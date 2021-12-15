@@ -1,0 +1,64 @@
+package it.airgap.tezos.michelson.micheline
+
+import it.airgap.tezos.core.internal.type.HexString
+import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.utils.isHex
+import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
+import kotlinx.serialization.Serializable
+
+// https://tezos.gitlab.io/shell/micheline.html#bnf-grammar
+@Serializable(with = MichelineJsonCoder.LiteralSerializer::class)
+public sealed class MichelineLiteral : MichelineNode() {
+
+    @Serializable
+    public data class Integer(public val int: kotlin.String) : MichelineLiteral() {
+
+        public constructor(value: Byte) : this(value.toString())
+        public constructor(value: Short) : this(value.toString())
+        public constructor(value: Int) : this(value.toString())
+        public constructor(value: Long) : this(value.toString())
+
+        init {
+            require(isValid(int))
+        }
+
+        public fun toByte(): Byte = int.toByte()
+        public fun toShort(): Short = int.toShort()
+        public fun toInt(): Int = int.toInt()
+        public fun toLong(): Long = int.toLong()
+
+        public companion object {
+            public fun isValid(value: kotlin.String): Boolean = value.matches(Regex("^-?[0-9]+$"))
+        }
+    }
+
+    @Serializable
+    public data class String(public val string: kotlin.String) : MichelineLiteral() {
+        init {
+            require(isValid(string))
+        }
+
+        public companion object {
+            public fun isValid(value: kotlin.String): Boolean = value.matches(Regex("^(\"|\r|\n|\t|\b|\\\\|[^\"\\\\])*$"))
+        }
+    }
+
+    @Serializable
+    public data class Bytes(public val bytes: kotlin.String) : MichelineLiteral() {
+
+        public constructor(value: ByteArray) : this(value.toHexString().asString(withPrefix = true))
+
+        init {
+            require(isValid(bytes))
+        }
+
+        public fun toByteArray(): ByteArray = if (bytes == HexString.PREFIX) byteArrayOf() else bytes.asHexString().toByteArray()
+
+        public companion object {
+            public fun isValid(value: kotlin.String): Boolean = (value.isHex() && value.startsWith(HexString.PREFIX)) || value == HexString.PREFIX
+        }
+    }
+
+    public companion object {}
+}
