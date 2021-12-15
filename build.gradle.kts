@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version Build.Kotlin.version
     `maven-publish`
+    jacoco
+    id("org.barfuin.gradle.jacocolog") version "2.0.0"
 }
 
 allprojects {
@@ -14,6 +16,7 @@ allprojects {
 subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
+    apply(plugin = "jacoco")
 
     group = Project.group
     version = Project.version
@@ -33,6 +36,16 @@ subprojects {
         }
     }
 
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+
+        reports {
+            xml.required.set(true)
+            csv.required.set(true)
+            html.required.set(true)
+        }
+    }
+
     publishing {
         publications {
             create<MavenPublication>("maven")
@@ -40,11 +53,16 @@ subprojects {
     }
 }
 
-// Jars
+// -- jars --
+
 tasks.register<Copy>("copyJars") {
+    dependsOn(tasks.assemble)
+
     subprojects.forEach {
-        from("${it.buildDir}/libs/${it.name}-${it.version}.jar")
-        into("$buildDir/libs/subprojects")
+        sync {
+            from("${it.buildDir}/libs/${it.name}-${it.version}.jar")
+            into("$buildDir/libs/subprojects")
+        }
     }
 }
 
@@ -57,12 +75,39 @@ tasks.register<Zip>("zipJars") {
     from("$buildDir/libs/subprojects")
 }
 
-// Tests
+// -- tests --
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test, subprojects.map { it.tasks.jacocoTestReport })
+
+    additionalSourceDirs.setFrom(subprojects.map { it.sourceSets.main.get().allSource.srcDirs })
+    sourceDirectories.setFrom(files(subprojects.map { it.sourceSets.main.get().allSource.srcDirs }))
+    classDirectories.setFrom(files(subprojects.map { it.sourceSets.main.get().output }))
+    executionData.setFrom(project.fileTree(".") { include("**/build/jacoco/test.exec") } )
+
+    reports {
+        xml.required.set(true)
+        csv.required.set(true)
+        html.required.set(true)
+    }
+}
+
 tasks.register<Copy>("copyTestReports") {
+    dependsOn(tasks.test)
+
     subprojects.forEach {
-        from("${it.buildDir}/reports/tests")
-        rename { filename -> "${it.name}-$filename" }
-        into("$buildDir/reports/tests/subprojects")
+        sync {
+            from("${it.buildDir}/reports/tests")
+            into("$buildDir/reports/tests/subprojects/${it.name}")
+        }
+        sync {
+            from("${it.buildDir}/reports/jacoco/test")
+            into("$buildDir/reports/tests/subprojects/${it.name}/coverage")
+        }
     }
 }
 
@@ -73,4 +118,7 @@ tasks.register<Zip>("zipTestReports") {
     destinationDirectory.set(layout.projectDirectory)
 
     from("$buildDir/reports/tests/subprojects")
+    from("$buildDir/reports/jacoco/test") {
+        into("coverage")
+    }
 }
