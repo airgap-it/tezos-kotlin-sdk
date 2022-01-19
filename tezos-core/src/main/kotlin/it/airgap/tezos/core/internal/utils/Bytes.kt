@@ -1,8 +1,9 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.HexString
 
-private val hexRegex: Regex = Regex("^(${HexString.PREFIX})?([0-9a-fA-F]{2})+$")
+private val hexRegex: Regex = Regex("^(${HexString.PREFIX})?([0-9a-fA-F]{2})*$")
 
 public fun String.isHex(): Boolean = this.matches(hexRegex)
 
@@ -27,5 +28,15 @@ public fun Int.toHexString(): HexString =
 public fun Long.toHexString(): HexString =
     toULong().toString(16).padStartEven('0').asHexString()
 
+public fun BigInt.toHexString(): HexString =
+    toHexStringOrNull() ?: failWithNegativeNumber(this)
+
+public fun BigInt.toHexStringOrNull(): HexString? =
+    if (this >= BigInt.valueOf(0)) toString(16).padStartEven('0').asHexString()
+    else null
+
 private fun failWithInvalidHexString(string: String): Nothing =
     throw IllegalArgumentException("$string is not a valid hex string")
+
+private fun failWithNegativeNumber(number: BigInt): Nothing =
+    throw IllegalArgumentException("cannot create HexString from a negative number $number")

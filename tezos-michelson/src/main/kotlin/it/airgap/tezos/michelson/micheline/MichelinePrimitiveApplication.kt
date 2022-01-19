@@ -13,7 +13,7 @@ public data class MichelinePrimitiveApplication internal constructor(
     @Serializable
     @JvmInline public value class Primitive(public val value: String) {
         init {
-            require(isValid(value))
+            require(isValid(value)) { "Invalid primitive." }
         }
 
         public companion object {
@@ -24,7 +24,7 @@ public data class MichelinePrimitiveApplication internal constructor(
     @Serializable
     @JvmInline public value class Annotation(public val value: String) {
         init {
-            require(isValid(value))
+            require(isValid(value)) { "Invalid annotation." }
         }
 
         public companion object {

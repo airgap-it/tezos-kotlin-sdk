@@ -5,7 +5,7 @@ import it.airgap.tezos.core.internal.utils.isHex
 @JvmInline
 public value class HexString(private val value: String) {
     init {
-        require(isValid(value))
+        require(isValid(value)) { "Invalid hex string." }
     }
 
     public fun length(withPrefix: Boolean = false): Int = asString(withPrefix).length
@@ -26,6 +26,7 @@ public value class HexString(private val value: String) {
     public fun toShort(): Short = asString().toUShort(16).toShort()
     public fun toInt(): Int = asString().toUInt(16).toInt()
     public fun toLong(): Long = asString().toULong(16).toLong()
+    public fun toBigInt(): BigInt = BigInt.valueOf(asString(), 16)
 
     public fun slice(indices: IntRange): HexString = HexString(value.slice(indices))
     public fun slice(startIndex: Int): HexString = HexString(value.substring(startIndex))

@@ -151,6 +151,7 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
         MichelsonInstruction.Get(1U) to MichelinePrimitiveApplication("GET", listOf(MichelineLiteral.Integer(1))),
         MichelsonInstruction.Update() to MichelinePrimitiveApplication("UPDATE"),
         MichelsonInstruction.Update(1U) to MichelinePrimitiveApplication("UPDATE", listOf(MichelineLiteral.Integer(1))),
+        MichelsonInstruction.GetAndUpdate to MichelinePrimitiveApplication("GET_AND_UPDATE"),
         MichelsonInstruction.If(
             MichelsonInstruction.Unit,
             MichelsonInstruction.Unit,
@@ -254,6 +255,9 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
 
 val michelsonTypeMichelinePairs: List<Pair<MichelsonType, MichelineNode>>
     get() = listOf(
+        MichelsonType.Parameter(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("parameter", listOf(MichelinePrimitiveApplication("unit"))),
+        MichelsonType.Storage(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("storage", listOf(MichelinePrimitiveApplication("unit"))),
+        MichelsonType.Code(MichelsonInstruction.Unit) to MichelinePrimitiveApplication("code", listOf(MichelinePrimitiveApplication("UNIT"))),
         MichelsonType.Option(MichelsonType.Operation) to MichelinePrimitiveApplication("option", listOf(MichelinePrimitiveApplication("operation"))),
         MichelsonType.List(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("list", listOf(MichelinePrimitiveApplication("unit"))),
         MichelsonType.Set(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("set", listOf(MichelinePrimitiveApplication("unit"))),

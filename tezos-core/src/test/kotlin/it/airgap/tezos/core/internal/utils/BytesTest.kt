@@ -1,5 +1,6 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.type.BigInt
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -7,6 +8,8 @@ import kotlin.test.assertTrue
 
 class BytesTest {
     private val validHexStrings: List<String> = listOf(
+        "",
+        "0x",
         "9434dc98",
         "0x7b1ea2cb",
         "e40476d7",
@@ -15,10 +18,8 @@ class BytesTest {
     )
 
     private val invalidHexStrings: List<String> = listOf(
-        "",
         "9434dc98az",
         "0xe40476d77t",
-        "0x",
         "0x1",
     )
 
@@ -125,5 +126,38 @@ class BytesTest {
             .forEach {
                 assertEquals(it.second, it.first.asString(withPrefix = false))
             }
+    }
+
+    @Test
+    fun `creates HexString from BigInt`() {
+        val bigIntegersWithExpected: List<Pair<BigInt, String>> = listOf(
+            BigInt.valueOf(0),
+            BigInt.valueOf(1),
+            BigInt.valueOf(10),
+            BigInt.valueOf(124),
+            BigInt.valueOf(6346),
+            BigInt.valueOf(Long.MAX_VALUE),
+        ).map { it to it.toString(16).padStartEven('0') }
+
+        bigIntegersWithExpected
+            .map { it.first.toHexString() to it.second.asHexString() }
+            .forEach {
+                assertEquals(it.second, it.first)
+            }
+    }
+
+    @Test
+    fun `returns null when creating HexString from negative BigInteger and asked to`() {
+        val negativeBigIntegers: List<BigInt> = listOf(
+            Long.MIN_VALUE,
+            -5236764366,
+            -346657,
+            -5265,
+            -1,
+        ).map(BigInt::valueOf)
+
+        val hexStrings = negativeBigIntegers.mapNotNull(BigInt::toHexStringOrNull)
+
+        assertEquals(0, hexStrings.size)
     }
 }

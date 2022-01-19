@@ -1,24 +1,38 @@
 package it.airgap.tezos.michelson.internal.converter
 
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.allIsInstance
 import it.airgap.tezos.core.internal.utils.anyIsInstance
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.*
+import it.airgap.tezos.michelson.internal.utils.second
+import it.airgap.tezos.michelson.internal.utils.third
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal object MichelineToMichelsonConverter : Converter<MichelineNode, Michelson> {
+internal class MichelineToMichelsonConverter(
+    stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter,
+    michelineToCompactStringConverter: MichelineToCompactStringConverter,
+) : Converter<MichelineNode, Michelson> {
+    private val literalToMichelsonConverter: MichelineLiteralToMichelsonConverter = MichelineLiteralToMichelsonConverter(michelineToCompactStringConverter)
+    private val primitiveApplicationToMichelsonConverter: MichelinePrimitiveApplicationToMichelsonConverter = MichelinePrimitiveApplicationToMichelsonConverter(
+        stringToMichelsonGrammarTypeConverter,
+        michelineToCompactStringConverter,
+        this,
+    )
+    private val michelineSequenceToMichelsonConverter: MichelineSequenceToMichelsonConverter = MichelineSequenceToMichelsonConverter(michelineToCompactStringConverter, this)
+
     override fun convert(value: MichelineNode): Michelson =
         when (value) {
-            is MichelineLiteral -> MichelineLiteralToMichelsonConverter.convert(value)
-            is MichelinePrimitiveApplication -> MichelinePrimitiveApplicationToMichelsonConverter.convert(value)
-            is MichelineSequence -> MichelineSequenceToMichelsonConverter.convert(value)
+            is MichelineLiteral -> literalToMichelsonConverter.convert(value)
+            is MichelinePrimitiveApplication -> primitiveApplicationToMichelsonConverter.convert(value)
+            is MichelineSequence -> michelineSequenceToMichelsonConverter.convert(value)
         }
 }
 
-internal object MichelineLiteralToMichelsonConverter : Converter<MichelineLiteral, Michelson> {
+private class MichelineLiteralToMichelsonConverter(private val michelineToCompactStringConverter: MichelineToCompactStringConverter) : Converter<MichelineLiteral, Michelson> {
     override fun convert(value: MichelineLiteral): Michelson = with(value) {
         try {
             when (this) {
@@ -32,13 +46,16 @@ internal object MichelineLiteralToMichelsonConverter : Converter<MichelineLitera
     }
 
     private fun failWithInvalidLiteral(literal: MichelineLiteral): Nothing =
-        failWithIllegalArgument("Invalid Micheline Literal: ${literal.toCompactExpression()}.")
+        failWithIllegalArgument("Invalid Micheline Literal: ${literal.toCompactExpression(michelineToCompactStringConverter)}.")
 }
 
-internal object MichelinePrimitiveApplicationToMichelsonConverter : Converter<MichelinePrimitiveApplication, Michelson> {
+private class MichelinePrimitiveApplicationToMichelsonConverter(
+    private val stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter,
+    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
+    private val toMichelsonConverter: MichelineToMichelsonConverter,
+) : Converter<MichelinePrimitiveApplication, Michelson> {
     override fun convert(value: MichelinePrimitiveApplication): Michelson = with(value) {
-        val grammarType =
-            Michelson.GrammarType.fromStringOrNull(prim.value) ?: failWithUnknownPrimitiveApplication(this)
+        val grammarType = Michelson.GrammarType.fromStringOrNull(prim.value, stringToMichelsonGrammarTypeConverter) ?: failWithUnknownPrimitiveApplication(this)
         try {
             when (grammarType) {
                 is MichelsonData.GrammarType -> fromDataPrimitiveApplication(grammarType, this)
@@ -211,6 +228,7 @@ internal object MichelinePrimitiveApplicationToMichelsonConverter : Converter<Mi
 
                 MichelsonInstruction.Update(n)
             }
+            MichelsonInstruction.GetAndUpdate -> MichelsonInstruction.GetAndUpdate
             MichelsonInstruction.If -> {
                 val ifBranch = args.first().convertToExpected<MichelsonInstruction>()
                 val elseBranch = args.second().convertToExpected<MichelsonInstruction>()
@@ -334,6 +352,21 @@ internal object MichelinePrimitiveApplicationToMichelsonConverter : Converter<Mi
         primitiveApplication: MichelinePrimitiveApplication,
     ): MichelsonType = with(primitiveApplication) {
         when (grammarType) {
+            MichelsonType.Parameter -> {
+                val type = args.first().convertToExpected<MichelsonType>()
+
+                MichelsonType.Parameter(type)
+            }
+            MichelsonType.Storage -> {
+                val type = args.first().convertToExpected<MichelsonType>()
+
+                MichelsonType.Storage(type)
+            }
+            MichelsonType.Code -> {
+                val code = args.first().convertToExpected<MichelsonInstruction>()
+
+                MichelsonType.Code(code)
+            }
             MichelsonType.Option -> {
                 val type = args.first().convertToExpected<MichelsonType>()
 
@@ -453,19 +486,34 @@ internal object MichelinePrimitiveApplicationToMichelsonConverter : Converter<Mi
         }
     }
 
+    private inline fun <reified T : Michelson> MichelineNode.convertToExpected(): T =
+        when (T::class) {
+            MichelsonData.NaturalNumberConstant::class -> toMichelsonConverter.convert(this)
+                .also { require(it is MichelsonData.IntConstant) }
+                .run { this as MichelsonData.IntConstant }
+                .run { MichelsonData.NaturalNumberConstant(value) } as T
+            else -> toMichelsonConverter.convert(this).also { require(it is T) } as T
+        }
+
+    private inline fun <reified T : Michelson> List<MichelineNode>.convertToExpected(): List<T> =
+        map { it.convertToExpected() }
+
     private fun failWithUnknownPrimitiveApplication(primitiveApplication: MichelinePrimitiveApplication): Nothing =
-        failWithIllegalArgument("Unknown Micheline Primitive Application: ${primitiveApplication.toCompactExpression()}.")
+        failWithIllegalArgument("Unknown Micheline Primitive Application: ${primitiveApplication.toCompactExpression(michelineToCompactStringConverter)}.")
 
     private fun failWithInvalidPrimitiveApplication(primitiveApplication: MichelinePrimitiveApplication): Nothing =
-        failWithIllegalArgument("Invalid Micheline Primitive Application: ${primitiveApplication.toCompactExpression()}.")
+        failWithIllegalArgument("Invalid Micheline Primitive Application: ${primitiveApplication.toCompactExpression(michelineToCompactStringConverter)}.")
 }
 
-internal object MichelineSequenceToMichelsonConverter : Converter<MichelineSequence, Michelson> {
+private class MichelineSequenceToMichelsonConverter(
+    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
+    private val toMichelsonConverter: MichelineToMichelsonConverter,
+) : Converter<MichelineSequence, Michelson> {
     @Suppress("UNCHECKED_CAST")
     override fun convert(value: MichelineSequence): Michelson {
         val michelsonValues = value.nodes.map {
             if (it is MichelinePrimitiveApplication && it.isElt) it.convertToElt()
-            else MichelineToMichelsonConverter.convert(it)
+            else toMichelsonConverter.convert(it)
         }
         with(michelsonValues) {
             return when {
@@ -489,29 +537,18 @@ internal object MichelineSequenceToMichelsonConverter : Converter<MichelineSeque
         return MichelsonData.Elt(key, value)
     }
 
+    private inline fun <reified T : Michelson> MichelineNode.convertToExpected(): T =
+        when (T::class) {
+            MichelsonData.NaturalNumberConstant::class -> toMichelsonConverter.convert(this)
+                .also { require(it is MichelsonData.IntConstant) }
+                .run { this as MichelsonData.IntConstant }
+                .run { MichelsonData.NaturalNumberConstant(value) } as T
+            else -> toMichelsonConverter.convert(this).also { require(it is T) } as T
+        }
+
     private fun failWithUnknownSequence(sequence: MichelineSequence): Nothing =
-        failWithIllegalArgument("Unknown Micheline Sequence: ${sequence.toCompactExpression()}.")
+        failWithIllegalArgument("Unknown Micheline Sequence: ${sequence.toCompactExpression(michelineToCompactStringConverter)}.")
 
     private fun failWithInvalidSequence(sequence: MichelineSequence): Nothing =
-        failWithIllegalArgument("Invalid Micheline Sequence: ${sequence.toCompactExpression()}.")
+        failWithIllegalArgument("Invalid Micheline Sequence: ${sequence.toCompactExpression(michelineToCompactStringConverter)}.")
 }
-
-private inline fun <reified T : Michelson> MichelineNode.convertToExpected(): T =
-    when (T::class) {
-        MichelsonData.NaturalNumberConstant::class -> MichelineToMichelsonConverter.convert(this)
-            .also { require(it is MichelsonData.IntConstant) }
-            .run { this as MichelsonData.IntConstant }
-            .run { MichelsonData.NaturalNumberConstant(value) } as T
-        else -> MichelineToMichelsonConverter.convert(this).also { require(it is T) } as T
-    }
-
-private inline fun <reified T : Michelson> List<MichelineNode>.convertToExpected(): List<T> =
-    map { it.convertToExpected() }
-
-private fun List<MichelineNode>.second(): MichelineNode =
-    if (size < 2) throw NoSuchElementException("List does not have enough elements.")
-    else this[1]
-
-private fun List<MichelineNode>.third(): MichelineNode =
-    if (size < 3) throw NoSuchElementException("List does not have enough elements.")
-    else this[2]

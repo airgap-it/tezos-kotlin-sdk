@@ -9,6 +9,8 @@ import kotlin.test.assertFailsWith
 
 class HexStringTest {
     private val validHexStrings: List<String> = listOf(
+        "",
+        "0x",
         "9434dc98",
         "0x7b1ea2cb",
         "e40476d7",
@@ -17,10 +19,8 @@ class HexStringTest {
     )
 
     private val invalidHexStrings: List<String> = listOf(
-        "",
         "9434dc98az",
         "0xe40476d77t",
-        "0x",
         "0x1",
     )
 

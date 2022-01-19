@@ -2,6 +2,7 @@ package it.airgap.tezos.michelson.micheline.dsl.builder.node
 
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.michelson.Michelson
+import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelineSequence
@@ -9,7 +10,9 @@ import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
 import it.airgap.tezos.michelson.toMicheline
 
-public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.GrammarType> internal constructor() : MichelineTransformableBuilder() {
+public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.GrammarType> internal constructor(
+    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+) : MichelineTransformableBuilder(michelsonToMichelineConverter) {
     override val value: MichelineNode
         get () {
             val nodes = builders.map { it.build() }
@@ -41,21 +44,21 @@ public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.GrammarType
     // -- primitive application --
 
     public fun primitiveApplication(prim: G, builderAction: MichelinePrimitiveApplicationBuilder<T, G>.() -> Unit = {}): MichelinePrimitiveApplicationBuilder<T, G> =
-        MichelinePrimitiveApplicationBuilder<T, G>(prim).apply(builderAction).also { builders.add(it) }
+        MichelinePrimitiveApplicationBuilder<T, G>(michelsonToMichelineConverter, prim).apply(builderAction).also { builders.add(it) }
 
     internal fun primitiveApplicationSingleArg(
         prim: G,
         builderAction: MichelinePrimitiveApplicationSingleArgBuilder<T, G>.() -> Unit,
     ): MichelinePrimitiveApplicationSingleArgBuilder<T, G> =
-        MichelinePrimitiveApplicationSingleArgBuilder<T, G>(prim).apply(builderAction).also { builders.add(it) }
+        MichelinePrimitiveApplicationSingleArgBuilder<T, G>(michelsonToMichelineConverter, prim).apply(builderAction).also { builders.add(it) }
 
     // -- sequence --
 
     public fun sequence(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
-        MichelineNodeBuilder<T, G>().apply(builderAction).mapNode { if (it is MichelineSequence) it else MichelineSequence(listOf(it)) }.also { builders.add(it) }
+        MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).mapNode { if (it is MichelineSequence) it else MichelineSequence(listOf(it)) }.also { builders.add(it) }
 
     // -- michelson --
 
     public infix fun michelson(value: T): MichelineBuilder =
-        MichelineBuilder { value.toMicheline() }.also { builders.add(it) }
+        MichelineBuilder { value.toMicheline(michelsonToMichelineConverter) }.also { builders.add(it) }
 }

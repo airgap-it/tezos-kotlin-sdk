@@ -398,13 +398,13 @@ class MichelsonDataTest {
     @Test
     fun `recognizes valid and invalid ByteSequenceConstants`() {
         val valid = listOf(
+            "0x",
             "0x00",
             "0x32ffb703ac"
         )
 
         val invalid = listOf(
             "",
-            "0x",
             "00",
             "0x0",
             "abc",
@@ -446,8 +446,6 @@ class MichelsonDataTest {
     @Test
     fun `fails to create ByteSequenceConstant from invalid string`() {
         val invalid = listOf(
-            "",
-            "0x",
             "00",
             "0x0",
             "abc",
@@ -463,6 +461,7 @@ class MichelsonDataTest {
     @Test
     fun `converts ByteSequenceConstant to ByteArray`() {
         val valid = listOf(
+            "0x",
             "0x00",
             "0x32ffb703ac"
         )

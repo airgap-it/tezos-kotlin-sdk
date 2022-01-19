@@ -1,20 +1,31 @@
 package it.airgap.tezos.michelson.internal.converter
 
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal object MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
+internal class MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
+    private val dataToMichelineConverter: MichelsonDataToMichelineConverter = MichelsonDataToMichelineConverter(this)
+    private val typeToMichelineConverter: MichelsonTypeToMichelineConverter = MichelsonTypeToMichelineConverter(
+        dataToMichelineConverter,
+        dataToMichelineConverter.instructionToMichelineConverter
+    )
+
     override fun convert(value: Michelson): MichelineNode =
         when (value) {
-            is MichelsonData -> MichelsonDataToMichelineConverter.convert(value)
-            is MichelsonType -> MichelsonTypeToMichelineConverter.convert(value)
+            is MichelsonData -> dataToMichelineConverter.convert(value)
+            is MichelsonType -> typeToMichelineConverter.convert(value)
         }
 }
 
-internal object MichelsonDataToMichelineConverter : Converter<MichelsonData, MichelineNode> {
+private class MichelsonDataToMichelineConverter(
+    private val toMichelineConverter: MichelsonToMichelineConverter
+) : Converter<MichelsonData, MichelineNode> {
+    val instructionToMichelineConverter: MichelsonInstructionToMichelineConverter = MichelsonInstructionToMichelineConverter(toMichelineConverter, this)
+
     override fun convert(value: MichelsonData): MichelineNode = with(value) {
         when (this) {
             is MichelsonData.IntConstant -> MichelineLiteral.Integer(this.value)
@@ -34,154 +45,159 @@ internal object MichelsonDataToMichelineConverter : Converter<MichelsonData, Mic
                 MichelinePrimitiveApplication(
                     MichelsonData.Elt,
                     listOf(
-                        MichelsonToMichelineConverter.convert(it.key),
-                        MichelsonToMichelineConverter.convert(it.value),
+                        toMichelineConverter.convert(it.key),
+                        toMichelineConverter.convert(it.value),
                     )
                 )
             })
-            is MichelsonInstruction -> MichelsonInstructionToMichelineConverter.convert(this)
+            is MichelsonInstruction -> instructionToMichelineConverter.convert(this)
         }
     }
 }
 
-internal object MichelsonInstructionToMichelineConverter : Converter<MichelsonInstruction, MichelineNode> {
+private class MichelsonInstructionToMichelineConverter(
+    private val toMichelineConverter: MichelsonToMichelineConverter,
+    private val dataToMichelineConverter: MichelsonDataToMichelineConverter,
+) : Converter<MichelsonInstruction, MichelineNode> {
+
     override fun convert(value: MichelsonInstruction): MichelineNode = with(value) {
         when (this) {
-            is MichelsonInstruction.Sequence -> MichelineSequence(instructions.map { it.toMicheline() })
+            is MichelsonInstruction.Sequence -> MichelineSequence(instructions.map { toMichelineConverter.convert(it) })
             is MichelsonInstruction.Drop -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Drop,
-                listOfNotNull(n?.let(MichelsonDataToMichelineConverter::convert)),
+                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
             )
             is MichelsonInstruction.Dup -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dup,
-                listOfNotNull(n?.let(MichelsonDataToMichelineConverter::convert)),
+                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
             )
             MichelsonInstruction.Swap -> MichelinePrimitiveApplication(MichelsonInstruction.Swap)
             is MichelsonInstruction.Dig -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dig,
-                listOf(MichelsonDataToMichelineConverter.convert(n)),
+                listOf(dataToMichelineConverter.convert(n)),
             )
             is MichelsonInstruction.Dug -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dug,
-                listOf(MichelsonDataToMichelineConverter.convert(n)),
+                listOf(dataToMichelineConverter.convert(n)),
             )
             is MichelsonInstruction.Push -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Push,
-                listOf(MichelsonToMichelineConverter.convert(type), MichelsonToMichelineConverter.convert(this.value)),
+                listOf(toMichelineConverter.convert(type), toMichelineConverter.convert(this.value)),
             )
             MichelsonInstruction.Some -> MichelinePrimitiveApplication(MichelsonInstruction.Some)
             is MichelsonInstruction. None -> MichelinePrimitiveApplication(
                 MichelsonInstruction.None,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             MichelsonInstruction.Unit -> MichelinePrimitiveApplication(MichelsonInstruction.Unit)
             MichelsonInstruction.Never -> MichelinePrimitiveApplication(MichelsonInstruction.Never)
             is MichelsonInstruction.IfNone -> MichelinePrimitiveApplication(
                 MichelsonInstruction.IfNone,
                 listOf(
-                    MichelsonToMichelineConverter.convert(ifBranch),
-                    MichelsonToMichelineConverter.convert(elseBranch),
+                    toMichelineConverter.convert(ifBranch),
+                    toMichelineConverter.convert(elseBranch),
                 ),
             )
             is MichelsonInstruction.Pair -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Pair,
-                listOfNotNull(n?.let(MichelsonDataToMichelineConverter::convert)),
+                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
             )
             MichelsonInstruction.Car -> MichelinePrimitiveApplication(MichelsonInstruction.Car)
             MichelsonInstruction.Cdr -> MichelinePrimitiveApplication(MichelsonInstruction.Cdr)
             is MichelsonInstruction.Unpair -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Unpair,
-                listOfNotNull(n?.let(MichelsonDataToMichelineConverter::convert)),
+                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
             )
             is MichelsonInstruction.Left -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Left,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             is MichelsonInstruction.Right -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Right,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             is MichelsonInstruction.IfLeft -> MichelinePrimitiveApplication(
                 MichelsonInstruction.IfLeft,
                 listOf(
-                    MichelsonToMichelineConverter.convert(ifBranch),
-                    MichelsonToMichelineConverter.convert(elseBranch),
+                    toMichelineConverter.convert(ifBranch),
+                    toMichelineConverter.convert(elseBranch),
                 ),
             )
             is MichelsonInstruction.Nil -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Nil,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             MichelsonInstruction.Cons -> MichelinePrimitiveApplication(MichelsonInstruction.Cons)
             is MichelsonInstruction.IfCons -> MichelinePrimitiveApplication(
                 MichelsonInstruction.IfCons,
-                listOf(MichelsonToMichelineConverter.convert(ifBranch), MichelsonToMichelineConverter.convert(elseBranch)),
+                listOf(toMichelineConverter.convert(ifBranch), toMichelineConverter.convert(elseBranch)),
             )
             MichelsonInstruction.Size -> MichelinePrimitiveApplication(MichelsonInstruction.Size)
             is MichelsonInstruction.EmptySet -> MichelinePrimitiveApplication(
                 MichelsonInstruction.EmptySet,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             is MichelsonInstruction.EmptyMap -> MichelinePrimitiveApplication(
                 MichelsonInstruction.EmptyMap,
                 listOf(
-                    MichelsonToMichelineConverter.convert(keyType),
-                    MichelsonToMichelineConverter.convert(valueType),
+                    toMichelineConverter.convert(keyType),
+                    toMichelineConverter.convert(valueType),
                 ),
             )
             is MichelsonInstruction.EmptyBigMap -> MichelinePrimitiveApplication(
                 MichelsonInstruction.EmptyBigMap,
                 listOf(
-                    MichelsonToMichelineConverter.convert(keyType),
-                    MichelsonToMichelineConverter.convert(valueType),
+                    toMichelineConverter.convert(keyType),
+                    toMichelineConverter.convert(valueType),
                 ),
             )
             is MichelsonInstruction.Map -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Map,
-                listOf(MichelsonToMichelineConverter.convert(expression)),
+                listOf(toMichelineConverter.convert(expression)),
             )
             is MichelsonInstruction.Iter -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Iter,
-                listOf(MichelsonToMichelineConverter.convert(expression)),
+                listOf(toMichelineConverter.convert(expression)),
             )
             MichelsonInstruction.Mem -> MichelinePrimitiveApplication(MichelsonInstruction.Mem)
             is MichelsonInstruction.Get -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Get,
-                listOfNotNull(n?.let(MichelsonDataToMichelineConverter::convert)),
+                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
             )
             is MichelsonInstruction.Update -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Update,
-                listOfNotNull(n?.let(MichelsonDataToMichelineConverter::convert)),
+                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
             )
+            is MichelsonInstruction.GetAndUpdate -> MichelinePrimitiveApplication(MichelsonInstruction.GetAndUpdate)
             is MichelsonInstruction.If -> MichelinePrimitiveApplication(
                 MichelsonInstruction.If,
                 listOf(
-                    MichelsonToMichelineConverter.convert(ifBranch),
-                    MichelsonToMichelineConverter.convert(elseBranch),
+                    toMichelineConverter.convert(ifBranch),
+                    toMichelineConverter.convert(elseBranch),
                 ),
             )
             is MichelsonInstruction.Loop -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Loop,
-                listOf(MichelsonToMichelineConverter.convert(body)),
+                listOf(toMichelineConverter.convert(body)),
             )
             is MichelsonInstruction.LoopLeft -> MichelinePrimitiveApplication(
                 MichelsonInstruction.LoopLeft,
-                listOf(MichelsonToMichelineConverter.convert(body)),
+                listOf(toMichelineConverter.convert(body)),
             )
             is MichelsonInstruction.Lambda -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Lambda,
                 listOf(
-                    MichelsonToMichelineConverter.convert(parameterType),
-                    MichelsonToMichelineConverter.convert(returnType),
-                    MichelsonToMichelineConverter.convert(body)),
+                    toMichelineConverter.convert(parameterType),
+                    toMichelineConverter.convert(returnType),
+                    toMichelineConverter.convert(body)),
             )
             MichelsonInstruction.Exec -> MichelinePrimitiveApplication(MichelsonInstruction.Exec)
             MichelsonInstruction.Apply -> MichelinePrimitiveApplication(MichelsonInstruction.Apply)
             is MichelsonInstruction.Dip -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dip,
                 listOfNotNull(
-                    n?.let(MichelsonDataToMichelineConverter::convert),
-                    MichelsonToMichelineConverter.convert(instruction),
+                    n?.let(dataToMichelineConverter::convert),
+                    toMichelineConverter.convert(instruction),
                 ),
             )
             MichelsonInstruction.Failwith -> MichelinePrimitiveApplication(MichelsonInstruction.Failwith)
@@ -192,7 +208,7 @@ internal object MichelsonInstructionToMichelineConverter : Converter<MichelsonIn
             MichelsonInstruction.Pack -> MichelinePrimitiveApplication(MichelsonInstruction.Pack)
             is MichelsonInstruction.Unpack -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Unpack,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             MichelsonInstruction.Add -> MichelinePrimitiveApplication(MichelsonInstruction.Add)
             MichelsonInstruction.Sub -> MichelinePrimitiveApplication(MichelsonInstruction.Sub)
@@ -219,16 +235,16 @@ internal object MichelsonInstructionToMichelineConverter : Converter<MichelsonIn
             MichelsonInstruction.SelfAddress -> MichelinePrimitiveApplication(MichelsonInstruction.SelfAddress)
             is MichelsonInstruction.Contract -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Contract,
-                listOf(MichelsonToMichelineConverter.convert(type)),
+                listOf(toMichelineConverter.convert(type)),
             )
             MichelsonInstruction.TransferTokens -> MichelinePrimitiveApplication(MichelsonInstruction.TransferTokens)
             MichelsonInstruction.SetDelegate -> MichelinePrimitiveApplication(MichelsonInstruction.SetDelegate)
             is MichelsonInstruction.CreateContract -> MichelinePrimitiveApplication(
                 MichelsonInstruction.CreateContract,
                 listOf(
-                    MichelsonToMichelineConverter.convert(parameterType),
-                    MichelsonToMichelineConverter.convert(storageType),
-                    MichelsonToMichelineConverter.convert(code),
+                    toMichelineConverter.convert(parameterType),
+                    toMichelineConverter.convert(storageType),
+                    toMichelineConverter.convert(code),
                 ),
             )
             MichelsonInstruction.ImplicitAccount -> MichelinePrimitiveApplication(MichelsonInstruction.ImplicitAccount)
@@ -252,7 +268,7 @@ internal object MichelsonInstructionToMichelineConverter : Converter<MichelsonIn
             MichelsonInstruction.PairingCheck -> MichelinePrimitiveApplication(MichelsonInstruction.PairingCheck)
             is MichelsonInstruction.SaplingEmptyState -> MichelinePrimitiveApplication(
                 MichelsonInstruction.SaplingEmptyState,
-                listOf(MichelsonDataToMichelineConverter.convert(memoSize)),
+                listOf(dataToMichelineConverter.convert(memoSize)),
             )
             MichelsonInstruction.SaplingVerifyUpdate -> MichelinePrimitiveApplication(MichelsonInstruction.SaplingVerifyUpdate)
             MichelsonInstruction.Ticket -> MichelinePrimitiveApplication(MichelsonInstruction.Ticket)
@@ -264,9 +280,17 @@ internal object MichelsonInstructionToMichelineConverter : Converter<MichelsonIn
     }
 }
 
-internal object MichelsonTypeToMichelineConverter : Converter<MichelsonType, MichelineNode> {
+private class MichelsonTypeToMichelineConverter(
+    private val dataToMichelineConverter: MichelsonDataToMichelineConverter,
+    private val instructionToMichelineConverter: MichelsonInstructionToMichelineConverter,
+) : Converter<MichelsonType, MichelineNode> {
+    val comparableTypeToMichelineConverter: MichelsonComparableTypeToMichelineConverter = MichelsonComparableTypeToMichelineConverter()
+
     override fun convert(value: MichelsonType): MichelineNode = with(value) {
         when (this) {
+            is MichelsonType.Parameter -> MichelinePrimitiveApplication(MichelsonType.Parameter, listOf(convert(this.type)))
+            is MichelsonType.Storage -> MichelinePrimitiveApplication(MichelsonType.Storage, listOf(convert(this.type)))
+            is MichelsonType.Code -> MichelinePrimitiveApplication(MichelsonType.Code, listOf(instructionToMichelineConverter.convert(this.code)))
             is MichelsonType.Option -> MichelinePrimitiveApplication(MichelsonType.Option, listOf(convert(this.type)))
             is MichelsonType.List -> MichelinePrimitiveApplication(MichelsonType.List, listOf(convert(this.type)))
             is MichelsonType.Set -> MichelinePrimitiveApplication(MichelsonType.Set, listOf(convert(this.type)))
@@ -283,20 +307,20 @@ internal object MichelsonTypeToMichelineConverter : Converter<MichelsonType, Mic
             MichelsonType. Bls12_381Fr -> MichelinePrimitiveApplication(MichelsonType.Bls12_381Fr)
             is MichelsonType.SaplingTransaction -> MichelinePrimitiveApplication(
                 MichelsonType.SaplingTransaction,
-                listOf(MichelsonDataToMichelineConverter.convert(memoSize)),
+                listOf(dataToMichelineConverter.convert(memoSize)),
             )
             is MichelsonType.SaplingState -> MichelinePrimitiveApplication(
                 MichelsonType.SaplingState,
-                listOf(MichelsonDataToMichelineConverter.convert(memoSize)),
+                listOf(dataToMichelineConverter.convert(memoSize)),
             )
             MichelsonType.Chest -> MichelinePrimitiveApplication(MichelsonType.Chest)
             MichelsonType.ChestKey -> MichelinePrimitiveApplication(MichelsonType.ChestKey)
-            is MichelsonComparableType -> MichelsonComparableTypeToMichelineConverter.convert(this)
+            is MichelsonComparableType -> comparableTypeToMichelineConverter.convert(this)
         }
     }
 }
 
-internal object MichelsonComparableTypeToMichelineConverter : Converter<MichelsonComparableType, MichelineNode> {
+private class MichelsonComparableTypeToMichelineConverter : Converter<MichelsonComparableType, MichelineNode> {
     override fun convert(value: MichelsonComparableType): MichelineNode = with(value) {
         when (this) {
             MichelsonComparableType.Unit -> MichelinePrimitiveApplication(MichelsonComparableType.Unit)

@@ -15,7 +15,7 @@ public sealed interface MichelsonData : Michelson {
         public constructor(value: Long) : this(value.toString())
 
         init {
-            require(isValid(value))
+            require(isValid(value)) { "Invalid Int constant." }
         }
 
         public fun toByte(): Byte = value.toByte()
@@ -37,7 +37,7 @@ public sealed interface MichelsonData : Michelson {
         public constructor(value: ULong) : this(value.toString())
 
         init {
-            require(isValid(value))
+            require(isValid(value)) { "Invalid natural number constant." }
         }
 
         public fun toUByte(): UByte = value.toUByte()
@@ -52,7 +52,7 @@ public sealed interface MichelsonData : Michelson {
 
     @JvmInline public value class StringConstant(public val value: String) : MichelsonData {
         init {
-            require(isValid(value))
+            require(isValid(value)) { "Invalid String constant." }
         }
 
         public companion object {
@@ -77,13 +77,17 @@ public sealed interface MichelsonData : Michelson {
 
     public object Unit : MichelsonData, GrammarType {
         override val name: String = "Unit"
+        override val tag: Int = 11
     }
 
     public object True : MichelsonData, GrammarType {
         override val name: String = "True"
+        override val tag: Int = 10
     }
+
     public object False : MichelsonData, GrammarType {
         override val name: String = "False"
+        override val tag: Int = 3
     }
 
     public data class Pair(public val values: List<MichelsonData>) : MichelsonData {
@@ -93,29 +97,34 @@ public sealed interface MichelsonData : Michelson {
 
         public companion object : GrammarType {
             override val name: String = "Pair"
+            override val tag: Int = 7
         }
     }
 
     public data class Left(public val value: MichelsonData) : MichelsonData {
         public companion object : GrammarType {
             override val name: String = "Left"
+            override val tag: Int = 5
         }
     }
 
     public data class Right(public val value: MichelsonData) : MichelsonData {
         public companion object : GrammarType {
             override val name: String = "Right"
+            override val tag: Int = 8
         }
     }
 
     public data class Some(public val value: MichelsonData) : MichelsonData {
         public companion object : GrammarType {
             override val name: String = "Some"
+            override val tag: Int = 9
         }
     }
 
     public object None : MichelsonData, GrammarType {
         override val name: String = "None"
+        override val tag: Int = 6
     }
 
     public data class Sequence(public val values: List<MichelsonData>) : MichelsonData {
@@ -129,6 +138,7 @@ public sealed interface MichelsonData : Michelson {
     public data class Elt(public val key: MichelsonData, public val value: MichelsonData) {
         public companion object : GrammarType {
             override val name: String = "Elt"
+            override val tag: Int = 4
         }
     }
 

@@ -4,6 +4,7 @@ package it.airgap.tezos.michelson
 public sealed interface Michelson {
     public sealed interface GrammarType {
         public val name: String
+        public val tag: Int
 
         public companion object {}
     }
