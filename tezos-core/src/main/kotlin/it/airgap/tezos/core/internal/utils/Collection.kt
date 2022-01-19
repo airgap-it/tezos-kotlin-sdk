@@ -16,3 +16,19 @@ public inline fun <reified T> MutableList<T?>.replaceOrAdd(index: Int, element: 
         this[index] = element
     }
 }
+
+public fun <T> MutableList<T>.consumeAt(index: Int): T? = if (index > lastIndex) null else this[index].also { removeAt(index) }
+public fun <T> MutableList<T>.consumeAt(indices: IntRange): List<T> = mutableListOf<T>().also {
+    for (i in indices) {
+        consumeAt(indices.first)?.let(it::add) ?: break
+    }
+}
+
+public fun <T> List<T>.tail(): List<T> {
+    val n = if (isNotEmpty()) size - 1 else 0
+    return takeLast(n)
+}
+
+public fun <T> List<T>.replacingAt(index: Int, newElement: T): List<T> =
+    if (index > lastIndex) this
+    else slice(0 until index) + newElement + slice(index + 1 until size)

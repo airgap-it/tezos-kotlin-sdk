@@ -4,6 +4,7 @@ package it.airgap.tezos.michelson.micheline.dsl.builder.expression
 
 import it.airgap.tezos.core.internal.utils.replaceOrAdd
 import it.airgap.tezos.michelson.MichelsonData
+import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelineNodeBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationNoArgsBuilder
@@ -16,12 +17,13 @@ public typealias MichelineMichelsonDataSingleArgBuilder = MichelinePrimitiveAppl
 public typealias MichelineMichelsonDataWithArgsBuilder = MichelinePrimitiveApplicationBuilder<MichelsonData, MichelsonData.GrammarType>
 
 public class MichelineMichelsonDataKeyValueBuilder internal constructor(
+    michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: MichelsonData.GrammarType,
-) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.GrammarType>(prim) {
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.GrammarType>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =
-        MichelineMichelsonDataExpressionBuilder().apply(builderAction).also { args.replaceOrAdd(0, it) }
+        MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
     public fun value(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =
-        MichelineMichelsonDataExpressionBuilder().apply(builderAction).also { args.replaceOrAdd(1, it) }
+        MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
 }
 
 public fun MichelineMichelsonDataExpressionBuilder.Unit(builderAction: MichelineMichelsonDataNoArgsBuilder.() -> Unit = {}): MichelineMichelsonDataNoArgsBuilder =
@@ -57,4 +59,4 @@ public fun MichelineMichelsonDataExpressionBuilder.None(builderAction: Micheline
 public val MichelineMichelsonDataExpressionBuilder.None: MichelineMichelsonDataNoArgsBuilder get() = None {}
 
 public fun MichelineMichelsonDataExpressionBuilder.Elt(builderAction: MichelineMichelsonDataKeyValueBuilder.() -> Unit): MichelineMichelsonDataKeyValueBuilder =
-    MichelineMichelsonDataKeyValueBuilder(MichelsonData.Elt).apply(builderAction).also { builders.add(it) }
+    MichelineMichelsonDataKeyValueBuilder(michelsonToMichelineConverter, MichelsonData.Elt).apply(builderAction).also { builders.add(it) }

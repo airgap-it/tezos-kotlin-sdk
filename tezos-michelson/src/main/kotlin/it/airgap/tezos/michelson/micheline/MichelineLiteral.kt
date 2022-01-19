@@ -44,7 +44,7 @@ public sealed class MichelineLiteral : MichelineNode() {
         }
     }
 
-    @Serializable
+    @Serializable(with = MichelineJsonCoder.LiteralBytesSerializer::class)
     public data class Bytes(public val bytes: kotlin.String) : MichelineLiteral() {
 
         public constructor(value: ByteArray) : this(value.toHexString().asString(withPrefix = true))

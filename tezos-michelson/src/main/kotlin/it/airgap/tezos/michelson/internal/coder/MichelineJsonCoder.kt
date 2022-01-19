@@ -1,5 +1,7 @@
 package it.airgap.tezos.michelson.internal.coder
 
+import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.michelson.internal.utils.KJsonSerializer
 import it.airgap.tezos.michelson.internal.utils.containsOneOfKeys
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
@@ -12,18 +14,21 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.*
 import kotlin.reflect.KClass
 
 @OptIn(ExperimentalSerializationApi::class)
-internal object MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
+internal class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
     override fun encode(value: MichelineNode): JsonElement = Json.encodeToJsonElement(MichelineNode.serializer(), value)
     override fun decode(value: JsonElement): MichelineNode = Json.decodeFromJsonElement(MichelineNode.serializer(), value)
 
     object NodeSerializer : KJsonSerializer<MichelineNode> {
-        override val descriptor: SerialDescriptor = buildClassSerialDescriptor("MichelineNode")
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor(MichelineNode::class.toString())
 
         override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): MichelineNode =
             when (jsonElement) {
@@ -61,7 +66,7 @@ internal object MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
             const val BYTES = "bytes"
         }
 
-        override val descriptor: SerialDescriptor = buildClassSerialDescriptor("MichelineLiteral")
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor(MichelineLiteral::class.toString())
 
         override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): MichelineLiteral {
             val jsonObject = jsonElement as? JsonObject ?: failWithUnexpectedJsonType(jsonElement::class)
@@ -85,6 +90,25 @@ internal object MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
         private fun failWithInvalidSerializedLiteral(): Nothing = throw SerializationException("Could not deserialize, invalid Micheline Literal.")
     }
 
+    object LiteralBytesSerializer : KSerializer<MichelineLiteral.Bytes> {
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor(MichelineLiteral.Bytes::class.toString()) {
+            element<String>("bytes")
+        }
+
+        override fun deserialize(decoder: Decoder): MichelineLiteral.Bytes =
+            decoder.decodeStructure(descriptor) {
+                val bytes = decodeStringElement(descriptor, 0)
+
+                MichelineLiteral.Bytes(bytes.asHexString().asString(withPrefix = true))
+            }
+
+        override fun serialize(encoder: Encoder, value: MichelineLiteral.Bytes) {
+            encoder.encodeStructure(descriptor) {
+                encodeStringElement(descriptor, 0, value.bytes.asHexString().asString(withPrefix = false))
+            }
+        }
+    }
+
     object SequenceSerializer : KSerializer<MichelineSequence> {
         private val listSerializer = ListSerializer(MichelineNode.serializer())
 
@@ -100,7 +124,7 @@ internal object MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
             encoder.encodeSerializableValue(listSerializer, value.nodes)
         }
     }
-
-    private fun failWithUnexpectedJsonType(type: KClass<out JsonElement>): Nothing =
-        throw SerializationException("Could not deserialize, unexpected JSON type $type.")
 }
+
+private fun failWithUnexpectedJsonType(type: KClass<out JsonElement>): Nothing =
+    throw SerializationException("Could not deserialize, unexpected JSON type $type.")

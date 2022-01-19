@@ -1,18 +1,52 @@
 package it.airgap.tezos.michelson.internal.converter
 
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.unmockkAll
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonData
+import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.toCompactExpression
 import it.airgap.tezos.michelson.toMichelson
 import michelsonMichelinePairs
+import mockTezosSdk
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class MichelineToMichelsonConverterTest {
+
+    @MockK
+    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+
+    private lateinit var michelineToMichelsonConverter: MichelineToMichelsonConverter
+
+    private lateinit var stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter
+    private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
+
+    @Before
+    fun setup() {
+        MockKAnnotations.init(this)
+        mockTezosSdk(dependencyRegistry)
+
+        stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
+        michelineToCompactStringConverter = MichelineToCompactStringConverter()
+
+        michelineToMichelsonConverter = MichelineToMichelsonConverter(stringToMichelsonGrammarTypeConverter, michelineToCompactStringConverter)
+
+        every { dependencyRegistry.michelineToMichelsonConverter } returns michelineToMichelsonConverter
+    }
+
+    @After
+    fun clean() {
+        unmockkAll()
+    }
 
     @Test
     fun `should convert Micheline Literal to Michelson`() {
@@ -23,9 +57,9 @@ class MichelineToMichelsonConverterTest {
         )
 
         expectedWithMicheline.forEach {
-            assertEquals(it.first, MichelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, MichelineLiteralToMichelsonConverter.convert(it.second))
+            assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
             assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
     }
 
@@ -35,9 +69,9 @@ class MichelineToMichelsonConverterTest {
         val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelinePrimitiveApplication } as List<Pair<Michelson, MichelinePrimitiveApplication>>
 
         expectedWithMicheline.forEach {
-            assertEquals(it.first, MichelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, MichelinePrimitiveApplicationToMichelsonConverter.convert(it.second))
+            assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
             assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
     }
 
@@ -48,13 +82,9 @@ class MichelineToMichelsonConverterTest {
         )
 
         unknownMicheline.forEach {
-            val message = "Unknown Micheline Primitive Application: ${it.toCompactExpression()}."
+            val message = "Unknown Micheline Primitive Application: ${it.toCompactExpression(michelineToCompactStringConverter)}."
             assertFailsWith<IllegalArgumentException>(message) {
-                MichelineToMichelsonConverter.convert(it)
-            }
-
-            assertFailsWith<IllegalArgumentException>(message) {
-                MichelinePrimitiveApplicationToMichelsonConverter.convert(it)
+                michelineToMichelsonConverter.convert(it)
             }
         }
 
@@ -192,6 +222,15 @@ class MichelineToMichelsonConverterTest {
 
             // -- MichelsonType --
 
+            MichelinePrimitiveApplication("parameter") /* empty args */,
+            MichelinePrimitiveApplication("parameter", listOf(MichelinePrimitiveApplication("UNIT"))) /* invalid arg types */,
+
+            MichelinePrimitiveApplication("storage") /* empty args */,
+            MichelinePrimitiveApplication("storage", listOf(MichelinePrimitiveApplication("UNIT"))) /* invalid arg types */,
+
+            MichelinePrimitiveApplication("code") /* empty args */,
+            MichelinePrimitiveApplication("code", listOf(MichelinePrimitiveApplication("unit"))) /* invalid arg types */,
+
             MichelinePrimitiveApplication("option") /* empty args */,
             MichelinePrimitiveApplication("option", listOf(MichelinePrimitiveApplication("UNIT"))) /* invalid arg types */,
 
@@ -235,13 +274,9 @@ class MichelineToMichelsonConverterTest {
         )
 
         invalidMicheline.forEach {
-            val message = "Invalid Micheline Primitive Application: ${it.toCompactExpression()}."
+            val message = "Invalid Micheline Primitive Application: ${it.toCompactExpression(michelineToCompactStringConverter)}."
             assertFailsWith<IllegalArgumentException>(message) {
-                MichelineToMichelsonConverter.convert(it)
-            }
-
-            assertFailsWith<IllegalArgumentException>(message) {
-                MichelinePrimitiveApplicationToMichelsonConverter.convert(it)
+                michelineToMichelsonConverter.convert(it)
             }
         }
     }
@@ -252,9 +287,9 @@ class MichelineToMichelsonConverterTest {
         val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelineSequence } as List<Pair<Michelson, MichelineSequence>>
 
         expectedWithMicheline.forEach {
-            assertEquals(it.first, MichelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, MichelineSequenceToMichelsonConverter.convert(it.second))
+            assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
             assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
     }
 
@@ -265,13 +300,9 @@ class MichelineToMichelsonConverterTest {
         )
 
         unknownMicheline.forEach {
-            val message = "Unknown Micheline Sequence: ${it.toCompactExpression()}."
+            val message = "Unknown Micheline Sequence: ${it.toCompactExpression(michelineToCompactStringConverter)}."
             assertFailsWith<IllegalArgumentException>(message) {
-                MichelineToMichelsonConverter.convert(it)
-            }
-
-            assertFailsWith<IllegalArgumentException>(message) {
-                MichelineSequenceToMichelsonConverter.convert(it)
+                michelineToMichelsonConverter.convert(it)
             }
         }
 
@@ -289,13 +320,9 @@ class MichelineToMichelsonConverterTest {
         )
 
         invalidMicheline.forEach {
-            val message = "Invalid Micheline Sequence: ${it.toCompactExpression()}."
+            val message = "Invalid Micheline Sequence: ${it.toCompactExpression(michelineToCompactStringConverter)}."
             assertFailsWith<IllegalArgumentException>(message) {
-                MichelineToMichelsonConverter.convert(it)
-            }
-
-            assertFailsWith<IllegalArgumentException>(message) {
-                MichelineSequenceToMichelsonConverter.convert(it)
+                michelineToMichelsonConverter.convert(it)
             }
         }
     }
