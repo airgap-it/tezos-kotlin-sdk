@@ -98,11 +98,11 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
         MichelsonInstruction.Unit to MichelinePrimitiveApplication("UNIT"),
         MichelsonInstruction.Never to MichelinePrimitiveApplication("NEVER"),
         MichelsonInstruction.IfNone(
-            MichelsonInstruction.Unit,
-            MichelsonInstruction.Unit,
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
         ) to MichelinePrimitiveApplication(
             "IF_NONE",
-            listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT")),
+            listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
         ),
         MichelsonInstruction.Pair() to MichelinePrimitiveApplication("PAIR"),
         MichelsonInstruction.Pair(1U) to MichelinePrimitiveApplication("PAIR", listOf(MichelineLiteral.Integer(1))),
@@ -113,20 +113,20 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
         MichelsonInstruction.Left(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("LEFT", listOf(MichelinePrimitiveApplication("unit"))),
         MichelsonInstruction.Right(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("RIGHT", listOf(MichelinePrimitiveApplication("unit"))),
         MichelsonInstruction.IfLeft(
-            MichelsonInstruction.Unit,
-            MichelsonInstruction.Unit,
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
         ) to MichelinePrimitiveApplication(
             "IF_LEFT",
-            listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT")),
+            listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
         ),
         MichelsonInstruction.Nil(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("NIL", listOf(MichelinePrimitiveApplication("unit"))),
         MichelsonInstruction.Cons to MichelinePrimitiveApplication("CONS"),
         MichelsonInstruction.IfCons(
-            MichelsonInstruction.Unit,
-            MichelsonInstruction.Unit,
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
         ) to MichelinePrimitiveApplication(
             "IF_CONS",
-            listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT")),
+            listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
         ),
         MichelsonInstruction.Size to MichelinePrimitiveApplication("SIZE"),
         MichelsonInstruction.EmptySet(MichelsonComparableType.Unit) to MichelinePrimitiveApplication("EMPTY_SET", listOf(MichelinePrimitiveApplication("unit"))),
@@ -144,8 +144,8 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
             "EMPTY_BIG_MAP",
             listOf(MichelinePrimitiveApplication("unit"), MichelinePrimitiveApplication("unit")),
         ),
-        MichelsonInstruction.Map(MichelsonInstruction.Unit) to MichelinePrimitiveApplication("MAP", listOf(MichelinePrimitiveApplication("UNIT"))),
-        MichelsonInstruction.Iter(MichelsonInstruction.Unit) to MichelinePrimitiveApplication("ITER", listOf(MichelinePrimitiveApplication("UNIT"))),
+        MichelsonInstruction.Map(MichelsonInstruction.Sequence(MichelsonInstruction.Unit)) to MichelinePrimitiveApplication("MAP", listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))),
+        MichelsonInstruction.Iter(MichelsonInstruction.Sequence(MichelsonInstruction.Unit)) to MichelinePrimitiveApplication("ITER", listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))),
         MichelsonInstruction.Mem to MichelinePrimitiveApplication("MEM"),
         MichelsonInstruction.Get() to MichelinePrimitiveApplication("GET"),
         MichelsonInstruction.Get(1U) to MichelinePrimitiveApplication("GET", listOf(MichelineLiteral.Integer(1))),
@@ -153,32 +153,32 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
         MichelsonInstruction.Update(1U) to MichelinePrimitiveApplication("UPDATE", listOf(MichelineLiteral.Integer(1))),
         MichelsonInstruction.GetAndUpdate to MichelinePrimitiveApplication("GET_AND_UPDATE"),
         MichelsonInstruction.If(
-            MichelsonInstruction.Unit,
-            MichelsonInstruction.Unit,
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
         ) to MichelinePrimitiveApplication(
             "IF",
-            listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT")),
+            listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
         ),
-        MichelsonInstruction.Loop(MichelsonInstruction.Unit) to MichelinePrimitiveApplication("LOOP", listOf(MichelinePrimitiveApplication("UNIT"))),
-        MichelsonInstruction.LoopLeft(MichelsonInstruction.Unit) to MichelinePrimitiveApplication("LOOP_LEFT", listOf(MichelinePrimitiveApplication("UNIT"))),
+        MichelsonInstruction.Loop(MichelsonInstruction.Sequence(MichelsonInstruction.Unit)) to MichelinePrimitiveApplication("LOOP", listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))),
+        MichelsonInstruction.LoopLeft(MichelsonInstruction.Sequence(MichelsonInstruction.Unit)) to MichelinePrimitiveApplication("LOOP_LEFT", listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))),
         MichelsonInstruction.Lambda(
             MichelsonComparableType.Unit,
             MichelsonComparableType.Unit,
-            MichelsonInstruction.Unit,
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
         ) to MichelinePrimitiveApplication(
             "LAMBDA",
             listOf(
                 MichelinePrimitiveApplication("unit"),
                 MichelinePrimitiveApplication("unit"),
-                MichelinePrimitiveApplication("UNIT"),
+                MichelineSequence(MichelinePrimitiveApplication("UNIT")),
             )
         ),
         MichelsonInstruction.Exec to MichelinePrimitiveApplication("EXEC"),
         MichelsonInstruction.Apply to MichelinePrimitiveApplication("APPLY"),
-        MichelsonInstruction.Dip(MichelsonInstruction.Unit) to MichelinePrimitiveApplication("DIP", listOf(MichelinePrimitiveApplication("UNIT"))),
-        MichelsonInstruction.Dip(MichelsonInstruction.Unit, 1U) to MichelinePrimitiveApplication(
+        MichelsonInstruction.Dip(MichelsonInstruction.Sequence(MichelsonInstruction.Unit)) to MichelinePrimitiveApplication("DIP", listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))),
+        MichelsonInstruction.Dip(MichelsonInstruction.Sequence(MichelsonInstruction.Unit), 1U) to MichelinePrimitiveApplication(
             "DIP",
-            listOf(MichelineLiteral.Integer(1), MichelinePrimitiveApplication("UNIT")),
+            listOf(MichelineLiteral.Integer(1), MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
         ),
         MichelsonInstruction.Failwith to MichelinePrimitiveApplication("FAILWITH"),
         MichelsonInstruction.Cast to MichelinePrimitiveApplication("CAST"),
@@ -216,13 +216,13 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
         MichelsonInstruction.CreateContract(
             MichelsonComparableType.Unit,
             MichelsonComparableType.Unit,
-            MichelsonInstruction.Unit,
+            MichelsonInstruction.Sequence(MichelsonInstruction.Unit),
         ) to MichelinePrimitiveApplication(
             "CREATE_CONTRACT",
             listOf(
                 MichelinePrimitiveApplication("unit"),
                 MichelinePrimitiveApplication("unit"),
-                MichelinePrimitiveApplication("UNIT"),
+                MichelineSequence(MichelinePrimitiveApplication("UNIT")),
             )
         ),
         MichelsonInstruction.ImplicitAccount to MichelinePrimitiveApplication("IMPLICIT_ACCOUNT"),

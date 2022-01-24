@@ -31,8 +31,6 @@ public value class HexString(private val value: String) {
     public fun slice(indices: IntRange): HexString = HexString(value.slice(indices))
     public fun slice(startIndex: Int): HexString = HexString(value.substring(startIndex))
 
-    public fun decodeToString(): String = toByteArray().decodeToString()
-
     public companion object {
         public const val PREFIX: String = "0x"
 

@@ -8,6 +8,7 @@ import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverte
 import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
+import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 import mockTezosSdk
 import org.junit.After
@@ -717,7 +718,7 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "IF_NONE",
-                args = listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     IF_NONE {
@@ -752,6 +753,50 @@ class MichelineMichelsonInstructionDslTest {
                 michelineInstruction(michelsonToMichelineConverter) {
                     IF_NONE {
                         ifBranch { UNIT }
+                        elseBranch { UNIT }
+                    }
+                },
+            ),
+            MichelinePrimitiveApplication(
+                "IF_NONE",
+                args = listOf(
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT")),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT"))
+                ),
+            ) to listOf(
+                micheline {
+                    IF_NONE {
+                        ifBranch { UNIT; UNIT }
+                        elseBranch { UNIT }
+                    }
+                },
+                micheline(michelsonToMichelineConverter) {
+                    IF_NONE {
+                        ifBranch { UNIT; UNIT }
+                        elseBranch { UNIT }
+                    }
+                },
+                michelineData {
+                    IF_NONE {
+                        ifBranch { UNIT; UNIT }
+                        elseBranch { UNIT }
+                    }
+                },
+                michelineData(michelsonToMichelineConverter) {
+                    IF_NONE {
+                        ifBranch { UNIT; UNIT }
+                        elseBranch { UNIT }
+                    }
+                },
+                michelineInstruction {
+                    IF_NONE {
+                        ifBranch { UNIT; UNIT }
+                        elseBranch { UNIT }
+                    }
+                },
+                michelineInstruction(michelsonToMichelineConverter) {
+                    IF_NONE {
+                        ifBranch { UNIT; UNIT }
                         elseBranch { UNIT }
                     }
                 },
@@ -1152,7 +1197,7 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "IF_LEFT",
-                args = listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     IF_LEFT {
@@ -1278,7 +1323,7 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "IF_CONS",
-                args = listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     IF_CONS {
@@ -1486,143 +1531,143 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "MAP",
-                args = listOf(MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     MAP {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     MAP {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 micheline {
                     MAP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     MAP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData {
                     MAP {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     MAP {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData {
                     MAP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     MAP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction {
                     MAP {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     MAP {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction {
                     MAP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     MAP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
             ),
             MichelinePrimitiveApplication(
                 "ITER",
-                args = listOf(MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     ITER {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     ITER {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 micheline {
                     ITER {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     ITER {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData {
                     ITER {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     ITER {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData {
                     ITER {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     ITER {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction {
                     ITER {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     ITER {
-                        arg { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction {
                     ITER {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     ITER {
-                        arg { UNIT }
-                        arg { UNIT }
+                        expression { UNIT }
+                        expression { UNIT }
                     }
                 },
             ),
@@ -1929,7 +1974,7 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "IF",
-                args = listOf(MichelinePrimitiveApplication("UNIT"), MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")), MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     IF {
@@ -1970,143 +2015,143 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "LOOP",
-                args = listOf(MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     LOOP {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     LOOP {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 micheline {
                     LOOP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     LOOP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData {
                     LOOP {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     LOOP {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData {
                     LOOP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     LOOP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction {
                     LOOP {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LOOP {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction {
                     LOOP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LOOP {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
             ),
             MichelinePrimitiveApplication(
                 "LOOP_LEFT",
-                args = listOf(MichelinePrimitiveApplication("UNIT"))
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT")))
             ) to listOf(
                 micheline {
                     LOOP_LEFT {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 micheline {
                     LOOP_LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData {
                     LOOP_LEFT {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData {
                     LOOP_LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction {
                     LOOP_LEFT {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        arg { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction {
                     LOOP_LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
+                        body { UNIT }
+                        body { UNIT }
                     }
                 },
             ),
@@ -2115,7 +2160,7 @@ class MichelineMichelsonInstructionDslTest {
                 args = listOf(
                     MichelinePrimitiveApplication("unit"),
                     MichelinePrimitiveApplication("unit"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
             ) to listOf(
                 micheline { 
@@ -2191,7 +2236,7 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "DIP",
-                args = listOf(MichelinePrimitiveApplication("UNIT")),
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
             ) to listOf(
                 micheline {
                     DIP {
@@ -2226,7 +2271,7 @@ class MichelineMichelsonInstructionDslTest {
             ),
             MichelinePrimitiveApplication(
                 "DIP",
-                args = listOf(MichelineLiteral.Integer(1), MichelinePrimitiveApplication("UNIT")),
+                args = listOf(MichelineLiteral.Integer(1), MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
             ) to listOf(
                 micheline {
                     DIP {
@@ -2990,7 +3035,7 @@ class MichelineMichelsonInstructionDslTest {
                 args = listOf(
                     MichelinePrimitiveApplication("unit"),
                     MichelinePrimitiveApplication("unit"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
             ) to listOf(
                 micheline {

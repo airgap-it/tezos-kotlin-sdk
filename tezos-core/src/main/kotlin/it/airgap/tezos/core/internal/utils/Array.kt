@@ -47,3 +47,6 @@ public fun ByteArray.splitAt(
 
     return Pair(first, second)
 }
+
+public fun ByteArray.startsWith(bytes: ByteArray): Boolean =
+    sliceArray(bytes.indices).contentEquals(bytes)

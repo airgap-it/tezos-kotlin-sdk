@@ -3,6 +3,7 @@ package it.airgap.tezos.core.internal.utils
 import it.airgap.tezos.core.internal.type.BigInt
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -159,5 +160,22 @@ class BytesTest {
         val hexStrings = negativeBigIntegers.mapNotNull(BigInt::toHexStringOrNull)
 
         assertEquals(0, hexStrings.size)
+    }
+
+    @Test
+    fun `fails when creating HexString from negative BigInteger`() {
+        val negativeBigIntegers: List<BigInt> = listOf(
+            Long.MIN_VALUE,
+            -5236764366,
+            -346657,
+            -5265,
+            -1,
+        ).map(BigInt::valueOf)
+
+        negativeBigIntegers.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                it.toHexString()
+            }
+        }
     }
 }

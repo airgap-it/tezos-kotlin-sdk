@@ -93,8 +93,8 @@ public sealed interface MichelsonInstruction : MichelsonData {
     }
 
     public data class IfNone(
-        public val ifBranch: MichelsonInstruction,
-        public val elseBranch: MichelsonInstruction,
+        public val ifBranch: Sequence,
+        public val elseBranch: Sequence,
     ) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "IF_NONE"
@@ -152,8 +152,8 @@ public sealed interface MichelsonInstruction : MichelsonData {
     }
 
     public data class IfLeft(
-        public val ifBranch: MichelsonInstruction,
-        public val elseBranch: MichelsonInstruction,
+        public val ifBranch: Sequence,
+        public val elseBranch: Sequence,
     ) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "IF_LEFT"
@@ -174,8 +174,8 @@ public sealed interface MichelsonInstruction : MichelsonData {
     }
 
     public data class IfCons(
-        public val ifBranch: MichelsonInstruction,
-        public val elseBranch: MichelsonInstruction,
+        public val ifBranch: Sequence,
+        public val elseBranch: Sequence,
     ) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "IF_CONS"
@@ -215,14 +215,14 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Map(public val expression: MichelsonInstruction) : MichelsonInstruction {
+    public data class Map(public val expression: Sequence) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "MAP"
             override val tag: kotlin.Int = 56
         }
     }
 
-    public data class Iter(public val expression: MichelsonInstruction) : MichelsonInstruction {
+    public data class Iter(public val expression: Sequence) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "ITER"
             override val tag: kotlin.Int = 82
@@ -266,8 +266,8 @@ public sealed interface MichelsonInstruction : MichelsonData {
     }
 
     public data class If(
-        public val ifBranch: MichelsonInstruction,
-        public val elseBranch: MichelsonInstruction,
+        public val ifBranch: Sequence,
+        public val elseBranch: Sequence,
     ) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "IF"
@@ -275,13 +275,13 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Loop(public val body: MichelsonInstruction) : MichelsonInstruction {
+    public data class Loop(public val body: Sequence) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "LOOP"
             override val tag: kotlin.Int = 52
         }
     }
-    public data class LoopLeft(public val body: MichelsonInstruction) : MichelsonInstruction {
+    public data class LoopLeft(public val body: Sequence) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "LOOP_LEFT"
             override val tag: kotlin.Int = 83
@@ -291,7 +291,7 @@ public sealed interface MichelsonInstruction : MichelsonData {
     public data class Lambda(
         public val parameterType: MichelsonType,
         public val returnType: MichelsonType,
-        public val body: MichelsonInstruction,
+        public val body: Sequence,
     ) : MichelsonInstruction {
         public companion object : GrammarType {
             override val name: String = "LAMBDA"
@@ -310,14 +310,14 @@ public sealed interface MichelsonInstruction : MichelsonData {
     }
 
     public data class Dip(
-        public val instruction: MichelsonInstruction,
+        public val instruction: Sequence,
         public val n: MichelsonData.NaturalNumberConstant? = null,
     ) : MichelsonInstruction {
 
-        public constructor(instruction: MichelsonInstruction, n: UByte) : this(instruction, MichelsonData.NaturalNumberConstant(n))
-        public constructor(instruction: MichelsonInstruction, n: UShort) : this(instruction, MichelsonData.NaturalNumberConstant(n))
-        public constructor(instruction: MichelsonInstruction, n: UInt) : this(instruction, MichelsonData.NaturalNumberConstant(n))
-        public constructor(instruction: MichelsonInstruction, n: ULong) : this(instruction, MichelsonData.NaturalNumberConstant(n))
+        public constructor(instruction: Sequence, n: UByte) : this(instruction, MichelsonData.NaturalNumberConstant(n))
+        public constructor(instruction: Sequence, n: UShort) : this(instruction, MichelsonData.NaturalNumberConstant(n))
+        public constructor(instruction: Sequence, n: UInt) : this(instruction, MichelsonData.NaturalNumberConstant(n))
+        public constructor(instruction: Sequence, n: ULong) : this(instruction, MichelsonData.NaturalNumberConstant(n))
 
         public companion object : GrammarType {
             override val name: String = "DIP"
@@ -497,7 +497,7 @@ public sealed interface MichelsonInstruction : MichelsonData {
     public data class CreateContract(
         public val parameterType: MichelsonType,
         public val storageType: MichelsonType,
-        public val code: MichelsonInstruction,
+        public val code: Sequence,
     ) :
         MichelsonInstruction {
         public companion object : GrammarType {

@@ -144,8 +144,8 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             MichelsonInstruction.Unit -> MichelsonInstruction.Unit
             MichelsonInstruction.Never -> MichelsonInstruction.Never
             MichelsonInstruction.IfNone -> {
-                val ifBranch = args.first().convertToExpected<MichelsonInstruction>()
-                val elseBranch = args.second().convertToExpected<MichelsonInstruction>()
+                val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
+                val elseBranch = args.second().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.IfNone(ifBranch, elseBranch)
             }
@@ -172,8 +172,8 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
                 MichelsonInstruction.Right(type)
             }
             MichelsonInstruction.IfLeft -> {
-                val ifBranch = args.first().convertToExpected<MichelsonInstruction>()
-                val elseBranch = args.second().convertToExpected<MichelsonInstruction>()
+                val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
+                val elseBranch = args.second().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.IfLeft(ifBranch, elseBranch)
             }
@@ -184,8 +184,8 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             }
             MichelsonInstruction.Cons -> MichelsonInstruction.Cons
             MichelsonInstruction.IfCons -> {
-                val ifBranch = args.first().convertToExpected<MichelsonInstruction>()
-                val elseBranch = args.second().convertToExpected<MichelsonInstruction>()
+                val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
+                val elseBranch = args.second().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.IfCons(ifBranch, elseBranch)
             }
@@ -208,12 +208,12 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
                 MichelsonInstruction.EmptyBigMap(keyType, valueType)
             }
             MichelsonInstruction.Map -> {
-                val expression = args.first().convertToExpected<MichelsonInstruction>()
+                val expression = args.first().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.Map(expression)
             }
             MichelsonInstruction.Iter -> {
-                val expression = args.first().convertToExpected<MichelsonInstruction>()
+                val expression = args.first().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.Iter(expression)
             }
@@ -230,25 +230,25 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             }
             MichelsonInstruction.GetAndUpdate -> MichelsonInstruction.GetAndUpdate
             MichelsonInstruction.If -> {
-                val ifBranch = args.first().convertToExpected<MichelsonInstruction>()
-                val elseBranch = args.second().convertToExpected<MichelsonInstruction>()
+                val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
+                val elseBranch = args.second().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.If(ifBranch, elseBranch)
             }
             MichelsonInstruction.Loop -> {
-                val body = args.first().convertToExpected<MichelsonInstruction>()
+                val body = args.first().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.Loop(body)
             }
             MichelsonInstruction.LoopLeft -> {
-                val body = args.first().convertToExpected<MichelsonInstruction>()
+                val body = args.first().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.LoopLeft(body)
             }
             MichelsonInstruction.Lambda -> {
                 val parameterType = args.first().convertToExpected<MichelsonType>()
                 val returnType = args.second().convertToExpected<MichelsonType>()
-                val body = args.third().convertToExpected<MichelsonInstruction>()
+                val body = args.third().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.Lambda(parameterType, returnType, body)
             }
@@ -256,11 +256,11 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             MichelsonInstruction.Apply -> MichelsonInstruction.Apply
             MichelsonInstruction.Dip -> {
                 val (n, instruction) = if (args.size == 1) {
-                    val instruction = args.first().convertToExpected<MichelsonInstruction>()
+                    val instruction = args.first().convertToExpected<MichelsonInstruction.Sequence>()
                     Pair(null, instruction)
                 } else {
                     val n = args.first().convertToExpected<MichelsonData.NaturalNumberConstant>()
-                    val instruction = args.second().convertToExpected<MichelsonInstruction>()
+                    val instruction = args.second().convertToExpected<MichelsonInstruction.Sequence>()
                     Pair(n, instruction)
                 }
 
@@ -310,7 +310,7 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             MichelsonInstruction.CreateContract -> {
                 val parameterType = args.first().convertToExpected<MichelsonType>()
                 val storageType = args.second().convertToExpected<MichelsonType>()
-                val code = args.third().convertToExpected<MichelsonInstruction>()
+                val code = args.third().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.CreateContract(parameterType, storageType, code)
             }

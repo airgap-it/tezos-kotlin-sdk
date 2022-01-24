@@ -30,5 +30,8 @@ public fun <T> List<T>.tail(): List<T> {
 }
 
 public fun <T> List<T>.replacingAt(index: Int, newElement: T): List<T> =
-    if (index > lastIndex) this
+    if (index > lastIndex || index < 0) this
     else slice(0 until index) + newElement + slice(index + 1 until size)
+
+public fun <T : Comparable<T>> List<T>.startsWith(elements: List<T>): Boolean =
+    slice(elements.indices) == elements

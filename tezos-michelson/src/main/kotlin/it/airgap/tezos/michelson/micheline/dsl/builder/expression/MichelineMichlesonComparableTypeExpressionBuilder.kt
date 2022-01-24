@@ -62,6 +62,11 @@ public fun MichelineMichelsonComparableTypeExpressionBuilder.keyHash(builderActi
 
 public val MichelineMichelsonComparableTypeExpressionBuilder.keyHash: MichelineMichelsonComparableTypeNoArgsBuilder get() = keyHash {}
 
+public fun MichelineMichelsonComparableTypeExpressionBuilder.key(builderAction: MichelineMichelsonComparableTypeNoArgsBuilder.() -> Unit = {}): MichelineMichelsonComparableTypeNoArgsBuilder =
+    primitiveApplication(MichelsonComparableType.Key, builderAction)
+
+public val MichelineMichelsonComparableTypeExpressionBuilder.key: MichelineMichelsonComparableTypeNoArgsBuilder get() = key {}
+
 public fun MichelineMichelsonComparableTypeExpressionBuilder.signature(builderAction: MichelineMichelsonComparableTypeNoArgsBuilder.() -> Unit = {}): MichelineMichelsonComparableTypeNoArgsBuilder =
     primitiveApplication(MichelsonComparableType.Signature, builderAction)
 

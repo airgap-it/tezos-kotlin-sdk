@@ -55,10 +55,14 @@ public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.GrammarType
     // -- sequence --
 
     public fun sequence(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
-        MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).mapNode { if (it is MichelineSequence) it else MichelineSequence(listOf(it)) }.also { builders.add(it) }
+        MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).mapNodeToSequence().also { builders.add(it) }
 
     // -- michelson --
 
     public infix fun michelson(value: T): MichelineBuilder =
         MichelineBuilder { value.toMicheline(michelsonToMichelineConverter) }.also { builders.add(it) }
+
+    // -- utils --
+
+    internal fun mapNodeToSequence(): MichelineNodeBuilder<T, G> = mapNode { if (it is MichelineSequence) it else MichelineSequence(listOf(it)) }
 }

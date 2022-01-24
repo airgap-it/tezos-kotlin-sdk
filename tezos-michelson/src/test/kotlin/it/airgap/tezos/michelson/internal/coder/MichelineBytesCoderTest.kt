@@ -33,18 +33,14 @@ class MichelineBytesCoderTest {
 
     private lateinit var michelineBytesCoder: MichelineBytesCoder
 
-    private lateinit var stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter
-    private lateinit var tagToMichelsonGrammarTypeConverter: TagToMichelsonGrammarTypeConverter
-    private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
-
     @Before
     fun setup() {
         MockKAnnotations.init(this)
         mockTezosSdk(dependencyRegistry)
 
-        stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
-        tagToMichelsonGrammarTypeConverter = TagToMichelsonGrammarTypeConverter()
-        michelineToCompactStringConverter = MichelineToCompactStringConverter()
+        val stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
+        val tagToMichelsonGrammarTypeConverter = TagToMichelsonGrammarTypeConverter()
+        val michelineToCompactStringConverter = MichelineToCompactStringConverter()
 
         michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter)
 
@@ -303,23 +299,23 @@ class MichelineBytesCoderTest {
                 args = listOf(
                     MichelinePrimitiveApplication("unit"),
                     MichelinePrimitiveApplication("unit"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "091d00000006036c036c034f00000000".asHexString().toByteArray(),
+            ) to "091d0000000b036c036c0200000002034f00000000".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "IMPLICIT_ACCOUNT",
             ) to "031e".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "DIP",
-                args = listOf(MichelinePrimitiveApplication("UNIT")),
-            ) to "051f034f".asHexString().toByteArray(),
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
+            ) to "051f0200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "DIP",
                 args = listOf(
                     MichelineLiteral.Integer(1),
-                    MichelinePrimitiveApplication("UNIT")
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "071f0001034f".asHexString().toByteArray(),
+            ) to "071f00010200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "DROP",
             ) to "0320".asHexString().toByteArray(),
@@ -376,31 +372,31 @@ class MichelineBytesCoderTest {
             MichelinePrimitiveApplication(
                 prim = "IF",
                 args = listOf(
-                    MichelinePrimitiveApplication("UNIT"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "072c034f034f".asHexString().toByteArray(),
+            ) to "072c0200000002034f0200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "IF_CONS",
                 args = listOf(
-                    MichelinePrimitiveApplication("UNIT"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "072d034f034f".asHexString().toByteArray(),
+            ) to "072d0200000002034f0200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "IF_LEFT",
                 args = listOf(
-                    MichelinePrimitiveApplication("UNIT"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "072e034f034f".asHexString().toByteArray(),
+            ) to "072e0200000002034f0200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "IF_NONE",
                 args = listOf(
-                    MichelinePrimitiveApplication("UNIT"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "072f034f034f".asHexString().toByteArray(),
+            ) to "072f0200000002034f0200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "INT",
             ) to "0330".asHexString().toByteArray(),
@@ -409,9 +405,9 @@ class MichelineBytesCoderTest {
                 args = listOf(
                     MichelinePrimitiveApplication("unit"),
                     MichelinePrimitiveApplication("unit"),
-                    MichelinePrimitiveApplication("UNIT"),
+                    MichelineSequence(MichelinePrimitiveApplication("UNIT")),
                 ),
-            ) to "093100000006036c036c034f00000000".asHexString().toByteArray(),
+            ) to "09310000000b036c036c0200000002034f00000000".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "LE",
             ) to "0332".asHexString().toByteArray(),
@@ -421,8 +417,8 @@ class MichelineBytesCoderTest {
             ) to "0533036c".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "LOOP",
-                args = listOf(MichelinePrimitiveApplication("UNIT")),
-            ) to "0534034f".asHexString().toByteArray(),
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
+            ) to "05340200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "LSL",
             ) to "0335".asHexString().toByteArray(),
@@ -434,8 +430,8 @@ class MichelineBytesCoderTest {
             ) to "0337".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "MAP",
-                args = listOf(MichelinePrimitiveApplication("UNIT")),
-            ) to "0538034f".asHexString().toByteArray(),
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
+            ) to "05380200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "MEM",
             ) to "0339".asHexString().toByteArray(),
@@ -525,12 +521,12 @@ class MichelineBytesCoderTest {
             ) to "0351".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "ITER",
-                args = listOf(MichelinePrimitiveApplication("UNIT")),
-            ) to "0552034f".asHexString().toByteArray(),
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
+            ) to "05520200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "LOOP_LEFT",
-                args = listOf(MichelinePrimitiveApplication("UNIT")),
-            ) to "0553034f".asHexString().toByteArray(),
+                args = listOf(MichelineSequence(MichelinePrimitiveApplication("UNIT"))),
+            ) to "05530200000002034f".asHexString().toByteArray(),
             MichelinePrimitiveApplication(
                 prim = "ADDRESS",
             ) to "0354".asHexString().toByteArray(),

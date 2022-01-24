@@ -2,7 +2,9 @@ package it.airgap.tezos.core.internal.delegate
 
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class LazyWeakTest {
 
@@ -38,6 +40,31 @@ class LazyWeakTest {
 
         assertEquals(h1, h2, "Expected lazy weak values hash codes to be the same.")
         assertEquals(1, initCounter)
+    }
+
+    @Test
+    fun `checks if value is initialized`() {
+        val delegate = lazyWeak { TestReference() }
+        val value by delegate
+
+        assertFalse(delegate.isInitialized())
+
+        value.hashCode()
+        assertTrue(delegate.isInitialized())
+
+        System.gc()
+        assertFalse(delegate.isInitialized())
+    }
+
+    @Test
+    fun `returns value's String value if initialized or uninitialized message otherwise`() {
+        val reference = TestReference()
+        val delegate = lazyWeak { reference }
+        val value by delegate
+
+        assertEquals("LazyWeak has no value reference.", delegate.toString())
+        value.hashCode()
+        assertEquals(reference.toString(), delegate.toString())
     }
 
     private class TestReference

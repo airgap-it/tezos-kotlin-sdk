@@ -21,10 +21,10 @@ public class MichelineMichelsonInstructionConditionalBuilder internal constructo
     prim: MichelsonInstruction.GrammarType,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.GrammarType>(michelsonToMichelineConverter, prim) {
     public fun ifBranch(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
-        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it.mapNodeToSequence()) }
 
     public fun elseBranch(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
-        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it.mapNodeToSequence()) }
 }
 
 public class MichelineMichelsonInstructionPushBuilder internal constructor(
@@ -48,6 +48,22 @@ public class MichelineMichelsonInstructionKeyValueBuilder internal constructor(
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
 }
 
+public class MichelineMichelsonInstructionSingleExpressionArgBuilder internal constructor(
+    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    prim: MichelsonInstruction.GrammarType,
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.GrammarType>(michelsonToMichelineConverter, prim) {
+    public fun expression(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it.mapNodeToSequence()) }
+}
+
+public class MichelineMichelsonInstructionSingleBodyArgBuilder internal constructor(
+    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    prim: MichelsonInstruction.GrammarType,
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.GrammarType>(michelsonToMichelineConverter, prim) {
+    public fun body(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it.mapNodeToSequence()) }
+}
+
 public class MichelineMichelsonInstructionLambdaBuilder internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.GrammarType>(michelsonToMichelineConverter, MichelsonInstruction.Lambda) {
@@ -58,7 +74,7 @@ public class MichelineMichelsonInstructionLambdaBuilder internal constructor(
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
 
     public fun body(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
-        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(2, it) }
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(2, it.mapNodeToSequence()) }
 }
 
 public class MichelineMichelsonInstructionDipBuilder internal constructor(
@@ -71,7 +87,7 @@ public class MichelineMichelsonInstructionDipBuilder internal constructor(
     public infix fun n(value: ULong): MichelineBuilder = n(value.toString())
 
     public fun instruction(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
-        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it.mapNodeToSequence()) }
 }
 
 public class MichelineMichelsonInstructionTypeArgBuilder internal constructor(
@@ -92,7 +108,7 @@ public class MichelineMichelsonInstructionCreateContractBuilder internal constru
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
 
     public fun code(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
-        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(2, it) }
+        MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(2, it.mapNodeToSequence()) }
 }
 
 public fun MichelineMichelsonInstructionExpressionBuilder.DROP(builderAction: MichelineMichelsonInstructionOptionalIntegerArgBuilder.() -> Unit = {}): MichelineMichelsonInstructionOptionalIntegerArgBuilder =
@@ -234,11 +250,11 @@ public fun MichelineMichelsonInstructionExpressionBuilder.EMPTY_MAP(builderActio
 public fun MichelineMichelsonInstructionExpressionBuilder.EMPTY_BIG_MAP(builderAction: MichelineMichelsonInstructionKeyValueBuilder.() -> Unit): MichelineMichelsonInstructionKeyValueBuilder =
     MichelineMichelsonInstructionKeyValueBuilder(michelsonToMichelineConverter, MichelsonInstruction.EmptyBigMap).apply(builderAction).also { builders.add(it) }
 
-public fun MichelineMichelsonInstructionExpressionBuilder.MAP(builderAction: MichelineMichelsonInstructionSingleArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleArgBuilder =
-    primitiveApplicationSingleArg(MichelsonInstruction.Map, builderAction)
+public fun MichelineMichelsonInstructionExpressionBuilder.MAP(builderAction: MichelineMichelsonInstructionSingleExpressionArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleExpressionArgBuilder =
+    MichelineMichelsonInstructionSingleExpressionArgBuilder(michelsonToMichelineConverter, MichelsonInstruction.Map).apply(builderAction).also { builders.add(it) }
 
-public fun MichelineMichelsonInstructionExpressionBuilder.ITER(builderAction: MichelineMichelsonInstructionSingleArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleArgBuilder =
-    primitiveApplicationSingleArg(MichelsonInstruction.Iter, builderAction)
+public fun MichelineMichelsonInstructionExpressionBuilder.ITER(builderAction: MichelineMichelsonInstructionSingleExpressionArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleExpressionArgBuilder =
+    MichelineMichelsonInstructionSingleExpressionArgBuilder(michelsonToMichelineConverter, MichelsonInstruction.Iter).apply(builderAction).also { builders.add(it) }
 
 public fun MichelineMichelsonInstructionExpressionBuilder.MEM(builderAction: MichelineMichelsonInstructionNoArgsBuilder.() -> Unit = {}): MichelineMichelsonInstructionNoArgsBuilder =
     primitiveApplication(MichelsonInstruction.Mem, builderAction)
@@ -275,11 +291,11 @@ public val MichelineMichelsonInstructionExpressionBuilder.GET_AND_UPDATE: Michel
 public fun MichelineMichelsonInstructionExpressionBuilder.IF(builderAction: MichelineMichelsonInstructionConditionalBuilder.() -> Unit): MichelineMichelsonInstructionConditionalBuilder =
     MichelineMichelsonInstructionConditionalBuilder(michelsonToMichelineConverter, MichelsonInstruction.If).apply(builderAction).also { builders.add(it) }
 
-public fun MichelineMichelsonInstructionExpressionBuilder.LOOP(builderAction: MichelineMichelsonInstructionSingleArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleArgBuilder =
-    primitiveApplicationSingleArg(MichelsonInstruction.Loop, builderAction)
+public fun MichelineMichelsonInstructionExpressionBuilder.LOOP(builderAction: MichelineMichelsonInstructionSingleBodyArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleBodyArgBuilder =
+    MichelineMichelsonInstructionSingleBodyArgBuilder(michelsonToMichelineConverter, MichelsonInstruction.Loop).apply(builderAction).also { builders.add(it) }
 
-public fun MichelineMichelsonInstructionExpressionBuilder.LOOP_LEFT(builderAction: MichelineMichelsonInstructionSingleArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleArgBuilder =
-    primitiveApplicationSingleArg(MichelsonInstruction.LoopLeft, builderAction)
+public fun MichelineMichelsonInstructionExpressionBuilder.LOOP_LEFT(builderAction: MichelineMichelsonInstructionSingleBodyArgBuilder.() -> Unit): MichelineMichelsonInstructionSingleBodyArgBuilder =
+    MichelineMichelsonInstructionSingleBodyArgBuilder(michelsonToMichelineConverter, MichelsonInstruction.LoopLeft).apply(builderAction).also { builders.add(it) }
 
 public fun MichelineMichelsonInstructionExpressionBuilder.LAMBDA(builderAction: MichelineMichelsonInstructionLambdaBuilder.() -> Unit): MichelineMichelsonInstructionLambdaBuilder =
     MichelineMichelsonInstructionLambdaBuilder(michelsonToMichelineConverter).apply(builderAction).also { builders.add(it) }
