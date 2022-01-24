@@ -3,11 +3,8 @@ package it.airgap.tezos.michelson.internal.coder
 import it.airgap.tezos.core.internal.coder.BytesCoder
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.type.ByteTag
-import it.airgap.tezos.core.internal.utils.asInt32Encoded
-import it.airgap.tezos.core.internal.utils.consumeAt
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.internal.type.BytesTag
+import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.fromStringOrNull
 import it.airgap.tezos.michelson.fromTagOrNull
@@ -82,11 +79,11 @@ private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
         val int = BigInt.valueOf(value, 10)
         val abs = int.abs()
 
-        val byte = abs and 0b00111111
+        val byte = abs and 0b0011_1111
         val nextValue = abs shr 6
 
-        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b00000000 else 0b10000000
-        val signMask = if (int < BigInt.valueOf(0)) 0b01000000 else 0b00000000
+        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b0000_0000 else 0b1000_0000
+        val signMask = if (int < BigInt.valueOf(0)) 0b0100_0000 else 0b0000_0000
         val encodedByte = byte or sequenceMask or signMask
 
         return encodeZarithInteger(nextValue, byteArrayOf(encodedByte.toByte()))
@@ -95,10 +92,10 @@ private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
     private tailrec fun encodeZarithInteger(value: BigInt, encoded: ByteArray): ByteArray {
         if (value == BigInt.valueOf(0)) return encoded
 
-        val byte = value and 0b01111111
+        val byte = value and 0b0111_1111
         val nextValue = value shr 7
 
-        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b00000000 else 0b10000000
+        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b0000_0000 else 0b1000_0000
         val encodedByte = byte or sequenceMask
 
         return encodeZarithInteger(nextValue, encoded + encodedByte.toByte())
@@ -129,9 +126,9 @@ private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
     private fun decodeZarithInteger(value: MutableList<Byte>): BigInt {
         val byte = value.consumeAt(0)?.toInt() ?: failWithInvalidEncodedInteger()
 
-        val part = BigInt.valueOf(byte and 0b00111111)
-        val sign = if (byte and 0b01000000 == 0b01000000) -1 else 1
-        val hasNext = byte and 0b10000000 == 0b10000000
+        val part = BigInt.valueOf(byte and 0b0011_1111)
+        val sign = if (byte and 0b0100_0000 == 0b0100_0000) -1 else 1
+        val hasNext = byte and 0b1000_0000 == 0b1000_0000
 
         val abs = if (hasNext) decodeZarithInteger(value, part, shift = 6) else part
 
@@ -141,8 +138,8 @@ private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
     private tailrec fun decodeZarithInteger(value: MutableList<Byte>, decoded: BigInt, shift: Int): BigInt {
         val byte = value.consumeAt(0)?.toInt() ?: return decoded
 
-        val part = BigInt.valueOf(byte and 0b01111111)
-        val hasNext = byte and 0b10000000 == 0b10000000
+        val part = BigInt.valueOf(byte and 0b0111_1111)
+        val hasNext = byte and 0b1000_0000 == 0b1000_0000
 
         return decodeZarithInteger(if (hasNext) value else mutableListOf(), decoded + (part shl shift), shift = shift + 7)
     }
@@ -401,22 +398,22 @@ private class MichelineSequenceBytesCoder(private val bytesCoder: MichelineBytes
     }
 }
 
-private enum class Tag(override val value: Byte) : ByteTag {
-    Int(0),
-    String(1),
-    Sequence(2),
-    PrimNoArgsNoAnnots(3),
-    PrimNoArgsSomeAnnots(4),
-    Prim1ArgNoAnnots(5),
-    Prim1ArgSomeAnnots(6),
-    Prim2ArgsNoAnnots(7),
-    Prim2ArgsSomeAnnots(8),
-    PrimGeneric(9),
-    Bytes(10);
+private enum class Tag(override val value: ByteArray) : BytesTag {
+    Int(byteArrayOf(0)),
+    String(byteArrayOf(1)),
+    Sequence(byteArrayOf(2)),
+    PrimNoArgsNoAnnots(byteArrayOf(3)),
+    PrimNoArgsSomeAnnots(byteArrayOf(4)),
+    Prim1ArgNoAnnots(byteArrayOf(5)),
+    Prim1ArgSomeAnnots(byteArrayOf(6)),
+    Prim2ArgsNoAnnots(byteArrayOf(7)),
+    Prim2ArgsSomeAnnots(byteArrayOf(8)),
+    PrimGeneric(byteArrayOf(9)),
+    Bytes(byteArrayOf(10));
 
     companion object {
         fun recognize(bytes: List<Byte>): Tag? =
             if (bytes.isEmpty()) null
-            else values().find { it.value == bytes.first() }
+            else values().find { bytes.startsWith(it.value.toList()) }
     }
 }

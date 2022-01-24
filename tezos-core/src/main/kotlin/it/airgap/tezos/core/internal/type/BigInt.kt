@@ -71,9 +71,16 @@ public interface BigInt : Comparable<BigInt> {
     // -- converters --
 
     public fun toByte(): Byte
+    public fun toByteExact(): Byte
+
     public fun toShort(): Short
+    public fun toShortExact(): Short
+
     public fun toInt(): Int
+    public fun toIntExact(): Int
+
     public fun toLong(): Long
+    public fun toLongExact(): Long
 
     public fun toByteArray(): ByteArray
 
@@ -206,9 +213,16 @@ internal class JvmBigInt(private val value: BigInteger) : BigInt {
     // -- converters --
 
     override fun toByte(): Byte = value.toByte()
+    override fun toByteExact(): Byte = value.byteValueExact()
+
     override fun toShort(): Short = value.toShort()
+    override fun toShortExact(): Short = value.shortValueExact()
+
     override fun toInt(): Int = value.toInt()
+    override fun toIntExact(): Int = value.intValueExact()
+
     override fun toLong(): Long = value.toLong()
+    override fun toLongExact(): Long = value.longValueExact()
 
     override fun toByteArray(): ByteArray = value.toByteArray()
 

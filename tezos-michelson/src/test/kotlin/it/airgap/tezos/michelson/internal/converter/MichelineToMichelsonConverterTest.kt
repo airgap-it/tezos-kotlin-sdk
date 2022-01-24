@@ -3,8 +3,9 @@ package it.airgap.tezos.michelson.internal.converter
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.Michelson
+import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
@@ -12,6 +13,7 @@ import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.toCompactExpression
 import it.airgap.tezos.michelson.toMichelson
+import michelsonComparableTypeMichelinePairs
 import michelsonMichelinePairs
 import mockTezosSdk
 import org.junit.After
@@ -35,7 +37,7 @@ class MichelineToMichelsonConverterTest {
         MockKAnnotations.init(this)
         mockTezosSdk(dependencyRegistry)
 
-        stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
+        stringToMichelsonGrammarTypeConverter = spyk(StringToMichelsonGrammarTypeConverter())
         michelineToCompactStringConverter = MichelineToCompactStringConverter()
 
         michelineToMichelsonConverter = MichelineToMichelsonConverter(stringToMichelsonGrammarTypeConverter, michelineToCompactStringConverter)
@@ -66,9 +68,21 @@ class MichelineToMichelsonConverterTest {
     @Test
     fun `should convert Micheline Primitive Application to Michelson`() {
         @Suppress("UNCHECKED_CAST")
-        val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelinePrimitiveApplication } as List<Pair<Michelson, MichelinePrimitiveApplication>>
+        val expectedWithMicheline1 = michelsonMichelinePairs.filter { it.second is MichelinePrimitiveApplication }
 
-        expectedWithMicheline.forEach {
+        expectedWithMicheline1.forEach {
+            assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
+            assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
+        }
+
+        val expectedWithMicheline2 = michelsonComparableTypeMichelinePairs.filter { it.second is MichelinePrimitiveApplication }
+
+        every { stringToMichelsonGrammarTypeConverter.convert("option") } returns MichelsonComparableType.Option
+        every { stringToMichelsonGrammarTypeConverter.convert("or") } returns MichelsonComparableType.Or
+        every { stringToMichelsonGrammarTypeConverter.convert("pair") } returns MichelsonComparableType.Pair
+
+        expectedWithMicheline2.forEach {
             assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
             assertEquals(it.first, it.second.toMichelson())
             assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
@@ -284,7 +298,7 @@ class MichelineToMichelsonConverterTest {
     @Test
     fun `should convert Micheline Sequence to Michelson`() {
         @Suppress("UNCHECKED_CAST")
-        val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelineSequence } as List<Pair<Michelson, MichelineSequence>>
+        val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelineSequence }
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))

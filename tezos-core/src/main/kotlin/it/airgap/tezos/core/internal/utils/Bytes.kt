@@ -36,7 +36,7 @@ public fun BigInt.toHexStringOrNull(): HexString? =
     else null
 
 private fun failWithInvalidHexString(string: String): Nothing =
-    throw IllegalArgumentException("$string is not a valid hex string")
+    failWithIllegalArgument("$string is not a valid hex string")
 
 private fun failWithNegativeNumber(number: BigInt): Nothing =
-    throw IllegalArgumentException("cannot create HexString from a negative number $number")
+    failWithIllegalArgument("cannot create HexString from a negative number $number")

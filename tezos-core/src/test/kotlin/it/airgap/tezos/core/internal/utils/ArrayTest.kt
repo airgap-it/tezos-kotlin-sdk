@@ -3,6 +3,8 @@ package it.airgap.tezos.core.internal.utils
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ArrayTest {
 
@@ -142,5 +144,14 @@ class ArrayTest {
             assertContentEquals(expected.first, actual.first)
             assertContentEquals(expected.second, actual.second)
         }
+    }
+
+    @Test
+    fun `verifies if ByteArray starts with specified bytes`() {
+        assertTrue(byteArrayOf(1, 2, 3).startsWith(byteArrayOf()))
+        assertTrue(byteArrayOf(1, 2, 3).startsWith(byteArrayOf(1)))
+        assertTrue(byteArrayOf(1, 2, 3).startsWith(byteArrayOf(1, 2)))
+        assertTrue(byteArrayOf(1, 2, 3).startsWith(byteArrayOf(1, 2, 3)))
+        assertFalse(byteArrayOf(1, 2, 3).startsWith(byteArrayOf(2, 3)))
     }
 }

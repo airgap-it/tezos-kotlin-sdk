@@ -121,4 +121,44 @@ class CollectionTest {
         assertEquals(mutableListOf(1, 2, 3), list5)
         assertEquals(listOf(), slice5)
     }
+
+    @Test
+    fun `replaces element at specified index in List`() {
+        assertEquals(
+            listOf(4, 2, 3),
+            listOf(1, 2, 3).replacingAt(0, 4),
+        )
+
+        assertEquals(
+            listOf(1, 4, 3),
+            listOf(1, 2, 3).replacingAt(1, 4),
+        )
+
+        assertEquals(
+            listOf(1, 2, 4),
+            listOf(1, 2, 3).replacingAt(2, 4),
+        )
+    }
+
+    @Test
+    fun `does not replace element at specified index in List if index is out of range`() {
+        assertEquals(
+            listOf(),
+            listOf<Int>().replacingAt(0, 1),
+        )
+
+        assertEquals(
+            listOf(1, 2, 3),
+            listOf(1, 2, 3).replacingAt(3, 4),
+        )
+    }
+
+    @Test
+    fun `verifies if List starts with specified elements`() {
+        assertTrue(listOf(1, 2, 3).startsWith(listOf()))
+        assertTrue(listOf(1, 2, 3).startsWith(listOf(1)))
+        assertTrue(listOf(1, 2, 3).startsWith(listOf(1, 2)))
+        assertTrue(listOf(1, 2, 3).startsWith(listOf(1, 2, 3)))
+        assertFalse(listOf(1, 2, 3).startsWith(listOf(2, 3)))
+    }
 }

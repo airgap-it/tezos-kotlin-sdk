@@ -42,7 +42,7 @@ internal class MichelinePrimitiveApplicationToNormalizedConverter(
                     ),
                 )
             }
-            else -> value
+            else -> value.copy(args = value.args.map { toNormalizedConverter.convert(it) })
         }
 }
 

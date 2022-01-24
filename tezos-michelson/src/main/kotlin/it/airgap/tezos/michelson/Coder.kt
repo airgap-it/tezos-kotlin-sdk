@@ -28,7 +28,7 @@ internal fun MichelineNode.Companion.decodeFromBytes(bytes: ByteArray, micheline
 // -- Micheline: String --
 
 public fun <T : MichelineNode> T.encodeToString(withHexPrefix: Boolean = false): String = encodeToString(TezosSdk.instance.dependencyRegistry.scoped().michelineBytesCoder, withHexPrefix)
-internal fun <T : MichelineNode> T.encodeToString(michelineBytesCoder: MichelineBytesCoder, withHexPrefix: Boolean = false): String = michelineBytesCoder.encode(this).toHexString().asString(withHexPrefix)
+internal fun <T : MichelineNode> T.encodeToString(michelineBytesCoder: MichelineBytesCoder, withHexPrefix: Boolean = false): String = encodeToBytes(michelineBytesCoder).toHexString().asString(withHexPrefix)
 
 public fun MichelineNode.Companion.decodeFromString(string: String): MichelineNode = decodeFromString(string, TezosSdk.instance.dependencyRegistry.scoped().michelineBytesCoder)
-internal fun MichelineNode.Companion.decodeFromString(string: String, michelineBytesCoder: MichelineBytesCoder): MichelineNode = michelineBytesCoder.decode(string.asHexString().toByteArray())
+internal fun MichelineNode.Companion.decodeFromString(string: String, michelineBytesCoder: MichelineBytesCoder): MichelineNode = MichelineNode.decodeFromBytes(string.asHexString().toByteArray(), michelineBytesCoder)
