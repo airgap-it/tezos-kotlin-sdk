@@ -1,7 +1,8 @@
 package it.airgap.tezos.michelson.internal.coder
 
-import it.airgap.tezos.core.internal.coder.BytesCoder
 import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.*
@@ -22,8 +23,9 @@ internal class MichelineBytesCoder(
     stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter,
     tagToMichelsonGrammarTypeConverter: TagToMichelsonGrammarTypeConverter,
     michelineToCompactStringConverter: MichelineToCompactStringConverter,
-) : BytesCoder<MichelineNode> {
-    private val literalBytesCoder: MichelineLiteralBytesCoder = MichelineLiteralBytesCoder()
+    zarithIntegerBytesCoder: ZarithIntegerBytesCoder,
+) : ConsumingBytesCoder<MichelineNode> {
+    private val literalBytesCoder: MichelineLiteralBytesCoder = MichelineLiteralBytesCoder(zarithIntegerBytesCoder)
     private val primitiveApplicationBytesCoder: MichelinePrimitiveApplicationBytesCoder = MichelinePrimitiveApplicationBytesCoder(
         stringToMichelsonGrammarTypeConverter,
         tagToMichelsonGrammarTypeConverter,
@@ -40,7 +42,7 @@ internal class MichelineBytesCoder(
         }
 
     override fun decode(value: ByteArray): MichelineNode = decodeConsuming(value.toMutableList())
-    fun decodeConsuming(value: MutableList<Byte>): MichelineNode =
+    override fun decodeConsuming(value: MutableList<Byte>): MichelineNode =
         when {
             literalBytesCoder.recognizesTag(value) -> literalBytesCoder.decodeConsuming(value)
             primitiveApplicationBytesCoder.recognizesTag(value) -> primitiveApplicationBytesCoder.decodeConsuming(value)
@@ -51,7 +53,7 @@ internal class MichelineBytesCoder(
     private fun failWithUnknownTag(): Nothing = failWithIllegalArgument("Unknown Micheline encoding tag.")
 }
 
-private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
+private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: ZarithIntegerBytesCoder) : Coder<MichelineLiteral, ByteArray> {
     override fun encode(value: MichelineLiteral): ByteArray =
         when (value) {
             is MichelineLiteral.Integer -> encodeInteger(value)
@@ -71,35 +73,9 @@ private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
     fun recognizesTag(value: List<Byte>): Boolean =
         listOf(Tag.Int, Tag.String, Tag.Bytes).any { it == Tag.recognize(value) }
 
-    private fun encodeInteger(value: MichelineLiteral.Integer): ByteArray = Tag.Int + encodeZarithInteger(value.int)
+    private fun encodeInteger(value: MichelineLiteral.Integer): ByteArray = Tag.Int + zarithIntegerBytesCoder.encode(BigInt.valueOf(value.int))
     private fun encodeString(value: MichelineLiteral.String): ByteArray = Tag.String + encodeString(value.string)
     private fun encodeBytes(value: MichelineLiteral.Bytes): ByteArray = Tag.Bytes + encodeBytes(value.toByteArray())
-
-    private fun encodeZarithInteger(value: String): ByteArray {
-        val int = BigInt.valueOf(value, 10)
-        val abs = int.abs()
-
-        val byte = abs and 0b0011_1111
-        val nextValue = abs shr 6
-
-        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b0000_0000 else 0b1000_0000
-        val signMask = if (int < BigInt.valueOf(0)) 0b0100_0000 else 0b0000_0000
-        val encodedByte = byte or sequenceMask or signMask
-
-        return encodeZarithInteger(nextValue, byteArrayOf(encodedByte.toByte()))
-    }
-
-    private tailrec fun encodeZarithInteger(value: BigInt, encoded: ByteArray): ByteArray {
-        if (value == BigInt.valueOf(0)) return encoded
-
-        val byte = value and 0b0111_1111
-        val nextValue = value shr 7
-
-        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b0000_0000 else 0b1000_0000
-        val encodedByte = byte or sequenceMask
-
-        return encodeZarithInteger(nextValue, encoded + encodedByte.toByte())
-    }
 
     private fun encodeString(value: String): ByteArray {
         val bytes = value.toByteArray(charset = Charsets.UTF_8)
@@ -118,30 +94,10 @@ private class MichelineLiteralBytesCoder : Coder<MichelineLiteral, ByteArray> {
         require(Tag.recognize(value) == Tag.Int) { "Invalid tag, encoded value is not MichelineLiteral.Integer." }
         value.consumeAt(0)
 
-        val int = decodeZarithInteger(value)
+        if (value.isEmpty()) failWithInvalidEncodedInteger()
+        val int = zarithIntegerBytesCoder.decodeConsuming(value)
 
         return MichelineLiteral.Integer(int.toString(10))
-    }
-
-    private fun decodeZarithInteger(value: MutableList<Byte>): BigInt {
-        val byte = value.consumeAt(0)?.toInt() ?: failWithInvalidEncodedInteger()
-
-        val part = BigInt.valueOf(byte and 0b0011_1111)
-        val sign = if (byte and 0b0100_0000 == 0b0100_0000) -1 else 1
-        val hasNext = byte and 0b1000_0000 == 0b1000_0000
-
-        val abs = if (hasNext) decodeZarithInteger(value, part, shift = 6) else part
-
-        return abs * sign
-    }
-
-    private tailrec fun decodeZarithInteger(value: MutableList<Byte>, decoded: BigInt, shift: Int): BigInt {
-        val byte = value.consumeAt(0)?.toInt() ?: return decoded
-
-        val part = BigInt.valueOf(byte and 0b0111_1111)
-        val hasNext = byte and 0b1000_0000 == 0b1000_0000
-
-        return decodeZarithInteger(if (hasNext) value else mutableListOf(), decoded + (part shl shift), shift = shift + 7)
     }
 
     private fun decodeString(value: MutableList<Byte>): MichelineLiteral.String {
@@ -331,7 +287,7 @@ private class MichelinePrimitiveApplicationBytesCoder(
         val prim = decodePrim(value)
 
         val argsLength = BigInt.valueOf(value.consumeAt(0 until 4).toHexString()).toInt()
-        val args = decodeArgs(value.consumeAt(0 until argsLength).toMutableList())
+        val args = decodeArgs(value.consumeAt(0 until argsLength))
         val annots = decodeAnnots(value)
 
         return MichelinePrimitiveApplication(prim, args, annots)
@@ -380,7 +336,7 @@ private class MichelineSequenceBytesCoder(private val bytesCoder: MichelineBytes
         value.consumeAt(0)
 
         val length = BigInt.valueOf(value.consumeAt(0 until 4).toHexString()).toInt()
-        val nodes = decodeNodes(value.consumeAt(0 until length).toMutableList())
+        val nodes = decodeNodes(value.consumeAt(0 until length))
 
         return MichelineSequence(nodes)
     }

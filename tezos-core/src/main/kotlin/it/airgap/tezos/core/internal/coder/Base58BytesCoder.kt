@@ -2,9 +2,10 @@ package it.airgap.tezos.core.internal.coder
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.base58.Base58Check
+import it.airgap.tezos.core.internal.utils.consumeAt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 
-public class Base58BytesCoder(private val base58Check: Base58Check): BytesCoder<String> {
+public class Base58BytesCoder(private val base58Check: Base58Check): ConsumingBytesCoder<String> {
 
     override fun encode(value: String): ByteArray = encode(value, prefix = null)
     public fun encode(value: String, prefix: Tezos.Prefix?): ByteArray {
@@ -22,6 +23,12 @@ public class Base58BytesCoder(private val base58Check: Base58Check): BytesCoder<
         if (prefix != null && value.size != prefix.dataLength) failWithInvalidPrefix(value, prefix)
         val bytes = prefix?.plus(value) ?: value
         return base58Check.encode(bytes)
+    }
+
+    override fun decodeConsuming(value: MutableList<Byte>): String = decodeConsuming(value, prefix = null)
+    public fun decodeConsuming(value: MutableList<Byte>, prefix: Tezos.Prefix?): String {
+        val bytes = prefix?.let { value.consumeAt(0 until it.dataLength) } ?: value
+        return decode(bytes.toByteArray(), prefix)
     }
 
     private fun failWithInvalidPrefix(value: String, prefix: Tezos.Prefix): Nothing = failWithIllegalArgument("Value `$value` is not prefixed with `${prefix}`.")

@@ -1,4 +1,4 @@
-package it.airgap.tezos.michelson.internal.coder
+package it.airgap.tezos.core.internal.coder
 
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -6,7 +6,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.Base58BytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import org.junit.After
@@ -66,14 +65,29 @@ class AddressBytesCoderTest {
     fun `should decode address from bytes`() {
         addressesWithBytes.forEach {
             assertEquals(it.first, addressBytesCoder.decode(it.second))
+            assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()))
         }
     }
 
     @Test
     fun `should fail to decode address from invalid bytes`() {
-        invalidBytes.forEach {
+        listOf(
+            invalidBytes,
+            listOf(
+                "0000ec6575487c0f706d9f936a33a0dd5a2f7f822502a5".asHexString().toByteArray(),
+                "00016cbe94a25b5de8b2aede4816d7e744c761d1c39e73".asHexString().toByteArray(),
+                "000234f443872ae83d91d50747de6abf6a125d63112b26".asHexString().toByteArray(),
+                "01f3ada5fa3d0003009b493ae4b1af6bf5e7cd6963d8".asHexString().toByteArray(),
+            ),
+        ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> {
                 addressBytesCoder.decode(it)
+            }
+        }
+
+        invalidBytes.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                addressBytesCoder.decodeConsuming(it.toMutableList())
             }
         }
     }
@@ -117,15 +131,11 @@ class AddressBytesCoderTest {
             "".asHexString().toByteArray(),
             "0000d7a60d4e90e8a33ec835159191b14ce4452f12".asHexString().toByteArray(),
             "006f328fa5c2ea6fd8596b63eafeabf91a78d37ae0".asHexString().toByteArray(),
-            "0000ec6575487c0f706d9f936a33a0dd5a2f7f822502a5".asHexString().toByteArray(),
             "00011a868789216112194b3bb003e8384c8f7217b2".asHexString().toByteArray(),
             "00945bf5622be703dcce774f9d940ed307b52905f5".asHexString().toByteArray(),
-            "00016cbe94a25b5de8b2aede4816d7e744c761d1c39e73".asHexString().toByteArray(),
             "00021a78f4332a6fe15b979904c6c2e5f9521e1ffc".asHexString().toByteArray(),
             "00f612a5590e21bcb4cabc85b30dbbe5f63533e0e7".asHexString().toByteArray(),
-            "000234f443872ae83d91d50747de6abf6a125d63112b26".asHexString().toByteArray(),
             "016077cd98fd8aca94851b83a4c44203b705d200".asHexString().toByteArray(),
             "a2049364703140f6e6f83b54e15021d63ed3700a".asHexString().toByteArray(),
-            "01f3ada5fa3d0003009b493ae4b1af6bf5e7cd6963d8".asHexString().toByteArray(),
         )
 }

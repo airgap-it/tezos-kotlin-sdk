@@ -79,7 +79,9 @@ class Base58BytesCoderTest {
 
         expectedWithActual.forEach {
             assertEquals(it.first, base58BytesCoder.decode(it.second))
+            assertEquals(it.first, base58BytesCoder.decodeConsuming(it.second.toMutableList()))
             assertEquals(it.first, base58BytesCoder.decode(it.second, prefix = null))
+            assertEquals(it.first, base58BytesCoder.decodeConsuming(it.second.toMutableList(), prefix = null))
         }
     }
 
@@ -89,6 +91,7 @@ class Base58BytesCoderTest {
 
         expectedWithActual.forEach {
             assertEquals(it.first.first, base58BytesCoder.decode(it.second, it.first.second))
+            assertEquals(it.first.first, base58BytesCoder.decodeConsuming(it.second.toMutableList(), it.first.second))
         }
     }
 
@@ -99,6 +102,10 @@ class Base58BytesCoderTest {
         expectedWithActual.forEach {
             assertFailsWith<IllegalArgumentException> {
                 base58BytesCoder.decode(it.first, it.second)
+            }
+
+            assertFailsWith<IllegalArgumentException> {
+                base58BytesCoder.decodeConsuming(it.first.toMutableList(), it.second)
             }
         }
     }

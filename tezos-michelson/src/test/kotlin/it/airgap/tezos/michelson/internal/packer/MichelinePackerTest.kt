@@ -6,12 +6,12 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.Base58BytesCoder
+import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.coder.*
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
@@ -66,8 +66,9 @@ class MichelinePackerTest {
         val signatureBytesCoder = SignatureBytesCoder(base58BytesCoder)
         val timestampBigIntCoder = TimestampBigIntCoder()
         val addressBytesCoder = AddressBytesCoder(keyHashBytesCoder, base58BytesCoder)
+        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalNumberBytesCoder())
 
-        val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter)
+        val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
 
         michelinePacker = MichelinePacker(
             michelineBytesCoder,

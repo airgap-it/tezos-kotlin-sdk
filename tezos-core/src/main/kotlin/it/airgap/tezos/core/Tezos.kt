@@ -35,6 +35,8 @@ public object Tezos {
         Ed25519PublicKey("edpk", byteArrayOf(13, 15, 37, (217).toByte()), dataLength = 32, base58Length = 54), /* edpk(54) */
         Secp256K1SecretKey("spsk", byteArrayOf(17, (162).toByte(), (224).toByte(), (201).toByte()), dataLength = 32, base58Length = 54), /* spsk(54) */
         P256SecretKey("p2sk", byteArrayOf(16, 81, (238).toByte(), (189).toByte()), dataLength = 32, base58Length = 54), /* p2sk(54) */
+        BlockPayloadHash("vh", byteArrayOf(1, 106, (242).toByte()), dataLength = 32, base58Length = 52), /* vh(52) */
+        NonceHash("nce", byteArrayOf(69, (220).toByte(), (169).toByte()), dataLength = 32, base58Length = 53), /* nce(53) */
 
         /* 56 */
         Ed25519EncryptedSeed("edesk", byteArrayOf(7, 90, 60, (179).toByte(), 41), dataLength = 56, base58Length = 88), /* edesk(88) */

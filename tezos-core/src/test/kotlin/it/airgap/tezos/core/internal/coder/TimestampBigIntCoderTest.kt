@@ -1,4 +1,4 @@
-package it.airgap.tezos.michelson.internal.coder
+package it.airgap.tezos.core.internal.coder
 
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.type.BigInt

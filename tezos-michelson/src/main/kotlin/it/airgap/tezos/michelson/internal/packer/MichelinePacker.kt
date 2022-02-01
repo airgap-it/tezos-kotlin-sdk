@@ -1,14 +1,14 @@
 package it.airgap.tezos.michelson.internal.packer
 
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.coder.Base58BytesCoder
+import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.replacingAt
 import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.coder.*
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.converter.MichelinePrimitiveApplicationToNormalizedConverter
 import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
 import it.airgap.tezos.michelson.internal.converter.StringToMichelsonGrammarTypeConverter
