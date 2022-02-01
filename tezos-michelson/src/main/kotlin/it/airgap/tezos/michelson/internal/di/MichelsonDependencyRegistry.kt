@@ -1,7 +1,8 @@
 package it.airgap.tezos.michelson.internal.di
 
 import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.michelson.internal.coder.*
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 
@@ -9,15 +10,15 @@ internal class MichelsonDependencyRegistry(dependencyRegistry: DependencyRegistr
 
     // -- coder --
 
-    override val michelineBytesCoder: MichelineBytesCoder by lazy { MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter) }
+    override val michelineBytesCoder: MichelineBytesCoder by lazy {
+        MichelineBytesCoder(
+            stringToMichelsonGrammarTypeConverter,
+            tagToMichelsonGrammarTypeConverter,
+            michelineToCompactStringConverter,
+            zarithIntegerBytesCoder,
+        )
+    }
     override val michelineJsonCoder: MichelineJsonCoder = MichelineJsonCoder()
-
-    override val addressBytesCoder: AddressBytesCoder by lazy { AddressBytesCoder(keyHashBytesCoder, base58BytesCoder) }
-    override val keyBytesCoder: KeyBytesCoder by lazy { KeyBytesCoder(base58BytesCoder) }
-    override val keyHashBytesCoder: KeyHashBytesCoder by lazy { KeyHashBytesCoder(base58BytesCoder) }
-    override val signatureBytesCoder: SignatureBytesCoder by lazy { SignatureBytesCoder(base58BytesCoder) }
-
-    override val timestampBigIntCoder: TimestampBigIntCoder = TimestampBigIntCoder()
 
     // -- converter --
 

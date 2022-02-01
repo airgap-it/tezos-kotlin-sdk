@@ -161,4 +161,13 @@ class CollectionTest {
         assertTrue(listOf(1, 2, 3).startsWith(listOf(1, 2, 3)))
         assertFalse(listOf(1, 2, 3).startsWith(listOf(2, 3)))
     }
+
+    @Test
+    fun `verifies if List of bytes starts with specified bytes`() {
+        assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf()))
+        assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1)))
+        assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1, 2)))
+        assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1, 2, 3)))
+        assertFalse(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(2, 3)))
+    }
 }

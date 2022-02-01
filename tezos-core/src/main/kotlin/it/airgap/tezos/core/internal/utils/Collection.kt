@@ -18,7 +18,7 @@ public inline fun <reified T> MutableList<T?>.replaceOrAdd(index: Int, element: 
 }
 
 public fun <T> MutableList<T>.consumeAt(index: Int): T? = if (index > lastIndex) null else this[index].also { removeAt(index) }
-public fun <T> MutableList<T>.consumeAt(indices: IntRange): List<T> = mutableListOf<T>().also {
+public fun <T> MutableList<T>.consumeAt(indices: IntRange): MutableList<T> = mutableListOf<T>().also {
     for (i in indices) {
         consumeAt(indices.first)?.let(it::add) ?: break
     }
@@ -35,3 +35,6 @@ public fun <T> List<T>.replacingAt(index: Int, newElement: T): List<T> =
 
 public fun <T : Comparable<T>> List<T>.startsWith(elements: List<T>): Boolean =
     slice(elements.indices) == elements
+
+public fun List<Byte>.startsWith(bytes: ByteArray): Boolean =
+    slice(bytes.indices).foldIndexed(true) { index, acc, byte -> acc && byte == bytes[index] }

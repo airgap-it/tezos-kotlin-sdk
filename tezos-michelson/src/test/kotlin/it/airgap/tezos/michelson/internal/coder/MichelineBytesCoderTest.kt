@@ -4,6 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.ZarithNaturalNumberBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.decodeFromBytes
@@ -41,8 +43,9 @@ class MichelineBytesCoderTest {
         val stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
         val tagToMichelsonGrammarTypeConverter = TagToMichelsonGrammarTypeConverter()
         val michelineToCompactStringConverter = MichelineToCompactStringConverter()
+        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalNumberBytesCoder())
 
-        michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter)
+        michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
 
         every { dependencyRegistry.michelineBytesCoder } returns michelineBytesCoder
     }

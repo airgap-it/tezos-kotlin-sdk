@@ -1,4 +1,4 @@
-package it.airgap.tezos.michelson.internal.coder
+package it.airgap.tezos.core.internal.coder
 
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -6,7 +6,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.Base58BytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import org.junit.After
@@ -64,14 +63,28 @@ class KeyHashBytesCoderTest {
     fun `should decode key hash from bytes`() {
         keyHashesWithBytes.forEach {
             assertEquals(it.first, keyHashBytesCoder.decode(it.second))
+            assertEquals(it.first, keyHashBytesCoder.decodeConsuming(it.second.toMutableList()))
         }
     }
 
     @Test
     fun `should fail to decode key hash from invalid bytes`() {
-        invalidBytes.forEach {
+        listOf(
+            invalidBytes,
+            listOf(
+                "00ec6575487c0f706d9f936a33a0dd5a2f7f822502a5".asHexString().toByteArray(),
+                "016cbe94a25b5de8b2aede4816d7e744c761d1c39e73".asHexString().toByteArray(),
+                "0234f443872ae83d91d50747de6abf6a125d63112b26".asHexString().toByteArray(),
+            ),
+        ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> {
                 keyHashBytesCoder.decode(it)
+            }
+        }
+
+        invalidBytes.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                keyHashBytesCoder.decodeConsuming(it.toMutableList())
             }
         }
     }
@@ -108,12 +121,9 @@ class KeyHashBytesCoderTest {
             "".asHexString().toByteArray(),
             "00d7a60d4e90e8a33ec835159191b14ce4452f12".asHexString().toByteArray(),
             "6f328fa5c2ea6fd8596b63eafeabf91a78d37ae0".asHexString().toByteArray(),
-            "00ec6575487c0f706d9f936a33a0dd5a2f7f822502a5".asHexString().toByteArray(),
             "011a868789216112194b3bb003e8384c8f7217b2".asHexString().toByteArray(),
             "945bf5622be703dcce774f9d940ed307b52905f5".asHexString().toByteArray(),
-            "016cbe94a25b5de8b2aede4816d7e744c761d1c39e73".asHexString().toByteArray(),
             "021a78f4332a6fe15b979904c6c2e5f9521e1ffc".asHexString().toByteArray(),
             "f612a5590e21bcb4cabc85b30dbbe5f63533e0e7".asHexString().toByteArray(),
-            "0234f443872ae83d91d50747de6abf6a125d63112b26".asHexString().toByteArray(),
         )
 }

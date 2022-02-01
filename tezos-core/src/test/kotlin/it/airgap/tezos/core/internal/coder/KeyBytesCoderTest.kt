@@ -1,4 +1,4 @@
-package it.airgap.tezos.michelson.internal.coder
+package it.airgap.tezos.core.internal.coder
 
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -6,7 +6,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.Base58BytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import org.junit.After
@@ -64,6 +63,7 @@ class KeyBytesCoderTest {
     fun `should decode key from bytes`() {
         keysWithBytes.forEach {
             assertEquals(it.first, keyBytesCoder.decode(it.second))
+            assertEquals(it.first, keyBytesCoder.decodeConsuming(it.second.toMutableList()))
         }
     }
 
@@ -72,6 +72,10 @@ class KeyBytesCoderTest {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> {
                 keyBytesCoder.decode(it)
+            }
+
+            assertFailsWith<IllegalArgumentException> {
+                keyBytesCoder.decodeConsuming(it.toMutableList())
             }
         }
     }

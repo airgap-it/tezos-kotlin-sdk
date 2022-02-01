@@ -2,7 +2,8 @@ package it.airgap.tezos.michelson.internal.di
 
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.findScoped
-import it.airgap.tezos.michelson.internal.coder.*
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 
@@ -12,13 +13,6 @@ internal interface ScopedDependencyRegistry : DependencyRegistry {
 
     val michelineBytesCoder: MichelineBytesCoder
     val michelineJsonCoder: MichelineJsonCoder
-
-    val addressBytesCoder: AddressBytesCoder
-    val keyBytesCoder: KeyBytesCoder
-    val keyHashBytesCoder: KeyHashBytesCoder
-    val signatureBytesCoder: SignatureBytesCoder
-
-    val timestampBigIntCoder: TimestampBigIntCoder
 
     // -- converter --
 

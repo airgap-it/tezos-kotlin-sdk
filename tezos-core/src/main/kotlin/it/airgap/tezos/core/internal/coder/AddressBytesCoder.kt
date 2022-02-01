@@ -1,16 +1,15 @@
-package it.airgap.tezos.michelson.internal.coder
+package it.airgap.tezos.core.internal.coder
 
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.coder.Base58BytesCoder
-import it.airgap.tezos.core.internal.coder.BytesCoder
 import it.airgap.tezos.core.internal.type.BytesTag
+import it.airgap.tezos.core.internal.utils.consumeAt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.startsWith
 
-internal class AddressBytesCoder(
+public class AddressBytesCoder(
     private val keyHashBytesCoder: KeyHashBytesCoder,
     private val base58BytesCoder: Base58BytesCoder
-) : BytesCoder<String> {
+) : ConsumingBytesCoder<String> {
     override fun encode(value: String): ByteArray {
         val prefix = Tezos.Prefix.recognize(value) ?: failWithInvalidAddress(value)
         val tag = AddressTag.fromPrefix(prefix)
@@ -33,8 +32,23 @@ internal class AddressBytesCoder(
         return decoder(value.sliceArray(1 until value.size))
     }
 
+    override fun decodeConsuming(value: MutableList<Byte>): String {
+        val tag = AddressTag.recognize(value) ?: failWithInvalidAddressBytes(value)
+        value.consumeAt(0 until tag.value.size)
+
+        val decoder: (MutableList<Byte>) -> String = when (tag) {
+            AddressTag.ImplicitAccount -> keyHashBytesCoder::decodeConsuming
+            AddressTag.OriginatedAccount -> ({ base58BytesCoder.decodeConsuming(it, Tezos.Prefix.ContractHash) })
+        }
+
+        return decoder(value)
+    }
+
     private fun failWithInvalidAddress(value: String): Nothing = failWithIllegalArgument("Value `$value` is not a valid Tezos address.")
-    private fun failWithInvalidAddressBytes(value: ByteArray): Nothing = failWithIllegalArgument("Bytes `${value.joinToString(prefix = "[", postfix = "]")}` are not valid Tezos address bytes.")
+
+    private fun failWithInvalidAddressBytes(value: ByteArray): Nothing = failWithInvalidAddressBytes(value.joinToString(prefix = "[", postfix = "]"))
+    private fun failWithInvalidAddressBytes(value: MutableList<Byte>): Nothing = failWithInvalidAddressBytes(value.joinToString(prefix = "[", postfix = "]"))
+    private fun failWithInvalidAddressBytes(value: String): Nothing = failWithIllegalArgument("Bytes `$value` are not valid Tezos address bytes.")
 }
 
 private enum class AddressTag(override val value: ByteArray) : BytesTag {
@@ -51,6 +65,13 @@ private enum class AddressTag(override val value: ByteArray) : BytesTag {
 
         fun recognize(bytes: ByteArray): AddressTag? =
             if (bytes.isEmpty()) null
-            else values().find { bytes.startsWith(it.value) }
+            else find(bytes::startsWith)
+
+        fun recognize(bytes: List<Byte>): AddressTag? =
+            if (bytes.isEmpty()) null
+            else find(bytes::startsWith)
+
+        private fun find(startsWith: (ByteArray) -> Boolean): AddressTag? =
+            values().find { startsWith(it.value) }
     }
 }

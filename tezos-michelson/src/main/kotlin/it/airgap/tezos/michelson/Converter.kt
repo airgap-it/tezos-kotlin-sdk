@@ -1,13 +1,7 @@
 package it.airgap.tezos.michelson
 
-import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.michelson.internal.converter.*
-import it.airgap.tezos.michelson.internal.converter.MichelineSequenceToNormalizedConverter
-import it.airgap.tezos.michelson.internal.converter.MichelineToNormalizedConverter
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonDataGrammarTypeConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonGrammarTypeConverter
 import it.airgap.tezos.michelson.internal.di.scoped
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
