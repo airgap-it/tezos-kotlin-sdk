@@ -1,7 +1,9 @@
 package it.airgap.tezos.core.internal.delegate
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import java.lang.ref.WeakReference
 
+@InternalTezosSdkApi
 public class LazyWeak<T : Any>(private val initializer: () -> T, lock: Any? = null) : Lazy<T> {
     private val lock = lock ?: this
 
@@ -16,4 +18,5 @@ public class LazyWeak<T : Any>(private val initializer: () -> T, lock: Any? = nu
     override fun toString(): String = if (isInitialized()) value.toString() else "LazyWeak has no value reference."
 }
 
+@InternalTezosSdkApi
 public fun <T : Any> lazyWeak(lock: Any? = null, initializer: () -> T): LazyWeak<T> = LazyWeak(initializer, lock)

@@ -10,16 +10,16 @@ import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveAp
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationNoArgsBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationSingleArgBuilder
 
-public typealias MichelineMichelsonDataExpressionBuilder = MichelineNodeBuilder<MichelsonData, MichelsonData.GrammarType>
+public typealias MichelineMichelsonDataExpressionBuilder = MichelineNodeBuilder<MichelsonData, MichelsonData.Prim>
 
-public typealias MichelineMichelsonDataNoArgsBuilder = MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.GrammarType>
-public typealias MichelineMichelsonDataSingleArgBuilder = MichelinePrimitiveApplicationSingleArgBuilder<MichelsonData, MichelsonData.GrammarType>
-public typealias MichelineMichelsonDataWithArgsBuilder = MichelinePrimitiveApplicationBuilder<MichelsonData, MichelsonData.GrammarType>
+public typealias MichelineMichelsonDataNoArgsBuilder = MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.Prim>
+public typealias MichelineMichelsonDataSingleArgBuilder = MichelinePrimitiveApplicationSingleArgBuilder<MichelsonData, MichelsonData.Prim>
+public typealias MichelineMichelsonDataWithArgsBuilder = MichelinePrimitiveApplicationBuilder<MichelsonData, MichelsonData.Prim>
 
 public class MichelineMichelsonDataKeyValueBuilder internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
-    prim: MichelsonData.GrammarType,
-) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.GrammarType>(michelsonToMichelineConverter, prim) {
+    prim: MichelsonData.Prim,
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =
         MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
     public fun value(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =

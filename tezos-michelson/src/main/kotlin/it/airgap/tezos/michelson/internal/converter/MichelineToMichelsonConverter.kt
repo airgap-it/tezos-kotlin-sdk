@@ -1,5 +1,6 @@
 package it.airgap.tezos.michelson.internal.converter
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.allIsInstance
 import it.airgap.tezos.core.internal.utils.anyIsInstance
@@ -12,13 +13,14 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelineToMichelsonConverter(
-    stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter,
+@InternalTezosSdkApi
+public class MichelineToMichelsonConverter(
+    stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
     michelineToCompactStringConverter: MichelineToCompactStringConverter,
 ) : Converter<MichelineNode, Michelson> {
     private val literalToMichelsonConverter: MichelineLiteralToMichelsonConverter = MichelineLiteralToMichelsonConverter(michelineToCompactStringConverter)
     private val primitiveApplicationToMichelsonConverter: MichelinePrimitiveApplicationToMichelsonConverter = MichelinePrimitiveApplicationToMichelsonConverter(
-        stringToMichelsonGrammarTypeConverter,
+        stringToMichelsonPrimConverter,
         michelineToCompactStringConverter,
         this,
     )
@@ -50,16 +52,16 @@ private class MichelineLiteralToMichelsonConverter(private val michelineToCompac
 }
 
 private class MichelinePrimitiveApplicationToMichelsonConverter(
-    private val stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter,
+    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
     private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
     private val toMichelsonConverter: MichelineToMichelsonConverter,
 ) : Converter<MichelinePrimitiveApplication, Michelson> {
     override fun convert(value: MichelinePrimitiveApplication): Michelson = with(value) {
-        val grammarType = Michelson.GrammarType.fromStringOrNull(prim.value, stringToMichelsonGrammarTypeConverter) ?: failWithUnknownPrimitiveApplication(this)
+        val prim = Michelson.Prim.fromStringOrNull(prim.value, stringToMichelsonPrimConverter) ?: failWithUnknownPrimitiveApplication(this)
         try {
-            when (grammarType) {
-                is MichelsonData.GrammarType -> fromDataPrimitiveApplication(grammarType, this)
-                is MichelsonType.GrammarType -> fromTypePrimitiveApplication(grammarType, this)
+            when (prim) {
+                is MichelsonData.Prim -> fromDataPrimitiveApplication(prim, this)
+                is MichelsonType.Prim -> fromTypePrimitiveApplication(prim, this)
             }
         } catch (e: IllegalArgumentException) {
             failWithInvalidPrimitiveApplication(this)
@@ -69,10 +71,10 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
     }
 
     private fun fromDataPrimitiveApplication(
-        grammarType: MichelsonData.GrammarType,
+        prim: MichelsonData.Prim,
         primitiveApplication: MichelinePrimitiveApplication,
     ): MichelsonData = with(primitiveApplication) {
-        when (grammarType) {
+        when (prim) {
             MichelsonData.Unit -> MichelsonData.Unit
             MichelsonData.True -> MichelsonData.True
             MichelsonData.False -> MichelsonData.False
@@ -98,16 +100,16 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
                 MichelsonData.Some(value)
             }
             MichelsonData.None -> MichelsonData.None
-            is MichelsonInstruction.GrammarType -> fromInstructionPrimitiveApplication(grammarType, this)
+            is MichelsonInstruction.Prim -> fromInstructionPrimitiveApplication(prim, this)
             else -> failWithUnknownPrimitiveApplication(primitiveApplication)
         }
     }
 
     private fun fromInstructionPrimitiveApplication(
-        grammarType: MichelsonInstruction.GrammarType,
+        prim: MichelsonInstruction.Prim,
         primitiveApplication: MichelinePrimitiveApplication,
     ): MichelsonInstruction = with(primitiveApplication) {
-        when (grammarType) {
+        when (prim) {
             MichelsonInstruction.Drop -> {
                 val n = args.firstOrNull()?.convertToExpected<MichelsonData.NaturalNumberConstant>()
 
@@ -348,10 +350,10 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
     }
 
     private fun fromTypePrimitiveApplication(
-        grammarType: MichelsonType.GrammarType,
+        prim: MichelsonType.Prim,
         primitiveApplication: MichelinePrimitiveApplication,
     ): MichelsonType = with(primitiveApplication) {
-        when (grammarType) {
+        when (prim) {
             MichelsonType.Parameter -> {
                 val type = args.first().convertToExpected<MichelsonType>()
 
@@ -443,15 +445,15 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             }
             MichelsonType.Chest -> MichelsonType.Chest
             MichelsonType.ChestKey -> MichelsonType.ChestKey
-            is MichelsonComparableType.GrammarType -> fromComparableTypePrimitiveApplication(grammarType, primitiveApplication)
+            is MichelsonComparableType.Prim -> fromComparableTypePrimitiveApplication(prim, primitiveApplication)
         }
     }
 
     private fun fromComparableTypePrimitiveApplication(
-        grammarType: MichelsonComparableType.GrammarType,
+        prim: MichelsonComparableType.Prim,
         primitiveApplication: MichelinePrimitiveApplication,
     ): MichelsonComparableType = with(primitiveApplication) {
-        when (grammarType) {
+        when (prim) {
             MichelsonComparableType.Unit -> MichelsonComparableType.Unit
             MichelsonComparableType.Never -> MichelsonComparableType.Never
             MichelsonComparableType.Bool -> MichelsonComparableType.Bool

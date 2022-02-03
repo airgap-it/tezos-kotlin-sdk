@@ -1,44 +1,41 @@
 package it.airgap.tezos.core.internal.coder
 
-import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.type.PrefixTag
-import it.airgap.tezos.core.internal.utils.consumeAt
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.internal.type.EncodedTag
+import it.airgap.tezos.core.internal.utils.consumeUntil
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.startsWith
+import it.airgap.tezos.core.type.encoded.Encoded
+import it.airgap.tezos.core.type.encoded.GenericSignature
+import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import kotlin.math.min
 
-public class SignatureBytesCoder(base58BytesCoder: Base58BytesCoder) : Base58PrefixedBytesCoder(base58BytesCoder) {
-    override fun tag(prefix: Tezos.Prefix): PrefixTag? = SignatureTag.fromPrefix(prefix)
-    override fun tag(bytes: ByteArray): PrefixTag? = SignatureTag.recognize(bytes)
-    override fun tag(bytes: MutableList<Byte>): PrefixTag? = SignatureTag.recognize(bytes)
-    override fun tagConsuming(bytes: MutableList<Byte>): PrefixTag? = tag(bytes)?.also { bytes.consumeAt(0 until it.value.size) }
+@InternalTezosSdkApi
+public class SignatureBytesCoder(encodedBytesCoder: EncodedBytesCoder) : EncodedGroupBytesCoder<SignatureEncoded<*>>(encodedBytesCoder) {
+    override fun tag(encoded: SignatureEncoded<*>): EncodedTag<Encoded.Kind<SignatureEncoded<*>>> = SignatureTag
+    override fun tag(bytes: ByteArray): EncodedTag<Encoded.Kind<SignatureEncoded<*>>>? = SignatureTag.recognize(bytes)
+    override fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<Encoded.Kind<SignatureEncoded<*>>>? = SignatureTag.recognize(bytes)?.also { bytes.consumeUntil(it.value.size) }
 
-    override fun failWithInvalidValue(value: String): Nothing = failWithInvalidSignature(value)
-    private fun failWithInvalidSignature(value: String): Nothing = failWithIllegalArgument("Value `$value` is not a valid Tezos signature.")
+    override fun failWithInvalidValue(value: SignatureEncoded<*>): Nothing = failWithUnknownSignature(value)
+    private fun failWithUnknownSignature(value: SignatureEncoded<*>): Nothing = failWithIllegalArgument("Unknown Tezos signature `$value`.")
 
     override fun failWithInvalidValue(value: ByteArray): Nothing = failWithInvalidSignatureBytes(value.joinToString(prefix = "[", postfix = "]"))
     override fun failWithInvalidValue(value: MutableList<Byte>): Nothing = failWithInvalidSignatureBytes(value.joinToString(prefix = "[", postfix = "]"))
-
     private fun failWithInvalidSignatureBytes(value: String): Nothing = failWithIllegalArgument("Bytes `$value` are not valid Tezos signature bytes.")
 }
 
-private object SignatureTag : PrefixTag {
+private object SignatureTag : EncodedTag<SignatureEncoded.Kind<*>> {
     override val value: ByteArray = byteArrayOf()
-    override val prefix: Tezos.Prefix = Tezos.Prefix.GenericSignature
+    override val kind: SignatureEncoded.Kind<*> = GenericSignature
 
-    fun fromPrefix(prefix: Tezos.Prefix): SignatureTag? =
-        when (prefix) {
-            Tezos.Prefix.Ed25519Signature, Tezos.Prefix.Secp256K1Signature, Tezos.Prefix.P256Signature, Tezos.Prefix.GenericSignature -> SignatureTag
-            else -> null
-        }
+    private fun isValid(bytes: ByteArray): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until bytes.size))
+    private fun isValid(bytes: MutableList<Byte>): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until min(value.size + kind.bytesLength, bytes.size)))
 
     fun recognize(bytes: ByteArray): SignatureTag? =
         if (bytes.isEmpty()) null
-        else takeIf(bytes.size, bytes::startsWith)
+        else SignatureTag.takeIf { it.isValid(bytes) }
 
     fun recognize(bytes: MutableList<Byte>): SignatureTag? =
         if (bytes.isEmpty()) null
-        else takeIf(bytes.size, bytes::startsWith)
-
-    private fun takeIf(size: Int, startsWith: (ByteArray) -> Boolean): SignatureTag? =
-        SignatureTag.takeIf { startsWith(value) && size == prefix.dataLength + value.size }
+        else SignatureTag.takeIf { it.isValid(bytes) }
 }

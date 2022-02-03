@@ -33,6 +33,7 @@ subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = Build.Kotlin.jvmTarget
+            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-opt-in=it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi"
         }
     }
 

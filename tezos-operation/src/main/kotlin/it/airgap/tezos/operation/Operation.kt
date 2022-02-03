@@ -1,9 +1,12 @@
 package it.airgap.tezos.operation
 
+import it.airgap.tezos.core.type.encoded.BlockHash
+import it.airgap.tezos.core.type.encoded.SignatureEncoded
+
 public data class Operation(
-    public val branch: String,
+    public val branch: BlockHash,
     public val contents: List<OperationContent>,
-    public val signature: String? = null,
+    public val signature: SignatureEncoded<*>? = null,
 ) {
     public companion object {}
 }
@@ -11,6 +14,6 @@ public data class Operation(
 @Suppress("FunctionName")
 public fun Operation(
     vararg contents: OperationContent,
-    branch: String,
-    signature: String? = null,
+    branch: BlockHash,
+    signature: SignatureEncoded<*>? = null,
 ): Operation = Operation(branch, contents.toList(), signature)

@@ -98,19 +98,11 @@ class Base58CheckTest {
 
     @Test
     fun `fails when decoding invalid Base58 string`() {
-        invalidBase58Strings.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                base58Check.decode(it)
-            }
-        }
+        invalidBase58Strings.forEach { assertFailsWith<IllegalArgumentException> { base58Check.decode(it) } }
     }
 
     @Test
     fun `fails on checksum mismatch`() {
-        invalidChecksums.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                base58Check.decode(it)
-            }
-        }
+        invalidChecksums.forEach { assertFailsWith<IllegalArgumentException> { base58Check.decode(it) } }
     }
 }

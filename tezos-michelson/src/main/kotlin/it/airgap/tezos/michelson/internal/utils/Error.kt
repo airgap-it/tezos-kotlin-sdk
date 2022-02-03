@@ -9,5 +9,5 @@ internal fun failWithUnexpectedMichelsonType(type: KClass<out Michelson>, caller
     failWithIllegalState("Unexpected Michelson type (${type}) for `$caller`.")
 
 @PublishedApi
-internal fun failWithUnexpectedMichelsonGrammarType(type: KClass<out Michelson.GrammarType>, caller: String): Nothing =
-    failWithIllegalState("Unexpected Michelson Grammar type (${type}) for `$caller`.")
+internal fun failWithUnexpectedMichelsonPrim(prim: KClass<out Michelson.Prim>, caller: String): Nothing =
+    failWithIllegalState("Unexpected Michelson prim (${prim.qualifiedName?.removePrefix(".Companion")?.substringAfterLast(".")}) for `$caller`.")

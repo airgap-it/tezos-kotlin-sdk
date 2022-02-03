@@ -1,8 +1,11 @@
 package it.airgap.tezos.core.internal.type
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.type.HexString
 import java.math.BigInteger
 
 // For easy multiplatform conversion
+@InternalTezosSdkApi
 public interface BigInt : Comparable<BigInt> {
 
     // -- logical operations --

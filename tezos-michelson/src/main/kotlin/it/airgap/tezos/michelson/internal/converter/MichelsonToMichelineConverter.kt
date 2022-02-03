@@ -1,5 +1,6 @@
 package it.airgap.tezos.michelson.internal.converter
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
@@ -7,7 +8,8 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
+@InternalTezosSdkApi
+public class MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
     private val dataToMichelineConverter: MichelsonDataToMichelineConverter = MichelsonDataToMichelineConverter(this)
     private val typeToMichelineConverter: MichelsonTypeToMichelineConverter = MichelsonTypeToMichelineConverter(
         dataToMichelineConverter,

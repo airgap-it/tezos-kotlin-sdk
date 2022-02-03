@@ -1,11 +1,15 @@
 package it.airgap.tezos.core.internal.di
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.coder.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import kotlin.reflect.KClass
 
+@InternalTezosSdkApi
 public interface DependencyRegistry {
 
     // -- scoped --
@@ -24,14 +28,6 @@ public interface DependencyRegistry {
     public val crypto: Crypto
 
     // -- coder --
-
-    public val base58BytesCoder: Base58BytesCoder
-    public val addressBytesCoder: AddressBytesCoder
-    public val keyBytesCoder: KeyBytesCoder
-    public val keyHashBytesCoder: KeyHashBytesCoder
-    public val signatureBytesCoder: SignatureBytesCoder
-    public val zarithNaturalNumberBytesCoder: ZarithNaturalNumberBytesCoder
-    public val zarithIntegerBytesCoder: ZarithIntegerBytesCoder
 
     public val timestampBigIntCoder: TimestampBigIntCoder
 }

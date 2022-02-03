@@ -2,6 +2,7 @@ package it.airgap.tezos.core.internal.type
 
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.asHexStringOrNull
+import it.airgap.tezos.core.type.HexString
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -42,9 +43,7 @@ class HexStringTest {
     @Test
     fun `fails when creating HexString form invalid string`() {
         invalidHexStrings.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                it.asHexString()
-            }
+            assertFailsWith<IllegalArgumentException> { it.asHexString() }
         }
     }
 

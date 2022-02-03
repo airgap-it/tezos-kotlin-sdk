@@ -5,16 +5,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.ZarithNaturalNumberBytesCoder
+import it.airgap.tezos.core.internal.coder.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
-import it.airgap.tezos.michelson.decodeFromBytes
-import it.airgap.tezos.michelson.decodeFromString
-import it.airgap.tezos.michelson.encodeToBytes
-import it.airgap.tezos.michelson.encodeToString
+import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonGrammarTypeConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonGrammarTypeConverter
+import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
 import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
@@ -40,12 +37,12 @@ class MichelineBytesCoderTest {
         MockKAnnotations.init(this)
         mockTezosSdk(dependencyRegistry)
 
-        val stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
-        val tagToMichelsonGrammarTypeConverter = TagToMichelsonGrammarTypeConverter()
+        val stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
+        val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
         val michelineToCompactStringConverter = MichelineToCompactStringConverter()
-        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalNumberBytesCoder())
+        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalBytesCoder())
 
-        michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
+        michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
 
         every { dependencyRegistry.michelineBytesCoder } returns michelineBytesCoder
     }
@@ -97,6 +94,8 @@ class MichelineBytesCoderTest {
             assertEquals(it.first, michelineBytesCoder.decode(it.second))
             assertEquals(it.first, MichelineNode.decodeFromBytes(it.second))
             assertEquals(it.first, MichelineNode.decodeFromBytes(it.second, michelineBytesCoder))
+            assertEquals(it.first, MichelineNode.decodeConsumingFromBytes(it.second.toMutableList()))
+            assertEquals(it.first, MichelineNode.decodeConsumingFromBytes(it.second.toMutableList(), michelineBytesCoder))
             assertEquals(it.first, MichelineNode.decodeFromString(it.second.toHexString().asString(withPrefix = false)))
             assertEquals(it.first, MichelineNode.decodeFromString(it.second.toHexString().asString(withPrefix = false), michelineBytesCoder))
             assertEquals(it.first, MichelineNode.decodeFromString(it.second.toHexString().asString(withPrefix = true)))
@@ -112,6 +111,8 @@ class MichelineBytesCoderTest {
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromString(it, michelineBytesCoder) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromBytes(it.asHexString().toByteArray()) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromBytes(it.asHexString().toByteArray(), michelineBytesCoder) }
+            assertFailsWith<IllegalArgumentException> { MichelineNode.decodeConsumingFromBytes(it.asHexString().toByteArray().toMutableList()) }
+            assertFailsWith<IllegalArgumentException> { MichelineNode.decodeConsumingFromBytes(it.asHexString().toByteArray().toMutableList(), michelineBytesCoder) }
         }
     }
 

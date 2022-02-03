@@ -1,34 +1,47 @@
 package it.airgap.tezos.michelson.internal.packer
 
-import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.decodeFromBytes
+import it.airgap.tezos.core.encodeToBytes
+import it.airgap.tezos.core.fromString
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.converter.StringToAddressConverter
+import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
+import it.airgap.tezos.core.internal.converter.StringToPublicKeyEncodedConverter
+import it.airgap.tezos.core.internal.converter.StringToSignatureEncodedConverter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.replacingAt
 import it.airgap.tezos.core.internal.utils.startsWith
+import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.converter.MichelinePrimitiveApplicationToNormalizedConverter
 import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonGrammarTypeConverter
+import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
 import it.airgap.tezos.michelson.internal.utils.second
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelinePacker(
+@InternalTezosSdkApi
+public class MichelinePacker(
     private val michelineBytesCoder: MichelineBytesCoder,
-    private val stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter,
+    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
     private val michelinePrimitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter,
     private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
-    private val base58BytesCoder: Base58BytesCoder,
+    private val encodedBytesCoder: EncodedBytesCoder,
     private val addressBytesCoder: AddressBytesCoder,
-    private val keyBytesCoder: KeyBytesCoder,
-    private val keyHashBytesCoder: KeyHashBytesCoder,
+    private val publicKeyBytesCoder: PublicKeyBytesCoder,
+    private val implicitAddressBytesCoder: ImplicitAddressBytesCoder,
     private val signatureBytesCoder: SignatureBytesCoder,
     private val timestampBigIntCoder: TimestampBigIntCoder,
+    private val stringToAddressConverter: StringToAddressConverter,
+    private val stringToImplicitAddressConverter: StringToImplicitAddressConverter,
+    private val stringToPublicKeyEncodedConverter: StringToPublicKeyEncodedConverter,
+    private val stringToSignatureEncodedConverter: StringToSignatureEncodedConverter,
 ) : Packer<MichelineNode> {
     override fun pack(value: MichelineNode, schema: MichelineNode?): ByteArray {
         val prePacked = if (schema != null) prePack(value, schema) else value
@@ -52,8 +65,8 @@ internal class MichelinePacker(
         }
 
     private fun prePack(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        when (val prim = Michelson.GrammarType.fromStringOrNull(schema.prim.value, stringToMichelsonGrammarTypeConverter)) {
-            is MichelsonType.GrammarType -> when (prim) {
+        when (val prim = Michelson.Prim.fromStringOrNull(schema.prim.value, stringToMichelsonPrimConverter)) {
+            is MichelsonType.Prim -> when (prim) {
                 MichelsonType.Option, MichelsonComparableType.Option -> prePackOptionData(value, schema)
                 MichelsonType.Set, MichelsonType.List -> prePackSequenceData(value, schema)
                 MichelsonType.Contract, MichelsonComparableType.Address -> prePackAddressData(value, schema)
@@ -75,7 +88,7 @@ internal class MichelinePacker(
     private fun prePack(value: MichelineSequence, schema: MichelineSequence): MichelineNode {
         if (value.nodes.size != schema.nodes.size) failWithValueSchemaMismatch(value, schema)
 
-        val prePackedArgs = value.nodes.zip(schema.nodes).map { (arg, type) -> prePack(arg, type) }
+        val prePackedArgs = prePack(value.nodes, schema.nodes)
         return MichelineSequence(prePackedArgs)
     }
 
@@ -87,7 +100,7 @@ internal class MichelinePacker(
             value.isPrim(MichelsonData.Some) -> {
                 if (value.args.size != schema.args.size) failWithValueSchemaMismatch(value, schema)
 
-                val prePackedArgs = value.args.zip(schema.args).map { (arg, type) -> prePack(arg, type) }
+                val prePackedArgs = prePack(value.args, schema.args)
                 value.copy(args = prePackedArgs)
             }
             value.isPrim(MichelsonData.None) -> value
@@ -99,13 +112,13 @@ internal class MichelinePacker(
         if (value !is MichelineSequence) failWithValueSchemaMismatch(value, schema)
         if (schema.args.size != 1) failWithInvalidSchema(schema)
 
-        val prePacked = value.nodes.map { prePack(it, schema.args.first()) }
+        val prePacked = prePack(value.nodes, schema.args.first())
 
         return MichelineSequence(prePacked)
     }
 
     private fun prePackAddressData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema, addressBytesCoder::encode)
+        prePackStringToBytes(value, schema) { Address.fromString(it, stringToAddressConverter).encodeToBytes(addressBytesCoder) }
 
     private fun prePackPairData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
         when {
@@ -123,7 +136,7 @@ internal class MichelinePacker(
 
                 if (valueNormalized.args.size != schemaNormalized.args.size) failWithValueSchemaMismatch(value, schema)
 
-                val prePackedArgs = valueNormalized.args.zip(schemaNormalized.args).map { (arg, type) -> prePack(arg, type) }
+                val prePackedArgs = prePack(valueNormalized.args, schemaNormalized.args)
                 valueNormalized.copy(args = prePackedArgs)
             }
             else -> failWithValueSchemaMismatch(value, schema)
@@ -162,7 +175,7 @@ internal class MichelinePacker(
         val prePacked = value.nodes.map {
             if (it !is MichelinePrimitiveApplication || !it.isPrim(MichelsonData.Elt) || it.args.size != schema.args.size) failWithValueSchemaMismatch(value, schema)
 
-            val prePackedArgs = it.args.zip(schema.args).map { (arg, type) -> prePack(arg, type) }
+            val prePackedArgs = prePack(it.args, schema.args)
             it.copy(args = prePackedArgs)
         }
 
@@ -176,16 +189,16 @@ internal class MichelinePacker(
         }
 
     private fun prePackChainIdData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { base58BytesCoder.encode(it, prefix = Tezos.Prefix.ChainId) }
+        prePackStringToBytes(value, schema) { ChainId(it).encodeToBytes(encodedBytesCoder) }
 
     private fun prePackKeyHashData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema, keyHashBytesCoder::encode)
+        prePackStringToBytes(value, schema) { ImplicitAddress.fromString(it, stringToImplicitAddressConverter).encodeToBytes(implicitAddressBytesCoder) }
 
     private fun prePackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema, keyBytesCoder::encode)
+        prePackStringToBytes(value, schema) { PublicKeyEncoded.fromString(it, stringToPublicKeyEncodedConverter).encodeToBytes(publicKeyBytesCoder) }
 
     private fun prePackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema, signatureBytesCoder::encode)
+        prePackStringToBytes(value, schema) { SignatureEncoded.fromString(it, stringToSignatureEncodedConverter).encodeToBytes(signatureBytesCoder) }
 
     private fun prePackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
         prePackStringToInt(value, schema, timestampBigIntCoder::encode)
@@ -205,8 +218,8 @@ internal class MichelinePacker(
         }
 
     private fun prePackInstruction(value: MichelinePrimitiveApplication, schema: MichelinePrimitiveApplication): MichelinePrimitiveApplication =
-        when (val prim = Michelson.GrammarType.fromStringOrNull(value.prim.value, stringToMichelsonGrammarTypeConverter)) {
-            is MichelsonInstruction.GrammarType -> when (prim) {
+        when (val prim = Michelson.Prim.fromStringOrNull(value.prim.value, stringToMichelsonPrimConverter)) {
+            is MichelsonInstruction.Prim -> when (prim) {
                 MichelsonInstruction.Map, MichelsonInstruction.Iter -> prePackIteratingInstruction(value, schema)
                 MichelsonInstruction.Loop, MichelsonInstruction.LoopLeft -> prePackLoopInstruction(value, schema)
                 MichelsonInstruction.Lambda -> prePackLambdaInstruction(value, schema)
@@ -255,6 +268,12 @@ internal class MichelinePacker(
         return value.copy(args = value.args.replacingAt(argumentIndex, prePackedArg))
     }
 
+    private fun prePack(values: List<MichelineNode>, schemas: List<MichelineNode>): List<MichelineNode> =
+        values.zip(schemas).map { (value, type) -> prePack(value, type) }
+
+    private fun prePack(values: List<MichelineNode>, schema: MichelineNode): List<MichelineNode> =
+        values.map { prePack(it, schema) }
+
     private fun postUnpack(value: MichelineNode, schema: MichelineNode): MichelineNode =
         when {
             schema is MichelinePrimitiveApplication -> postUnpack(value, schema)
@@ -263,8 +282,8 @@ internal class MichelinePacker(
         }
 
     private fun postUnpack(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        when (val prim = Michelson.GrammarType.fromStringOrNull(schema.prim.value, stringToMichelsonGrammarTypeConverter)) {
-            is MichelsonType.GrammarType -> when (prim) {
+        when (val prim = Michelson.Prim.fromStringOrNull(schema.prim.value, stringToMichelsonPrimConverter)) {
+            is MichelsonType.Prim -> when (prim) {
                 MichelsonType.Option, MichelsonComparableType.Option -> postUnpackOptionData(value, schema)
                 MichelsonType.Set, MichelsonType.List -> postUnpackSequenceData(value, schema)
                 MichelsonType.Contract, MichelsonComparableType.Address -> postUnpackAddressData(value, schema)
@@ -286,7 +305,7 @@ internal class MichelinePacker(
     private fun postUnpack(value: MichelineSequence, schema: MichelineSequence): MichelineNode {
         if (value.nodes.size != schema.nodes.size) failWithValueSchemaMismatch(value, schema)
 
-        val postUnpackedArgs = value.nodes.zip(schema.nodes).map { (arg, type) -> postUnpack(arg, type) }
+        val postUnpackedArgs = postUnpack(value.nodes, schema.nodes)
         return MichelineSequence(postUnpackedArgs)
     }
 
@@ -297,7 +316,7 @@ internal class MichelinePacker(
             value.isPrim(MichelsonData.Some) -> {
                 if (value.args.size != schema.args.size) failWithValueSchemaMismatch(value, schema)
 
-                val postUnpackedArgs = value.args.zip(schema.args).map { (arg, type) -> postUnpack(arg, type) }
+                val postUnpackedArgs = postUnpack(value.args, schema.args)
                 value.copy(args = postUnpackedArgs)
             }
             value.isPrim(MichelsonData.None) -> value
@@ -309,14 +328,14 @@ internal class MichelinePacker(
         if (value !is MichelineSequence) failWithValueSchemaMismatch(value, schema)
         if (schema.args.size != 1) failWithInvalidSchema(schema)
 
-        val postUnpacked = value.nodes.map { postUnpack(it, schema.args.first()) }
+        val postUnpacked = postUnpack(value.nodes, schema.args.first())
 
         return MichelineSequence(postUnpacked)
 
     }
 
     private fun postUnpackAddressData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema, addressBytesCoder::decode)
+        postUnpackBytesToString(value, schema) { Address.decodeFromBytes(it, addressBytesCoder).base58 }
 
     private fun postUnpackPairData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode {
         if (value !is MichelinePrimitiveApplication) failWithValueSchemaMismatch(value, schema)
@@ -328,7 +347,7 @@ internal class MichelinePacker(
 
                 if (valueNormalized.args.size != schemaNormalized.args.size) failWithValueSchemaMismatch(value, schema)
 
-                val postUnpackedArgs = valueNormalized.args.zip(schemaNormalized.args).map { (arg, type) -> postUnpack(arg, type) }
+                val postUnpackedArgs = postUnpack(valueNormalized.args, schemaNormalized.args)
                 valueNormalized.copy(args = postUnpackedArgs)
             }
             else -> failWithValueSchemaMismatch(value, schema)
@@ -368,7 +387,7 @@ internal class MichelinePacker(
         val prePacked = value.nodes.map {
             if (it !is MichelinePrimitiveApplication || !it.isPrim(MichelsonData.Elt) || it.args.size != schema.args.size) failWithValueSchemaMismatch(value, schema)
 
-            val postUnpackedArgs = it.args.zip(schema.args).map { (arg, type) -> postUnpack(arg, type) }
+            val postUnpackedArgs = postUnpack(it.args, schema.args)
             it.copy(args = postUnpackedArgs)
         }
 
@@ -382,16 +401,16 @@ internal class MichelinePacker(
         }
 
     private fun postUnpackChainIdData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema) { base58BytesCoder.decode(it, prefix = Tezos.Prefix.ChainId) }
+        postUnpackBytesToString(value, schema) { ChainId.decodeFromBytes(it, encodedBytesCoder).base58 }
 
     private fun postUnpackKeyHashData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema, keyHashBytesCoder::decode)
+        postUnpackBytesToString(value, schema) { ImplicitAddress.decodeFromBytes(it, implicitAddressBytesCoder).base58 }
 
     private fun postUnpackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema, keyBytesCoder::decode)
+        postUnpackBytesToString(value, schema) { PublicKeyEncoded.decodeFromBytes(it, publicKeyBytesCoder).base58 }
 
     private fun postUnpackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema, signatureBytesCoder::decode)
+        postUnpackBytesToString(value, schema) { SignatureEncoded.decodeFromBytes(it, signatureBytesCoder).base58 }
 
     private fun postUnpackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
         postUnpackBigIntToString(value, schema, timestampBigIntCoder::decode)
@@ -411,8 +430,8 @@ internal class MichelinePacker(
         }
 
     private fun postUnpackInstruction(value: MichelinePrimitiveApplication, schema: MichelinePrimitiveApplication): MichelineNode =
-        when (val prim = Michelson.GrammarType.fromStringOrNull(value.prim.value, stringToMichelsonGrammarTypeConverter)) {
-            is MichelsonInstruction.GrammarType -> when (prim) {
+        when (val prim = Michelson.Prim.fromStringOrNull(value.prim.value, stringToMichelsonPrimConverter)) {
+            is MichelsonInstruction.Prim -> when (prim) {
                 MichelsonInstruction.Map, MichelsonInstruction.Iter -> postUnpackIteratingInstruction(value, schema)
                 MichelsonInstruction.Loop, MichelsonInstruction.LoopLeft -> postUnpackLoopInstruction(value, schema)
                 MichelsonInstruction.Lambda -> postUnpackLambdaInstruction(value, schema)
@@ -460,6 +479,12 @@ internal class MichelinePacker(
         val prePackedArg = postUnpackLambdaData(value.args[argumentIndex], schema)
         return value.copy(args = value.args.replacingAt(argumentIndex, prePackedArg))
     }
+
+    private fun postUnpack(values: List<MichelineNode>, schemas: List<MichelineNode>): List<MichelineNode> =
+        values.zip(schemas).map { (value, type) -> postUnpack(value, type) }
+
+    private fun postUnpack(values: List<MichelineNode>, schema: MichelineNode): List<MichelineNode> =
+        values.map { postUnpack(it, schema) }
 
     private fun failWithInvalidValue(value: MichelineNode): Nothing =
         failWithIllegalArgument("Micheline value ${value.toCompactExpression(michelineToCompactStringConverter)} is invalid.")

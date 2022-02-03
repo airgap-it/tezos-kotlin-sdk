@@ -1,9 +1,9 @@
 package it.airgap.tezos.michelson
 
-import it.airgap.tezos.core.internal.type.HexString
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.isHex
 import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.type.HexString
 
 // https://tezos.gitlab.io/active/michelson.html#full-grammar
 public sealed interface MichelsonData : Michelson {
@@ -75,19 +75,19 @@ public sealed interface MichelsonData : Michelson {
         }
     }
 
-    public object Unit : MichelsonData, GrammarType {
+    public object Unit : MichelsonData, Prim {
         override val name: String = "Unit"
-        override val tag: Int = 11
+        override val tag: ByteArray = byteArrayOf(11)
     }
 
-    public object True : MichelsonData, GrammarType {
+    public object True : MichelsonData, Prim {
         override val name: String = "True"
-        override val tag: Int = 10
+        override val tag: ByteArray = byteArrayOf(10)
     }
 
-    public object False : MichelsonData, GrammarType {
+    public object False : MichelsonData, Prim {
         override val name: String = "False"
-        override val tag: Int = 3
+        override val tag: ByteArray = byteArrayOf(3)
     }
 
     public data class Pair(public val values: List<MichelsonData>) : MichelsonData {
@@ -95,36 +95,36 @@ public sealed interface MichelsonData : Michelson {
             require(values.size >= 2)
         }
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "Pair"
-            override val tag: Int = 7
+            override val tag: ByteArray = byteArrayOf(7)
         }
     }
 
     public data class Left(public val value: MichelsonData) : MichelsonData {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "Left"
-            override val tag: Int = 5
+            override val tag: ByteArray = byteArrayOf(5)
         }
     }
 
     public data class Right(public val value: MichelsonData) : MichelsonData {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "Right"
-            override val tag: Int = 8
+            override val tag: ByteArray = byteArrayOf(8)
         }
     }
 
     public data class Some(public val value: MichelsonData) : MichelsonData {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "Some"
-            override val tag: Int = 9
+            override val tag: ByteArray = byteArrayOf(9)
         }
     }
 
-    public object None : MichelsonData, GrammarType {
+    public object None : MichelsonData, Prim {
         override val name: String = "None"
-        override val tag: Int = 6
+        override val tag: ByteArray = byteArrayOf(6)
     }
 
     public data class Sequence(public val values: List<MichelsonData>) : MichelsonData {
@@ -136,14 +136,27 @@ public sealed interface MichelsonData : Michelson {
     }
 
     public data class Elt(public val key: MichelsonData, public val value: MichelsonData) {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "Elt"
-            override val tag: Int = 4
+            override val tag: ByteArray = byteArrayOf(4)
         }
     }
 
-    public sealed interface GrammarType : Michelson.GrammarType {
-        public companion object {}
+    public sealed interface Prim : Michelson.Prim {
+        public companion object {
+            public val values: List<Prim>
+                get() = listOf(
+                    Unit,
+                    True,
+                    False,
+                    Pair,
+                    Left,
+                    Right,
+                    Some,
+                    None,
+                    Elt,
+                ) + MichelsonInstruction.Prim.values
+        }
     }
 
     public companion object {

@@ -173,9 +173,7 @@ class BytesTest {
         ).map(BigInt::valueOf)
 
         negativeBigIntegers.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                it.toHexString()
-            }
+            assertFailsWith<IllegalArgumentException> { it.toHexString() }
         }
     }
 }

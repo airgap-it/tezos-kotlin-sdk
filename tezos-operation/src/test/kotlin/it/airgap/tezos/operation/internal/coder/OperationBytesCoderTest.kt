@@ -10,6 +10,12 @@ import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.type.encoded.BlockHash
+import it.airgap.tezos.core.type.encoded.GenericSignature
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
+import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
 import it.airgap.tezos.operation.*
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 import it.airgap.tezos.operation.internal.di.ScopedDependencyRegistry
@@ -44,26 +50,33 @@ class OperationBytesCoderTest {
 
         val base58Check = Base58Check(Base58(), crypto)
 
-        val base58BytesCoder = Base58BytesCoder(base58Check)
-        val keyHashBytesCoder = KeyHashBytesCoder(base58BytesCoder)
-        val keyBytesCoder = KeyBytesCoder(base58BytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(base58BytesCoder)
-        val addressBytesCoder = AddressBytesCoder(keyHashBytesCoder, base58BytesCoder)
-        val zarithNaturalNumberBytesCoder = ZarithNaturalNumberBytesCoder()
+        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
+        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
+        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
+        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
+        val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
+        val michelineBytesCoder = MichelineBytesCoder(
+            StringToMichelsonPrimConverter(),
+            TagToMichelsonPrimConverter(),
+            MichelineToCompactStringConverter(),
+            ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
+        )
 
         val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
 
         val operationContentBytesCoder = OperationContentBytesCoder(
-            base58BytesCoder,
+            encodedBytesCoder,
             addressBytesCoder,
-            keyBytesCoder,
-            keyHashBytesCoder,
+            publicKeyBytesCoder,
+            implicitAddressBytesCoder,
             signatureBytesCoder,
-            zarithNaturalNumberBytesCoder,
+            zarithNaturalBytesCoder,
+            michelineBytesCoder,
             tagToOperationContentKindConverter,
         )
 
-        operationBytesCoder = OperationBytesCoder(operationContentBytesCoder, base58BytesCoder)
+        operationBytesCoder = OperationBytesCoder(operationContentBytesCoder, encodedBytesCoder)
 
         every { dependencyRegistry.operationBytesCoder } returns operationBytesCoder
     }
@@ -79,9 +92,9 @@ class OperationBytesCoderTest {
             operationsWithBytes,
             listOf(
                 Operation(
-                    "BLyKu3tnc9NCuiFfCqfeVGPCoZTyW63dYh2XAYxkM7fQYKCqsju",
+                    BlockHash("BLyKu3tnc9NCuiFfCqfeVGPCoZTyW63dYh2XAYxkM7fQYKCqsju"),
                     contents = emptyList(),
-                    signature = "siga9NgTU8rCDsojPqDciCQi9nPDhYKTBrg1SjHsxRfMgJByWJr4SrXpUhQEjxiJpR7sVbQwHoo2mdMF1CdLGSyAXW6JTyst"
+                    signature = GenericSignature("siga9NgTU8rCDsojPqDciCQi9nPDhYKTBrg1SjHsxRfMgJByWJr4SrXpUhQEjxiJpR7sVbQwHoo2mdMF1CdLGSyAXW6JTyst")
                 ) to "a5db12a8a7716fa5445bd374c8b3239c876dde8397efae0eb0dd223dc23a51c7".asHexString().toByteArray(),
             ),
         ).flatten().forEach {
@@ -110,46 +123,29 @@ class OperationBytesCoderTest {
     @Test
     fun `should fail to decode Operation from invalid bytes`() {
         invalidBytes.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                operationBytesCoder.decode(it)
-            }
-
-            assertFailsWith<IllegalArgumentException> {
-                operationBytesCoder.decodeConsuming(it.toMutableList())
-            }
-
-            assertFailsWith<IllegalArgumentException> {
-                Operation.unforgeFromBytes(it)
-            }
-
-            assertFailsWith<IllegalArgumentException> {
-                Operation.unforgeFromBytes(it, operationBytesCoder)
-            }
-
-            assertFailsWith<IllegalArgumentException> {
-                Operation.unforgeFromString(it.toHexString().asString())
-            }
-
-            assertFailsWith<IllegalArgumentException> {
-                Operation.unforgeFromString(it.toHexString().asString(), operationBytesCoder)
-            }
+            assertFailsWith<IllegalArgumentException> { operationBytesCoder.decode(it) }
+            assertFailsWith<IllegalArgumentException> { operationBytesCoder.decodeConsuming(it.toMutableList()) }
+            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromBytes(it) }
+            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromBytes(it, operationBytesCoder) }
+            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromString(it.toHexString().asString()) }
+            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromString(it.toHexString().asString(), operationBytesCoder) }
         }
     }
 
     private val operationsWithBytes: List<Pair<Operation, ByteArray>>
         get() = listOf(
             Operation(
-                "BLyKu3tnc9NCuiFfCqfeVGPCoZTyW63dYh2XAYxkM7fQYKCqsju",
+                BlockHash("BLyKu3tnc9NCuiFfCqfeVGPCoZTyW63dYh2XAYxkM7fQYKCqsju"),
                 contents = emptyList(),
             ) to "a5db12a8a7716fa5445bd374c8b3239c876dde8397efae0eb0dd223dc23a51c7".asHexString().toByteArray(),
             Operation(
-                OperationContent.SeedNonceRevelation(1, "6cdaf9367e551995a670a5c642a9396290f8c9d17e6bc3c1555bfaa910d92214"),
-                branch = "BLjg4HU2BwnCgJfRutxJX5rHACzLDxRJes1MXqbXXdxvHWdK3Te",
+                OperationContent.SeedNonceRevelation(1, "6cdaf9367e551995a670a5c642a9396290f8c9d17e6bc3c1555bfaa910d92214".asHexString()),
+                branch = BlockHash("BLjg4HU2BwnCgJfRutxJX5rHACzLDxRJes1MXqbXXdxvHWdK3Te"),
             ) to "86db32fcecf30277eef3ef9f397118ed067957dd998979fd723ea0a0d50beead01000000016cdaf9367e551995a670a5c642a9396290f8c9d17e6bc3c1555bfaa910d92214".asHexString().toByteArray(),
             Operation(
-                OperationContent.SeedNonceRevelation(1, "9d15bcdc0194b327d3cb0dcd05242bc6ff1635da635e38ed7a62b8c413ce6833"),
-                OperationContent.SeedNonceRevelation(2, "921ed0115c7cc1b5dcd07ad66ce4d9b2b0186c93c27a80d70b66b4e309add170"),
-                branch = "BLjg4HU2BwnCgJfRutxJX5rHACzLDxRJes1MXqbXXdxvHWdK3Te",
+                OperationContent.SeedNonceRevelation(1, "9d15bcdc0194b327d3cb0dcd05242bc6ff1635da635e38ed7a62b8c413ce6833".asHexString()),
+                OperationContent.SeedNonceRevelation(2, "921ed0115c7cc1b5dcd07ad66ce4d9b2b0186c93c27a80d70b66b4e309add170".asHexString()),
+                branch = BlockHash("BLjg4HU2BwnCgJfRutxJX5rHACzLDxRJes1MXqbXXdxvHWdK3Te"),
             ) to "86db32fcecf30277eef3ef9f397118ed067957dd998979fd723ea0a0d50beead01000000019d15bcdc0194b327d3cb0dcd05242bc6ff1635da635e38ed7a62b8c413ce68330100000002921ed0115c7cc1b5dcd07ad66ce4d9b2b0186c93c27a80d70b66b4e309add170".asHexString().toByteArray(),
         )
 

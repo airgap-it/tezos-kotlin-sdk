@@ -1,6 +1,9 @@
 package it.airgap.tezos.operation
 
 import it.airgap.tezos.core.internal.type.BytesTag
+import it.airgap.tezos.core.type.HexString
+import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
@@ -37,7 +40,7 @@ public sealed interface OperationContent {
 
     public data class SeedNonceRevelation(
         public val level: Int,
-        public val nonce: String,
+        public val nonce: HexString,
     ) : OperationContent {
         public companion object : Kind {
             override val tag: UByte = 1U
@@ -63,8 +66,8 @@ public sealed interface OperationContent {
     }
 
     public data class ActivateAccount(
-        public val pkh: String,
-        public val secret: String,
+        public val pkh: Ed25519PublicKeyHash,
+        public val secret: HexString,
     ) : OperationContent {
         public companion object : Kind {
             override val tag: UByte = 4U
@@ -72,9 +75,9 @@ public sealed interface OperationContent {
     }
 
     public data class Proposals(
-        public val source: String,
+        public val source: ImplicitAddress<*>,
         public val period: Int,
-        public val proposals: List<String>,
+        public val proposals: List<ProtocolHash>,
     ) : OperationContent {
         public companion object : Kind {
             override val tag: UByte = 5U
@@ -82,9 +85,9 @@ public sealed interface OperationContent {
     }
 
     public data class Ballot(
-        public val source: String,
+        public val source: ImplicitAddress<*>,
         public val period: Int,
-        public val proposal: String,
+        public val proposal: ProtocolHash,
         public val ballot: BallotType,
     ) : OperationContent {
         public enum class BallotType(override val value: ByteArray) : BytesTag {
@@ -110,7 +113,7 @@ public sealed interface OperationContent {
     }
 
     public data class FailingNoop(
-        public val arbitrary: String,
+        public val arbitrary: HexString,
     ) : OperationContent {
         public companion object : Kind {
             override val tag: UByte = 17U
@@ -123,14 +126,14 @@ public sealed interface OperationContent {
         public val slot: UShort
         public val level: Int
         public val round: Int
-        public val blockPayloadHash: String
+        public val blockPayloadHash: BlockPayloadHash
     }
 
     public data class Preendorsement(
         override val slot: UShort,
         override val level: Int,
         override val round: Int,
-        override val blockPayloadHash: String,
+        override val blockPayloadHash: BlockPayloadHash,
     ) : Consensus {
         public companion object : Kind {
             override val tag: UByte = 20U
@@ -141,7 +144,7 @@ public sealed interface OperationContent {
         override val slot: UShort,
         override val level: Int,
         override val round: Int,
-        override val blockPayloadHash: String,
+        override val blockPayloadHash: BlockPayloadHash,
     ) : Consensus {
         public companion object : Kind {
             override val tag: UByte = 21U
@@ -151,20 +154,20 @@ public sealed interface OperationContent {
     // -- manager --
 
     public sealed interface Manager : OperationContent {
-        public val source: String
-        public val fee: String
-        public val counter: String
-        public val gasLimit: String
-        public val storageLimit: String
+        public val source: ImplicitAddress<*>
+        public val fee: ZarithNatural
+        public val counter: ZarithNatural
+        public val gasLimit: ZarithNatural
+        public val storageLimit: ZarithNatural
     }
 
     public data class Reveal(
-        override val source: String,
-        override val fee: String,
-        override val counter: String,
-        override val gasLimit: String,
-        override val storageLimit: String,
-        public val publicKey: String,
+        override val source: ImplicitAddress<*>,
+        override val fee: ZarithNatural,
+        override val counter: ZarithNatural,
+        override val gasLimit: ZarithNatural,
+        override val storageLimit: ZarithNatural,
+        public val publicKey: PublicKeyEncoded<*>,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 107U
@@ -172,13 +175,13 @@ public sealed interface OperationContent {
     }
 
     public data class Transaction(
-        override val source: String,
-        override val fee: String,
-        override val counter: String,
-        override val gasLimit: String,
-        override val storageLimit: String,
-        public val amount: String,
-        public val destination: String,
+        override val source: ImplicitAddress<*>,
+        override val fee: ZarithNatural,
+        override val counter: ZarithNatural,
+        override val gasLimit: ZarithNatural,
+        override val storageLimit: ZarithNatural,
+        public val amount: ZarithNatural,
+        public val destination: Address<*>,
         public val parameters: Parameters? = null,
     ) : Manager {
         public companion object : Kind {
@@ -187,13 +190,13 @@ public sealed interface OperationContent {
     }
 
     public data class Origination(
-        override val source: String,
-        override val fee: String,
-        override val counter: String,
-        override val gasLimit: String,
-        override val storageLimit: String,
-        public val balance: String,
-        public val delegate: String? = null,
+        override val source: ImplicitAddress<*>,
+        override val fee: ZarithNatural,
+        override val counter: ZarithNatural,
+        override val gasLimit: ZarithNatural,
+        override val storageLimit: ZarithNatural,
+        public val balance: ZarithNatural,
+        public val delegate: ImplicitAddress<*>? = null,
         public val script: Script,
     ) : Manager {
         public companion object : Kind {
@@ -202,12 +205,12 @@ public sealed interface OperationContent {
     }
 
     public data class Delegation(
-        override val source: String,
-        override val fee: String,
-        override val counter: String,
-        override val gasLimit: String,
-        override val storageLimit: String,
-        public val delegate: String? = null,
+        override val source: ImplicitAddress<*>,
+        override val fee: ZarithNatural,
+        override val counter: ZarithNatural,
+        override val gasLimit: ZarithNatural,
+        override val storageLimit: ZarithNatural,
+        public val delegate: ImplicitAddress<*>? = null,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 110U
@@ -215,11 +218,11 @@ public sealed interface OperationContent {
     }
 
     public data class RegisterGlobalConstant(
-        override val source: String,
-        override val fee: String,
-        override val counter: String,
-        override val gasLimit: String,
-        override val storageLimit: String,
+        override val source: ImplicitAddress<*>,
+        override val fee: ZarithNatural,
+        override val counter: ZarithNatural,
+        override val gasLimit: ZarithNatural,
+        override val storageLimit: ZarithNatural,
         public val value: MichelineNode,
     ) : Manager {
         public companion object : Kind {
@@ -228,12 +231,12 @@ public sealed interface OperationContent {
     }
 
     public data class SetDepositsLimit(
-        override val source: String,
-        override val fee: String,
-        override val counter: String,
-        override val gasLimit: String,
-        override val storageLimit: String,
-        public val limit: String? = null,
+        override val source: ImplicitAddress<*>,
+        override val fee: ZarithNatural,
+        override val counter: ZarithNatural,
+        override val gasLimit: ZarithNatural,
+        override val storageLimit: ZarithNatural,
+        public val limit: ZarithNatural? = null,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 112U
