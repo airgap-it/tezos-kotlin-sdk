@@ -43,7 +43,7 @@ internal fun MichelinePrimitiveApplication(
     MichelinePrimitiveApplication(MichelinePrimitiveApplication.Primitive(prim), args, annots.map { MichelinePrimitiveApplication.Annotation(it) })
 
 @Suppress("FunctionName")
-public fun <T : Michelson.GrammarType> MichelinePrimitiveApplication(
+public fun <T : Michelson.Prim> MichelinePrimitiveApplication(
     prim: T,
     args: List<MichelineNode> = emptyList(),
     annots: List<String> = emptyList(),

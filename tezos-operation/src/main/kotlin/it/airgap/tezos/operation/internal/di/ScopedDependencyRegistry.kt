@@ -18,6 +18,6 @@ internal interface ScopedDependencyRegistry : DependencyRegistry {
     val tagToOperationContentKindConverter: TagToOperationContentKindConverter
 }
 
-internal fun DependencyRegistry.scoped(): ScopedDependencyRegistry =
+internal fun DependencyRegistry.operation(): ScopedDependencyRegistry =
     if (this is ScopedDependencyRegistry) this
-    else findScoped<OperationDependencyRegistry>() ?: OperationDependencyRegistry(this).also { addScoped(it) }
+    else findScoped<OperationScopedDependencyRegistry>() ?: OperationScopedDependencyRegistry(this).also { addScoped(it) }

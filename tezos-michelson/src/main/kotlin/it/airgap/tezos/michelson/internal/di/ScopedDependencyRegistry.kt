@@ -1,5 +1,6 @@
 package it.airgap.tezos.michelson.internal.di
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.findScoped
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
@@ -7,43 +8,44 @@ import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 
-internal interface ScopedDependencyRegistry : DependencyRegistry {
+public interface ScopedDependencyRegistry : DependencyRegistry {
 
     // -- coder --
 
-    val michelineBytesCoder: MichelineBytesCoder
-    val michelineJsonCoder: MichelineJsonCoder
+    public val michelineBytesCoder: MichelineBytesCoder
+    public val michelineJsonCoder: MichelineJsonCoder
 
     // -- converter --
 
-    val michelineToMichelsonConverter: MichelineToMichelsonConverter
+    public val michelineToMichelsonConverter: MichelineToMichelsonConverter
 
-    val michelineToNormalizedConverter: MichelineToNormalizedConverter
-    val michelinePrimitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter
-    val michelineSequenceToNormalizedConverter: MichelineSequenceToNormalizedConverter
+    public val michelineToNormalizedConverter: MichelineToNormalizedConverter
+    public val michelinePrimitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter
+    public val michelineSequenceToNormalizedConverter: MichelineSequenceToNormalizedConverter
 
-    val michelineToStringConverter: MichelineToStringConverter
-    val michelineToCompactStringConverter: MichelineToCompactStringConverter
+    public val michelineToStringConverter: MichelineToStringConverter
+    public val michelineToCompactStringConverter: MichelineToCompactStringConverter
 
-    val michelsonToMichelineConverter: MichelsonToMichelineConverter
+    public val michelsonToMichelineConverter: MichelsonToMichelineConverter
 
-    val stringToMichelsonGrammarTypeConverter: StringToMichelsonGrammarTypeConverter
-    val stringToMichelsonDataGrammarTypeConverter: StringToMichelsonDataGrammarTypeConverter
-    val stringToMichelsonInstructionGrammarTypeConverter: StringToMichelsonInstructionGrammarTypeConverter
-    val stringToMichelsonTypeGrammarTypeConverter: StringToMichelsonTypeGrammarTypeConverter
-    val stringToMichelsonComparableTypeGrammarTypeConverter: StringToMichelsonComparableTypeGrammarTypeConverter
+    public val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter
+    public val stringToMichelsonDataPrimConverter: StringToMichelsonDataPrimConverter
+    public val stringToMichelsonInstructionPrimConverter: StringToMichelsonInstructionPrimConverter
+    public val stringToMichelsonTypePrimConverter: StringToMichelsonTypePrimConverter
+    public val stringToMichelsonComparableTypePrimConverter: StringToMichelsonComparableTypePrimConverter
 
-    val tagToMichelsonGrammarTypeConverter: TagToMichelsonGrammarTypeConverter
-    val tagToMichelsonDataGrammarTypeConverter: TagToMichelsonDataGrammarTypeConverter
-    val tagToMichelsonInstructionGrammarTypeConverter: TagToMichelsonInstructionGrammarTypeConverter
-    val tagToMichelsonTypeGrammarTypeConverter: TagToMichelsonTypeGrammarTypeConverter
-    val tagToMichelsonComparableTypeGrammarTypeConverter: TagToMichelsonComparableTypeGrammarTypeConverter
+    public val tagToMichelsonPrimConverter: TagToMichelsonPrimConverter
+    public val tagToMichelsonDataPrimConverter: TagToMichelsonDataPrimConverter
+    public val tagToMichelsonInstructionPrimConverter: TagToMichelsonInstructionPrimConverter
+    public val tagToMichelsonTypePrimConverter: TagToMichelsonTypePrimConverter
+    public val tagToMichelsonComparableTypePrimConverter: TagToMichelsonComparableTypePrimConverter
 
     // -- packer --
 
-    val michelinePacker: MichelinePacker
+    public val michelinePacker: MichelinePacker
 }
 
-internal fun DependencyRegistry.scoped(): ScopedDependencyRegistry =
+@InternalTezosSdkApi
+public fun DependencyRegistry.michelson(): ScopedDependencyRegistry =
     if (this is ScopedDependencyRegistry) this
-    else findScoped<MichelsonDependencyRegistry>() ?: MichelsonDependencyRegistry(this).also { addScoped(it) }
+    else findScoped() ?: MichelsonScopedDependencyRegistry(this).also { addScoped(it) }

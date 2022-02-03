@@ -9,7 +9,7 @@ import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
 
-public class MichelinePrimitiveApplicationBuilder<in T : Michelson, in G : Michelson.GrammarType> @PublishedApi internal constructor(
+public class MichelinePrimitiveApplicationBuilder<in T : Michelson, in G : Michelson.Prim> @PublishedApi internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: G,
 ) : MichelinePrimitiveApplicationSingleArgBuilder<T, G>(michelsonToMichelineConverter, prim) {
@@ -17,7 +17,7 @@ public class MichelinePrimitiveApplicationBuilder<in T : Michelson, in G : Miche
         MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.add(it) }
 }
 
-public open class MichelinePrimitiveApplicationSingleArgBuilder<in T : Michelson, in G : Michelson.GrammarType> internal constructor(
+public open class MichelinePrimitiveApplicationSingleArgBuilder<in T : Michelson, in G : Michelson.Prim> internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
@@ -25,7 +25,7 @@ public open class MichelinePrimitiveApplicationSingleArgBuilder<in T : Michelson
         MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
-public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.GrammarType> internal constructor(
+public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Prim> internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: T,
 ) : MichelineTransformableBuilder(michelsonToMichelineConverter) {
@@ -43,7 +43,7 @@ public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Gr
     }
 }
 
-public class MichelinePrimitiveApplicationOptionalIntegerArgBuilder<in T : Michelson.GrammarType> internal constructor(
+public class MichelinePrimitiveApplicationOptionalIntegerArgBuilder<in T : Michelson.Prim> internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: T,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<T>(michelsonToMichelineConverter, prim) {
@@ -54,7 +54,7 @@ public class MichelinePrimitiveApplicationOptionalIntegerArgBuilder<in T : Miche
     public infix fun arg(value: ULong): MichelineBuilder = arg(value.toString())
 }
 
-public class MichelinePrimitiveApplicationIntegerArgBuilder<in T : Michelson.GrammarType> internal constructor(
+public class MichelinePrimitiveApplicationIntegerArgBuilder<in T : Michelson.Prim> internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: T,
     arg: MichelineLiteral.Integer,

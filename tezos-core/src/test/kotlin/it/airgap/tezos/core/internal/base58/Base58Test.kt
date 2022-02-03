@@ -67,10 +67,6 @@ class Base58Test {
 
     @Test
     fun `fails when decoding invalid Base58 string`() {
-        invalidBase58Strings.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                base58.decode(it)
-            }
-        }
+        invalidBase58Strings.forEach { assertFailsWith<IllegalArgumentException> { base58.decode(it) } }
     }
 }

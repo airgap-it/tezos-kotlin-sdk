@@ -1,5 +1,6 @@
 package it.airgap.tezos.michelson.internal.converter
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
@@ -10,9 +11,10 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelineToNormalizedConverter : Converter<MichelineNode, MichelineNode> {
-    val primitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter((this))
-    val sequenceToNormalizedConverter: MichelineSequenceToNormalizedConverter = MichelineSequenceToNormalizedConverter(this)
+@InternalTezosSdkApi
+public class MichelineToNormalizedConverter : Converter<MichelineNode, MichelineNode> {
+    internal val primitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter((this))
+    internal val sequenceToNormalizedConverter: MichelineSequenceToNormalizedConverter = MichelineSequenceToNormalizedConverter(this)
 
     override fun convert(value: MichelineNode): MichelineNode =
         when (value) {
@@ -22,7 +24,8 @@ internal class MichelineToNormalizedConverter : Converter<MichelineNode, Micheli
         }
 }
 
-internal class MichelinePrimitiveApplicationToNormalizedConverter(
+@InternalTezosSdkApi
+public class MichelinePrimitiveApplicationToNormalizedConverter(
     private val toNormalizedConverter: MichelineToNormalizedConverter,
 ) : Converter<MichelinePrimitiveApplication, MichelinePrimitiveApplication> {
     override fun convert(value: MichelinePrimitiveApplication): MichelinePrimitiveApplication =
@@ -46,7 +49,8 @@ internal class MichelinePrimitiveApplicationToNormalizedConverter(
         }
 }
 
-internal class MichelineSequenceToNormalizedConverter(
+@InternalTezosSdkApi
+public class MichelineSequenceToNormalizedConverter(
     private val toNormalizedConverter: MichelineToNormalizedConverter,
 ) : Converter<MichelineSequence, MichelineSequence> {
     override fun convert(value: MichelineSequence): MichelineSequence = MichelineSequence(value.nodes.map { toNormalizedConverter.convert(it) })

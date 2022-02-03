@@ -1,8 +1,8 @@
 package it.airgap.tezos.michelson
 
 import inRange
-import it.airgap.tezos.core.internal.type.HexString
 import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.type.HexString
 import org.junit.Test
 import kotlin.test.*
 
@@ -119,9 +119,7 @@ class MichelsonDataTest {
         )
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                MichelsonData.IntConstant(it)
-            }
+            assertFailsWith<IllegalArgumentException> { MichelsonData.IntConstant(it) }
         }
     }
 
@@ -284,9 +282,7 @@ class MichelsonDataTest {
         )
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                MichelsonData.NaturalNumberConstant(it)
-            }
+            assertFailsWith<IllegalArgumentException> { MichelsonData.NaturalNumberConstant(it) }
         }
     }
 
@@ -312,7 +308,6 @@ class MichelsonDataTest {
             }
 
             if (it.inRange(UShort.MIN_VALUE..UShort.MAX_VALUE)) {
-                println("$it, ${Short.MIN_VALUE}, ${Short.MAX_VALUE}")
                 assertEquals(it.toUShort(), naturalNumber.toUShort())
             } else {
                 assertFailsWith<NumberFormatException> { naturalNumber.toUShort() }

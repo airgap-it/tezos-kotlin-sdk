@@ -1,5 +1,6 @@
 package it.airgap.tezos.michelson.internal.coder
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.michelson.internal.utils.KJsonSerializer
@@ -23,11 +24,12 @@ import kotlinx.serialization.json.*
 import kotlin.reflect.KClass
 
 @OptIn(ExperimentalSerializationApi::class)
-internal class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
+@InternalTezosSdkApi
+public class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
     override fun encode(value: MichelineNode): JsonElement = Json.encodeToJsonElement(MichelineNode.serializer(), value)
     override fun decode(value: JsonElement): MichelineNode = Json.decodeFromJsonElement(MichelineNode.serializer(), value)
 
-    object NodeSerializer : KJsonSerializer<MichelineNode> {
+    internal object NodeSerializer : KJsonSerializer<MichelineNode> {
         override val descriptor: SerialDescriptor = buildClassSerialDescriptor(MichelineNode::class.toString())
 
         override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): MichelineNode =
@@ -59,7 +61,7 @@ internal class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
         }
     }
 
-    object LiteralSerializer : KJsonSerializer<MichelineLiteral> {
+    internal object LiteralSerializer : KJsonSerializer<MichelineLiteral> {
         object Field {
             const val INT = "int"
             const val STRING = "string"
@@ -90,7 +92,7 @@ internal class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
         private fun failWithInvalidSerializedLiteral(): Nothing = throw SerializationException("Could not deserialize, invalid Micheline Literal.")
     }
 
-    object LiteralBytesSerializer : KSerializer<MichelineLiteral.Bytes> {
+    internal object LiteralBytesSerializer : KSerializer<MichelineLiteral.Bytes> {
         override val descriptor: SerialDescriptor = buildClassSerialDescriptor(MichelineLiteral.Bytes::class.toString()) {
             element<String>("bytes")
         }
@@ -109,7 +111,7 @@ internal class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
         }
     }
 
-    object SequenceSerializer : KSerializer<MichelineSequence> {
+    internal object SequenceSerializer : KSerializer<MichelineSequence> {
         private val listSerializer = ListSerializer(MichelineNode.serializer())
 
         override val descriptor: SerialDescriptor = listSerializer.descriptor

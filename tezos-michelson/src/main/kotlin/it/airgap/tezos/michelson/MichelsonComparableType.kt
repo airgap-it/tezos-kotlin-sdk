@@ -2,80 +2,80 @@ package it.airgap.tezos.michelson
 
 // https://tezos.gitlab.io/active/michelson.html#full-grammar
 public sealed interface MichelsonComparableType : MichelsonType {
-    public object Unit : MichelsonComparableType, GrammarType {
+    public object Unit : MichelsonComparableType, Prim {
         override val name: kotlin.String = "unit"
-        override val tag: kotlin.Int = 108
+        override val tag: ByteArray = byteArrayOf(108)
     }
 
-    public object Never : MichelsonComparableType, GrammarType {
+    public object Never : MichelsonComparableType, Prim {
         override val name: kotlin.String = "never"
-        override val tag: kotlin.Int = 120
+        override val tag: ByteArray = byteArrayOf(120)
     }
 
-    public object Bool : MichelsonComparableType, GrammarType {
+    public object Bool : MichelsonComparableType, Prim {
         override val name: kotlin.String = "bool"
-        override val tag: kotlin.Int = 89
+        override val tag: ByteArray = byteArrayOf(89)
     }
 
-    public object Int : MichelsonComparableType, GrammarType {
+    public object Int : MichelsonComparableType, Prim {
         override val name: kotlin.String = "int"
-        override val tag: kotlin.Int = 91
+        override val tag: ByteArray = byteArrayOf(91)
     }
 
-    public object Nat : MichelsonComparableType, GrammarType {
+    public object Nat : MichelsonComparableType, Prim {
         override val name: kotlin.String = "nat"
-        override val tag: kotlin.Int = 98
+        override val tag: ByteArray = byteArrayOf(98)
     }
 
-    public object String : MichelsonComparableType, GrammarType {
+    public object String : MichelsonComparableType, Prim {
         override val name: kotlin.String = "string"
-        override val tag: kotlin.Int = 104
+        override val tag: ByteArray = byteArrayOf(104)
     }
 
-    public object ChainId : MichelsonComparableType, GrammarType {
+    public object ChainId : MichelsonComparableType, Prim {
         override val name: kotlin.String = "chain_id"
-        override val tag: kotlin.Int = 116
+        override val tag: ByteArray = byteArrayOf(116)
     }
 
-    public object Bytes : MichelsonComparableType, GrammarType {
+    public object Bytes : MichelsonComparableType, Prim {
         override val name: kotlin.String = "bytes"
-        override val tag: kotlin.Int = 105
+        override val tag: ByteArray = byteArrayOf(105)
     }
 
-    public object Mutez : MichelsonComparableType, GrammarType {
+    public object Mutez : MichelsonComparableType, Prim {
         override val name: kotlin.String = "mutez"
-        override val tag: kotlin.Int = 106
+        override val tag: ByteArray = byteArrayOf(106)
     }
 
-    public object KeyHash : MichelsonComparableType, GrammarType {
+    public object KeyHash : MichelsonComparableType, Prim {
         override val name: kotlin.String = "key_hash"
-        override val tag: kotlin.Int = 93
+        override val tag: ByteArray = byteArrayOf(93)
     }
 
-    public object Key : MichelsonComparableType, GrammarType {
+    public object Key : MichelsonComparableType, Prim {
         override val name: kotlin.String = "key"
-        override val tag: kotlin.Int = 92
+        override val tag: ByteArray = byteArrayOf(92)
     }
 
-    public object Signature : MichelsonComparableType, GrammarType {
+    public object Signature : MichelsonComparableType, Prim {
         override val name: kotlin.String = "signature"
-        override val tag: kotlin.Int = 103
+        override val tag: ByteArray = byteArrayOf(103)
     }
 
-    public object Timestamp : MichelsonComparableType, GrammarType {
+    public object Timestamp : MichelsonComparableType, Prim {
         override val name: kotlin.String = "timestamp"
-        override val tag: kotlin.Int = 107
+        override val tag: ByteArray = byteArrayOf(107)
     }
 
-    public object Address : MichelsonComparableType, GrammarType {
+    public object Address : MichelsonComparableType, Prim {
         override val name: kotlin.String = "address"
-        override val tag: kotlin.Int = 110
+        override val tag: ByteArray = byteArrayOf(110)
     }
 
     public data class Option(public val type: MichelsonComparableType) : MichelsonComparableType {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: kotlin.String = "option"
-            override val tag: kotlin.Int = 99
+            override val tag: ByteArray = byteArrayOf(99)
         }
     }
 
@@ -83,9 +83,9 @@ public sealed interface MichelsonComparableType : MichelsonType {
         public val lhs: MichelsonComparableType,
         public val rhs: MichelsonComparableType,
     ) : MichelsonComparableType {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: kotlin.String = "or"
-            override val tag: kotlin.Int = 100
+            override val tag: ByteArray = byteArrayOf(100)
         }
     }
 
@@ -94,14 +94,35 @@ public sealed interface MichelsonComparableType : MichelsonType {
             require(types.size >= 2) { "Pair requires at least 2 arguments." }
         }
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: kotlin.String = "pair"
-            override val tag: kotlin.Int = 101
+            override val tag: ByteArray = byteArrayOf(101)
         }
     }
 
-    public sealed interface GrammarType : MichelsonType.GrammarType {
-        public companion object {}
+    public sealed interface Prim : MichelsonType.Prim {
+        public companion object {
+            public val values: List<Prim>
+                get() = listOf(
+                    Unit,
+                    Never,
+                    Bool,
+                    Int,
+                    Nat,
+                    String,
+                    ChainId,
+                    Bytes,
+                    Mutez,
+                    KeyHash,
+                    Key,
+                    Signature,
+                    Timestamp,
+                    Address,
+                    Option,
+                    Or,
+                    Pair,
+                )
+        }
     }
 
     public companion object {

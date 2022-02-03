@@ -1,9 +1,9 @@
 package it.airgap.tezos.michelson.micheline
 
-import it.airgap.tezos.core.internal.type.HexString
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.isHex
 import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import kotlinx.serialization.Serializable
 

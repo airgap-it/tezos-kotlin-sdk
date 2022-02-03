@@ -56,13 +56,8 @@ class MichelinePrimitiveApplicationTest {
             MichelinePrimitiveApplication(MichelsonData.Unit, annots = listOf("%annot")),
         )
 
-        assertFailsWith<IllegalArgumentException> {
-            MichelinePrimitiveApplication("@prim")
-        }
-
-        assertFailsWith<IllegalArgumentException> {
-            MichelinePrimitiveApplication("prim", annots = listOf("annot"))
-        }
+        assertFailsWith<IllegalArgumentException> { MichelinePrimitiveApplication("@prim") }
+        assertFailsWith<IllegalArgumentException> { MichelinePrimitiveApplication("prim", annots = listOf("annot")) }
     }
 
     @Test

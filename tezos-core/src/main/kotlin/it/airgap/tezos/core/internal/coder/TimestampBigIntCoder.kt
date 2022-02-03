@@ -1,5 +1,6 @@
 package it.airgap.tezos.core.internal.coder
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import java.time.DateTimeException
@@ -7,6 +8,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
+@InternalTezosSdkApi
 public class TimestampBigIntCoder : Coder<String, BigInt> {
     override fun encode(value: String): BigInt {
         val timestamp = dateToTimestamp(value)

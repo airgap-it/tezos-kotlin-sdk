@@ -7,6 +7,10 @@ import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.converter.StringToAddressConverter
+import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
+import it.airgap.tezos.core.internal.converter.StringToPublicKeyEncodedConverter
+import it.airgap.tezos.core.internal.converter.StringToSignatureEncodedConverter
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
@@ -54,33 +58,42 @@ class MichelinePackerTest {
 
         val base58Check = Base58Check(Base58(), crypto)
 
-        val stringToMichelsonGrammarTypeConverter = StringToMichelsonGrammarTypeConverter()
+        val stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
         michelineToNormalizedConverter = MichelineToNormalizedConverter()
         val michelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter(michelineToNormalizedConverter)
-        val tagToMichelsonGrammarTypeConverter = TagToMichelsonGrammarTypeConverter()
+        val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
         val michelineToCompactStringConverter = MichelineToCompactStringConverter()
 
-        val base58BytesCoder = Base58BytesCoder(base58Check)
-        val keyHashBytesCoder = KeyHashBytesCoder(base58BytesCoder)
-        val keyBytesCoder = KeyBytesCoder(base58BytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(base58BytesCoder)
+        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
+        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
+        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
         val timestampBigIntCoder = TimestampBigIntCoder()
-        val addressBytesCoder = AddressBytesCoder(keyHashBytesCoder, base58BytesCoder)
-        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalNumberBytesCoder())
+        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
+        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalBytesCoder())
 
-        val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonGrammarTypeConverter, tagToMichelsonGrammarTypeConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
+        val stringToAddressConverter = StringToAddressConverter()
+        val stringToImplicitAddressConverter = StringToImplicitAddressConverter()
+        val stringToPublicKeyEncodedConverter = StringToPublicKeyEncodedConverter()
+        val stringToSignatureEncodedConverter = StringToSignatureEncodedConverter()
+
+        val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
 
         michelinePacker = MichelinePacker(
             michelineBytesCoder,
-            stringToMichelsonGrammarTypeConverter,
+            stringToMichelsonPrimConverter,
             michelinePrimitiveApplicationToNormalizedConverter,
             michelineToCompactStringConverter,
-            base58BytesCoder,
+            encodedBytesCoder,
             addressBytesCoder,
-            keyBytesCoder,
-            keyHashBytesCoder,
+            publicKeyBytesCoder,
+            implicitAddressBytesCoder,
             signatureBytesCoder,
             timestampBigIntCoder,
+            stringToAddressConverter,
+            stringToImplicitAddressConverter,
+            stringToPublicKeyEncodedConverter,
+            stringToSignatureEncodedConverter,
         )
 
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
@@ -150,11 +163,11 @@ class MichelinePackerTest {
             michelineWithSchemas.forEach {
                 assertContentEquals(packed, michelinePacker.pack(it.first, it.second))
                 assertContentEquals(packed, it.first.packToBytes(it.second))
-                assertContentEquals(packed, it.first.packToBytes(michelinePacker, it.second))
-                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(withHexPrefix = false, it.second))
-                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(michelinePacker, withHexPrefix = false, it.second))
-                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(withHexPrefix = true, it.second))
-                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(michelinePacker, withHexPrefix = true, it.second))
+                assertContentEquals(packed, it.first.packToBytes(it.second, michelinePacker))
+                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(it.second, withHexPrefix = false))
+                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(it.second, withHexPrefix = false, michelinePacker))
+                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(it.second, withHexPrefix = true))
+                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(it.second, withHexPrefix = true, michelinePacker))
             }
         }
     }
@@ -164,9 +177,9 @@ class MichelinePackerTest {
         invalidPrimitiveApplicationsWithSchema.forEach {
             assertFailsWith<IllegalArgumentException> { michelinePacker.pack(it.first, it.second) }
             assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second) }
-            assertFailsWith<IllegalArgumentException> { it.first.packToBytes(michelinePacker, it.second) }
-            assertFailsWith<IllegalArgumentException> { it.first.packToString(schema = it.second) }
-            assertFailsWith<IllegalArgumentException> { it.first.packToString(michelinePacker, schema = it.second) }
+            assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second, michelinePacker) }
+            assertFailsWith<IllegalArgumentException> { it.first.packToString(it.second) }
+            assertFailsWith<IllegalArgumentException> { it.first.packToString(it.second, michelinePacker = michelinePacker) }
         }
     }
 
@@ -196,11 +209,11 @@ class MichelinePackerTest {
             michelineWithSchemas.forEach {
                 assertEquals(it.first.normalized(michelineToNormalizedConverter), michelinePacker.unpack(packed, it.second))
                 assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromBytes(packed, it.second))
-                assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromBytes(packed, michelinePacker, it.second))
+                assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromBytes(packed, it.second, michelinePacker))
                 assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second))
-                assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = false), michelinePacker, it.second))
+                assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, michelinePacker))
                 assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second))
-                assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = true), michelinePacker, it.second))
+                assertEquals(it.first.normalized(michelineToNormalizedConverter), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, michelinePacker))
             }
         }
     }
@@ -210,9 +223,9 @@ class MichelinePackerTest {
         (invalidPackedWithSchema + packedWithInvalidSchema).forEach {
             assertFailsWith<IllegalArgumentException> { michelinePacker.unpack(it.first.asHexString().toByteArray(), it.second) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromBytes(it.first.asHexString().toByteArray(), it.second) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromBytes(it.first.asHexString().toByteArray(), michelinePacker, it.second) }
+            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, michelinePacker) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromString(it.first, it.second) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromString(it.first, michelinePacker, it.second) }
+            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromString(it.first, it.second, michelinePacker) }
         }
     }
 

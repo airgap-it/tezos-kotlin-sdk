@@ -10,7 +10,7 @@ import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
 import it.airgap.tezos.michelson.toMicheline
 
-public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.GrammarType> internal constructor(
+public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.Prim> internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
 ) : MichelineTransformableBuilder(michelsonToMichelineConverter) {
     override val value: MichelineNode

@@ -32,9 +32,7 @@ class TimestampBigIntCoderTest {
     @Test
     fun `should fail to encode invalid timestamp to BigInt`() {
         invalidTimestamps.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                timestampBigIntCoder.encode(it)
-            }
+            assertFailsWith<IllegalArgumentException> { timestampBigIntCoder.encode(it) }
         }
     }
 
@@ -48,9 +46,7 @@ class TimestampBigIntCoderTest {
     @Test
     fun `should fail to decode timestamp from invalid BigInt`() {
         invalidBigInts.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                timestampBigIntCoder.decode(it)
-            }
+            assertFailsWith<IllegalArgumentException> { timestampBigIntCoder.decode(it) }
         }
     }
 

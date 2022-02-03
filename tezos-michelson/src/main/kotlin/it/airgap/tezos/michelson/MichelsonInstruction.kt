@@ -13,9 +13,9 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "DROP"
-            override val tag: kotlin.Int = 32
+            override val tag: ByteArray = byteArrayOf(32)
         }
     }
 
@@ -26,15 +26,15 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "DUP"
-            override val tag: kotlin.Int = 33
+            override val tag: ByteArray = byteArrayOf(33)
         }
     }
 
-    public object Swap : MichelsonInstruction, GrammarType {
+    public object Swap : MichelsonInstruction, Prim {
         override val name: String = "SWAP"
-        override val tag: kotlin.Int = 76
+        override val tag: ByteArray = byteArrayOf(76)
     }
 
     public data class Dig(public val n: MichelsonData.NaturalNumberConstant) : MichelsonInstruction {
@@ -44,9 +44,9 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "DIG"
-            override val tag: kotlin.Int = 112
+            override val tag: ByteArray = byteArrayOf(112)
         }
     }
 
@@ -57,48 +57,48 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "DUG"
-            override val tag: kotlin.Int = 113
+            override val tag: ByteArray = byteArrayOf(113)
         }
     }
 
     public data class Push(public val type: MichelsonType, public val value: MichelsonData) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "PUSH"
-            override val tag: kotlin.Int = 67
+            override val tag: ByteArray = byteArrayOf(67)
         }
     }
 
-    public object Some : MichelsonInstruction, GrammarType {
+    public object Some : MichelsonInstruction, Prim {
         override val name: String = "SOME"
-        override val tag: kotlin.Int = 70
+        override val tag: ByteArray = byteArrayOf(70)
     }
 
     public data class None(public val type: MichelsonType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "NONE"
-            override val tag: kotlin.Int = 62
+            override val tag: ByteArray = byteArrayOf(62)
         }
     }
 
-    public object Unit : MichelsonInstruction, GrammarType {
+    public object Unit : MichelsonInstruction, Prim {
         override val name: String = "UNIT"
-        override val tag: kotlin.Int = 79
+        override val tag: ByteArray = byteArrayOf(79)
     }
 
-    public object Never : MichelsonInstruction, GrammarType {
+    public object Never : MichelsonInstruction, Prim {
         override val name: String = "NEVER"
-        override val tag: kotlin.Int = 121
+        override val tag: ByteArray = byteArrayOf(121)
     }
 
     public data class IfNone(
         public val ifBranch: Sequence,
         public val elseBranch: Sequence,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "IF_NONE"
-            override val tag: kotlin.Int = 47
+            override val tag: ByteArray = byteArrayOf(47)
         }
     }
 
@@ -109,19 +109,19 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "PAIR"
-            override val tag: kotlin.Int = 66
+            override val tag: ByteArray = byteArrayOf(66)
         }
     }
 
-    public object Car : MichelsonInstruction, GrammarType {
+    public object Car : MichelsonInstruction, Prim {
         override val name: String = "CAR"
-        override val tag: kotlin.Int = 22
+        override val tag: ByteArray = byteArrayOf(22)
     }
-    public object Cdr : MichelsonInstruction, GrammarType {
+    public object Cdr : MichelsonInstruction, Prim {
         override val name: String = "CDR"
-        override val tag: kotlin.Int = 23
+        override val tag: ByteArray = byteArrayOf(23)
     }
 
     public data class Unpair(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
@@ -131,23 +131,23 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "UNPAIR"
-            override val tag: kotlin.Int = 122
+            override val tag: ByteArray = byteArrayOf(122)
         }
     }
 
     public data class Left(public val type: MichelsonType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "LEFT"
-            override val tag: kotlin.Int = 51
+            override val tag: ByteArray = byteArrayOf(51)
         }
     }
 
     public data class Right(public val type: MichelsonType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "RIGHT"
-            override val tag: kotlin.Int = 68
+            override val tag: ByteArray = byteArrayOf(68)
         }
     }
 
@@ -155,43 +155,43 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public val ifBranch: Sequence,
         public val elseBranch: Sequence,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "IF_LEFT"
-            override val tag: kotlin.Int = 46
+            override val tag: ByteArray = byteArrayOf(46)
         }
     }
 
     public data class Nil(public val type: MichelsonType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "NIL"
-            override val tag: kotlin.Int = 61
+            override val tag: ByteArray = byteArrayOf(61)
         }
     }
 
-    public object Cons : MichelsonInstruction, GrammarType {
+    public object Cons : MichelsonInstruction, Prim {
         override val name: String = "CONS"
-        override val tag: kotlin.Int = 27
+        override val tag: ByteArray = byteArrayOf(27)
     }
 
     public data class IfCons(
         public val ifBranch: Sequence,
         public val elseBranch: Sequence,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "IF_CONS"
-            override val tag: kotlin.Int = 45
+            override val tag: ByteArray = byteArrayOf(45)
         }
     }
 
-    public object Size : MichelsonInstruction, GrammarType {
+    public object Size : MichelsonInstruction, Prim {
         override val name: String = "SIZE"
-        override val tag: kotlin.Int = 69
+        override val tag: ByteArray = byteArrayOf(69)
     }
 
     public data class EmptySet(public val type: MichelsonComparableType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "EMPTY_SET"
-            override val tag: kotlin.Int = 36
+            override val tag: ByteArray = byteArrayOf(36)
         }
     }
 
@@ -199,9 +199,9 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public val keyType: MichelsonComparableType,
         public val valueType: MichelsonType,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "EMPTY_MAP"
-            override val tag: kotlin.Int = 35
+            override val tag: ByteArray = byteArrayOf(35)
         }
     }
 
@@ -209,29 +209,29 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public val keyType: MichelsonComparableType,
         public val valueType: MichelsonType,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "EMPTY_BIG_MAP"
-            override val tag: kotlin.Int = 114
+            override val tag: ByteArray = byteArrayOf(114)
         }
     }
 
     public data class Map(public val expression: Sequence) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "MAP"
-            override val tag: kotlin.Int = 56
+            override val tag: ByteArray = byteArrayOf(56)
         }
     }
 
     public data class Iter(public val expression: Sequence) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "ITER"
-            override val tag: kotlin.Int = 82
+            override val tag: ByteArray = byteArrayOf(82)
         }
     }
 
-    public object Mem : MichelsonInstruction, GrammarType {
+    public object Mem : MichelsonInstruction, Prim {
         override val name: String = "MEM"
-        override val tag: kotlin.Int = 57
+        override val tag: ByteArray = byteArrayOf(57)
     }
 
     public data class Get(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
@@ -241,9 +241,9 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "GET"
-            override val tag: kotlin.Int = 41
+            override val tag: ByteArray = byteArrayOf(41)
         }
     }
 
@@ -254,37 +254,37 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
         public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "UPDATE"
-            override val tag: kotlin.Int = 80
+            override val tag: ByteArray = byteArrayOf(80)
         }
     }
 
-    public object GetAndUpdate : MichelsonInstruction, GrammarType {
+    public object GetAndUpdate : MichelsonInstruction, Prim {
         override val name: String = "GET_AND_UPDATE"
-        override val tag: kotlin.Int = 140
+        override val tag: ByteArray = byteArrayOf((140).toByte())
     }
 
     public data class If(
         public val ifBranch: Sequence,
         public val elseBranch: Sequence,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "IF"
-            override val tag: kotlin.Int = 44
+            override val tag: ByteArray = byteArrayOf(44)
         }
     }
 
     public data class Loop(public val body: Sequence) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "LOOP"
-            override val tag: kotlin.Int = 52
+            override val tag: ByteArray = byteArrayOf(52)
         }
     }
     public data class LoopLeft(public val body: Sequence) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "LOOP_LEFT"
-            override val tag: kotlin.Int = 83
+            override val tag: ByteArray = byteArrayOf(83)
         }
     }
 
@@ -293,20 +293,20 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public val returnType: MichelsonType,
         public val body: Sequence,
     ) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "LAMBDA"
-            override val tag: kotlin.Int = 49
+            override val tag: ByteArray = byteArrayOf(49)
         }
     }
 
-    public object Exec : MichelsonInstruction, GrammarType {
+    public object Exec : MichelsonInstruction, Prim {
         override val name: String = "EXEC"
-        override val tag: kotlin.Int = 38
+        override val tag: ByteArray = byteArrayOf(38)
     }
 
-    public object Apply : MichelsonInstruction, GrammarType {
+    public object Apply : MichelsonInstruction, Prim {
         override val name: String = "APPLY"
-        override val tag: kotlin.Int = 115
+        override val tag: ByteArray = byteArrayOf(115)
     }
 
     public data class Dip(
@@ -319,179 +319,179 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(instruction: Sequence, n: UInt) : this(instruction, MichelsonData.NaturalNumberConstant(n))
         public constructor(instruction: Sequence, n: ULong) : this(instruction, MichelsonData.NaturalNumberConstant(n))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "DIP"
-            override val tag: kotlin.Int = 31
+            override val tag: ByteArray = byteArrayOf(31)
         }
     }
 
-    public object Failwith : MichelsonInstruction, GrammarType {
+    public object Failwith : MichelsonInstruction, Prim {
         override val name: String = "FAILWITH"
-        override val tag: kotlin.Int = 39
+        override val tag: ByteArray = byteArrayOf(39)
     }
 
-    public object Cast : MichelsonInstruction, GrammarType {
+    public object Cast : MichelsonInstruction, Prim {
         override val name: String = "CAST"
-        override val tag: kotlin.Int = 87
+        override val tag: ByteArray = byteArrayOf(87)
     }
 
-    public object Rename : MichelsonInstruction, GrammarType {
+    public object Rename : MichelsonInstruction, Prim {
         override val name: String = "RENAME"
-        override val tag: kotlin.Int = 88
+        override val tag: ByteArray = byteArrayOf(88)
     }
 
-    public object Concat : MichelsonInstruction, GrammarType {
+    public object Concat : MichelsonInstruction, Prim {
         override val name: String = "CONCAT"
-        override val tag: kotlin.Int = 26
+        override val tag: ByteArray = byteArrayOf(26)
     }
 
-    public object Slice : MichelsonInstruction, GrammarType {
+    public object Slice : MichelsonInstruction, Prim {
         override val name: String = "SLICE"
-        override val tag: kotlin.Int = 111
+        override val tag: ByteArray = byteArrayOf(111)
     }
 
-    public object Pack : MichelsonInstruction, GrammarType {
+    public object Pack : MichelsonInstruction, Prim {
         override val name: String = "PACK"
-        override val tag: kotlin.Int = 12
+        override val tag: ByteArray = byteArrayOf(12)
     }
 
     public data class Unpack(public val type: MichelsonType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "UNPACK"
-            override val tag: kotlin.Int = 13
+            override val tag: ByteArray = byteArrayOf(13)
         }
     }
 
-    public object Add : MichelsonInstruction, GrammarType {
+    public object Add : MichelsonInstruction, Prim {
         override val name: String = "ADD"
-        override val tag: kotlin.Int = 18
+        override val tag: ByteArray = byteArrayOf(18)
     }
 
-    public object Sub : MichelsonInstruction, GrammarType {
+    public object Sub : MichelsonInstruction, Prim {
         override val name: String = "SUB"
-        override val tag: kotlin.Int = 75
+        override val tag: ByteArray = byteArrayOf(75)
     }
 
-    public object Mul : MichelsonInstruction, GrammarType {
+    public object Mul : MichelsonInstruction, Prim {
         override val name: String = "MUL"
-        override val tag: kotlin.Int = 58
+        override val tag: ByteArray = byteArrayOf(58)
     }
 
-    public object Ediv : MichelsonInstruction, GrammarType {
+    public object Ediv : MichelsonInstruction, Prim {
         override val name: String = "EDIV"
-        override val tag: kotlin.Int = 34
+        override val tag: ByteArray = byteArrayOf(34)
     }
 
-    public object Abs : MichelsonInstruction, GrammarType {
+    public object Abs : MichelsonInstruction, Prim {
         override val name: String = "ABS"
-        override val tag: kotlin.Int = 17
+        override val tag: ByteArray = byteArrayOf(17)
     }
 
-    public object Isnat : MichelsonInstruction, GrammarType {
+    public object Isnat : MichelsonInstruction, Prim {
         override val name: String = "ISNAT"
-        override val tag: kotlin.Int = 86
+        override val tag: ByteArray = byteArrayOf(86)
     }
 
-    public object Int : MichelsonInstruction, GrammarType {
+    public object Int : MichelsonInstruction, Prim {
         override val name: String = "INT"
-        override val tag: kotlin.Int = 48
+        override val tag: ByteArray = byteArrayOf(48)
     }
 
-    public object Neg : MichelsonInstruction, GrammarType {
+    public object Neg : MichelsonInstruction, Prim {
         override val name: String = "NEG"
-        override val tag: kotlin.Int = 59
+        override val tag: ByteArray = byteArrayOf(59)
     }
 
-    public object Lsl : MichelsonInstruction, GrammarType {
+    public object Lsl : MichelsonInstruction, Prim {
         override val name: String = "LSL"
-        override val tag: kotlin.Int = 53
+        override val tag: ByteArray = byteArrayOf(53)
     }
 
-    public object Lsr : MichelsonInstruction, GrammarType {
+    public object Lsr : MichelsonInstruction, Prim {
         override val name: String = "LSR"
-        override val tag: kotlin.Int = 54
+        override val tag: ByteArray = byteArrayOf(54)
     }
 
-    public object Or : MichelsonInstruction, GrammarType {
+    public object Or : MichelsonInstruction, Prim {
         override val name: String = "OR"
-        override val tag: kotlin.Int = 65
+        override val tag: ByteArray = byteArrayOf(65)
     }
 
-    public object And : MichelsonInstruction, GrammarType {
+    public object And : MichelsonInstruction, Prim {
         override val name: String = "AND"
-        override val tag: kotlin.Int = 20
+        override val tag: ByteArray = byteArrayOf(20)
     }
 
-    public object Xor : MichelsonInstruction, GrammarType {
+    public object Xor : MichelsonInstruction, Prim {
         override val name: String = "XOR"
-        override val tag: kotlin.Int = 81
+        override val tag: ByteArray = byteArrayOf(81)
     }
 
-    public object Not : MichelsonInstruction, GrammarType {
+    public object Not : MichelsonInstruction, Prim {
         override val name: String = "NOT"
-        override val tag: kotlin.Int = 63
+        override val tag: ByteArray = byteArrayOf(63)
     }
 
-    public object Compare : MichelsonInstruction, GrammarType {
+    public object Compare : MichelsonInstruction, Prim {
         override val name: String = "COMPARE"
-        override val tag: kotlin.Int = 25
+        override val tag: ByteArray = byteArrayOf(25)
     }
 
-    public object Eq : MichelsonInstruction, GrammarType {
+    public object Eq : MichelsonInstruction, Prim {
         override val name: String = "EQ"
-        override val tag: kotlin.Int = 37
+        override val tag: ByteArray = byteArrayOf(37)
     }
 
-    public object Neq : MichelsonInstruction, GrammarType {
+    public object Neq : MichelsonInstruction, Prim {
         override val name: String = "NEQ"
-        override val tag: kotlin.Int = 60
+        override val tag: ByteArray = byteArrayOf(60)
     }
 
-    public object Lt : MichelsonInstruction, GrammarType {
+    public object Lt : MichelsonInstruction, Prim {
         override val name: String = "LT"
-        override val tag: kotlin.Int = 55
+        override val tag: ByteArray = byteArrayOf(55)
     }
 
-    public object Gt : MichelsonInstruction, GrammarType {
+    public object Gt : MichelsonInstruction, Prim {
         override val name: String = "GT"
-        override val tag: kotlin.Int = 42
+        override val tag: ByteArray = byteArrayOf(42)
     }
 
-    public object Le : MichelsonInstruction, GrammarType {
+    public object Le : MichelsonInstruction, Prim {
         override val name: String = "LE"
-        override val tag: kotlin.Int = 50
+        override val tag: ByteArray = byteArrayOf(50)
     }
 
-    public object Ge : MichelsonInstruction, GrammarType {
+    public object Ge : MichelsonInstruction, Prim {
         override val name: String = "GE"
-        override val tag: kotlin.Int = 40
+        override val tag: ByteArray = byteArrayOf(40)
     }
 
-    public object Self : MichelsonInstruction, GrammarType {
+    public object Self : MichelsonInstruction, Prim {
         override val name: String = "SELF"
-        override val tag: kotlin.Int = 73
+        override val tag: ByteArray = byteArrayOf(73)
     }
 
-    public object SelfAddress : MichelsonInstruction, GrammarType {
+    public object SelfAddress : MichelsonInstruction, Prim {
         override val name: String = "SELF_ADDRESS"
-        override val tag: kotlin.Int = 119
+        override val tag: ByteArray = byteArrayOf(119)
     }
 
     public data class Contract(public val type: MichelsonType) : MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "CONTRACT"
-            override val tag: kotlin.Int = 85
+            override val tag: ByteArray = byteArrayOf(85)
         }
     }
 
-    public object TransferTokens : MichelsonInstruction, GrammarType {
+    public object TransferTokens : MichelsonInstruction, Prim {
         override val name: String = "TRANSFER_TOKENS"
-        override val tag: kotlin.Int = 77
+        override val tag: ByteArray = byteArrayOf(77)
     }
 
-    public object SetDelegate : MichelsonInstruction, GrammarType {
+    public object SetDelegate : MichelsonInstruction, Prim {
         override val name: String = "SET_DELEGATE"
-        override val tag: kotlin.Int = 78
+        override val tag: ByteArray = byteArrayOf(78)
     }
 
     public data class CreateContract(
@@ -500,105 +500,105 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public val code: Sequence,
     ) :
         MichelsonInstruction {
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "CREATE_CONTRACT"
-            override val tag: kotlin.Int = 29
+            override val tag: ByteArray = byteArrayOf(29)
         }
     }
 
-    public object ImplicitAccount : MichelsonInstruction, GrammarType {
+    public object ImplicitAccount : MichelsonInstruction, Prim {
         override val name: String = "IMPLICIT_ACCOUNT"
-        override val tag: kotlin.Int = 30
+        override val tag: ByteArray = byteArrayOf(30)
     }
 
-    public object VotingPower : MichelsonInstruction, GrammarType {
+    public object VotingPower : MichelsonInstruction, Prim {
         override val name: String = "VOTING_POWER"
-        override val tag: kotlin.Int = 123
+        override val tag: ByteArray = byteArrayOf(123)
     }
 
-    public object Now : MichelsonInstruction, GrammarType {
+    public object Now : MichelsonInstruction, Prim {
         override val name: String = "NOW"
-        override val tag: kotlin.Int = 64
+        override val tag: ByteArray = byteArrayOf(64)
     }
 
-    public object Level : MichelsonInstruction, GrammarType {
+    public object Level : MichelsonInstruction, Prim {
         override val name: String = "LEVEL"
-        override val tag: kotlin.Int = 118
+        override val tag: ByteArray = byteArrayOf(118)
     }
 
-    public object Amount : MichelsonInstruction, GrammarType {
+    public object Amount : MichelsonInstruction, Prim {
         override val name: String = "AMOUNT"
-        override val tag: kotlin.Int = 19
+        override val tag: ByteArray = byteArrayOf(19)
     }
 
-    public object Balance : MichelsonInstruction, GrammarType {
+    public object Balance : MichelsonInstruction, Prim {
         override val name: String = "BALANCE"
-        override val tag: kotlin.Int = 21
+        override val tag: ByteArray = byteArrayOf(21)
     }
 
-    public object CheckSignature : MichelsonInstruction, GrammarType {
+    public object CheckSignature : MichelsonInstruction, Prim {
         override val name: String = "CHECK_SIGNATURE"
-        override val tag: kotlin.Int = 24
+        override val tag: ByteArray = byteArrayOf(24)
     }
 
-    public object Blake2B : MichelsonInstruction, GrammarType {
+    public object Blake2B : MichelsonInstruction, Prim {
         override val name: String = "BLAKE2B"
-        override val tag: kotlin.Int = 14
+        override val tag: ByteArray = byteArrayOf(14)
     }
 
-    public object Keccak : MichelsonInstruction, GrammarType {
+    public object Keccak : MichelsonInstruction, Prim {
         override val name: String = "KECCAK"
-        override val tag: kotlin.Int = 125
+        override val tag: ByteArray = byteArrayOf(125)
     }
 
-    public object Sha3 : MichelsonInstruction, GrammarType {
+    public object Sha3 : MichelsonInstruction, Prim {
         override val name: String = "SHA3"
-        override val tag: kotlin.Int = 126
+        override val tag: ByteArray = byteArrayOf(126)
     }
 
-    public object Sha256 : MichelsonInstruction, GrammarType {
+    public object Sha256 : MichelsonInstruction, Prim {
         override val name: String = "SHA256"
-        override val tag: kotlin.Int = 15
+        override val tag: ByteArray = byteArrayOf(15)
     }
 
-    public object Sha512 : MichelsonInstruction, GrammarType {
+    public object Sha512 : MichelsonInstruction, Prim {
         override val name: String = "SHA512"
-        override val tag: kotlin.Int = 16
+        override val tag: ByteArray = byteArrayOf(16)
     }
 
-    public object HashKey : MichelsonInstruction, GrammarType {
+    public object HashKey : MichelsonInstruction, Prim {
         override val name: String = "HASH_KEY"
-        override val tag: kotlin.Int = 43
+        override val tag: ByteArray = byteArrayOf(43)
     }
 
-    public object Source : MichelsonInstruction, GrammarType {
+    public object Source : MichelsonInstruction, Prim {
         override val name: String = "SOURCE"
-        override val tag: kotlin.Int = 71
+        override val tag: ByteArray = byteArrayOf(71)
     }
 
-    public object Sender : MichelsonInstruction, GrammarType {
+    public object Sender : MichelsonInstruction, Prim {
         override val name: String = "SENDER"
-        override val tag: kotlin.Int = 72
+        override val tag: ByteArray = byteArrayOf(72)
     }
 
-    public object Address : MichelsonInstruction, GrammarType {
+    public object Address : MichelsonInstruction, Prim {
         override val name: String = "ADDRESS"
-        override val tag: kotlin.Int = 84
+        override val tag: ByteArray = byteArrayOf(84)
     }
 
-    public object ChainId : MichelsonInstruction, GrammarType {
+    public object ChainId : MichelsonInstruction, Prim {
         override val name: String = "CHAIN_ID"
-        override val tag: kotlin.Int = 117
+        override val tag: ByteArray = byteArrayOf(117)
     }
 
-    public object TotalVotingPower : MichelsonInstruction, GrammarType {
+    public object TotalVotingPower : MichelsonInstruction, Prim {
         override val name: String = "TOTAL_VOTING_POWER"
-        override val tag: kotlin.Int = 124
+        override val tag: ByteArray = byteArrayOf(124)
     }
 
-    public object PairingCheck : MichelsonInstruction, GrammarType {
+    public object PairingCheck : MichelsonInstruction, Prim {
         override val name: String = "PAIRING_CHECK"
-        override val tag: kotlin.Int = 127
+        override val tag: ByteArray = byteArrayOf(127)
     }
 
     public data class SaplingEmptyState(public val memoSize: MichelsonData.NaturalNumberConstant) : MichelsonInstruction {
@@ -608,44 +608,146 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public constructor(memoSize: UInt) : this(MichelsonData.NaturalNumberConstant(memoSize))
         public constructor(memoSize: ULong) : this(MichelsonData.NaturalNumberConstant(memoSize))
 
-        public companion object : GrammarType {
+        public companion object : Prim {
             override val name: String = "SAPLING_EMPTY_STATE"
-            override val tag: kotlin.Int = 133
+            override val tag: ByteArray = byteArrayOf((133).toByte())
         }
     }
 
-    public object SaplingVerifyUpdate : MichelsonInstruction, GrammarType {
+    public object SaplingVerifyUpdate : MichelsonInstruction, Prim {
         override val name: String = "SAPLING_VERIFY_UPDATE"
-        override val tag: kotlin.Int = 134
+        override val tag: ByteArray = byteArrayOf((134).toByte())
     }
 
-    public object Ticket : MichelsonInstruction, GrammarType {
+    public object Ticket : MichelsonInstruction, Prim {
         override val name: String = "TICKET"
-        override val tag: kotlin.Int = 136
+        override val tag: ByteArray = byteArrayOf((136).toByte())
     }
 
-    public object ReadTicket : MichelsonInstruction, GrammarType {
+    public object ReadTicket : MichelsonInstruction, Prim {
         override val name: String = "READ_TICKET"
-        override val tag: kotlin.Int = 137
+        override val tag: ByteArray = byteArrayOf((137).toByte())
     }
 
-    public object SplitTicket : MichelsonInstruction, GrammarType {
+    public object SplitTicket : MichelsonInstruction, Prim {
         override val name: String = "SPLIT_TICKET"
-        override val tag: kotlin.Int = 138
+        override val tag: ByteArray = byteArrayOf((138).toByte())
     }
 
-    public object JoinTickets : MichelsonInstruction, GrammarType {
+    public object JoinTickets : MichelsonInstruction, Prim {
         override val name: String = "JOIN_TICKETS"
-        override val tag: kotlin.Int = 139
+        override val tag: ByteArray = byteArrayOf((139).toByte())
     }
 
-    public object OpenChest : MichelsonInstruction, GrammarType {
+    public object OpenChest : MichelsonInstruction, Prim {
         override val name: String = "OPEN_CHEST"
-        override val tag: kotlin.Int = 143
+        override val tag: ByteArray = byteArrayOf((143).toByte())
     }
 
-    public sealed interface GrammarType : MichelsonData.GrammarType {
-        public companion object {}
+    public sealed interface Prim : MichelsonData.Prim {
+        public companion object {
+            public val values: List<Prim>
+                get() = listOf(
+                    Drop,
+                    Dup,
+                    Swap,
+                    Dig,
+                    Dug,
+                    Push,
+                    Some,
+                    None,
+                    Unit,
+                    Never,
+                    IfNone,
+                    Pair,
+                    Car,
+                    Cdr,
+                    Unpair,
+                    Left,
+                    Right,
+                    IfLeft,
+                    Nil,
+                    Cons,
+                    IfCons,
+                    Size,
+                    EmptySet,
+                    EmptyMap,
+                    EmptyBigMap,
+                    Map,
+                    Iter,
+                    Mem,
+                    Get,
+                    Update,
+                    GetAndUpdate,
+                    If,
+                    Loop,
+                    LoopLeft,
+                    Lambda,
+                    Exec,
+                    Apply,
+                    Dip,
+                    Failwith,
+                    Cast,
+                    Rename,
+                    Concat,
+                    Slice,
+                    Pack,
+                    Unpack,
+                    Add,
+                    Sub,
+                    Mul,
+                    Ediv,
+                    Abs,
+                    Isnat,
+                    Int,
+                    Neg,
+                    Lsl,
+                    Lsr,
+                    Or,
+                    And,
+                    Xor,
+                    Not,
+                    Compare,
+                    Eq,
+                    Neq,
+                    Lt,
+                    Gt,
+                    Le,
+                    Ge,
+                    Self,
+                    SelfAddress,
+                    Contract,
+                    TransferTokens,
+                    SetDelegate,
+                    CreateContract,
+                    ImplicitAccount,
+                    VotingPower,
+                    Now,
+                    Level,
+                    Amount,
+                    Balance,
+                    CheckSignature,
+                    Blake2B,
+                    Keccak,
+                    Sha3,
+                    Sha256,
+                    Sha512,
+                    HashKey,
+                    Source,
+                    Sender,
+                    Address,
+                    ChainId,
+                    TotalVotingPower,
+                    PairingCheck,
+                    SaplingEmptyState,
+                    SaplingVerifyUpdate,
+                    Ticket,
+                    ReadTicket,
+                    SplitTicket,
+                    JoinTickets,
+                    OpenChest,
+                )
+        }
     }
 
     public companion object {

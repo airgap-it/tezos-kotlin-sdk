@@ -1,8 +1,8 @@
 package it.airgap.tezos.michelson.micheline
 
 import inRange
-import it.airgap.tezos.core.internal.type.HexString
 import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.type.HexString
 import org.junit.Test
 import kotlin.test.*
 
@@ -120,9 +120,7 @@ class MichelineLiteralTest {
         )
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                MichelineLiteral.Integer(it)
-            }
+            assertFailsWith<IllegalArgumentException> { MichelineLiteral.Integer(it) }
         }
     }
 
@@ -230,9 +228,7 @@ class MichelineLiteralTest {
         val invalid = listOf<String>()
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                MichelineLiteral.String(it)
-            }
+            assertFailsWith<IllegalArgumentException> { MichelineLiteral.String(it) }
         }
     }
 
@@ -295,9 +291,7 @@ class MichelineLiteralTest {
         )
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> {
-                MichelineLiteral.Bytes(it)
-            }
+            assertFailsWith<IllegalArgumentException> { MichelineLiteral.Bytes(it) }
         }
     }
 

@@ -4,31 +4,31 @@ import it.airgap.tezos.core.internal.utils.replaceOrAdd
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.utils.failWithUnexpectedMichelsonGrammarType
+import it.airgap.tezos.michelson.internal.utils.failWithUnexpectedMichelsonPrim
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.*
 
-public typealias MichelineMichelsonTypeExpressionBuilder = MichelineNodeBuilder<MichelsonType, MichelsonType.GrammarType>
+public typealias MichelineMichelsonTypeExpressionBuilder = MichelineNodeBuilder<MichelsonType, MichelsonType.Prim>
 
-public typealias MichelineMichelsonTypeNoArgsBuilder = MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.GrammarType>
-public typealias MichelineMichelsonTypeSingleArgBuilder = MichelinePrimitiveApplicationSingleArgBuilder<MichelsonType, MichelsonType.GrammarType>
-public typealias MichelineMichelsonTypeIntegerArgBuilder = MichelinePrimitiveApplicationIntegerArgBuilder<MichelsonType.GrammarType>
+public typealias MichelineMichelsonTypeNoArgsBuilder = MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>
+public typealias MichelineMichelsonTypeSingleArgBuilder = MichelinePrimitiveApplicationSingleArgBuilder<MichelsonType, MichelsonType.Prim>
+public typealias MichelineMichelsonTypeIntegerArgBuilder = MichelinePrimitiveApplicationIntegerArgBuilder<MichelsonType.Prim>
 
 public class MichelineMichelsonTypeCodeBuilder internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter
-) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.GrammarType>(michelsonToMichelineConverter, MichelsonType.Code) {
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Code) {
     public fun arg(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
         MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
-public class MichelineMichelsonTypeOptionBuilder<T : MichelsonType, G : MichelsonType.GrammarType> @PublishedApi internal constructor(
+public class MichelineMichelsonTypeOptionBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
-public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonType.GrammarType> @PublishedApi internal constructor(
+public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
@@ -38,7 +38,7 @@ public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonTyp
 
 public class MichelineMichelsonTypeLambdaBuilder internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter
-) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.GrammarType>(michelsonToMichelineConverter, MichelsonType.Lambda) {
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Lambda) {
     public fun parameter(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 
@@ -48,8 +48,8 @@ public class MichelineMichelsonTypeLambdaBuilder internal constructor(
 
 public class MichelineMichelsonTypeMapBuilder internal constructor(
     michelsonToMichelineConverter: MichelsonToMichelineConverter,
-    prim: MichelsonType.GrammarType,
-) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.GrammarType>(michelsonToMichelineConverter, prim) {
+    prim: MichelsonType.Prim,
+) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit): MichelineMichelsonComparableTypeExpressionBuilder =
         MichelineMichelsonComparableTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 
@@ -57,14 +57,14 @@ public class MichelineMichelsonTypeMapBuilder internal constructor(
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
 }
 
-public inline fun <T : MichelsonType, reified G : MichelsonType.GrammarType> MichelineNodeBuilder<T, G>.option(
+public inline fun <T : MichelsonType, reified G : MichelsonType.Prim> MichelineNodeBuilder<T, G>.option(
     builderAction: MichelineMichelsonTypeOptionBuilder<T, G>.() -> Unit
 ): MichelineMichelsonTypeOptionBuilder<T, G> {
     val prim: G = when (G::class) {
-        MichelsonType.GrammarType::class -> MichelsonType.Option as G
-        MichelsonComparableType.GrammarType::class -> MichelsonComparableType.Option as G
+        MichelsonType.Prim::class -> MichelsonType.Option as G
+        MichelsonComparableType.Prim::class -> MichelsonComparableType.Option as G
         else -> null
-    } ?: failWithUnexpectedMichelsonGrammarType(G::class, "pair")
+    } ?: failWithUnexpectedMichelsonPrim(G::class, "pair")
 
     return MichelineMichelsonTypeOptionBuilder<T, G>(michelsonToMichelineConverter, prim).apply(builderAction).also { builders.add(it) }
 }
@@ -98,26 +98,26 @@ public fun MichelineMichelsonTypeExpressionBuilder.contract(builderAction: Miche
 public fun MichelineMichelsonTypeExpressionBuilder.ticket(builderAction: MichelineMichelsonTypeSingleArgBuilder.() -> Unit): MichelineMichelsonTypeSingleArgBuilder =
     primitiveApplication(MichelsonType.Ticket, builderAction)
 
-public inline fun <T : MichelsonType, reified G : MichelsonType.GrammarType> MichelineNodeBuilder<T, G>.pair(
+public inline fun <T : MichelsonType, reified G : MichelsonType.Prim> MichelineNodeBuilder<T, G>.pair(
     builderAction: MichelinePrimitiveApplicationBuilder<T, G>.() -> Unit
 ): MichelinePrimitiveApplicationBuilder<T, G> {
     val prim: G = when (G::class) {
-        MichelsonType.GrammarType::class -> MichelsonType.Pair as G
-        MichelsonComparableType.GrammarType::class -> MichelsonComparableType.Pair as G
+        MichelsonType.Prim::class -> MichelsonType.Pair as G
+        MichelsonComparableType.Prim::class -> MichelsonComparableType.Pair as G
         else -> null
-    } ?: failWithUnexpectedMichelsonGrammarType(G::class, "pair")
+    } ?: failWithUnexpectedMichelsonPrim(G::class, "pair")
 
     return MichelinePrimitiveApplicationBuilder<T, G>(michelsonToMichelineConverter, prim).apply(builderAction).also { builders.add(it) }
 }
 
-public inline fun <T : MichelsonType, reified G : MichelsonType.GrammarType> MichelineNodeBuilder<T, G>.or(
+public inline fun <T : MichelsonType, reified G : MichelsonType.Prim> MichelineNodeBuilder<T, G>.or(
     builderAction: MichelineMichelsonTypeOrBuilder<T, G>.() -> Unit
 ): MichelineMichelsonTypeOrBuilder<T, G> {
     val prim: G = when (G::class) {
-        MichelsonType.GrammarType::class -> MichelsonType.Or as G
-        MichelsonComparableType.GrammarType::class -> MichelsonComparableType.Or as G
+        MichelsonType.Prim::class -> MichelsonType.Or as G
+        MichelsonComparableType.Prim::class -> MichelsonComparableType.Or as G
         else -> null
-    } ?: failWithUnexpectedMichelsonGrammarType(G::class, "or")
+    } ?: failWithUnexpectedMichelsonPrim(G::class, "or")
 
     return MichelineMichelsonTypeOrBuilder<T, G>(michelsonToMichelineConverter, prim).apply(builderAction).also { builders.add(it) }
 }
