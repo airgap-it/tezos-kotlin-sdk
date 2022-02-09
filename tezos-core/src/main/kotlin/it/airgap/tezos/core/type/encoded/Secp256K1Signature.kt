@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Secp256K1Signature(override val base58: String) : SignatureEncoded<Secp256K1Signature> {
 
-    override val kind: Encoded.Kind<Secp256K1Signature>
+    override val kind: SignatureEncoded.Kind<Secp256K1Signature>
         get() = Companion
 
     init {

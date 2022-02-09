@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Secp256K1EncryptedScalar(override val base58: String) : EncryptedScalarEncoded<Secp256K1EncryptedScalar> {
 
-    override val kind: Encoded.Kind<Secp256K1EncryptedScalar>
+    override val kind: EncryptedScalarEncoded.Kind<Secp256K1EncryptedScalar>
         get() = Companion
 
     init {

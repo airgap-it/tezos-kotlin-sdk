@@ -1,14 +1,13 @@
 dependencies {
     implementation(project(":tezos-core"))
-    implementation(project(":tezos-michelson"))
 
     // Kotlin
     implementation(kotlin("stdlib"))
 
+    // Bouncy Castle
+    implementation(Dependencies.bouncyCastle)
+
     // Test
     testImplementation(Dependencies.kotlinTest)
     testImplementation(Dependencies.junit)
-    testImplementation(Dependencies.mockk)
-
-    testImplementation(Dependencies.bouncyCastle)
 }

@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class GenericSignature(override val base58: String) : SignatureEncoded<GenericSignature> {
 
-    override val kind: Encoded.Kind<GenericSignature>
+    override val kind: SignatureEncoded.Kind<GenericSignature>
         get() = Companion
 
     init {

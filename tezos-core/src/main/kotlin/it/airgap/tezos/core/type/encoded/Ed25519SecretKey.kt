@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Ed25519SecretKey(override val base58: String) : SecretKeyEncoded<Ed25519SecretKey> {
 
-    override val kind: Encoded.Kind<Ed25519SecretKey>
+    override val kind: SecretKeyEncoded.Kind<Ed25519SecretKey>
         get() = Companion
 
     init {

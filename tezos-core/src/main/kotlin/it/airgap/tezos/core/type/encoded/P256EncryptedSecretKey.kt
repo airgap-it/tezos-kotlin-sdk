@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class P256EncryptedSecretKey(override val base58: String) : EncryptedSecretKeyEncoded<P256EncryptedSecretKey> {
 
-    override val kind: Encoded.Kind<P256EncryptedSecretKey>
+    override val kind: EncryptedSecretKeyEncoded.Kind<P256EncryptedSecretKey>
         get() = Companion
 
     init {
