@@ -3,33 +3,33 @@ package it.airgap.tezos.core.internal.utils
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 
 @InternalTezosSdkApi
-public fun ByteArray.asInt8Encoded(): ByteArray {
+public fun ByteArray.asInt8Encoded(fillValue: UByte = 0U): ByteArray {
     require(size <= 1) { "ByteArray does not hold Int8 value." }
-    return padStart(n = 1, fillValue = 0)
+    return padStart(n = 1, fillValue)
 }
 
 @InternalTezosSdkApi
-public fun ByteArray.asInt16Encoded(): ByteArray {
+public fun ByteArray.asInt16Encoded(fillValue: UByte = 0U): ByteArray {
     require(size <= 2) { "ByteArray does not hold Int16 value." }
-    return padStart(n = 2, fillValue = 0)
+    return padStart(n = 2, fillValue)
 }
 
 @InternalTezosSdkApi
-public fun ByteArray.asInt32Encoded(): ByteArray {
+public fun ByteArray.asInt32Encoded(fillValue: UByte = 0U): ByteArray {
     require(size <= 4) { "ByteArray does not hold Int32 value." }
-    return padStart(n = 4, fillValue = 0)
+    return padStart(n = 4, fillValue)
 }
 
 @InternalTezosSdkApi
-public fun ByteArray.asInt64Encoded(): ByteArray {
+public fun ByteArray.asInt64Encoded(fillValue: UByte = 0U): ByteArray {
     require(size <= 8) { "ByteArray does not hold Int64 value." }
-    return padStart(n = 8, fillValue = 0)
+    return padStart(n = 8, fillValue)
 }
 
 @InternalTezosSdkApi
-public fun ByteArray.padStart(n: Int, fillValue: Byte = 0): ByteArray =
+public fun ByteArray.padStart(n: Int, fillValue: UByte = 0U): ByteArray =
     if (size >= n) this
-    else ByteArray(n) { fillValue }.also {
+    else ByteArray(n) { fillValue.toByte() }.also {
         for (i in indices) {
             it[it.size - size + i] = this[i]
         }
@@ -59,4 +59,5 @@ public fun ByteArray.splitAt(
 
 @InternalTezosSdkApi
 public fun ByteArray.startsWith(bytes: ByteArray): Boolean =
-    sliceArray(bytes.indices).contentEquals(bytes)
+    if (size < bytes.size) false
+    else sliceArray(bytes.indices).contentEquals(bytes)

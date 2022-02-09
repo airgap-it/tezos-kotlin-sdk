@@ -24,17 +24,17 @@ public fun encodeUInt8ToBytes(value: UByte): ByteArray = byteArrayOf(value.toByt
 public fun decodeConsumingUInt8FromBytes(bytes: MutableList<Byte>): UByte? = bytes.consumeAt(0)?.toUByte()
 
 @InternalTezosSdkApi
-public fun encodeUInt16ToBytes(value: UShort): ByteArray = BigInt.valueOf(value.toLong()).toByteArray().asInt16Encoded()
+public fun encodeUInt16ToBytes(value: UShort): ByteArray = BigInt.valueOf(value.toLong()).toHexString().toByteArray().asInt16Encoded()
 @InternalTezosSdkApi
 public fun decodeConsumingUInt16FromBytes(bytes: MutableList<Byte>): UShort = BigInt.valueOf(bytes.consumeAt(0 until 2).toByteArray()).toShortExact().toUShort()
 
 @InternalTezosSdkApi
-public fun encodeInt32ToBytes(value: Int): ByteArray = BigInt.valueOf(value).toByteArray().asInt32Encoded()
+public fun encodeInt32ToBytes(value: Int): ByteArray = BigInt.valueOf(value).toByteArray().asInt32Encoded(fillValue = if (value >= 0) 0U else 255U)
 @InternalTezosSdkApi
 public fun decodeConsumingInt32FromBytes(bytes: MutableList<Byte>): Int = BigInt.valueOf(bytes.consumeAt(0 until 4).toByteArray()).toIntExact()
 
 @InternalTezosSdkApi
-public fun encodeInt64ToBytes(value: Long): ByteArray = BigInt.valueOf(value).toByteArray().asInt64Encoded()
+public fun encodeInt64ToBytes(value: Long): ByteArray = BigInt.valueOf(value).toByteArray().asInt64Encoded(fillValue = if (value >= 0) 0U else 255U)
 @InternalTezosSdkApi
 public fun decodeConsumingInt64FromBytes(bytes: MutableList<Byte>): Long = BigInt.valueOf(bytes.consumeAt(0 until 8).toByteArray()).toLongExact()
 

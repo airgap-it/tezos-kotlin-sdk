@@ -7,10 +7,10 @@ import it.airgap.tezos.core.type.HexString
 @InternalTezosSdkApi
 public class Crypto(private val provider: CryptoProvider)  {
     public fun hashSha256(message: HexString): ByteArray = hashSha256(message.toByteArray())
-    public fun hashSha256(message: ByteArray): ByteArray = provider.hash256(message)
+    public fun hashSha256(message: ByteArray): ByteArray = provider.sha256(message)
 
     public fun hash(message: HexString, size: Int): ByteArray = hash(message.toByteArray(), size)
-    public fun hash(message: ByteArray, size: Int): ByteArray = provider.hash(message, size)
+    public fun hash(message: ByteArray, size: Int): ByteArray = provider.blake2b(message, size)
 
     public fun signEd25519(message: HexString, secretKey: HexString): ByteArray = signEd25519(message.toByteArray(), secretKey.toByteArray())
     public fun signEd25519(message: ByteArray, secretKey: ByteArray): ByteArray = provider.signEd25519(message, secretKey)

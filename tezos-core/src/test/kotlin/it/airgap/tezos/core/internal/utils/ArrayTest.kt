@@ -9,44 +9,47 @@ import kotlin.test.assertTrue
 class ArrayTest {
 
     @Test
-    fun `prepends ByteArray with 0 to match Int8 byte size`() {
+    fun `prepends ByteArray with fill value to match Int8 byte size`() {
         assertContentEquals(byteArrayOf(0), byteArrayOf().asInt8Encoded())
+        assertContentEquals(byteArrayOf((255).toByte()), byteArrayOf().asInt8Encoded(fillValue = 255U))
         assertContentEquals(byteArrayOf(1), byteArrayOf(1).asInt8Encoded())
     }
 
     @Test
-    fun `fails if requested to prepend ByteArray with 0 to match Int8 byte size but holds too big value`() {
+    fun `fails if requested to prepend ByteArray with fill value to match Int8 byte size but holds too big value`() {
         assertFailsWith<IllegalArgumentException> { byteArrayOf(1, 1).asInt8Encoded() }
     }
 
     @Test
-    fun `prepends ByteArray with 0 to match Int16 byte size`() {
+    fun `prepends ByteArray with fill value to match Int16 byte size`() {
         assertContentEquals(byteArrayOf(0, 0), byteArrayOf().asInt16Encoded())
         assertContentEquals(byteArrayOf(0, 1), byteArrayOf(1).asInt16Encoded())
+        assertContentEquals(byteArrayOf((255).toByte(), 1), byteArrayOf(1).asInt16Encoded(fillValue = 255U))
         assertContentEquals(byteArrayOf(1, 1), byteArrayOf(1, 1).asInt16Encoded())
     }
 
     @Test
-    fun `fails if requested to prepend ByteArray with 0 to match Int16 byte size but holds too big value`() {
+    fun `fails if requested to prepend ByteArray with fill value to match Int16 byte size but holds too big value`() {
         assertFailsWith<IllegalArgumentException> { byteArrayOf(1, 1, 1).asInt16Encoded() }
     }
 
     @Test
-    fun `prepends ByteArray with 0 to match Int32 byte size`() {
+    fun `prepends ByteArray with fill value to match Int32 byte size`() {
         assertContentEquals(byteArrayOf(0, 0, 0, 0), byteArrayOf().asInt32Encoded())
         assertContentEquals(byteArrayOf(0, 0, 0, 1), byteArrayOf(1).asInt32Encoded())
         assertContentEquals(byteArrayOf(0, 0, 1, 1), byteArrayOf(1, 1).asInt32Encoded())
+        assertContentEquals(byteArrayOf((255).toByte(), (255).toByte(), 1, 1), byteArrayOf(1, 1).asInt32Encoded(fillValue = 255U))
         assertContentEquals(byteArrayOf(0, 1, 1, 1), byteArrayOf(1, 1, 1).asInt32Encoded())
         assertContentEquals(byteArrayOf(1, 1, 1, 1), byteArrayOf(1, 1, 1, 1).asInt32Encoded())
     }
 
     @Test
-    fun `fails if requested to prepend ByteArray with 0 to match Int32 byte size but holds too big value`() {
+    fun `fails if requested to prepend ByteArray with fill value to match Int32 byte size but holds too big value`() {
         assertFailsWith<IllegalArgumentException> { byteArrayOf(1, 1, 1, 1, 1).asInt32Encoded() }
     }
 
     @Test
-    fun `prepends ByteArray with 0 to match Int64 byte size`() {
+    fun `prepends ByteArray with fill value to match Int64 byte size`() {
         assertContentEquals(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0), byteArrayOf().asInt64Encoded())
         assertContentEquals(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 1), byteArrayOf(1).asInt64Encoded())
         assertContentEquals(byteArrayOf(0, 0, 0, 0, 0, 0, 1, 1), byteArrayOf(1, 1).asInt64Encoded())
@@ -55,11 +58,12 @@ class ArrayTest {
         assertContentEquals(byteArrayOf(0, 0, 0, 1, 1, 1, 1, 1), byteArrayOf(1, 1, 1, 1, 1).asInt64Encoded())
         assertContentEquals(byteArrayOf(0, 0, 1, 1, 1, 1, 1, 1), byteArrayOf(1, 1, 1, 1, 1, 1).asInt64Encoded())
         assertContentEquals(byteArrayOf(0, 1, 1, 1, 1, 1, 1, 1), byteArrayOf(1, 1, 1, 1, 1, 1, 1).asInt64Encoded())
+        assertContentEquals(byteArrayOf((255).toByte(), 1, 1, 1, 1, 1, 1, 1), byteArrayOf(1, 1, 1, 1, 1, 1, 1).asInt64Encoded(fillValue = 255U))
         assertContentEquals(byteArrayOf(1, 1, 1, 1, 1, 1, 1, 1), byteArrayOf(1, 1, 1, 1, 1, 1, 1, 1).asInt64Encoded())
     }
 
     @Test
-    fun `fails if requested to prepend ByteArray with 0 to match Int64 byte size but holds too big value`() {
+    fun `fails if requested to prepend ByteArray with fill value to match Int64 byte size but holds too big value`() {
         assertFailsWith<IllegalArgumentException> { byteArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1).asInt64Encoded() }
     }
 

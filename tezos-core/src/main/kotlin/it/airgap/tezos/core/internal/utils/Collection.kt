@@ -52,4 +52,5 @@ public fun <T : Comparable<T>> List<T>.startsWith(elements: List<T>): Boolean =
 
 @InternalTezosSdkApi
 public fun List<Byte>.startsWith(bytes: ByteArray): Boolean =
-    slice(bytes.indices).foldIndexed(true) { index, acc, byte -> acc && byte == bytes[index] }
+    if (size < bytes.size) false
+    else slice(bytes.indices).foldIndexed(true) { index, acc, byte -> acc && byte == bytes[index] }

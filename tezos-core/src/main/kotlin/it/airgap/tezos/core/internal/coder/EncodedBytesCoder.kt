@@ -19,7 +19,7 @@ public class EncodedBytesCoder(private val base58Check: Base58Check): ConsumingB
 
     override fun decode(value: ByteArray): Encoded<*> {
         val kind = Encoded.Kind.recognize(value) ?: failWithInvalidBytes(value)
-        return decode(value, kind)
+        return decode(value.sliceArray(kind.base58Bytes.size until value.size), kind)
     }
 
     public fun <E : Encoded<*>, K : Encoded.Kind<E>> decode(value: ByteArray, kind: K): E {
@@ -28,7 +28,7 @@ public class EncodedBytesCoder(private val base58Check: Base58Check): ConsumingB
     }
 
     override fun decodeConsuming(value: MutableList<Byte>): Encoded<*> {
-        val kind = Encoded.Kind.recognize(value) ?: failWithInvalidBytes(value)
+        val kind = Encoded.Kind.recognizeConsuming(value) ?: failWithInvalidBytes(value)
         return decodeConsuming(value, kind)
     }
 
@@ -43,4 +43,7 @@ public class EncodedBytesCoder(private val base58Check: Base58Check): ConsumingB
         val type = kind?.let { kind::class.qualifiedName?.removeSuffix(".Companion")?.substringAfterLast(".") } ?: "Base58 encoded"
         failWithIllegalArgument("Bytes $bytes are not valid $type data.")
     }
+
+    private fun Encoded.Kind.Companion.recognizeConsuming(bytes: MutableList<Byte>): Encoded.Kind<*>? =
+        recognize(bytes)?.also { bytes.consumeUntil(it.base58Bytes.size) }
 }

@@ -1,8 +1,6 @@
 package it.airgap.tezos.michelson.internal.di
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.core.internal.di.findScoped
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.converter.*
@@ -44,8 +42,3 @@ public interface ScopedDependencyRegistry : DependencyRegistry {
 
     public val michelinePacker: MichelinePacker
 }
-
-@InternalTezosSdkApi
-public fun DependencyRegistry.michelson(): ScopedDependencyRegistry =
-    if (this is ScopedDependencyRegistry) this
-    else findScoped() ?: MichelsonScopedDependencyRegistry(this).also { addScoped(it) }

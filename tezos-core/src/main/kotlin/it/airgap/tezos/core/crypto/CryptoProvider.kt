@@ -2,10 +2,10 @@ package it.airgap.tezos.core.crypto
 
 public interface CryptoProvider {
     @Throws(Exception::class)
-    public fun hash256(message: ByteArray): ByteArray
+    public fun sha256(message: ByteArray): ByteArray
 
     @Throws(Exception::class)
-    public fun hash(message: ByteArray, size: Int): ByteArray
+    public fun blake2b(message: ByteArray, size: Int): ByteArray
 
     @Throws(Exception::class)
     public fun signEd25519(message: ByteArray, secretKey: ByteArray): ByteArray

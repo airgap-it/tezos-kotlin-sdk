@@ -1,7 +1,9 @@
 package it.airgap.tezos.michelson.internal.di
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.core
+import it.airgap.tezos.core.internal.di.findScoped
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.converter.*
@@ -62,8 +64,13 @@ internal class MichelsonScopedDependencyRegistry(dependencyRegistry: DependencyR
             timestampBigIntCoder,
             core().stringToAddressConverter,
             core().stringToImplicitAddressConverter,
-            core().stringToPublicKeyEncodedConverter,
-            core().stringToSignatureEncodedConverter,
+            core().stringToPublicKeyConverter,
+            core().stringToSignatureConverter,
         )
     }
 }
+
+@InternalTezosSdkApi
+public fun DependencyRegistry.michelson(): ScopedDependencyRegistry =
+    if (this is ScopedDependencyRegistry) this
+    else findScoped<MichelsonScopedDependencyRegistry>() ?: MichelsonScopedDependencyRegistry(this).also { addScoped(it) }
