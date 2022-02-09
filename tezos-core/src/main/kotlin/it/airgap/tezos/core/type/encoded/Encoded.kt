@@ -22,7 +22,7 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
 
         public fun isValid(string: String): Boolean = string.startsWith(base58Prefix) && string.length == base58Length
         public fun isValid(bytes: ByteArray): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size == bytesLength + base58Bytes.size)
-        public fun isValid(bytes: List<Byte>): Boolean = bytes.size >= bytesLength || (bytes.startsWith(base58Bytes) && bytes.size >= bytesLength + base58Bytes.size)
+        public fun isValid(bytes: List<Byte>): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size >= bytesLength + base58Bytes.size)
 
         public companion object {
             public val values: List<Kind<*>>

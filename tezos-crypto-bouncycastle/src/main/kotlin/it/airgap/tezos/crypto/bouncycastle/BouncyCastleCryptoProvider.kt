@@ -16,12 +16,12 @@ import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import java.math.BigInteger
 
 public class BouncyCastleCryptoProvider : CryptoProvider {
-    override fun hash256(message: ByteArray): ByteArray {
+    override fun sha256(message: ByteArray): ByteArray {
         val shA256Digest = SHA256Digest()
         return shA256Digest.hash(message)
     }
 
-    override fun hash(message: ByteArray, size: Int): ByteArray {
+    override fun blake2b(message: ByteArray, size: Int): ByteArray {
         if (size !in 1..64) failWithInvalidHashSize(size)
 
         val digestSize = size * 8

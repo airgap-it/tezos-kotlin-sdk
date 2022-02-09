@@ -15,7 +15,7 @@ class BouncyCastleCryptoProviderTest {
     }
 
     @Test
-    fun `should hash message with SHA256`() {
+    fun `should hash message with SHA-256`() {
         val messagesWithExpected = listOf(
             "05" to "e77b9a9ae9e30b0dbdb6f510a264ef9de781501d7b6b92ae89eb059c5ab743db",
             "e8" to "e6f207509afa3908da116ce61a7576954248d9fe64a3c652b493cca57ce36e2e",
@@ -30,7 +30,7 @@ class BouncyCastleCryptoProviderTest {
             val message = it.first.asHexString().toByteArray()
             val expected = it.second.asHexString().toByteArray()
 
-            assertContentEquals(expected, cryptoProvider.hash256(message))
+            assertContentEquals(expected, cryptoProvider.sha256(message))
         }
     }
 
@@ -51,7 +51,7 @@ class BouncyCastleCryptoProviderTest {
             val size = it.first.second
             val expected = it.second.asHexString().toByteArray()
 
-            assertContentEquals(expected, cryptoProvider.hash(message, size))
+            assertContentEquals(expected, cryptoProvider.blake2b(message, size))
         }
     }
 

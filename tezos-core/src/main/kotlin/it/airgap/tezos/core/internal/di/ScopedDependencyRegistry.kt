@@ -28,14 +28,14 @@ public interface ScopedDependencyRegistry : DependencyRegistry {
     public val bytesToImplicitAddressConverter: BytesToImplicitAddressConverter
     public val stringToImplicitAddressConverter: StringToImplicitAddressConverter
 
-    public val bytesToPublicKeyEncodedConverter: BytesToPublicKeyEncodedConverter
-    public val stringToPublicKeyEncodedConverter: StringToPublicKeyEncodedConverter
+    public val bytesToPublicKeyConverter: BytesToPublicKeyConverter
+    public val stringToPublicKeyConverter: StringToPublicKeyConverter
 
-    public val bytesToSignatureEncodedConverter: BytesToSignatureEncodedConverter
-    public val stringToSignatureEncodedConverter: StringToSignatureEncodedConverter
+    public val bytesToSignatureConverter: BytesToSignatureConverter
+    public val stringToSignatureConverter: StringToSignatureConverter
+
+    public val signatureToGenericSignatureConverter: SignatureToGenericSignatureConverter
+    public val genericSignatureToEd25519SignatureConverter: GenericSignatureToEd25519SignatureConverter
+    public val genericSignatureToSecp256K1SignatureConverter: GenericSignatureToSecp256K1SignatureConverter
+    public val genericSignatureToP256SignatureConverter: GenericSignatureToP256SignatureConverter
 }
-
-@InternalTezosSdkApi
-public fun DependencyRegistry.core(): ScopedDependencyRegistry =
-    if (this is ScopedDependencyRegistry) this
-    else findScoped() ?: CoreScopedDependencyRegistry(this).also { addScoped(it) }

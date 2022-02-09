@@ -1,7 +1,6 @@
 package it.airgap.tezos.operation.internal.di
 
 import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.core.internal.di.findScoped
 import it.airgap.tezos.operation.internal.coder.OperationBytesCoder
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
@@ -28,7 +27,3 @@ internal interface ScopedDependencyRegistry : DependencyRegistry {
     val operationSecp256K1Signer: OperationSecp256K1Signer
     val operationP256Signer: OperationP256Signer
 }
-
-internal fun DependencyRegistry.operation(): ScopedDependencyRegistry =
-    if (this is ScopedDependencyRegistry) this
-    else findScoped<OperationScopedDependencyRegistry>() ?: OperationScopedDependencyRegistry(this).also { addScoped(it) }

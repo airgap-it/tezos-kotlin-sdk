@@ -4,8 +4,6 @@ import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.coder.TimestampBigIntCoder
-import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.delegate.lazyWeak
 import kotlin.reflect.KClass
@@ -19,13 +17,13 @@ internal class CoreDependencyRegistry(private val cryptoProvider: CryptoProvider
         get() = _scoped
 
     override fun addScoped(scoped: DependencyRegistry) {
-        val key = scoped::class.java.packageName ?: return
+        val key = scoped::class.qualifiedName ?: return
         _scoped[key] = scoped
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : DependencyRegistry> findScoped(targetClass: KClass<T>): T? {
-        val key = targetClass.java.packageName ?: return null
+        val key = targetClass.qualifiedName ?: return null
         return scoped[key] as T?
     }
 

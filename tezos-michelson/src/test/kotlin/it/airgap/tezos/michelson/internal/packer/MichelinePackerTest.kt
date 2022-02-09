@@ -9,8 +9,8 @@ import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.converter.StringToAddressConverter
 import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToPublicKeyEncodedConverter
-import it.airgap.tezos.core.internal.converter.StringToSignatureEncodedConverter
+import it.airgap.tezos.core.internal.converter.StringToPublicKeyConverter
+import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
@@ -74,8 +74,8 @@ class MichelinePackerTest {
 
         val stringToAddressConverter = StringToAddressConverter()
         val stringToImplicitAddressConverter = StringToImplicitAddressConverter()
-        val stringToPublicKeyEncodedConverter = StringToPublicKeyEncodedConverter()
-        val stringToSignatureEncodedConverter = StringToSignatureEncodedConverter()
+        val stringToPublicKeyConverter = StringToPublicKeyConverter()
+        val stringToSignatureConverter = StringToSignatureConverter()
 
         val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
 
@@ -92,8 +92,8 @@ class MichelinePackerTest {
             timestampBigIntCoder,
             stringToAddressConverter,
             stringToImplicitAddressConverter,
-            stringToPublicKeyEncodedConverter,
-            stringToSignatureEncodedConverter,
+            stringToPublicKeyConverter,
+            stringToSignatureConverter,
         )
 
         michelsonToMichelineConverter = MichelsonToMichelineConverter()

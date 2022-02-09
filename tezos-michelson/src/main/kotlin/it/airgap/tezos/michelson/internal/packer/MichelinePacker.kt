@@ -7,8 +7,8 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.converter.StringToAddressConverter
 import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToPublicKeyEncodedConverter
-import it.airgap.tezos.core.internal.converter.StringToSignatureEncodedConverter
+import it.airgap.tezos.core.internal.converter.StringToPublicKeyConverter
+import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
@@ -40,8 +40,8 @@ public class MichelinePacker(
     private val timestampBigIntCoder: TimestampBigIntCoder,
     private val stringToAddressConverter: StringToAddressConverter,
     private val stringToImplicitAddressConverter: StringToImplicitAddressConverter,
-    private val stringToPublicKeyEncodedConverter: StringToPublicKeyEncodedConverter,
-    private val stringToSignatureEncodedConverter: StringToSignatureEncodedConverter,
+    private val stringToPublicKeyConverter: StringToPublicKeyConverter,
+    private val stringToSignatureConverter: StringToSignatureConverter,
 ) : Packer<MichelineNode> {
     override fun pack(value: MichelineNode, schema: MichelineNode?): ByteArray {
         val prePacked = if (schema != null) prePack(value, schema) else value
@@ -195,10 +195,10 @@ public class MichelinePacker(
         prePackStringToBytes(value, schema) { ImplicitAddress.fromString(it, stringToImplicitAddressConverter).encodeToBytes(implicitAddressBytesCoder) }
 
     private fun prePackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { PublicKeyEncoded.fromString(it, stringToPublicKeyEncodedConverter).encodeToBytes(publicKeyBytesCoder) }
+        prePackStringToBytes(value, schema) { PublicKeyEncoded.fromString(it, stringToPublicKeyConverter).encodeToBytes(publicKeyBytesCoder) }
 
     private fun prePackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { SignatureEncoded.fromString(it, stringToSignatureEncodedConverter).encodeToBytes(signatureBytesCoder) }
+        prePackStringToBytes(value, schema) { SignatureEncoded.fromString(it, stringToSignatureConverter).encodeToBytes(signatureBytesCoder) }
 
     private fun prePackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
         prePackStringToInt(value, schema, timestampBigIntCoder::encode)

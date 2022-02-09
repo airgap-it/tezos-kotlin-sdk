@@ -6,7 +6,7 @@ import it.airgap.tezos.core.type.encoded.*
 
 @InternalTezosSdkApi
 public class StringToImplicitAddressConverter : StringToEncodedGroupedConverter<ImplicitAddress<*>>() {
-    override val kinds: List<Encoded.Kind<out ImplicitAddress<*>>>
+    override val kinds: List<Encoded.Kind<ImplicitAddress<*>>>
         get() = listOf(Ed25519PublicKeyHash, Secp256K1PublicKeyHash, P256PublicKeyHash)
 
     override fun failWithInvalidValue(value: String): Nothing = failWithInvalidImplicitAddress(value)
