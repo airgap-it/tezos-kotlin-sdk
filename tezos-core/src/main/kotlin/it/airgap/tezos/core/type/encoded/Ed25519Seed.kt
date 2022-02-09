@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Ed25519Seed(override val base58: String) : SeedEncoded<Ed25519Seed> {
 
-    override val kind: Encoded.Kind<Ed25519Seed>
+    override val kind: SeedEncoded.Kind<Ed25519Seed>
         get() = Companion
 
     init {

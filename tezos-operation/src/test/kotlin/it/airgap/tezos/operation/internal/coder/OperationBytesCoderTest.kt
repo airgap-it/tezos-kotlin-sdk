@@ -91,7 +91,7 @@ class OperationBytesCoderTest {
         listOf(
             operationsWithBytes,
             listOf(
-                Operation(
+                Operation.Signed(
                     BlockHash("BLyKu3tnc9NCuiFfCqfeVGPCoZTyW63dYh2XAYxkM7fQYKCqsju"),
                     contents = emptyList(),
                     signature = GenericSignature("siga9NgTU8rCDsojPqDciCQi9nPDhYKTBrg1SjHsxRfMgJByWJr4SrXpUhQEjxiJpR7sVbQwHoo2mdMF1CdLGSyAXW6JTyst")
@@ -102,9 +102,9 @@ class OperationBytesCoderTest {
             assertContentEquals(it.second, it.first.forgeToBytes())
             assertContentEquals(it.second, it.first.forgeToBytes(operationBytesCoder))
             assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false))
-            assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(operationBytesCoder, withHexPrefix = false))
+            assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false, operationBytesCoder))
             assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true))
-            assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(operationBytesCoder, withHexPrefix = true))
+            assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true, operationBytesCoder))
         }
     }
 
@@ -134,7 +134,7 @@ class OperationBytesCoderTest {
 
     private val operationsWithBytes: List<Pair<Operation, ByteArray>>
         get() = listOf(
-            Operation(
+            Operation.Unsigned(
                 BlockHash("BLyKu3tnc9NCuiFfCqfeVGPCoZTyW63dYh2XAYxkM7fQYKCqsju"),
                 contents = emptyList(),
             ) to "a5db12a8a7716fa5445bd374c8b3239c876dde8397efae0eb0dd223dc23a51c7".asHexString().toByteArray(),

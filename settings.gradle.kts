@@ -1,4 +1,4 @@
 include("tezos-core")
 include("tezos-michelson")
 include("tezos-operation")
-include("tezos-crypto-tuweni")
+include("tezos-crypto-bouncycastle")

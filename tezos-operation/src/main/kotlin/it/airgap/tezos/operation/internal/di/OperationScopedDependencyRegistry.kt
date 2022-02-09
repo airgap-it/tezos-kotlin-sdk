@@ -6,6 +6,10 @@ import it.airgap.tezos.michelson.internal.di.michelson
 import it.airgap.tezos.operation.internal.coder.OperationBytesCoder
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
+import it.airgap.tezos.operation.internal.signer.OperationEd25519Signer
+import it.airgap.tezos.operation.internal.signer.OperationP256Signer
+import it.airgap.tezos.operation.internal.signer.OperationSecp256K1Signer
+import it.airgap.tezos.operation.internal.signer.OperationSigner
 
 internal class OperationScopedDependencyRegistry(dependencyRegistry: DependencyRegistry) : ScopedDependencyRegistry, DependencyRegistry by dependencyRegistry {
 
@@ -28,4 +32,11 @@ internal class OperationScopedDependencyRegistry(dependencyRegistry: DependencyR
     // -- converter --
 
     override val tagToOperationContentKindConverter: TagToOperationContentKindConverter = TagToOperationContentKindConverter()
+
+    // -- signer --
+
+    override val operationSigner: OperationSigner by lazy { OperationSigner(operationEd25519Signer, operationSecp256K1Signer, operationP256Signer) }
+    override val operationEd25519Signer: OperationEd25519Signer by lazy { OperationEd25519Signer(crypto, operationBytesCoder, core().encodedBytesCoder) }
+    override val operationSecp256K1Signer: OperationSecp256K1Signer by lazy { OperationSecp256K1Signer(crypto, operationBytesCoder, core().encodedBytesCoder) }
+    override val operationP256Signer: OperationP256Signer by lazy { OperationP256Signer(crypto, operationBytesCoder, core().encodedBytesCoder) }
 }

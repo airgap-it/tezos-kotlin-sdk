@@ -5,7 +5,7 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class ContractHash(override val base58: String) : OriginatedAddress<ContractHash> {
 
-    override val kind: Encoded.Kind<ContractHash>
+    override val kind: OriginatedAddress.Kind<ContractHash>
         get() = Companion
 
     init {

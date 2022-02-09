@@ -2,6 +2,7 @@ package it.airgap.tezos.operation.internal.coder
 
 import it.airgap.tezos.core.decodeConsumingFromBytes
 import it.airgap.tezos.core.encodeToBytes
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.encoded.*
@@ -21,7 +22,8 @@ import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 
-internal class OperationContentBytesCoder(
+@InternalTezosSdkApi
+public class OperationContentBytesCoder(
     private val encodedBytesCoder: EncodedBytesCoder,
     private val addressBytesCoder: AddressBytesCoder,
     private val publicKeyBytesCoder: PublicKeyBytesCoder,
