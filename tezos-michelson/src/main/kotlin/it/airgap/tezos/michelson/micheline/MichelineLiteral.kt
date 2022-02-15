@@ -20,7 +20,7 @@ public sealed class MichelineLiteral : MichelineNode() {
         public constructor(value: Long) : this(value.toString())
 
         init {
-            require(isValid(int))
+            require(isValid(int)) { "Invalid Micheline Integer." }
         }
 
         public fun toByte(): Byte = int.toByte()
@@ -36,7 +36,7 @@ public sealed class MichelineLiteral : MichelineNode() {
     @Serializable
     public data class String(public val string: kotlin.String) : MichelineLiteral() {
         init {
-            require(isValid(string))
+            require(isValid(string)) { "Invalid Micheline String." }
         }
 
         public companion object {
@@ -50,7 +50,7 @@ public sealed class MichelineLiteral : MichelineNode() {
         public constructor(value: ByteArray) : this(value.toHexString().asString(withPrefix = true))
 
         init {
-            require(isValid(bytes))
+            require(isValid(bytes)) { "Invalid Micheline Bytes." }
         }
 
         public fun toByteArray(): ByteArray = if (bytes == HexString.PREFIX) byteArrayOf() else bytes.asHexString().toByteArray()

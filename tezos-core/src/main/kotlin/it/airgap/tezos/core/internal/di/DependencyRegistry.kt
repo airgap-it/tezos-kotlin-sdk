@@ -33,3 +33,5 @@ public interface DependencyRegistry {
 }
 
 public inline fun <reified T : DependencyRegistry> DependencyRegistry.findScoped(): T? = findScoped(T::class)
+
+public typealias DependencyRegistryFactory = (DependencyRegistry) -> DependencyRegistry

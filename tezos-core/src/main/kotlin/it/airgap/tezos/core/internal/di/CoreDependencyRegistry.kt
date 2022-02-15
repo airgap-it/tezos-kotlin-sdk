@@ -8,7 +8,10 @@ import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.delegate.lazyWeak
 import kotlin.reflect.KClass
 
-internal class CoreDependencyRegistry(private val cryptoProvider: CryptoProvider) : DependencyRegistry {
+internal class CoreDependencyRegistry(
+    cryptoProvider: CryptoProvider,
+    scopedDependencyRegistryFactories: List<DependencyRegistryFactory> = emptyList(),
+) : DependencyRegistry {
 
     // -- scoped --
 
@@ -25,6 +28,10 @@ internal class CoreDependencyRegistry(private val cryptoProvider: CryptoProvider
     override fun <T : DependencyRegistry> findScoped(targetClass: KClass<T>): T? {
         val key = targetClass.qualifiedName ?: return null
         return scoped[key] as T?
+    }
+
+    init {
+        scopedDependencyRegistryFactories.forEach { addScoped(it(this)) }
     }
 
     // -- base58 --
