@@ -1,10 +1,10 @@
 package it.airgap.tezos.michelson.micheline
 
-import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
+import it.airgap.tezos.michelson.internal.serializer.MichelineSequenceSerializer
 import kotlinx.serialization.Serializable
 
 // https://tezos.gitlab.io/shell/micheline.html#bnf-grammar
-@Serializable(with = MichelineJsonCoder.SequenceSerializer::class)
+@Serializable(with = MichelineSequenceSerializer::class)
 public data class MichelineSequence(public val nodes: List<MichelineNode>) : MichelineNode() {
     public companion object {}
 }

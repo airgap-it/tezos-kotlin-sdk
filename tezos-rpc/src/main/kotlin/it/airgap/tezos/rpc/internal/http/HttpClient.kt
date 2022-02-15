@@ -1,10 +1,10 @@
-package it.airgap.tezos.rpc.internal.network
+package it.airgap.tezos.rpc.internal.http
 
+import it.airgap.tezos.rpc.http.HttpClientProvider
+import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.utils.decodeFromString
 import it.airgap.tezos.rpc.internal.utils.encodeToString
-import it.airgap.tezos.rpc.network.HttpClientProvider
-import it.airgap.tezos.rpc.network.HttpHeader
-import it.airgap.tezos.rpc.network.HttpParameter
 import kotlinx.serialization.json.Json
 
 public class HttpClient(

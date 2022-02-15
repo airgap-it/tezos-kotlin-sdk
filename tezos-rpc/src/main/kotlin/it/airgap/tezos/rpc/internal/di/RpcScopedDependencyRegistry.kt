@@ -5,8 +5,8 @@ import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.findScoped
 import it.airgap.tezos.core.internal.utils.failWithIllegalState
-import it.airgap.tezos.rpc.internal.network.HttpClient
-import it.airgap.tezos.rpc.network.HttpClientProvider
+import it.airgap.tezos.rpc.http.HttpClientProvider
+import it.airgap.tezos.rpc.internal.http.HttpClient
 import kotlinx.serialization.json.Json
 
 internal class RpcScopedDependencyRegistry(

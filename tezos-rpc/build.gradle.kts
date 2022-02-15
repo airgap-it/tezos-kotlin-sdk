@@ -1,3 +1,7 @@
+plugins {
+    kotlin("plugin.serialization") version Build.Kotlin.version
+}
+
 dependencies {
     implementation(project(":tezos-core"))
 

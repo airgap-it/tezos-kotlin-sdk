@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.network
+package it.airgap.tezos.rpc.http
 
 public typealias HttpHeader = Pair<String, String>
 public typealias HttpParameter = Pair<String, String>

@@ -4,11 +4,12 @@ import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.isHex
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.HexString
-import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
+import it.airgap.tezos.michelson.internal.serializer.MichelineLiteralBytesSerializer
+import it.airgap.tezos.michelson.internal.serializer.MichelineLiteralSerializer
 import kotlinx.serialization.Serializable
 
 // https://tezos.gitlab.io/shell/micheline.html#bnf-grammar
-@Serializable(with = MichelineJsonCoder.LiteralSerializer::class)
+@Serializable(with = MichelineLiteralSerializer::class)
 public sealed class MichelineLiteral : MichelineNode() {
 
     @Serializable
@@ -44,7 +45,7 @@ public sealed class MichelineLiteral : MichelineNode() {
         }
     }
 
-    @Serializable(with = MichelineJsonCoder.LiteralBytesSerializer::class)
+    @Serializable(with = MichelineLiteralBytesSerializer::class)
     public data class Bytes(public val bytes: kotlin.String) : MichelineLiteral() {
 
         public constructor(value: ByteArray) : this(value.toHexString().asString(withPrefix = true))
