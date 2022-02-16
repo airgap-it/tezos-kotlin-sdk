@@ -15,12 +15,17 @@ public interface ShellRpc {
     // -- /chains --
 
     public suspend fun setBootstrapped(chainId: String, bootstrapped: Boolean, headers: List<HttpHeader> = emptyList()): SetBootstrappedResponse
+
     public suspend fun getBlocks(chainId: String, length: UInt? = null, head: BlockHash? = null, minDate: String? = null, headers: List<HttpHeader> = emptyList()): GetBlocksResponse
+
     public suspend fun getChainId(chainId: String, headers: List<HttpHeader> = emptyList()): GetChainIdResponse
+
     public suspend fun getInvalidBlocks(chainId: String, headers: List<HttpHeader> = emptyList()): GetInvalidBlocksResponse
     public suspend fun getInvalidBlock(chainId: String, blockHash: BlockHash, headers: List<HttpHeader> = emptyList()): GetInvalidBlockResponse
     public suspend fun deleteInvalidBlock(chainId: String, blockHash: BlockHash, headers: List<HttpHeader> = emptyList()): DeleteInvalidBlockResponse
+
     public suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader> = emptyList()): IsBootstrappedResponse
+
     public suspend fun getCaboose(chainId: String, headers: List<HttpHeader> = emptyList()): GetCabooseResponse
     public suspend fun getCheckpoint(chainId: String, headers: List<HttpHeader> = emptyList()): GetCheckpointResponse
     public suspend fun getSavepoint(chainId: String, headers: List<HttpHeader> = emptyList()): GetSavepointResponse
@@ -29,6 +34,7 @@ public interface ShellRpc {
 
     public suspend fun getHistoryMode(headers: List<HttpHeader> = emptyList()): GetHistoryModeResponse
     public suspend fun setLogging(activeSinks: String, headers: List<HttpHeader> = emptyList()): SetLoggingResponse
+
     public suspend fun getUserActivatedProtocolOverrides(headers: List<HttpHeader> = emptyList()): GetUserActivatedProtocolOverridesResponse
     public suspend fun getUserActivatedUpgrades(headers: List<HttpHeader> = emptyList()): GetUserActivatedUpgradesResponse
 
@@ -45,4 +51,32 @@ public interface ShellRpc {
     public suspend fun monitorHeads(chainId: ChainId, nextProtocol: ProtocolHash? = null, headers: List<HttpHeader> = emptyList()): MonitorHeadsResponse
     public suspend fun monitorProtocols(headers: List<HttpHeader> = emptyList()): MonitorProtocolsResponse
     public suspend fun monitorValidBlocks(protocol: ProtocolHash? = null, nextProtocol: ProtocolHash? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): MonitorValidBlocksResponse
+
+    // -- /network --
+
+//    public suspend fun getConnections(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getConnection(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//
+//    public suspend fun clearGreylist(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//
+//    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//
+//    public suspend fun getPeers(filter: String /* TODO: change to enum(accepted, running, disconnected) */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getPeerEvents(peerId: CryptoboxPublicKeyHash, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//
+//    public suspend fun getKnownAddresses(filter: String /* TODO: change to enum(requested, accepted, running, disconnected) */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getAddressDetails(point: String /* TODO: change to IP:addr? */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun connectToAddress(point: String /* TODO: change to IP:addr? */, timeout: Long? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun changeAddressPermissions(point: String /* TODO: change to IP:addr? */, peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun isAddressBanned(point: String /* TODO: change to IP:addr? */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getAddressEvents(point: String /* TODO: change to IP:addr? */, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//
+//    public suspend fun getNetworkDetails(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getNetworkStats(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 }
