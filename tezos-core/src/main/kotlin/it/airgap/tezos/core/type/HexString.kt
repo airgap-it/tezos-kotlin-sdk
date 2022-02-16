@@ -4,7 +4,7 @@ import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.isHex
 
 @JvmInline
-public value class HexString(private val value: String) {
+public value class HexString(public val value: String) {
     init {
         require(isValid(value)) { "Invalid hex string." }
     }

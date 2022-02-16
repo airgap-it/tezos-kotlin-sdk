@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.data.shell
+package it.airgap.tezos.rpc.shell.data
 
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
