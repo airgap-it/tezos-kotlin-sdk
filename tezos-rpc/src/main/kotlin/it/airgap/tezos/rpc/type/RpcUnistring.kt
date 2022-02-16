@@ -12,5 +12,19 @@ public sealed interface RpcUnistring {
     public value class PlainUtf8(public val string: String) : RpcUnistring
 
     @Serializable
-    public data class InvalidUtf8(@SerialName("invalid_utf8_string") public val invalidUtf8String: List<UByte>) : RpcUnistring
+    public data class InvalidUtf8(@SerialName("invalid_utf8_string") public val invalidUtf8String: ByteArray) : RpcUnistring {
+        override fun equals(other: Any?): Boolean =
+            when {
+                this === other -> true
+                other is InvalidUtf8 -> invalidUtf8String.contentEquals(other.invalidUtf8String)
+                else -> false
+            }
+
+        override fun hashCode(): Int = invalidUtf8String.contentHashCode()
+    }
 }
+
+internal typealias RpcBlockHash = RpcUnistring
+internal typealias RpcChainId = RpcUnistring
+internal typealias RpcOperationHash = RpcUnistring
+internal typealias RpcProtocolHash = RpcUnistring

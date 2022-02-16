@@ -1,7 +1,10 @@
 package it.airgap.tezos.rpc.data.shell
 
+import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.internal.serializer.RpcHistoryModeSerializer
+import it.airgap.tezos.rpc.type.RpcProtocolHash
 import it.airgap.tezos.rpc.type.RpcUnistring
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -36,21 +39,31 @@ public typealias SetLoggingResponse = Unit
 // -- /network/user_activated_protocol_overrides --
 
 @Serializable
-public data class RpcUserActivatedProtocolOverride(
-    @SerialName("replaced_protocol") public val replacedProtocol: RpcUnistring,
-    @SerialName("replacement_protocol") public val replacementProtocol: RpcUnistring,
+public data class RpcUserActivatedProtocolOverride<T>(
+    @SerialName("replaced_protocol") public val replacedProtocol: T,
+    @SerialName("replacement_protocol") public val replacementProtocol: T,
 )
 
 @Serializable
-public data class GetUserActivatedProtocolOverridesResponse(public val protocolOverrides: List<RpcUserActivatedProtocolOverride>)
+@JvmInline
+internal value class GetUserActivatedProtocolOverridesTransitionalResponse(val overrides: List<RpcUserActivatedProtocolOverride<RpcProtocolHash>>)
+
+@Serializable
+@JvmInline
+public value class GetUserActivatedProtocolOverridesResponse(public val overrides: List<RpcUserActivatedProtocolOverride<@Contextual ProtocolHash>>)
 
 // -- /network/user_activated_upgrades --
 
 @Serializable
-public data class RpcUserActivatedUpgrade(
+public data class RpcUserActivatedUpgrade<T>(
     public val level: Int,
-    @SerialName("replacement_protocol") public val replacementProtocol: RpcUnistring,
+    @SerialName("replacement_protocol") public val replacementProtocol: T,
 )
 
 @Serializable
-public data class GetUserActivatedUpgradesResponse(public val upgrades: List<RpcUserActivatedUpgrade>)
+@JvmInline
+internal value class GetUserActivatedUpgradesTransitionalResponse(val upgrades: List<RpcUserActivatedUpgrade<RpcProtocolHash>>)
+
+@Serializable
+@JvmInline
+public value class GetUserActivatedUpgradesResponse(public val upgrades: List<RpcUserActivatedUpgrade<@Contextual ProtocolHash>>)
