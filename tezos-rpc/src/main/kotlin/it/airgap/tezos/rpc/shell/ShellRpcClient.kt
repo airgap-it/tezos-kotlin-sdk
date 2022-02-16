@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.shell
 
 import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -122,7 +123,7 @@ internal class ShellRpcClient(
 
     override suspend fun injectProtocol(
         expectedEnvVersion: UShort,
-        components: List<RpcProtocolComponents>,
+        components: List<RpcProtocolComponent>,
         async: Boolean?,
         headers: List<HttpHeader>,
     ): InjectProtocolResponse =
@@ -134,6 +135,48 @@ internal class ShellRpcClient(
                 async?.takeIf { it }?.let { add("async" to null) }
             },
             request = InjectProtocolRequest(expectedEnvVersion, components),
+        ).toFinal()
+
+    // -- /monitor --
+
+    override suspend fun monitorActiveChains(headers: List<HttpHeader>): MonitorActiveChainsResponse =
+        httpClient.get<MonitorActiveChainsTransitionalResponse>(nodeUrl, "/monitor/active_chains", headers).toFinal()
+
+    override suspend fun monitorBootstrapped(headers: List<HttpHeader>): MonitorBootstrappedResponse =
+        httpClient.get<MonitorBootstrappedTransitionalResponse>(nodeUrl, "/monitor/bootstrapped", headers).toFinal()
+
+    override suspend fun monitorHeads(
+        chainId: ChainId,
+        nextProtocol: ProtocolHash?,
+        headers: List<HttpHeader>,
+    ): MonitorHeadsResponse =
+        httpClient.get<MonitorHeadsTransitionalResponse>(
+            nodeUrl,
+            "/monitor/heads/$chainId",
+            headers,
+            parameters = buildList {
+                nextProtocol?.let { add("next_protocol" to it.base58) }
+            },
+        ).toFinal()
+
+    override suspend fun monitorProtocols(headers: List<HttpHeader>): MonitorProtocolsResponse =
+        httpClient.get<MonitorProtocolsTransitionalResponse>(nodeUrl, "/monitor/protocols", headers).toFinal()
+
+    override suspend fun monitorValidBlocks(
+        protocol: ProtocolHash?,
+        nextProtocol: ProtocolHash?,
+        chain: ChainId?,
+        headers: List<HttpHeader>,
+    ): MonitorValidBlocksResponse =
+        httpClient.get<MonitorValidBlocksTransitionalResponse>(
+            nodeUrl,
+            "/monitor/valid_blocks",
+            headers,
+            parameters = buildList {
+                protocol?.let { add("protocol" to it.base58) }
+                nextProtocol?.let { add("next_protocol" to it.base58) }
+                chain?.let { add("chain" to it.base58) }
+            },
         ).toFinal()
 
     // ==== converters ====
@@ -193,12 +236,58 @@ internal class ShellRpcClient(
     private fun InjectProtocolTransitionalResponse.toFinal(): InjectProtocolResponse =
         InjectProtocolResponse(hash.toEncodedProtocolHash())
 
+    // -- /monitor --
+
+    private fun MonitorActiveChainsTransitionalResponse.toFinal(): MonitorActiveChainsResponse =
+        MonitorActiveChainsResponse(chains.map { it.toFinal() })
+
+    private fun MonitorBootstrappedTransitionalResponse.toFinal(): MonitorBootstrappedResponse =
+        MonitorBootstrappedResponse(block.toEncodedBlockHash(), timestamp.toLongTimestamp())
+
+    private fun MonitorHeadsTransitionalResponse.toFinal(): MonitorHeadsResponse =
+        MonitorHeadsResponse(blockHeader.toFinal())
+
+    private fun MonitorProtocolsTransitionalResponse.toFinal(): MonitorProtocolsResponse =
+        MonitorProtocolsResponse(hash.toEncodedProtocolHash())
+
+    private fun MonitorValidBlocksTransitionalResponse.toFinal(): MonitorValidBlocksResponse =
+        MonitorValidBlocksResponse(blockHeader.toFinal())
+
+    private fun RpcActiveChain<RpcChainId, RpcProtocolHash, RpcTimestamp>.toFinal(): RpcActiveChain<ChainId, ProtocolHash, Long> =
+        when (this) {
+            is RpcActiveChain.Main -> RpcActiveChain.Main(chainId.toEncodedChainId())
+            is RpcActiveChain.Test -> RpcActiveChain.Test(chainId.toEncodedChainId(), testProtocol.toEncodedProtocolHash(), expirationDate.toLongTimestamp())
+            is RpcActiveChain.Stopping -> RpcActiveChain.Stopping(stopping.toEncodedChainId())
+        }
+
+    private fun RpcBlockHeader<RpcBlockHash, RpcTimestamp, RpcOperationListListHash, RpcContextHash>.toFinal(): RpcBlockHeader<BlockHash, Long, OperationListListHash, ContextHash> =
+        RpcBlockHeader(
+            hash.toEncodedBlockHash(),
+            level,
+            proto,
+            predecessor.toEncodedBlockHash(),
+            timestamp.toLongTimestamp(),
+            validationPass,
+            operationsHash.toEncodedOperationListListHash(),
+            fitness,
+            context.toEncodedContextHash(),
+            protocolData,
+        )
+
     // -- common --
 
     private fun RpcBlockHash.toEncodedBlockHash(): BlockHash = toEncoded(BlockHash)
     private fun RpcChainId.toEncodedChainId(): ChainId = toEncoded(ChainId)
+    private fun RpcContextHash.toEncodedContextHash(): ContextHash = toEncoded(ContextHash)
     private fun RpcOperationHash.toEncodedOperationHash(): OperationHash = toEncoded(OperationHash)
+    private fun RpcOperationListListHash.toEncodedOperationListListHash(): OperationListListHash = toEncoded(OperationListListHash)
     private fun RpcProtocolHash.toEncodedProtocolHash(): ProtocolHash = toEncoded(ProtocolHash)
+
+    private fun RpcTimestamp.toLongTimestamp(): Long =
+        when (this) {
+            is RpcUnistring.PlainUtf8 -> BigInt.valueOf(string).toLongExact()
+            is RpcUnistring.InvalidUtf8 -> BigInt.valueOf(invalidUtf8String).toLongExact()
+        }
 
     private fun <E : Encoded<E>, K : Encoded.Kind<E>> RpcUnistring.toEncoded(kind: K): E =
         when (this) {

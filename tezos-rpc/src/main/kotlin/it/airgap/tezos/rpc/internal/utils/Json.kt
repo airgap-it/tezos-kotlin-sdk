@@ -17,3 +17,6 @@ internal fun JsonObject.getString(key: String): String =
 
 internal fun <T> JsonObject.getSerializable(key: String, jsonDecoder: JsonDecoder, deserializer: KSerializer<T>): T =
     get(key)?.let { jsonDecoder.json.decodeFromJsonElement(deserializer, it) } ?: failWithMissingField(key)
+
+internal fun JsonObject.containsKeys(vararg keys: String): Boolean = keys.all { containsKey(it) }
+internal fun JsonObject.doesNotContainKeys(vararg keys: String): Boolean = keys.none { containsKey(it) }

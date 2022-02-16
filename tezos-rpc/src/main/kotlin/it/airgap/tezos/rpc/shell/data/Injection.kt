@@ -4,10 +4,7 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.OperationHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
-import it.airgap.tezos.rpc.type.RpcBlockHash
-import it.airgap.tezos.rpc.type.RpcOperation
-import it.airgap.tezos.rpc.type.RpcOperationHash
-import it.airgap.tezos.rpc.type.RpcProtocolHash
+import it.airgap.tezos.rpc.type.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -47,16 +44,9 @@ public value class InjectOperationResponse(public val hash: @Contextual Operatio
 // -- /protocol --
 
 @Serializable
-public data class RpcProtocolComponents(
-    public val name: String,
-    public val implementation: String,
-    public val `interface`: String? = null,
-)
-
-@Serializable
 public data class InjectProtocolRequest(
     @SerialName("expected_env_version") public val expectedEnvVersion: UShort,
-    public val components: List<RpcProtocolComponents>,
+    public val components: List<RpcProtocolComponent>,
 )
 
 @Serializable

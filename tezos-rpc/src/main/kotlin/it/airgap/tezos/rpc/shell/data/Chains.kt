@@ -4,7 +4,8 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.type.RpcBlockHash
 import it.airgap.tezos.rpc.type.RpcChainId
-import it.airgap.tezos.rpc.type.RpcError
+import it.airgap.tezos.rpc.type.RpcChainStatus
+import it.airgap.tezos.rpc.type.RpcInvalidBlock
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -42,13 +43,6 @@ public value class GetChainIdResponse(public val chainId: @Contextual ChainId)
 // -- /<chain_id>/invalid_blocks --
 
 @Serializable
-public data class RpcInvalidBlock<T>(
-    public val block: T,
-    public val level: Int,
-    public val errors: List<RpcError>,
-)
-
-@Serializable
 @JvmInline
 internal value class GetInvalidBlocksTransitionalResponse(val blocks: List<RpcInvalidBlock<RpcBlockHash>>)
 
@@ -59,21 +53,16 @@ public value class GetInvalidBlocksResponse(public val blocks: List<RpcInvalidBl
 // -- /<chain_id>/invalid_blocks/<block_hash> --
 
 @Serializable
-internal data class GetInvalidBlockTransitionalResponse(val block: RpcInvalidBlock<RpcBlockHash>)
+@JvmInline
+internal value class GetInvalidBlockTransitionalResponse(val block: RpcInvalidBlock<RpcBlockHash>)
 
 @Serializable
-public data class GetInvalidBlockResponse(public val block: RpcInvalidBlock<@Contextual BlockHash>)
+@JvmInline
+public value class GetInvalidBlockResponse(public val block: RpcInvalidBlock<@Contextual BlockHash>)
 
 public typealias DeleteInvalidBlockResponse = Unit
 
 // -- /<chain_id>/is_bootstrapped --
-
-@Serializable
-public enum class RpcChainStatus {
-    @SerialName("stuck") Stuck,
-    @SerialName("synced") Synced,
-    @SerialName("unsynced") Unsynced,
-}
 
 @Serializable
 public data class IsBootstrappedResponse(public val bootstrapped: Boolean, @SerialName("sync_state") public val syncState: RpcChainStatus)

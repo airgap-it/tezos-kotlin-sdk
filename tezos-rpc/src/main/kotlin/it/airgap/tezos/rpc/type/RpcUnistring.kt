@@ -26,5 +26,9 @@ public sealed interface RpcUnistring {
 
 internal typealias RpcBlockHash = RpcUnistring
 internal typealias RpcChainId = RpcUnistring
+internal typealias RpcContextHash = RpcUnistring
 internal typealias RpcOperationHash = RpcUnistring
+internal typealias RpcOperationListListHash = RpcUnistring
 internal typealias RpcProtocolHash = RpcUnistring
+
+internal typealias RpcTimestamp = RpcUnistring
