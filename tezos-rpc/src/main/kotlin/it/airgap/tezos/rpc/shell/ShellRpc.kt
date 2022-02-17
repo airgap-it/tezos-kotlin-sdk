@@ -54,16 +54,16 @@ public interface ShellRpc {
 
     // -- /network --
 
-//    public suspend fun getConnections(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun getConnection(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//
-//    public suspend fun clearGreylist(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getConnections(headers: List<HttpHeader> = emptyList()): GetConnectionsResponse
+//    public suspend fun getConnection(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): GetConnectionResponse
+//    public suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean? = null, headers: List<HttpHeader> = emptyList()): CloseConnectionResponse
+
+//    public suspend fun clearGreylist(headers: List<HttpHeader> = emptyList()): ClearGreylistResponse
 //    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//
+
 //    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//
+
 //    public suspend fun getPeers(filter: String /* TODO: change to enum(accepted, running, disconnected) */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
@@ -76,7 +76,7 @@ public interface ShellRpc {
 //    public suspend fun changeAddressPermissions(point: String /* TODO: change to IP:addr? */, peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun isAddressBanned(point: String /* TODO: change to IP:addr? */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun getAddressEvents(point: String /* TODO: change to IP:addr? */, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//
+
 //    public suspend fun getNetworkDetails(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun getNetworkStats(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 }

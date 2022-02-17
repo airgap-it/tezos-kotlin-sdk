@@ -3,6 +3,7 @@ package it.airgap.tezos.rpc.shell
 import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.HexString
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
@@ -242,7 +243,7 @@ internal class ShellRpcClient(
         MonitorActiveChainsResponse(chains.map { it.toFinal() })
 
     private fun MonitorBootstrappedTransitionalResponse.toFinal(): MonitorBootstrappedResponse =
-        MonitorBootstrappedResponse(block.toEncodedBlockHash(), timestamp.toLongTimestamp())
+        MonitorBootstrappedResponse(block.toEncodedBlockHash(), timestamp.toTimestamp())
 
     private fun MonitorHeadsTransitionalResponse.toFinal(): MonitorHeadsResponse =
         MonitorHeadsResponse(blockHeader.toFinal())
@@ -253,20 +254,20 @@ internal class ShellRpcClient(
     private fun MonitorValidBlocksTransitionalResponse.toFinal(): MonitorValidBlocksResponse =
         MonitorValidBlocksResponse(blockHeader.toFinal())
 
-    private fun RpcActiveChain<RpcChainId, RpcProtocolHash, RpcTimestamp>.toFinal(): RpcActiveChain<ChainId, ProtocolHash, Long> =
+    private fun RpcActiveChain<RpcChainId, RpcProtocolHash, RpcTimestamp>.toFinal(): RpcActiveChain<ChainId, ProtocolHash, Timestamp> =
         when (this) {
             is RpcActiveChain.Main -> RpcActiveChain.Main(chainId.toEncodedChainId())
-            is RpcActiveChain.Test -> RpcActiveChain.Test(chainId.toEncodedChainId(), testProtocol.toEncodedProtocolHash(), expirationDate.toLongTimestamp())
+            is RpcActiveChain.Test -> RpcActiveChain.Test(chainId.toEncodedChainId(), testProtocol.toEncodedProtocolHash(), expirationDate.toTimestamp())
             is RpcActiveChain.Stopping -> RpcActiveChain.Stopping(stopping.toEncodedChainId())
         }
 
-    private fun RpcBlockHeader<RpcBlockHash, RpcTimestamp, RpcOperationListListHash, RpcContextHash>.toFinal(): RpcBlockHeader<BlockHash, Long, OperationListListHash, ContextHash> =
+    private fun RpcBlockHeader<RpcBlockHash, RpcTimestamp, RpcOperationListListHash, RpcContextHash>.toFinal(): RpcBlockHeader<BlockHash, Timestamp, OperationListListHash, ContextHash> =
         RpcBlockHeader(
             hash.toEncodedBlockHash(),
             level,
             proto,
             predecessor.toEncodedBlockHash(),
-            timestamp.toLongTimestamp(),
+            timestamp.toTimestamp(),
             validationPass,
             operationsHash.toEncodedOperationListListHash(),
             fitness,
@@ -283,10 +284,10 @@ internal class ShellRpcClient(
     private fun RpcOperationListListHash.toEncodedOperationListListHash(): OperationListListHash = toEncoded(OperationListListHash)
     private fun RpcProtocolHash.toEncodedProtocolHash(): ProtocolHash = toEncoded(ProtocolHash)
 
-    private fun RpcTimestamp.toLongTimestamp(): Long =
+    private fun RpcTimestamp.toTimestamp(): Timestamp =
         when (this) {
-            is RpcUnistring.PlainUtf8 -> BigInt.valueOf(string).toLongExact()
-            is RpcUnistring.InvalidUtf8 -> BigInt.valueOf(invalidUtf8String).toLongExact()
+            is RpcUnistring.PlainUtf8 -> Timestamp.Rfc3339(string)
+            is RpcUnistring.InvalidUtf8 -> Timestamp.Millis(BigInt.valueOf(invalidUtf8String).toLongExact()) // TODO: verify
         }
 
     private fun <E : Encoded<E>, K : Encoded.Kind<E>> RpcUnistring.toEncoded(kind: K): E =

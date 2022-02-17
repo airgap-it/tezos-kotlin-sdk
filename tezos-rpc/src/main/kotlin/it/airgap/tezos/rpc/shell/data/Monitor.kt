@@ -1,5 +1,6 @@
 package it.airgap.tezos.rpc.shell.data
 
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.type.*
 import kotlinx.serialization.Contextual
@@ -15,7 +16,7 @@ internal value class MonitorActiveChainsTransitionalResponse(val chains: List<Rp
 
 @Serializable
 @JvmInline
-public value class MonitorActiveChainsResponse(public val chains: List<RpcActiveChain<@Contextual ChainId, @Contextual ProtocolHash, Long>>)
+public value class MonitorActiveChainsResponse(public val chains: List<RpcActiveChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>>)
 
 // -- /bootstrapped --
 
@@ -23,7 +24,7 @@ public value class MonitorActiveChainsResponse(public val chains: List<RpcActive
 internal data class MonitorBootstrappedTransitionalResponse(val block: RpcBlockHash, val timestamp: RpcTimestamp)
 
 @Serializable
-public data class MonitorBootstrappedResponse(public val block: @Contextual BlockHash, public val timestamp: Long)
+public data class MonitorBootstrappedResponse(public val block: @Contextual BlockHash, public val timestamp: @Contextual Timestamp)
 
 // -- /heads/<chain_id> --
 
@@ -33,7 +34,7 @@ internal value class MonitorHeadsTransitionalResponse(val blockHeader: RpcBlockH
 
 @Serializable
 @JvmInline
-public value class MonitorHeadsResponse(public val blockHeader: RpcBlockHeader<@Contextual BlockHash, Long, @Contextual OperationListListHash, @Contextual ContextHash>)
+public value class MonitorHeadsResponse(public val blockHeader: RpcBlockHeader<@Contextual BlockHash, @Contextual Timestamp, @Contextual OperationListListHash, @Contextual ContextHash>)
 
 // -- /protocols --
 
@@ -53,4 +54,4 @@ internal value class MonitorValidBlocksTransitionalResponse(val blockHeader: Rpc
 
 @Serializable
 @JvmInline
-public value class MonitorValidBlocksResponse(public val blockHeader: RpcBlockHeader<@Contextual BlockHash, Long, @Contextual OperationListListHash, @Contextual ContextHash>)
+public value class MonitorValidBlocksResponse(public val blockHeader: RpcBlockHeader<@Contextual BlockHash, @Contextual Timestamp, @Contextual OperationListListHash, @Contextual ContextHash>)
