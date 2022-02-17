@@ -2,25 +2,22 @@
 Please read this!
 
 1. Before opening a new issue, make sure to search for keywords in the issues
-filtered by the "feature" label and verify the issue you're about to submit isn't a duplicate.
+filtered by the "bug" label and verify the issue you're about to submit isn't a duplicate.
 
-2. Make sure you're including the name of the affected component if applicable, as an example:
+2. Make sure you're including the name of the affected component if applicable.
 
-tezos or aeternity
 --->
 
 ### Summary
 
-(Summarize the feature concisely)
+Epic referencing all the relevant issues for WORK_UNIT.
 
-### What is the expected behavior?
+### Which issues need to be completed
 
-(Describe what the user should see)
+## [PROJECT_NAME](https://gitlab.papers.tech/papers/tezos/sdks/PROJECT_NAME)
 
-### Relevant mockups or screenshots
-
-(Paste or link any relevant mockups or screenshot that describe the feature.)
-
-### Possible approach
-
-(Outline a possible approach for this feature, ex. make an example how the code could look like)
+**Features**
+<!---
+- [ ] #ISSUE_NUMBER - TITLE
+- [ ] https://gitlab.papers.tech/papers/tezos/sdks/PROJECT_NAME/-/issues/ISSUE_NUMBER - TITLE
+--->
