@@ -34,9 +34,9 @@ class HexStringTest {
 
     @Test
     fun `returns null when creating HexString from invalid string and asked to`() {
-        val hexString = invalidHexStrings.mapNotNull(String::asHexStringOrNull)
+        val hexStrings = invalidHexStrings.mapNotNull(String::asHexStringOrNull)
 
-        assertEquals(0, hexString.size)
+        assertEquals(0, hexStrings.size)
     }
 
     @Test

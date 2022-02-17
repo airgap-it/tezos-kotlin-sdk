@@ -61,7 +61,7 @@ internal class MichelsonScopedDependencyRegistry(dependencyRegistry: DependencyR
             core().publicKeyBytesCoder,
             core().implicitAddressBytesCoder,
             core().signatureBytesCoder,
-            timestampBigIntCoder,
+            core().timestampBigIntCoder,
             core().stringToAddressConverter,
             core().stringToImplicitAddressConverter,
             core().stringToPublicKeyConverter,

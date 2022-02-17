@@ -9,6 +9,7 @@ import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
@@ -64,6 +65,7 @@ class OperationContentBytesCoderTest {
             ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
         )
 
+        val timestampBigIntCoder = TimestampBigIntCoder()
         val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
 
         operationContentBytesCoder = OperationContentBytesCoder(
@@ -74,6 +76,7 @@ class OperationContentBytesCoderTest {
             signatureBytesCoder,
             zarithNaturalBytesCoder,
             michelineBytesCoder,
+            timestampBigIntCoder,
             tagToOperationContentKindConverter,
         )
     }
@@ -139,7 +142,7 @@ class OperationContentBytesCoderTest {
                     1,
                     1U,
                     BlockHash("BKsP8FYgikDmqbUiVxfgXVjWuay5LQZY6LP4EvcsFK8uuqj4wQD"),
-                    1,
+                    Timestamp.Rfc3339("1970-01-01T00:00:00.001Z"),
                     1U,
                     OperationHash("op7BauymKmWRrNrWTsS9yCbE7wLbsxjtdTGvFzLZuMUzRmUe4Pd"),
                     emptyList(),
@@ -155,7 +158,7 @@ class OperationContentBytesCoderTest {
                     2,
                     2U,
                     BlockHash("BMaBxGyVhtTiMKd7KA8HXJnbTK4e1TzffNc94G18op55HGQYVRk"),
-                    2,
+                    Timestamp.Rfc3339("1970-01-01T00:00:00.002Z"),
                     2U,
                     OperationHash("oo1HUR2PPAShbHfQ2w4dFoywHSCJTX32Evwgc39zKaiN92ZzP3o"),
                     emptyList(),
@@ -173,7 +176,7 @@ class OperationContentBytesCoderTest {
                     1,
                     1U,
                     BlockHash("BKsP8FYgikDmqbUiVxfgXVjWuay5LQZY6LP4EvcsFK8uuqj4wQD"),
-                    1,
+                    Timestamp.Rfc3339("1970-01-01T00:00:00.001Z"),
                     1U,
                     OperationHash("op7BauymKmWRrNrWTsS9yCbE7wLbsxjtdTGvFzLZuMUzRmUe4Pd"),
                     listOf(Fitness(1, null, 1, 1)),
@@ -189,7 +192,7 @@ class OperationContentBytesCoderTest {
                     2,
                     2U,
                     BlockHash("BMaBxGyVhtTiMKd7KA8HXJnbTK4e1TzffNc94G18op55HGQYVRk"),
-                    2,
+                    Timestamp.Rfc3339("1970-01-01T00:00:00.002Z"),
                     2U,
                     OperationHash("oo1HUR2PPAShbHfQ2w4dFoywHSCJTX32Evwgc39zKaiN92ZzP3o"),
                     listOf(Fitness(2, 2, 2, 2), Fitness(2, null, 2, 2)),

@@ -19,6 +19,8 @@ internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegist
     override val zarithNaturalBytesCoder: ZarithNaturalBytesCoder = ZarithNaturalBytesCoder()
     override val zarithIntegerBytesCoder: ZarithIntegerBytesCoder by lazy { ZarithIntegerBytesCoder(zarithNaturalBytesCoder) }
 
+    override val timestampBigIntCoder: TimestampBigIntCoder = TimestampBigIntCoder()
+
     // -- converter --
 
     override val bytesToAddressConverter: BytesToAddressConverter by lazy { BytesToAddressConverter(base58Check) }
@@ -37,7 +39,6 @@ internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegist
     override val genericSignatureToEd25519SignatureConverter: GenericSignatureToEd25519SignatureConverter by lazy { GenericSignatureToEd25519SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
     override val genericSignatureToSecp256K1SignatureConverter: GenericSignatureToSecp256K1SignatureConverter by lazy { GenericSignatureToSecp256K1SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
     override val genericSignatureToP256SignatureConverter: GenericSignatureToP256SignatureConverter by lazy { GenericSignatureToP256SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
-
 }
 
 @InternalTezosSdkApi

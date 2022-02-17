@@ -1,13 +1,14 @@
 package it.airgap.tezos.operation.header
 
 import it.airgap.tezos.core.type.HexString
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 
 public interface ShellBlockHeader {
     public val level: Int
     public val proto: UByte
     public val predecessor: BlockHash
-    public val timestamp: Long
+    public val timestamp: Timestamp
     public val validationPass: UByte
     public val operationsHash: OperationHash
     public val fitness: List<Fitness>

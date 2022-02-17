@@ -194,6 +194,7 @@ class OperationSignerTest {
             ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
         )
 
+        val timestampBigIntCoder = TimestampBigIntCoder()
         val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
 
         val operationContentBytesCoder = OperationContentBytesCoder(
@@ -204,6 +205,7 @@ class OperationSignerTest {
             signatureBytesCoder,
             zarithNaturalBytesCoder,
             michelineBytesCoder,
+            timestampBigIntCoder,
             tagToOperationContentKindConverter,
         )
 

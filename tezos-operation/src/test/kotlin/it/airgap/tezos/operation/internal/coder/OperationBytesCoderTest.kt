@@ -63,6 +63,7 @@ class OperationBytesCoderTest {
             ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
         )
 
+        val timestampBigIntCoder = TimestampBigIntCoder()
         val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
 
         val operationContentBytesCoder = OperationContentBytesCoder(
@@ -73,6 +74,7 @@ class OperationBytesCoderTest {
             signatureBytesCoder,
             zarithNaturalBytesCoder,
             michelineBytesCoder,
+            timestampBigIntCoder,
             tagToOperationContentKindConverter,
         )
 
