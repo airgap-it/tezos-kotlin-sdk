@@ -1,4 +1,4 @@
-package it.airgap.tezos.crypto.bouncycastle.internal.utils
+package it.airgap.tezos.crypto.default.internal.utils
 
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.splitAt
