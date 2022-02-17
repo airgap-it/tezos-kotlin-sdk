@@ -59,9 +59,12 @@ subprojects {
 tasks.register<Copy>("copyJars") {
     dependsOn(tasks.assemble)
 
-    subprojects.forEach {
-        sync {
+    delete("$buildDir/libs/subprojects")
+
+    subprojects.filterBuildable().forEach {
+        copy {
             from("${it.buildDir}/libs/${it.name}-${it.version}.jar")
+            rename("^.+-(.+)$", "${it.fullName}-$1")
             into("$buildDir/libs/subprojects")
         }
     }
@@ -83,11 +86,11 @@ tasks.test {
 }
 
 tasks.jacocoTestReport {
-    dependsOn(tasks.test, subprojects.map { it.tasks.jacocoTestReport })
+    dependsOn(tasks.test, subprojects.filterBuildable().map { it.tasks.jacocoTestReport })
 
-    additionalSourceDirs.setFrom(subprojects.map { it.sourceSets.main.get().allSource.srcDirs })
-    sourceDirectories.setFrom(files(subprojects.map { it.sourceSets.main.get().allSource.srcDirs }))
-    classDirectories.setFrom(files(subprojects.map { it.sourceSets.main.get().output }))
+    additionalSourceDirs.setFrom(subprojects.filterBuildable().map { it.sourceSets.main.get().allSource.srcDirs })
+    sourceDirectories.setFrom(files(subprojects.filterBuildable().map { it.sourceSets.main.get().allSource.srcDirs }))
+    classDirectories.setFrom(files(subprojects.filterBuildable().map { it.sourceSets.main.get().output }))
     executionData.setFrom(project.fileTree(".") { include("**/build/jacoco/test.exec") } )
 
     reports {
@@ -100,14 +103,14 @@ tasks.jacocoTestReport {
 tasks.register<Copy>("copyTestReports") {
     dependsOn(tasks.test)
 
-    subprojects.forEach {
+    subprojects.filterBuildable().forEach {
         sync {
             from("${it.buildDir}/reports/tests")
-            into("$buildDir/reports/tests/subprojects/${it.name}")
+            into("$buildDir/reports/tests/subprojects/${it.fullName}")
         }
         sync {
             from("${it.buildDir}/reports/jacoco/test")
-            into("$buildDir/reports/tests/subprojects/${it.name}/coverage")
+            into("$buildDir/reports/tests/subprojects/${it.fullName}/coverage")
         }
     }
 }
@@ -123,3 +126,8 @@ tasks.register<Zip>("zipTestReports") {
         into("coverage")
     }
 }
+
+fun MutableSet<org.gradle.api.Project>.filterBuildable(): List<org.gradle.api.Project> = filter { it.childProjects.isEmpty() }
+
+val org.gradle.api.Project.fullName: String
+    get() = path.removePrefix(":").replace(":", "-")
