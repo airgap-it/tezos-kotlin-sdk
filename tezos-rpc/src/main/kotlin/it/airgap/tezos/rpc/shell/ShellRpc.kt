@@ -59,8 +59,8 @@ public interface ShellRpc {
 //    public suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean? = null, headers: List<HttpHeader> = emptyList()): CloseConnectionResponse
 
 //    public suspend fun clearGreylist(headers: List<HttpHeader> = emptyList()): ClearGreylistResponse
-//    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()): GetGreylistedIPsResponse
+//    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()): GetLastGreylistedPeersResponse
 
 //    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 

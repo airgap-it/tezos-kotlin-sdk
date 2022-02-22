@@ -1,7 +1,8 @@
 package it.airgap.tezos.rpc.shell.data
 
 import it.airgap.tezos.core.type.Timestamp
-import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.encoded.BlockHash
+import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.type.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -12,16 +13,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @JvmInline
-internal value class MonitorActiveChainsTransitionalResponse(val chains: List<RpcActiveChain<RpcChainId, RpcProtocolHash, RpcTimestamp>>)
+internal value class MonitorActiveChainsTransitionalResponse(val chains: List<TransitionalRpcActiveChain>)
 
 @Serializable
 @JvmInline
-public value class MonitorActiveChainsResponse(public val chains: List<RpcActiveChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>>)
+public value class MonitorActiveChainsResponse(public val chains: List<RpcActiveChain>)
 
 // -- /bootstrapped --
 
 @Serializable
-internal data class MonitorBootstrappedTransitionalResponse(val block: RpcBlockHash, val timestamp: RpcTimestamp)
+internal data class MonitorBootstrappedTransitionalResponse(val block: TransitionalRpcBlockHash, val timestamp: TransitionalTimestamp)
 
 @Serializable
 public data class MonitorBootstrappedResponse(public val block: @Contextual BlockHash, public val timestamp: @Contextual Timestamp)
@@ -30,17 +31,17 @@ public data class MonitorBootstrappedResponse(public val block: @Contextual Bloc
 
 @Serializable
 @JvmInline
-internal value class MonitorHeadsTransitionalResponse(val blockHeader: RpcBlockHeader<RpcBlockHash, RpcTimestamp, RpcOperationListListHash, RpcContextHash>)
+internal value class MonitorHeadsTransitionalResponse(val blockHeader: TransitionalRpcBlockHeader)
 
 @Serializable
 @JvmInline
-public value class MonitorHeadsResponse(public val blockHeader: RpcBlockHeader<@Contextual BlockHash, @Contextual Timestamp, @Contextual OperationListListHash, @Contextual ContextHash>)
+public value class MonitorHeadsResponse(public val blockHeader: RpcBlockHeader)
 
 // -- /protocols --
 
 @Serializable
 @JvmInline
-internal value class MonitorProtocolsTransitionalResponse(val hash: RpcProtocolHash)
+internal value class MonitorProtocolsTransitionalResponse(val hash: TransitionalRpcProtocolHash)
 
 @Serializable
 @JvmInline
@@ -50,8 +51,8 @@ public value class MonitorProtocolsResponse(public val hash: @Contextual Protoco
 
 @Serializable
 @JvmInline
-internal value class MonitorValidBlocksTransitionalResponse(val blockHeader: RpcBlockHeader<RpcBlockHash, RpcTimestamp, RpcOperationListListHash, RpcContextHash>)
+internal value class MonitorValidBlocksTransitionalResponse(val blockHeader: TransitionalRpcBlockHeader)
 
 @Serializable
 @JvmInline
-public value class MonitorValidBlocksResponse(public val blockHeader: RpcBlockHeader<@Contextual BlockHash, @Contextual Timestamp, @Contextual OperationListListHash, @Contextual ContextHash>)
+public value class MonitorValidBlocksResponse(public val blockHeader: RpcBlockHeader)

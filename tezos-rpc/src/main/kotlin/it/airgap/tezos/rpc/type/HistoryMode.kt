@@ -4,6 +4,8 @@ import it.airgap.tezos.rpc.internal.serializer.RpcHistoryModeSerializer
 import it.airgap.tezos.rpc.shell.data.RpcAdditionalCycles
 import kotlinx.serialization.Serializable
 
+// -- RpcHistoryMode --
+
 @Serializable(with = RpcHistoryModeSerializer::class)
 public sealed class RpcHistoryMode {
     public object Archive : RpcHistoryMode()

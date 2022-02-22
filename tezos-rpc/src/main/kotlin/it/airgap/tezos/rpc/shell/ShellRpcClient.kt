@@ -75,7 +75,7 @@ internal class ShellRpcClient(
         httpClient.get(nodeUrl, "/config/history_mode", headers)
 
     override suspend fun setLogging(activeSinks: String, headers: List<HttpHeader>): SetLoggingResponse =
-        httpClient.put(nodeUrl, "/config/logging", headers, request = SetLoggingRequest(RpcUnistring.PlainUtf8(activeSinks)))
+        httpClient.put(nodeUrl, "/config/logging", headers, request = SetLoggingRequest(activeSinks))
 
     override suspend fun getUserActivatedProtocolOverrides(headers: List<HttpHeader>): GetUserActivatedProtocolOverridesResponse =
         httpClient.get<GetUserActivatedProtocolOverridesTransitionalResponse>(nodeUrl, "/config/network/user_activated_protocol_overrides", headers).toFinal()
@@ -200,7 +200,7 @@ internal class ShellRpcClient(
     private fun GetInvalidBlockTransitionalResponse.toFinal(): GetInvalidBlockResponse =
         GetInvalidBlockResponse(block.toFinal())
 
-    private fun RpcInvalidBlock<RpcBlockHash>.toFinal(): RpcInvalidBlock<BlockHash> =
+    private fun TransitionalRpcInvalidBlock.toFinal(): RpcInvalidBlock =
         RpcInvalidBlock(block.toEncodedBlockHash(), level, errors)
 
     private fun GetCabooseTransitionalResponse.toFinal(): GetCabooseResponse =
@@ -220,10 +220,10 @@ internal class ShellRpcClient(
     private fun GetUserActivatedUpgradesTransitionalResponse.toFinal(): GetUserActivatedUpgradesResponse =
         GetUserActivatedUpgradesResponse(upgrades.map { it.toFinal() })
 
-    private fun RpcUserActivatedProtocolOverride<RpcProtocolHash>.toFinal(): RpcUserActivatedProtocolOverride<ProtocolHash> =
+    private fun TransitionalRpcUserActivatedProtocolOverride.toFinal(): RpcUserActivatedProtocolOverride =
         RpcUserActivatedProtocolOverride(replacedProtocol.toEncodedProtocolHash(), replacementProtocol.toEncodedProtocolHash())
 
-    private fun RpcUserActivatedUpgrade<RpcProtocolHash>.toFinal(): RpcUserActivatedUpgrade<ProtocolHash> =
+    private fun TransitionalRpcUserActivatedUpgrade.toFinal(): RpcUserActivatedUpgrade =
         RpcUserActivatedUpgrade(level, replacementProtocol.toEncodedProtocolHash())
 
     // -- /injection --
@@ -254,14 +254,14 @@ internal class ShellRpcClient(
     private fun MonitorValidBlocksTransitionalResponse.toFinal(): MonitorValidBlocksResponse =
         MonitorValidBlocksResponse(blockHeader.toFinal())
 
-    private fun RpcActiveChain<RpcChainId, RpcProtocolHash, RpcTimestamp>.toFinal(): RpcActiveChain<ChainId, ProtocolHash, Timestamp> =
+    private fun TransitionalRpcActiveChain.toFinal(): RpcActiveChain =
         when (this) {
-            is RpcActiveChain.Main -> RpcActiveChain.Main(chainId.toEncodedChainId())
-            is RpcActiveChain.Test -> RpcActiveChain.Test(chainId.toEncodedChainId(), testProtocol.toEncodedProtocolHash(), expirationDate.toTimestamp())
-            is RpcActiveChain.Stopping -> RpcActiveChain.Stopping(stopping.toEncodedChainId())
+            is TransitionalRpcMainChain -> RpcMainChain(chainId.toEncodedChainId())
+            is TransitionalRpcTestChain -> RpcTestChain(chainId.toEncodedChainId(), testProtocol.toEncodedProtocolHash(), expirationDate.toTimestamp())
+            is TransitionalRpcStoppingChain -> RpcStoppingChain(stopping.toEncodedChainId())
         }
 
-    private fun RpcBlockHeader<RpcBlockHash, RpcTimestamp, RpcOperationListListHash, RpcContextHash>.toFinal(): RpcBlockHeader<BlockHash, Timestamp, OperationListListHash, ContextHash> =
+    private fun TransitionalRpcBlockHeader.toFinal(): RpcBlockHeader =
         RpcBlockHeader(
             hash.toEncodedBlockHash(),
             level,
@@ -277,22 +277,22 @@ internal class ShellRpcClient(
 
     // -- common --
 
-    private fun RpcBlockHash.toEncodedBlockHash(): BlockHash = toEncoded(BlockHash)
-    private fun RpcChainId.toEncodedChainId(): ChainId = toEncoded(ChainId)
-    private fun RpcContextHash.toEncodedContextHash(): ContextHash = toEncoded(ContextHash)
-    private fun RpcOperationHash.toEncodedOperationHash(): OperationHash = toEncoded(OperationHash)
-    private fun RpcOperationListListHash.toEncodedOperationListListHash(): OperationListListHash = toEncoded(OperationListListHash)
-    private fun RpcProtocolHash.toEncodedProtocolHash(): ProtocolHash = toEncoded(ProtocolHash)
+    private fun TransitionalRpcBlockHash.toEncodedBlockHash(): BlockHash = toEncoded(BlockHash)
+    private fun TransitionalRpcChainId.toEncodedChainId(): ChainId = toEncoded(ChainId)
+    private fun TransitionalRpcContextHash.toEncodedContextHash(): ContextHash = toEncoded(ContextHash)
+    private fun TransitionalRpcOperationHash.toEncodedOperationHash(): OperationHash = toEncoded(OperationHash)
+    private fun TransitionalRpcOperationListListHash.toEncodedOperationListListHash(): OperationListListHash = toEncoded(OperationListListHash)
+    private fun TransitionalRpcProtocolHash.toEncodedProtocolHash(): ProtocolHash = toEncoded(ProtocolHash)
 
-    private fun RpcTimestamp.toTimestamp(): Timestamp =
+    private fun TransitionalTimestamp.toTimestamp(): Timestamp =
         when (this) {
-            is RpcUnistring.PlainUtf8 -> Timestamp.Rfc3339(string)
-            is RpcUnistring.InvalidUtf8 -> Timestamp.Millis(BigInt.valueOf(invalidUtf8String).toLongExact()) // TODO: verify
+            is Unistring.PlainUtf8 -> Timestamp.Rfc3339(string)
+            is Unistring.InvalidUtf8 -> Timestamp.Millis(BigInt.valueOf(invalidUtf8String).toLongExact()) // TODO: verify
         }
 
-    private fun <E : Encoded<E>, K : Encoded.Kind<E>> RpcUnistring.toEncoded(kind: K): E =
+    private fun <E : Encoded<E>, K : Encoded.Kind<E>> Unistring.toEncoded(kind: K): E =
         when (this) {
-            is RpcUnistring.PlainUtf8 -> kind.createValue(string)
-            is RpcUnistring.InvalidUtf8 -> encodedBytesCoder.decode(invalidUtf8String, kind)
+            is Unistring.PlainUtf8 -> kind.createValue(string)
+            is Unistring.InvalidUtf8 -> encodedBytesCoder.decode(invalidUtf8String, kind)
         }
 }

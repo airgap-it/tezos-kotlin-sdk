@@ -4,6 +4,8 @@ import it.airgap.tezos.rpc.internal.serializer.RpcErrorKindSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcErrorSerializer
 import kotlinx.serialization.Serializable
 
+// -- RpcError --
+
 @Serializable(with = RpcErrorSerializer::class)
 public data class RpcError(
     public val kind: Kind,

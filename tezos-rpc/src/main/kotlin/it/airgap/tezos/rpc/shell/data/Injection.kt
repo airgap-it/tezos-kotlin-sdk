@@ -21,7 +21,7 @@ public data class InjectBlockRequest(
 
 @Serializable
 @JvmInline
-internal value class InjectBlockTransitionalResponse(val hash: RpcBlockHash)
+internal value class InjectBlockTransitionalResponse(val hash: TransitionalRpcBlockHash)
 
 @Serializable
 @JvmInline
@@ -35,7 +35,7 @@ public value class InjectOperationRequest(public val data: @Contextual HexString
 
 @Serializable
 @JvmInline
-internal value class InjectOperationTransitionalResponse(val hash: RpcOperationHash)
+internal value class InjectOperationTransitionalResponse(val hash: TransitionalRpcOperationHash)
 
 @Serializable
 @JvmInline
@@ -51,7 +51,7 @@ public data class InjectProtocolRequest(
 
 @Serializable
 @JvmInline
-internal value class InjectProtocolTransitionalResponse(val hash: RpcProtocolHash)
+internal value class InjectProtocolTransitionalResponse(val hash: TransitionalRpcProtocolHash)
 
 @Serializable
 @JvmInline

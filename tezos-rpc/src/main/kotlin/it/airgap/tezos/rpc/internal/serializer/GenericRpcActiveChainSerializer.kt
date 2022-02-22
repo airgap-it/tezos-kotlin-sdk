@@ -4,7 +4,10 @@ import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.containsKeys
 import it.airgap.tezos.rpc.internal.utils.doesNotContainKeys
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
-import it.airgap.tezos.rpc.type.RpcActiveChain
+import it.airgap.tezos.rpc.type.GenericRpcActiveChain
+import it.airgap.tezos.rpc.type.GenericRpcMainChain
+import it.airgap.tezos.rpc.type.GenericRpcStoppingChain
+import it.airgap.tezos.rpc.type.GenericRpcTestChain
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
@@ -16,25 +19,25 @@ import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonObject
 
 @OptIn(ExperimentalSerializationApi::class)
-internal class RpcActiveChainSerializer<ChainId, ProtocolHash, Timestamp>(
+internal class GenericRpcActiveChainSerializer<ChainId, ProtocolHash, Timestamp>(
     private val chainIdSerializer: KSerializer<ChainId>,
     private val protocolHashSerializer: KSerializer<ProtocolHash>,
     private val timestampSerializer: KSerializer<Timestamp>,
-): KJsonSerializer<RpcActiveChain<ChainId, ProtocolHash, Timestamp>> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(RpcActiveChain::class.toString()) {
+): KJsonSerializer<GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(GenericRpcActiveChain::class.toString()) {
         element("chain_id", chainIdSerializer.descriptor, isOptional = true)
         element("test_protocol", protocolHashSerializer.descriptor, isOptional = true)
         element("expiration_date", timestampSerializer.descriptor, isOptional = true)
         element("stopping", chainIdSerializer.descriptor, isOptional = true)
     }
 
-    override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): RpcActiveChain<ChainId, ProtocolHash, Timestamp> {
+    override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp> {
         val jsonObject = jsonElement as? JsonObject ?: failWithUnexpectedJsonType(jsonElement::class)
 
         return when {
-            jsonObject.isMain() -> jsonDecoder.decodeSerializableValue(RpcActiveChain.Main.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
-            jsonObject.isTest() -> jsonDecoder.decodeSerializableValue(RpcActiveChain.Test.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
-            jsonObject.isStopping() -> jsonDecoder.decodeSerializableValue(RpcActiveChain.Stopping.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
+            jsonObject.isMain() -> jsonDecoder.decodeSerializableValue(GenericRpcMainChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
+            jsonObject.isTest() -> jsonDecoder.decodeSerializableValue(GenericRpcTestChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
+            jsonObject.isStopping() -> jsonDecoder.decodeSerializableValue(GenericRpcStoppingChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
             else -> failWithUnknownValue(jsonElement.toString())
         }
     }
@@ -51,11 +54,11 @@ internal class RpcActiveChainSerializer<ChainId, ProtocolHash, Timestamp>(
         containsKey(getElementName(3)) && doesNotContainKeys(getElementName(0), getElementName(1), getElementName(2))
     }
 
-    override fun serialize(jsonEncoder: JsonEncoder, value: RpcActiveChain<ChainId, ProtocolHash, Timestamp>) {
+    override fun serialize(jsonEncoder: JsonEncoder, value: GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>) {
         when (value) {
-            is RpcActiveChain.Main -> jsonEncoder.encodeSerializableValue(RpcActiveChain.Main.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
-            is RpcActiveChain.Test -> jsonEncoder.encodeSerializableValue(RpcActiveChain.Test.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
-            is RpcActiveChain.Stopping -> jsonEncoder.encodeSerializableValue(RpcActiveChain.Stopping.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
+            is GenericRpcMainChain -> jsonEncoder.encodeSerializableValue(GenericRpcMainChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
+            is GenericRpcTestChain -> jsonEncoder.encodeSerializableValue(GenericRpcTestChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
+            is GenericRpcStoppingChain -> jsonEncoder.encodeSerializableValue(GenericRpcStoppingChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
         }
     }
 

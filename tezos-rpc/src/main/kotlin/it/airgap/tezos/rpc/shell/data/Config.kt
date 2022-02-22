@@ -1,8 +1,6 @@
 package it.airgap.tezos.rpc.shell.data
 
-import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.type.*
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,7 +17,7 @@ public data class GetHistoryModeResponse(@SerialName("history_mode") public val 
 // -- /logging --
 
 @Serializable
-public data class SetLoggingRequest(@SerialName("active_sinks") public val activeSinks: RpcUnistring)
+public data class SetLoggingRequest(@SerialName("active_sinks") public val activeSinks: String)
 
 public typealias SetLoggingResponse = Unit
 
@@ -27,18 +25,18 @@ public typealias SetLoggingResponse = Unit
 
 @Serializable
 @JvmInline
-internal value class GetUserActivatedProtocolOverridesTransitionalResponse(val overrides: List<RpcUserActivatedProtocolOverride<RpcProtocolHash>>)
+internal value class GetUserActivatedProtocolOverridesTransitionalResponse(val overrides: List<TransitionalRpcUserActivatedProtocolOverride>)
 
 @Serializable
 @JvmInline
-public value class GetUserActivatedProtocolOverridesResponse(public val overrides: List<RpcUserActivatedProtocolOverride<@Contextual ProtocolHash>>)
+public value class GetUserActivatedProtocolOverridesResponse(public val overrides: List<RpcUserActivatedProtocolOverride>)
 
 // -- /network/user_activated_upgrades --
 
 @Serializable
 @JvmInline
-internal value class GetUserActivatedUpgradesTransitionalResponse(val upgrades: List<RpcUserActivatedUpgrade<RpcProtocolHash>>)
+internal value class GetUserActivatedUpgradesTransitionalResponse(val upgrades: List<TransitionalRpcUserActivatedUpgrade>)
 
 @Serializable
 @JvmInline
-public value class GetUserActivatedUpgradesResponse(public val upgrades: List<RpcUserActivatedUpgrade<@Contextual ProtocolHash>>)
+public value class GetUserActivatedUpgradesResponse(public val upgrades: List<RpcUserActivatedUpgrade>)
