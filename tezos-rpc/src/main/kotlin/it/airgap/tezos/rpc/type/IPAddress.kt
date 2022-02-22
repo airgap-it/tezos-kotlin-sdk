@@ -19,6 +19,8 @@ public sealed interface RpcIPAddress {
                 RpcIPv6Address.isValid(string) -> RpcIPv6Address(string)
                 else -> null
             }
+
+        public fun isValid(string: String): Boolean = RpcIPv4Address.isValid(string) || RpcIPv6Address.isValid(string)
     }
 }
 

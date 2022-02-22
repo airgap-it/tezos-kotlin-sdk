@@ -22,7 +22,7 @@ public value class MonitorActiveChainsResponse(public val chains: List<RpcActive
 // -- /bootstrapped --
 
 @Serializable
-internal data class MonitorBootstrappedTransitionalResponse(val block: TransitionalRpcBlockHash, val timestamp: TransitionalTimestamp)
+internal data class MonitorBootstrappedTransitionalResponse(val block: TransitionalRpcBlockHash, val timestamp: TransitionalRpcTimestamp)
 
 @Serializable
 public data class MonitorBootstrappedResponse(public val block: @Contextual BlockHash, public val timestamp: @Contextual Timestamp)

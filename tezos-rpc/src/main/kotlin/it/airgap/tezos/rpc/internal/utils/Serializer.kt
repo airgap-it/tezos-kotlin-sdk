@@ -1,7 +1,9 @@
 package it.airgap.tezos.rpc.internal.utils
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
@@ -42,3 +44,11 @@ internal interface KJsonSerializer<T> : KSerializer<T> {
     private fun failWithExpectedJsonEncoder(actual: KClass<out Encoder>): Nothing =
         throw SerializationException("Expected Json encoder, got $actual.")
 }
+
+@OptIn(ExperimentalSerializationApi::class)
+public val SerialDescriptor.elementIndices: Iterable<Int>
+    get() = (0 until elementsCount)
+
+@OptIn(ExperimentalSerializationApi::class)
+public fun SerialDescriptor.getElementNames(indices: Collection<Int>): List<String> =
+    indices.map { getElementName(it) }

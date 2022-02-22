@@ -1,9 +1,8 @@
 package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
-import it.airgap.tezos.rpc.internal.utils.containsKeys
-import it.airgap.tezos.rpc.internal.utils.doesNotContainKeys
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
+import it.airgap.tezos.rpc.internal.utils.hasElements
 import it.airgap.tezos.rpc.type.GenericRpcActiveChain
 import it.airgap.tezos.rpc.type.GenericRpcMainChain
 import it.airgap.tezos.rpc.type.GenericRpcStoppingChain
@@ -38,20 +37,8 @@ internal class GenericRpcActiveChainSerializer<ChainId, ProtocolHash, Timestamp>
             jsonObject.isMain() -> jsonDecoder.decodeSerializableValue(GenericRpcMainChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
             jsonObject.isTest() -> jsonDecoder.decodeSerializableValue(GenericRpcTestChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
             jsonObject.isStopping() -> jsonDecoder.decodeSerializableValue(GenericRpcStoppingChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer))
-            else -> failWithUnknownValue(jsonElement.toString())
+            else -> failWithUnknownValue(jsonObject.toString())
         }
-    }
-
-    private fun JsonObject.isMain(): Boolean = with(descriptor) {
-        containsKey(getElementName(0)) && doesNotContainKeys(getElementName(1), getElementName(2), getElementName(3))
-    }
-
-    private fun JsonObject.isTest(): Boolean = with(descriptor) {
-        containsKeys(getElementName(0), getElementName(1), getElementName(2)) && !containsKey(getElementName(3))
-    }
-
-    private fun JsonObject.isStopping(): Boolean = with(descriptor) {
-        containsKey(getElementName(3)) && doesNotContainKeys(getElementName(0), getElementName(1), getElementName(2))
     }
 
     override fun serialize(jsonEncoder: JsonEncoder, value: GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>) {
@@ -61,6 +48,14 @@ internal class GenericRpcActiveChainSerializer<ChainId, ProtocolHash, Timestamp>
             is GenericRpcStoppingChain -> jsonEncoder.encodeSerializableValue(GenericRpcStoppingChain.serializer(chainIdSerializer, protocolHashSerializer, timestampSerializer), value)
         }
     }
+
+    private val mainElementIndices: Set<Int> = setOf(0)
+    private val testElementIndices: Set<Int> = setOf(0, 1, 2)
+    private val stoppingElementIndices: Set<Int> = setOf(3)
+
+    private fun JsonObject.isMain(): Boolean = hasElements(descriptor, mainElementIndices)
+    private fun JsonObject.isTest(): Boolean = hasElements(descriptor, testElementIndices)
+    private fun JsonObject.isStopping(): Boolean = hasElements(descriptor, stoppingElementIndices)
 
     private fun failWithUnknownValue(value: String): Nothing = throw SerializationException("Unknown ActiveChain value `$value`.")
 }

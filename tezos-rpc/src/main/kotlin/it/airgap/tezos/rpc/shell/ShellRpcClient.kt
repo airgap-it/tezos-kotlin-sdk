@@ -284,7 +284,7 @@ internal class ShellRpcClient(
     private fun TransitionalRpcOperationListListHash.toEncodedOperationListListHash(): OperationListListHash = toEncoded(OperationListListHash)
     private fun TransitionalRpcProtocolHash.toEncodedProtocolHash(): ProtocolHash = toEncoded(ProtocolHash)
 
-    private fun TransitionalTimestamp.toTimestamp(): Timestamp =
+    private fun TransitionalRpcTimestamp.toTimestamp(): Timestamp =
         when (this) {
             is Unistring.PlainUtf8 -> Timestamp.Rfc3339(string)
             is Unistring.InvalidUtf8 -> Timestamp.Millis(BigInt.valueOf(invalidUtf8String).toLongExact()) // TODO: verify

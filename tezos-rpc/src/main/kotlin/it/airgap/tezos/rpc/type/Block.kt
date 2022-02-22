@@ -28,7 +28,7 @@ public data class GenericRpcBlockHeader<BlockHash, Timestamp, OperationListListH
     public val context: ContextHash,
     @SerialName("protocol_data") public val protocolData: @Contextual HexString,
 )
-internal typealias TransitionalRpcBlockHeader = GenericRpcBlockHeader<TransitionalRpcBlockHash, TransitionalTimestamp, TransitionalRpcOperationListListHash, TransitionalRpcContextHash>
+internal typealias TransitionalRpcBlockHeader = GenericRpcBlockHeader<TransitionalRpcBlockHash, TransitionalRpcTimestamp, TransitionalRpcOperationListListHash, TransitionalRpcContextHash>
 public typealias RpcBlockHeader = GenericRpcBlockHeader<@Contextual BlockHash, @Contextual Timestamp, @Contextual OperationListListHash, @Contextual ContextHash>
 
 // -- RpcInvalidBlock --

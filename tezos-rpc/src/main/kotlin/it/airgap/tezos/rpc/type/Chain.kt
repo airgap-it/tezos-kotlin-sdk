@@ -15,42 +15,39 @@ internal typealias TransitionalRpcChainId = Unistring
 // -- RpcActiveChain --
 
 @Serializable(with = GenericRpcActiveChainSerializer::class)
-public sealed class GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp> {
-    public abstract val chainId: ChainId?
-    public abstract val testProtocol: ProtocolHash?
-    public abstract val expirationDate: Timestamp?
-    public abstract val stopping: ChainId?
+public sealed class GenericRpcActiveChain<out ChainId, out ProtocolHash, out Timestamp> {
+    public open val chainId: ChainId? = null
+    public open val testProtocol: ProtocolHash? = null
+    public open val expirationDate: Timestamp? = null
+    public open val stopping: ChainId? = null
 }
+internal typealias TransitionalRpcActiveChain = GenericRpcActiveChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalRpcTimestamp>
+public typealias RpcActiveChain = GenericRpcActiveChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
 
 @Serializable
-public data class GenericRpcMainChain<ChainId, ProtocolHash, Timestamp>(override val chainId: ChainId) : GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>() {
-    override val testProtocol: ProtocolHash? = null
-    override val expirationDate: Timestamp? = null
-    override val stopping: ChainId? = null
-}
+public data class GenericRpcMainChain<ChainId, ProtocolHash, Timestamp>(@SerialName("chain_id") override val chainId: ChainId) : GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>()
+internal typealias TransitionalRpcMainChain = GenericRpcMainChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalRpcTimestamp>
+public typealias RpcMainChain = GenericRpcMainChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
 
 @Serializable
 public data class GenericRpcTestChain<ChainId, ProtocolHash, Timestamp>(
-    override val chainId: ChainId,
+    @SerialName("chain_id") override val chainId: ChainId,
     @SerialName("test_protocol") override val testProtocol: ProtocolHash,
     @SerialName("expiration_date") override val expirationDate: Timestamp,
-) : GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>() {
-    override val stopping: ChainId? = null
-}
+) : GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>()
+internal typealias TransitionalRpcTestChain = GenericRpcTestChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalRpcTimestamp>
+public typealias RpcTestChain = GenericRpcTestChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
 
 @Serializable
-public data class GenericRpcStoppingChain<ChainId, ProtocolHash, Timestamp>(override val stopping: ChainId) : GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>() {
-    override val chainId: ChainId? = null
-    override val testProtocol: ProtocolHash? = null
-    override val expirationDate: Timestamp? = null
-}
-
-internal typealias TransitionalRpcActiveChain = GenericRpcActiveChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalTimestamp>
-internal typealias TransitionalRpcMainChain = GenericRpcMainChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalTimestamp>
-internal typealias TransitionalRpcTestChain = GenericRpcTestChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalTimestamp>
-internal typealias TransitionalRpcStoppingChain = GenericRpcStoppingChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalTimestamp>
-
-public typealias RpcActiveChain = GenericRpcActiveChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
-public typealias RpcMainChain = GenericRpcMainChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
-public typealias RpcTestChain = GenericRpcTestChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
+public data class GenericRpcStoppingChain<ChainId, ProtocolHash, Timestamp>(override val stopping: ChainId) : GenericRpcActiveChain<ChainId, ProtocolHash, Timestamp>()
+internal typealias TransitionalRpcStoppingChain = GenericRpcStoppingChain<TransitionalRpcChainId, TransitionalRpcProtocolHash, TransitionalRpcTimestamp>
 public typealias RpcStoppingChain = GenericRpcStoppingChain<@Contextual ChainId, @Contextual ProtocolHash, @Contextual Timestamp>
+
+// -- RpcChainStatus --
+
+@Serializable
+public enum class RpcChainStatus {
+    @SerialName("stuck") Stuck,
+    @SerialName("synced") Synced,
+    @SerialName("unsynced") Unsynced,
+}

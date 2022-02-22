@@ -62,9 +62,9 @@ public interface ShellRpc {
 //    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()): GetGreylistedIPsResponse
 //    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()): GetLastGreylistedPeersResponse
 
-//    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()): GetLogResponse
 
-//    public suspend fun getPeers(filter: String /* TODO: change to enum(accepted, running, disconnected) */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+//    public suspend fun getPeers(filter: RpcPeerState? = null, headers: List<HttpHeader> = emptyList()): GetPeersResponse
 //    public suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
 //    public suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */

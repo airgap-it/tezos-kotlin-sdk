@@ -2,7 +2,10 @@ package it.airgap.tezos.rpc.shell.data
 
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
-import it.airgap.tezos.rpc.type.*
+import it.airgap.tezos.rpc.type.RpcIPAddress
+import it.airgap.tezos.rpc.type.TransitionalRpcIPAddress
+import it.airgap.tezos.rpc.type.TransitionalRpcTimestamp
+import it.airgap.tezos.rpc.type.p2p.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -35,11 +38,15 @@ public typealias CloseConnectionResponse = Unit
 
 public typealias ClearGreylistResponse = Unit
 
+// -- /greylist/ips --
+
 @Serializable
-internal data class GetGreylistedIPsTransitionalResponse(val ips: List<TransitionalRpcIPAddress>, @SerialName("not_reliable_since") val notReliableSince: TransitionalTimestamp)
+internal data class GetGreylistedIPsTransitionalResponse(val ips: List<TransitionalRpcIPAddress>, @SerialName("not_reliable_since") val notReliableSince: TransitionalRpcTimestamp)
 
 @Serializable
 public data class GetGreylistedIPsResponse(public val ips: List<RpcIPAddress>, @SerialName("not_reliable_since") val notReliableSince: Timestamp)
+
+// -- /greylist/peers --
 
 @Serializable
 @JvmInline
@@ -48,3 +55,23 @@ internal value class GetLastGreylistedPeersTransitionalResponse(val peers: List<
 @Serializable
 @JvmInline
 public value class GetLastGreylistedPeersResponse(public val peers: List<@Contextual CryptoboxPublicKeyHash>)
+
+// -- /log --
+
+@Serializable
+@JvmInline
+internal value class GetLogTransitionalResponse(val events: List<TransitionalRpcConnectionPoolEvent>)
+
+@Serializable
+@JvmInline
+public value class GetLogResponse(public val events: List<RpcConnectionPoolEvent>)
+
+// -- /peers --
+
+@Serializable
+@JvmInline
+internal value class GetPeersTransitionalResponse(val peers: List<Pair<TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcPeer>>)
+
+@Serializable
+@JvmInline
+public value class GetPeersResponse(public val peers: List<Pair<@Contextual CryptoboxPublicKeyHash, RpcPeer>>)
