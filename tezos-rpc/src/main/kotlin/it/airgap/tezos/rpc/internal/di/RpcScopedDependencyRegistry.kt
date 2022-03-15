@@ -14,6 +14,10 @@ internal class RpcScopedDependencyRegistry(
     dependencyRegistry: DependencyRegistry,
 ) : ScopedDependencyRegistry, DependencyRegistry by dependencyRegistry {
 
+    // -- serialization --
+
+    override val json: Json by lazyWeak { Json { /* TODO: configuration */ } }
+
     // -- network --
 
     override val httpClient: HttpClient by lazyWeak {

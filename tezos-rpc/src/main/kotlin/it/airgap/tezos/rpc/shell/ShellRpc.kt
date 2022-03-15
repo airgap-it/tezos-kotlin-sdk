@@ -3,11 +3,14 @@ package it.airgap.tezos.rpc.shell
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
+import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.shell.data.*
+import it.airgap.tezos.rpc.type.RpcAcl
 import it.airgap.tezos.rpc.type.RpcOperation
 import it.airgap.tezos.rpc.type.RpcProtocolComponent
+import it.airgap.tezos.rpc.type.p2p.RpcPeerState
 
 // https://tezos.gitlab.io/shell/rpc.html
 public interface ShellRpc {
@@ -54,29 +57,19 @@ public interface ShellRpc {
 
     // -- /network --
 
-//    public suspend fun getConnections(headers: List<HttpHeader> = emptyList()): GetConnectionsResponse
-//    public suspend fun getConnection(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): GetConnectionResponse
-//    public suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean? = null, headers: List<HttpHeader> = emptyList()): CloseConnectionResponse
+    public suspend fun getConnections(headers: List<HttpHeader> = emptyList()): GetConnectionsResponse
+    public suspend fun getConnection(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): GetConnectionResponse
+    public suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean? = null, headers: List<HttpHeader> = emptyList()): CloseConnectionResponse
 
-//    public suspend fun clearGreylist(headers: List<HttpHeader> = emptyList()): ClearGreylistResponse
-//    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()): GetGreylistedIPsResponse
-//    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()): GetLastGreylistedPeersResponse
+    public suspend fun clearGreylist(headers: List<HttpHeader> = emptyList()): ClearGreylistResponse
+    public suspend fun getGreylistedIPs(headers: List<HttpHeader> = emptyList()): GetGreylistedIPsResponse
+    public suspend fun getLastGreylistedPeers(headers: List<HttpHeader> = emptyList()): GetLastGreylistedPeersResponse
 
-//    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()): GetLogResponse
+    public suspend fun getLogs(headers: List<HttpHeader> = emptyList()): GetLogResponse
 
-//    public suspend fun getPeers(filter: RpcPeerState? = null, headers: List<HttpHeader> = emptyList()): GetPeersResponse
-//    public suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun getPeerEvents(peerId: CryptoboxPublicKeyHash, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//
-//    public suspend fun getKnownAddresses(filter: String /* TODO: change to enum(requested, accepted, running, disconnected) */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun getAddressDetails(point: String /* TODO: change to IP:addr? */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun connectToAddress(point: String /* TODO: change to IP:addr? */, timeout: Long? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun changeAddressPermissions(point: String /* TODO: change to IP:addr? */, peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun isAddressBanned(point: String /* TODO: change to IP:addr? */, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun getAddressEvents(point: String /* TODO: change to IP:addr? */, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-
-//    public suspend fun getNetworkDetails(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
-//    public suspend fun getNetworkStats(headers: List<HttpHeader> = emptyList()) /* TODO: return type */
+    public suspend fun getPeers(filter: RpcPeerState? = null, headers: List<HttpHeader> = emptyList()): GetPeersResponse
+    public suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): GetPeerResponse
+    public suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader> = emptyList()): ChangePeerPermissionResponse
+    public suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): BannedPeerResponse
+    public suspend fun getPeerEvents(peerId: CryptoboxPublicKeyHash, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()): GetPeerEventsResponse
 }

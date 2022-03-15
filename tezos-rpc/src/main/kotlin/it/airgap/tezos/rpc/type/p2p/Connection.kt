@@ -10,18 +10,18 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 // -- RpcConnection --
 
 @Serializable
-public data class GenericRpcConnection<CryptoboxPublicKeyHash, ConnectionId, NetworkVersion>(
+public data class GenericRpcConnection<CryptoboxPublicKeyHash, ConnectionId>(
     public val incoming: Boolean,
     @SerialName("peer_id") public val peerId: CryptoboxPublicKeyHash,
     @SerialName("id_point") public val idPoint: ConnectionId,
     @SerialName("remote_socket_port") public val remoteSocketPort: UShort,
-    @SerialName("announced_version") public val announcedVersion: NetworkVersion,
+    @SerialName("announced_version") public val announcedVersion: RpcNetworkVersion,
     public val private: Boolean,
     @SerialName("local_metadata") public val localMetadata: RpcConnectionMetadata,
     @SerialName("remote_metadata") public val remoteMetadata: RpcConnectionMetadata,
 )
-internal typealias TransitionalRpcConnection = GenericRpcConnection<TransitionalRpcCryptoboxPublicKeyHash, RpcConnectionId, TransitionalRpcNetworkVersion>
-public typealias RpcConnection = GenericRpcConnection<@Contextual CryptoboxPublicKeyHash, @Contextual RpcConnectionId, RpcNetworkVersion>
+internal typealias TransitionalRpcConnection = GenericRpcConnection<TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+public typealias RpcConnection = GenericRpcConnection<@Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 // -- RpcConnectionId --
 
@@ -36,6 +36,8 @@ public typealias RpcConnectionId = GenericRpcConnectionId<RpcIPAddress>
 public data class RpcConnectionMetadata(@SerialName("disable_mempool") public val disableMempool: Boolean, @SerialName("private_node") public val privateNode: Boolean)
 
 // -- RpcConnectionPointId --
+
+internal typealias TransitionalRpcConnectionPointId = Unistring
 
 @Serializable
 @JvmInline
@@ -77,18 +79,18 @@ public sealed class GenericRpcConnectionPoolEvent<out PointId, out CryptoboxPubl
         internal const val CLASS_DISCRIMINATOR = "event"
     }
 }
-internal typealias TransitionalRpcConnectionPoolEvent = GenericRpcConnectionPoolEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcConnectionPoolEvent = GenericRpcConnectionPoolEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcConnectionPoolEvent = GenericRpcConnectionPoolEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
 @SerialName(RpcTooFewConnectionsEvent.KIND)
-public object RpcTooFewConnectionsEvent : GenericRpcConnectionPoolEvent<Any, Any, Any>() {
+public object RpcTooFewConnectionsEvent : GenericRpcConnectionPoolEvent<Nothing, Nothing, Nothing>() {
     internal const val KIND = "too_few_connections"
 }
 
 @Serializable
 @SerialName(RpcTooManyConnectionsEvent.KIND)
-public object RpcTooManyConnectionsEvent : GenericRpcConnectionPoolEvent<Any, Any, Any>() {
+public object RpcTooManyConnectionsEvent : GenericRpcConnectionPoolEvent<Nothing, Nothing, Nothing>() {
     internal const val KIND = "too_many_connections"
 }
 
@@ -99,7 +101,7 @@ public data class GenericRpcNewPointEvent<PointId, PeerId, ConnectionId>(overrid
         internal const val KIND = "new_point"
     }
 }
-internal typealias TransitionalRpcNewPointEvent = GenericRpcNewPointEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcNewPointEvent = GenericRpcNewPointEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcNewPointEvent = GenericRpcNewPointEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -109,7 +111,7 @@ public data class GenericRpcNewPeerEvent<PointId, PeerId, ConnectionId>(@SerialN
         internal const val KIND = "new_peer"
     }
 }
-internal typealias TransitionalRpcNewPeerEvent = GenericRpcNewPeerEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcNewPeerEvent = GenericRpcNewPeerEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcNewPeerEvent = GenericRpcNewPeerEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -119,7 +121,7 @@ public data class GenericRpcIncomingConnectionEvent<PointId, PeerId, ConnectionI
         internal const val KIND = "incoming_connection"
     }
 }
-internal typealias TransitionalRpcIncomingConnectionEvent = GenericRpcIncomingConnectionEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcIncomingConnectionEvent = GenericRpcIncomingConnectionEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcIncomingConnectionEvent = GenericRpcIncomingConnectionEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -129,7 +131,7 @@ public data class GenericRpcOutgoingConnectionEvent<PointId, PeerId, ConnectionI
         internal const val KIND = "outgoing_connection"
     }
 }
-internal typealias TransitionalRpcOutgoingConnectionEvent = GenericRpcOutgoingConnectionEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcOutgoingConnectionEvent = GenericRpcOutgoingConnectionEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcOutgoingConnectionEvent = GenericRpcOutgoingConnectionEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -139,7 +141,7 @@ public data class GenericRpcAuthenticationFailedEvent<PointId, PeerId, Connectio
         internal const val KIND = "authentication_failed"
     }
 }
-internal typealias TransitionalRpcAuthenticationFailedEvent = GenericRpcAuthenticationFailedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcAuthenticationFailedEvent = GenericRpcAuthenticationFailedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcAuthenticationFailedEvent = GenericRpcAuthenticationFailedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -153,7 +155,7 @@ public data class GenericRpcAcceptingRequestEvent<PointId, PeerId, ConnectionId>
         internal const val KIND = "accepting_request"
     }
 }
-internal typealias TransitionalRpcAcceptingRequestEvent = GenericRpcAcceptingRequestEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcAcceptingRequestEvent = GenericRpcAcceptingRequestEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcAcceptingRequestEvent = GenericRpcAcceptingRequestEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -167,7 +169,7 @@ public data class GenericRpcRejectingRequestEvent<PointId, PeerId, ConnectionId>
         internal const val KIND = "rejecting_request"
     }
 }
-internal typealias TransitionalRpcRejectingRequestEvent = GenericRpcRejectingRequestEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcRejectingRequestEvent = GenericRpcRejectingRequestEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcRejectingRequestEvent = GenericRpcRejectingRequestEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -180,7 +182,7 @@ public data class GenericRpcRequestRejectedEvent<PointId, PeerId, ConnectionId>(
         internal const val KIND = "request_rejected"
     }
 }
-internal typealias TransitionalRpcRequestRejectedEvent = GenericRpcRequestRejectedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcRequestRejectedEvent = GenericRpcRequestRejectedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcRequestRejectedEvent = GenericRpcRequestRejectedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -193,7 +195,7 @@ public data class GenericRpcConnectionEstablishedEvent<PointId, PeerId, Connecti
         internal const val KIND = "accepting_request"
     }
 }
-internal typealias TransitionalRpcConnectionEstablishedEvent = GenericRpcConnectionEstablishedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcConnectionEstablishedEvent = GenericRpcConnectionEstablishedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcConnectionEstablishedEvent = GenericRpcConnectionEstablishedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -203,7 +205,7 @@ public data class GenericRpcDisconnectionEvent<PointId, PeerId, ConnectionId>(@S
         internal const val KIND = "disconnection"
     }
 }
-internal typealias TransitionalRpcDisconnectionEvent = GenericRpcDisconnectionEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcDisconnectionEvent = GenericRpcDisconnectionEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcDisconnectionEvent = GenericRpcDisconnectionEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -213,18 +215,18 @@ public data class GenericRpcExternalDisconnectionEvent<PointId, PeerId, Connecti
         internal const val KIND = "external_disconnection"
     }
 }
-internal typealias TransitionalRpcExternalDisconnectionEvent = GenericRpcExternalDisconnectionEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcExternalDisconnectionEvent = GenericRpcExternalDisconnectionEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcExternalDisconnectionEvent = GenericRpcExternalDisconnectionEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
 @SerialName(RpcGcPointsEvent.KIND)
-public object RpcGcPointsEvent : GenericRpcConnectionPoolEvent<Any, Any, Any>() {
+public object RpcGcPointsEvent : GenericRpcConnectionPoolEvent<Nothing, Nothing, Nothing>() {
     internal const val KIND = "gc_points"
 }
 
 @Serializable
 @SerialName(RpcGcPeerIdsEvent.KIND)
-public object RpcGcPeerIdsEvent : GenericRpcConnectionPoolEvent<Any, Any, Any>() {
+public object RpcGcPeerIdsEvent : GenericRpcConnectionPoolEvent<Nothing, Nothing, Nothing>() {
     internal const val KIND = "gc_peer_ids"
 }
 
@@ -235,7 +237,7 @@ public data class GenericRpcSwapRequestReceivedEvent<PointId, CryptoboxPublicKey
         internal const val KIND = "swap_request_received"
     }
 }
-internal typealias TransitionalRpcSwapRequestReceivedEvent = GenericRpcSwapRequestReceivedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapRequestReceivedEvent = GenericRpcSwapRequestReceivedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapRequestReceivedEvent = GenericRpcSwapRequestReceivedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -245,7 +247,7 @@ public data class GenericRpcSwapAckReceivedEvent<PointId, CryptoboxPublicKeyHash
         internal const val KIND = "swap_ack_received"
     }
 }
-internal typealias TransitionalRpcSwapAckReceivedEvent = GenericRpcSwapAckReceivedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapAckReceivedEvent = GenericRpcSwapAckReceivedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapAckReceivedEvent = GenericRpcSwapAckReceivedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -255,7 +257,7 @@ public data class GenericRpcSwapRequestSentEvent<PointId, CryptoboxPublicKeyHash
         internal const val KIND = "swap_request_sent"
     }
 }
-internal typealias TransitionalRpcSwapRequestSentEvent = GenericRpcSwapRequestSentEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapRequestSentEvent = GenericRpcSwapRequestSentEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapRequestSentEvent = GenericRpcSwapRequestSentEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -265,7 +267,7 @@ public data class GenericRpcSwapAckSentEvent<PointId, CryptoboxPublicKeyHash, Co
         internal const val KIND = "swap_ack_sent"
     }
 }
-internal typealias TransitionalRpcSwapAckSentEvent = GenericRpcSwapAckSentEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapAckSentEvent = GenericRpcSwapAckSentEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapAckSentEvent = GenericRpcSwapAckSentEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -275,7 +277,7 @@ public data class GenericRpcSwapRequestIgnoredEvent<PointId, CryptoboxPublicKeyH
         internal const val KIND = "swap_request_ignored"
     }
 }
-internal typealias TransitionalRpcSwapRequestIgnoredEvent = GenericRpcSwapRequestIgnoredEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapRequestIgnoredEvent = GenericRpcSwapRequestIgnoredEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapRequestIgnoredEvent = GenericRpcSwapRequestIgnoredEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -285,7 +287,7 @@ public data class GenericRpcSwapSuccessEvent<PointId, CryptoboxPublicKeyHash, Co
         internal const val KIND = "swap_success"
     }
 }
-internal typealias TransitionalRpcSwapSuccessEvent = GenericRpcSwapSuccessEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapSuccessEvent = GenericRpcSwapSuccessEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapSuccessEvent = GenericRpcSwapSuccessEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -295,7 +297,7 @@ public data class GenericRpcSwapFailureEvent<PointId, CryptoboxPublicKeyHash, Co
         internal const val KIND = "swap_failure"
     }
 }
-internal typealias TransitionalRpcSwapFailureEvent = GenericRpcSwapFailureEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcSwapFailureEvent = GenericRpcSwapFailureEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcSwapFailureEvent = GenericRpcSwapFailureEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -305,7 +307,7 @@ public data class GenericRpcBootstrapSentEvent<PointId, CryptoboxPublicKeyHash, 
         internal const val KIND = "bootstrap_sent"
     }
 }
-internal typealias TransitionalRpcBootstrapSentEvent = GenericRpcBootstrapSentEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcBootstrapSentEvent = GenericRpcBootstrapSentEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcBootstrapSentEvent = GenericRpcBootstrapSentEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -316,7 +318,7 @@ public data class GenericRpcBootstrapReceivedEvent<PointId, CryptoboxPublicKeyHa
         internal const val KIND = "bootstrap_received"
     }
 }
-internal typealias TransitionalRpcBootstrapReceivedEvent = GenericRpcBootstrapReceivedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcBootstrapReceivedEvent = GenericRpcBootstrapReceivedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcBootstrapReceivedEvent = GenericRpcBootstrapReceivedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -326,7 +328,7 @@ public data class GenericRpcAdvertiseSentEvent<PointId, CryptoboxPublicKeyHash, 
         internal const val KIND = "advertise_sent"
     }
 }
-internal typealias TransitionalRpcAdvertiseSentEvent = GenericRpcAdvertiseSentEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcAdvertiseSentEvent = GenericRpcAdvertiseSentEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcAdvertiseSentEvent = GenericRpcAdvertiseSentEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>
 
 @Serializable
@@ -336,5 +338,5 @@ public data class GenericRpcAdvertiseReceivedEvent<PointId, CryptoboxPublicKeyHa
         internal const val KIND = "advertise_received"
     }
 }
-internal typealias TransitionalRpcAdvertiseReceivedEvent = GenericRpcAdvertiseReceivedEvent<Unistring, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
+internal typealias TransitionalRpcAdvertiseReceivedEvent = GenericRpcAdvertiseReceivedEvent<TransitionalRpcConnectionPointId, TransitionalRpcCryptoboxPublicKeyHash, TransitionalRpcConnectionId>
 public typealias RpcAdvertiseReceivedEvent = GenericRpcAdvertiseReceivedEvent<RpcConnectionPointId, @Contextual CryptoboxPublicKeyHash, RpcConnectionId>

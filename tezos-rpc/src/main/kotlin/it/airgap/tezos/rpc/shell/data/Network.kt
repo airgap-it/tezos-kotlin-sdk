@@ -2,6 +2,7 @@ package it.airgap.tezos.rpc.shell.data
 
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
+import it.airgap.tezos.rpc.type.RpcAcl
 import it.airgap.tezos.rpc.type.RpcIPAddress
 import it.airgap.tezos.rpc.type.TransitionalRpcIPAddress
 import it.airgap.tezos.rpc.type.TransitionalRpcTimestamp
@@ -75,3 +76,41 @@ internal value class GetPeersTransitionalResponse(val peers: List<Pair<Transitio
 @Serializable
 @JvmInline
 public value class GetPeersResponse(public val peers: List<Pair<@Contextual CryptoboxPublicKeyHash, RpcPeer>>)
+
+// -- /peers/<peer_id> --
+
+@Serializable
+@JvmInline
+internal value class GetPeerTransitionalResponse(val peer: TransitionalRpcPeer)
+
+@Serializable
+@JvmInline
+public value class GetPeerResponse(public val peer: RpcPeer)
+
+@Serializable
+@JvmInline
+public value class ChangePeerPermissionRequest(public val acl: RpcAcl?)
+
+@Serializable
+@JvmInline
+internal value class ChangePeerPermissionTransitionalResponse(val peer: TransitionalRpcPeer)
+
+@Serializable
+@JvmInline
+public value class ChangePeerPermissionResponse(public val peer: RpcPeer)
+
+// -- /peers/<peer_id>/banned --
+
+@Serializable
+@JvmInline
+public value class BannedPeerResponse(public val isBanned: Boolean)
+
+// -- /peers/<peer_id>/log
+
+@Serializable
+@JvmInline
+internal value class GetPeerEventsTransitionalResponse(val events: List<TransitionalRpcPeerPoolEvent>)
+
+@Serializable
+@JvmInline
+public value class GetPeerEventsResponse(public val events: List<RpcPeerPoolEvent>)

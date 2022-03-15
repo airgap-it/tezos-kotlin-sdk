@@ -7,13 +7,11 @@ import kotlinx.serialization.Serializable
 // -- RpcNetworkVersion --
 
 @Serializable
-public data class GenericRpcNetworkVersion<DistributedDbVersionName>(
-    @SerialName("chain_name") public val chainName: DistributedDbVersionName,
+public data class RpcNetworkVersion(
+    @SerialName("chain_name") public val chainName: Unistring,
     @SerialName("distributed_db_version") public val distributedDbVersion: UShort,
     @SerialName("p2p_version") public val p2pVersion: UShort,
 )
-internal typealias TransitionalRpcNetworkVersion = GenericRpcNetworkVersion<Unistring>
-public typealias RpcNetworkVersion = GenericRpcNetworkVersion<String>
 
 // -- RpcNetworkStat --
 

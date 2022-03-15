@@ -5,15 +5,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable(with = UnistringSerializer::class)
-internal sealed interface Unistring {
+public sealed interface Unistring {
 
     @Serializable
     @JvmInline
-    value class PlainUtf8(val string: String) : Unistring
+    public value class PlainUtf8(public val string: String) : Unistring
 
     @Serializable
-    data class InvalidUtf8(@SerialName("invalid_utf8_string") val invalidUtf8String: ByteArray) :
-        Unistring {
+    public data class InvalidUtf8(@SerialName("invalid_utf8_string") public val invalidUtf8String: ByteArray) : Unistring {
         override fun equals(other: Any?): Boolean =
             when {
                 this === other -> true

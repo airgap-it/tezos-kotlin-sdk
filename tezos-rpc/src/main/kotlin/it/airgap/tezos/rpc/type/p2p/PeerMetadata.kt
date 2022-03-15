@@ -37,8 +37,8 @@ public data class RpcPeerMetadataResponses(
 @Serializable
 public data class RpcPeerMetadataRequests(
     public val sent: RpcPeerMetadataEntry,
-    public val failed: RpcPeerMetadataEntry,
     public val received: RpcPeerMetadataEntry,
+    public val failed: RpcPeerMetadataEntry,
     public val scheduled: RpcPeerMetadataEntry,
 )
 

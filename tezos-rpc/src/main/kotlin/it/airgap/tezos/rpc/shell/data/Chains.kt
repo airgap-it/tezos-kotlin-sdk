@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 // -- /<chain_id> --
 
 @Serializable
-public class SetBootstrappedRequest(public val bootstrapped: Boolean)
+public data class SetBootstrappedRequest(public val bootstrapped: Boolean)
 
 public typealias SetBootstrappedResponse = Unit
 

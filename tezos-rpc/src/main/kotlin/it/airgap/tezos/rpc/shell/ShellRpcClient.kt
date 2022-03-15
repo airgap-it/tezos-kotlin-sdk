@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.shell
 
 import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
-import it.airgap.tezos.core.internal.type.BigInt
+import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
@@ -9,11 +9,15 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.*
+import it.airgap.tezos.rpc.type.p2p.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 internal class ShellRpcClient(
     private val nodeUrl: String,
     private val httpClient: HttpClient,
     private val encodedBytesCoder: EncodedBytesCoder,
+    private val json: Json,
 ) : ShellRpc {
 
     // ==== RPC (https://tezos.gitlab.io/shell/rpc.html) ====
@@ -180,6 +184,105 @@ internal class ShellRpcClient(
             },
         ).toFinal()
 
+    // -- /network --
+    override suspend fun getConnections(headers: List<HttpHeader>): GetConnectionsResponse =
+        httpClient.get<GetConnectionsTransitionalResponse>(
+            nodeUrl,
+            "/network/connections",
+            headers,
+        ).toFinal()
+
+    override suspend fun getConnection(
+        peerId: CryptoboxPublicKeyHash,
+        headers: List<HttpHeader>,
+    ): GetConnectionResponse =
+        httpClient.get<GetConnectionTransitionalResponse>(
+            nodeUrl,
+            "/network/connections/${peerId.base58}",
+            headers,
+        ).toFinal()
+
+    override suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean?, headers: List<HttpHeader>): CloseConnectionResponse =
+        httpClient.delete(
+            nodeUrl,
+            "/network/connections/${peerId.base58}",
+            headers,
+            parameters = buildList {
+                wait?.takeIf { it }?.let { add("wait" to null) }
+            },
+        )
+
+    override suspend fun clearGreylist(headers: List<HttpHeader>): ClearGreylistResponse =
+        httpClient.delete(nodeUrl, "/network/greylist", headers, )
+
+    override suspend fun getGreylistedIPs(headers: List<HttpHeader>): GetGreylistedIPsResponse =
+        httpClient.get<GetGreylistedIPsTransitionalResponse>(
+            nodeUrl,
+            "/network/greylist/ips",
+            headers,
+        ).toFinal()
+
+
+    override suspend fun getLastGreylistedPeers(headers: List<HttpHeader>): GetLastGreylistedPeersResponse =
+        httpClient.get<GetLastGreylistedPeersTransitionalResponse>(
+            nodeUrl,
+            "/network/greylist/peers",
+            headers,
+        ).toFinal()
+
+    override suspend fun getLogs(headers: List<HttpHeader>): GetLogResponse =
+        httpClient.get<GetLogTransitionalResponse>(
+            nodeUrl,
+            "/network/log",
+            headers,
+        ).toFinal()
+
+    override suspend fun getPeers(filter: RpcPeerState?, headers: List<HttpHeader>): GetPeersResponse =
+        httpClient.get<GetPeersTransitionalResponse>(
+            nodeUrl,
+            "/network/peers",
+            headers,
+            parameters = buildList {
+                filter?.let { add("filter" to json.encodeToString(it)) }
+            },
+        ).toFinal()
+
+    override suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): GetPeerResponse =
+        httpClient.get<GetPeerTransitionalResponse>(
+            nodeUrl,
+            "/network/peers/${peerId.base58}",
+            headers,
+        ).toFinal()
+
+    override suspend fun changePeerPermissions(
+        peerId: CryptoboxPublicKeyHash,
+        acl: RpcAcl,
+        headers: List<HttpHeader>,
+    ): ChangePeerPermissionResponse =
+        httpClient.patch<ChangePeerPermissionRequest, ChangePeerPermissionTransitionalResponse>(
+            nodeUrl,
+            "/network/peers/${peerId.base58}",
+            headers,
+            request = ChangePeerPermissionRequest(acl),
+        ).toFinal()
+
+    override suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): BannedPeerResponse =
+        httpClient.get(nodeUrl, "/network/peers/${peerId.base58}/banned", headers)
+
+    override suspend fun getPeerEvents(
+        peerId: CryptoboxPublicKeyHash,
+        monitor: Boolean?,
+        headers: List<HttpHeader>,
+    ): GetPeerEventsResponse =
+        httpClient.get<GetPeerEventsTransitionalResponse>(
+            nodeUrl,
+            "/network/peers/${peerId.base58}/log",
+            headers,
+            parameters = buildList {
+                monitor?.takeIf { it }?.let { add("monitor" to null) }
+            }
+        ).toFinal()
+
     // ==== converters ====
 
     // -- /chains --
@@ -275,11 +378,106 @@ internal class ShellRpcClient(
             protocolData,
         )
 
+    // -- /network --
+
+    private fun GetConnectionsTransitionalResponse.toFinal(): GetConnectionsResponse =
+        GetConnectionsResponse(connections.map { it.toFinal() })
+
+    private fun GetConnectionTransitionalResponse.toFinal(): GetConnectionResponse =
+        GetConnectionResponse(connection.toFinal())
+
+    private fun GetGreylistedIPsTransitionalResponse.toFinal(): GetGreylistedIPsResponse =
+        GetGreylistedIPsResponse(ips.map { it.toRpcIPAddress() }, notReliableSince.toTimestamp())
+
+    private fun GetLastGreylistedPeersTransitionalResponse.toFinal(): GetLastGreylistedPeersResponse =
+        GetLastGreylistedPeersResponse(peers.map { it.toEncodedCryptoboxPublicKeyHash() })
+
+    private fun GetLogTransitionalResponse.toFinal(): GetLogResponse =
+        GetLogResponse(events.map { it.toFinal() })
+
+    private fun GetPeersTransitionalResponse.toFinal(): GetPeersResponse =
+        GetPeersResponse(peers.map { it.first.toEncodedCryptoboxPublicKeyHash() to it.second.toFinal() })
+
+    private fun GetPeerTransitionalResponse.toFinal(): GetPeerResponse =
+        GetPeerResponse(peer.toFinal())
+
+    private fun ChangePeerPermissionTransitionalResponse.toFinal(): ChangePeerPermissionResponse =
+        ChangePeerPermissionResponse(peer.toFinal())
+
+    private fun GetPeerEventsTransitionalResponse.toFinal(): GetPeerEventsResponse =
+        GetPeerEventsResponse(events.map { it.toFinal() })
+
+    private fun TransitionalRpcConnection.toFinal(): RpcConnection =
+        RpcConnection(
+            incoming,
+            peerId.toEncodedCryptoboxPublicKeyHash(),
+            idPoint.toFinal(),
+            remoteSocketPort,
+            announcedVersion,
+            private,
+            localMetadata,
+            remoteMetadata,
+        )
+
+    private fun TransitionalRpcConnectionId.toFinal(): RpcConnectionId =
+        RpcConnectionId(address.toRpcIPAddress(), port)
+
+    private fun TransitionalRpcConnectionPoolEvent.toFinal(): RpcConnectionPoolEvent =
+        when (this) {
+            RpcTooFewConnectionsEvent -> RpcTooFewConnectionsEvent
+            RpcTooManyConnectionsEvent -> RpcTooManyConnectionsEvent
+            is TransitionalRpcNewPointEvent -> RpcNewPointEvent(point.toConnectionPointId())
+            is TransitionalRpcNewPeerEvent -> RpcNewPeerEvent(peerId.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcIncomingConnectionEvent -> RpcIncomingConnectionEvent(point.toConnectionPointId())
+            is TransitionalRpcOutgoingConnectionEvent -> RpcOutgoingConnectionEvent(point.toConnectionPointId())
+            is TransitionalRpcAuthenticationFailedEvent -> RpcAuthenticationFailedEvent(point.toConnectionPointId())
+            is TransitionalRpcAcceptingRequestEvent -> RpcAcceptingRequestEvent(point.toConnectionPointId(), idPoint.toFinal(), peerId.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcRejectingRequestEvent -> RpcRejectingRequestEvent(point.toConnectionPointId(), idPoint.toFinal(), peerId.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcRequestRejectedEvent -> RpcRequestRejectedEvent(point.toConnectionPointId(), identity?.run { first.toFinal() to second.toEncodedCryptoboxPublicKeyHash() })
+            is TransitionalRpcConnectionEstablishedEvent -> RpcConnectionEstablishedEvent(idPoint.toFinal(), peerId.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcDisconnectionEvent -> RpcDisconnectionEvent(peerId.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcExternalDisconnectionEvent -> RpcExternalDisconnectionEvent(peerId.toEncodedCryptoboxPublicKeyHash())
+            RpcGcPointsEvent -> RpcGcPointsEvent
+            RpcGcPeerIdsEvent -> RpcGcPeerIdsEvent
+            is TransitionalRpcSwapRequestReceivedEvent -> RpcSwapRequestReceivedEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcSwapAckReceivedEvent -> RpcSwapAckReceivedEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcSwapRequestSentEvent -> RpcSwapRequestSentEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcSwapAckSentEvent -> RpcSwapAckSentEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcSwapRequestIgnoredEvent -> RpcSwapRequestIgnoredEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcSwapSuccessEvent -> RpcSwapSuccessEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcSwapFailureEvent -> RpcSwapFailureEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcBootstrapSentEvent -> RpcBootstrapSentEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcBootstrapReceivedEvent -> RpcBootstrapReceivedEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcAdvertiseSentEvent -> RpcAdvertiseSentEvent(source.toEncodedCryptoboxPublicKeyHash())
+            is TransitionalRpcAdvertiseReceivedEvent -> RpcAdvertiseReceivedEvent(source.toEncodedCryptoboxPublicKeyHash())
+        }
+
+    private fun TransitionalRpcPeer.toFinal(): RpcPeer =
+        RpcPeer(
+            score,
+            trusted,
+            connectionMetadata,
+            peerMetadata,
+            state,
+            reachableAt?.toFinal(),
+            stat,
+            lastFailedConnection?.run { first.toFinal() to second.toTimestamp() },
+            lastRejectedConnection?.run { first.toFinal() to second.toTimestamp() },
+            lastEstablishedConnection?.run { first.toFinal() to second.toTimestamp() },
+            lastDisconnection?.run { first.toFinal() to second.toTimestamp() },
+            lastMiss?.run { first.toFinal() to second.toTimestamp() },
+            lastSeen?.run { first.toFinal() to second.toTimestamp() },
+        )
+
+    private fun TransitionalRpcPeerPoolEvent.toFinal(): RpcPeerPoolEvent =
+        RpcPeerPoolEvent(kind, timestamp.toTimestamp(), address.toRpcIPAddress(), port)
+
     // -- common --
 
     private fun TransitionalRpcBlockHash.toEncodedBlockHash(): BlockHash = toEncoded(BlockHash)
     private fun TransitionalRpcChainId.toEncodedChainId(): ChainId = toEncoded(ChainId)
     private fun TransitionalRpcContextHash.toEncodedContextHash(): ContextHash = toEncoded(ContextHash)
+    private fun TransitionalRpcCryptoboxPublicKeyHash.toEncodedCryptoboxPublicKeyHash(): CryptoboxPublicKeyHash = toEncoded(CryptoboxPublicKeyHash)
     private fun TransitionalRpcOperationHash.toEncodedOperationHash(): OperationHash = toEncoded(OperationHash)
     private fun TransitionalRpcOperationListListHash.toEncodedOperationListListHash(): OperationListListHash = toEncoded(OperationListListHash)
     private fun TransitionalRpcProtocolHash.toEncodedProtocolHash(): ProtocolHash = toEncoded(ProtocolHash)
@@ -287,12 +485,24 @@ internal class ShellRpcClient(
     private fun TransitionalRpcTimestamp.toTimestamp(): Timestamp =
         when (this) {
             is Unistring.PlainUtf8 -> Timestamp.Rfc3339(string)
-            is Unistring.InvalidUtf8 -> Timestamp.Millis(BigInt.valueOf(invalidUtf8String).toLongExact()) // TODO: verify
+            is Unistring.InvalidUtf8 -> failWithIllegalArgument("Invalid Timestamp.") // TODO: improve error
+        }
+
+    private fun TransitionalRpcIPAddress.toRpcIPAddress(): RpcIPAddress =
+        when (this) {
+            is Unistring.PlainUtf8 -> RpcIPAddress.fromString(string)
+            is Unistring.InvalidUtf8 -> failWithIllegalArgument("Invalid IP address.") // TODO: improve error
+        }
+
+    private fun TransitionalRpcConnectionPointId.toConnectionPointId(): RpcConnectionPointId =
+        when (this) {
+            is Unistring.PlainUtf8 -> RpcConnectionPointId(string)
+            is Unistring.InvalidUtf8 -> failWithIllegalArgument("Invalid Point ID.") // TODO: improve error
         }
 
     private fun <E : Encoded<E>, K : Encoded.Kind<E>> Unistring.toEncoded(kind: K): E =
         when (this) {
             is Unistring.PlainUtf8 -> kind.createValue(string)
-            is Unistring.InvalidUtf8 -> encodedBytesCoder.decode(invalidUtf8String, kind)
+            is Unistring.InvalidUtf8 -> failWithIllegalArgument("Invalid value.") // TODO: improve error
         }
 }
