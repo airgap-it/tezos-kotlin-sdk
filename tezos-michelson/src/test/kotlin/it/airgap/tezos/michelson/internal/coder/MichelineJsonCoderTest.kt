@@ -73,7 +73,72 @@ class MichelineJsonCoderTest {
             assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString())
             assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString(michelineJsonCoder))
         }
+    }
 
+    @Test
+    fun `should encode Micheline Literal to JSON`() {
+        listOf(
+            literalIntegerWithJson(),
+            literalStringWithJson(),
+            literalBytesWithJson(),
+            literalBytesWithJson("0x00"),
+        ).forEach {
+            val jsonElement = Json.decodeFromString<JsonElement>(it.second)
+            assertEquals(Json.encodeToString(jsonElement), Json.encodeToString(it.first))
+            assertEquals(jsonElement, michelineJsonCoder.encode(it.first))
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString())
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString(michelineJsonCoder))
+        }
+
+        listOf(
+            literalBytesWithJson(),
+            literalBytesWithJson("0x00"),
+        ).forEach {
+            val jsonElement = Json.decodeFromString<JsonElement>(it.second)
+            assertEquals(Json.encodeToString(jsonElement), Json.encodeToString(it.first))
+            assertEquals(jsonElement, michelineJsonCoder.encode(it.first))
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString())
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString(michelineJsonCoder))
+        }
+    }
+
+    @Test
+    fun `should encode Micheline Primitive Application to JSON`() {
+        listOf(
+            primitiveApplicationWithJson(),
+            primitiveApplicationWithJson(args = listOf(MichelineLiteral.Integer(0))),
+            primitiveApplicationWithJson(annots = listOf("%annot")),
+            primitiveApplicationWithJson(args = listOf(MichelineLiteral.Integer(0)), annots = listOf("%annot")),
+        ).forEach {
+            val jsonElement = Json.decodeFromString<JsonElement>(it.second)
+            assertEquals(Json.encodeToString(jsonElement), Json.encodeToString(it.first))
+            assertEquals(jsonElement, michelineJsonCoder.encode(it.first))
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString())
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString(michelineJsonCoder))
+        }
+    }
+
+    @Test
+    fun `should encode Micheline Sequence to JSON`() {
+        listOf(
+            sequenceWithJson(),
+            sequenceWithJson(listOf(MichelineLiteral.Integer(0))),
+            sequenceWithJson(
+                listOf(
+                    MichelinePrimitiveApplication(
+                        "prim",
+                        listOf(MichelineLiteral.Integer(0)),
+                        listOf("%annot")
+                    )
+                )
+            ),
+        ).forEach {
+            val jsonElement = Json.decodeFromString<JsonElement>(it.second)
+            assertEquals(Json.encodeToString(jsonElement), Json.encodeToString(it.first))
+            assertEquals(jsonElement, michelineJsonCoder.encode(it.first))
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString())
+            assertEquals(Json.encodeToString(jsonElement), it.first.toJsonString(michelineJsonCoder))
+        }
     }
 
     @Test
@@ -103,7 +168,66 @@ class MichelineJsonCoderTest {
             assertEquals(it.first, MichelineNode.fromJsonString(it.second))
             assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
         }
+    }
 
+    @Test
+    fun `should decode Micheline Literal from JSON`() {
+        listOf(
+            literalIntegerWithJson(),
+            literalStringWithJson(),
+            literalBytesWithJson(),
+        ).forEach {
+            assertEquals(it.first, Json.decodeFromString(it.second))
+            assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+        }
+
+        listOf(
+            literalBytesWithJson(),
+        ).forEach {
+            assertEquals(it.first, Json.decodeFromString(it.second))
+            assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+        }
+    }
+
+    @Test
+    fun `should decode Micheline Primitive Application from JSON`() {
+        listOf(
+            primitiveApplicationWithJson(),
+            primitiveApplicationWithJson(args = listOf(MichelineLiteral.Integer(0))),
+            primitiveApplicationWithJson(annots = listOf("%annot")),
+            primitiveApplicationWithJson(args = listOf(MichelineLiteral.Integer(0)), annots = listOf("%annot")),
+        ).forEach {
+            assertEquals(it.first, Json.decodeFromString(it.second))
+            assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+        }
+    }
+
+    @Test
+    fun `should decode Micheline Sequence from JSON`() {
+        listOf(
+            sequenceWithJson(),
+            sequenceWithJson(listOf(MichelineLiteral.Integer(0))),
+            sequenceWithJson(
+                listOf(
+                    MichelinePrimitiveApplication(
+                        "prim",
+                        listOf(MichelineLiteral.Integer(0)),
+                        listOf("%annot")
+                    )
+                )
+            ),
+        ).forEach {
+            assertEquals(it.first, Json.decodeFromString(it.second))
+            assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second))
+            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+        }
     }
 
     private fun literalIntegerWithJson(int: Int = 0): Pair<MichelineLiteral.Integer, String> =
