@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 // -- RpcUserActivatedProtocolOverride --
 
 @Serializable
-public data class RpcUserActivatedProtocolOverride<ProtocolHash>(
+public data class RpcUserActivatedProtocolOverride(
     @SerialName("replaced_protocol") public val replacedProtocol: @Contextual ProtocolHash,
     @SerialName("replacement_protocol") public val replacementProtocol: @Contextual ProtocolHash,
 )
