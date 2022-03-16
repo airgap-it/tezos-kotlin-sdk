@@ -9,20 +9,20 @@ import it.airgap.tezos.core.type.encoded.*
 import kotlin.math.min
 
 @InternalTezosSdkApi
-public class PublicKeyBytesCoder(encodedBytesCoder: EncodedBytesCoder) : EncodedGroupBytesCoder<PublicKeyEncoded<*>>(encodedBytesCoder) {
-    override fun tag(encoded: PublicKeyEncoded<*>): EncodedTag<Encoded.Kind<PublicKeyEncoded<*>>>? = PublicKeyTag.fromEncoded(encoded)
-    override fun tag(bytes: ByteArray): EncodedTag<Encoded.Kind<PublicKeyEncoded<*>>>? = PublicKeyTag.recognize(bytes)
-    override fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<Encoded.Kind<PublicKeyEncoded<*>>>? = PublicKeyTag.recognize(bytes)?.also { bytes.consumeUntil(it.value.size) }
+public class PublicKeyBytesCoder(encodedBytesCoder: EncodedBytesCoder) : EncodedGroupBytesCoder<MetaPublicKeyEncoded<*>>(encodedBytesCoder) {
+    override fun tag(encoded: MetaPublicKeyEncoded<*>): EncodedTag<MetaEncoded.Kind<MetaPublicKeyEncoded<*>>>? = PublicKeyTag.fromEncoded(encoded)
+    override fun tag(bytes: ByteArray): EncodedTag<MetaEncoded.Kind<MetaPublicKeyEncoded<*>>>? = PublicKeyTag.recognize(bytes)
+    override fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<MetaEncoded.Kind<MetaPublicKeyEncoded<*>>>? = PublicKeyTag.recognize(bytes)?.also { bytes.consumeUntil(it.value.size) }
 
-    override fun failWithInvalidValue(value: PublicKeyEncoded<*>): Nothing = failWithUnknownPublicKey(value)
-    private fun failWithUnknownPublicKey(value: PublicKeyEncoded<*>): Nothing = failWithIllegalArgument("Unknown Tezos public key `$value`.")
+    override fun failWithInvalidValue(value: MetaPublicKeyEncoded<*>): Nothing = failWithUnknownPublicKey(value)
+    private fun failWithUnknownPublicKey(value: MetaPublicKeyEncoded<*>): Nothing = failWithIllegalArgument("Unknown Tezos public key `$value`.")
 
     override fun failWithInvalidValue(value: ByteArray): Nothing = failWithInvalidPublicKeyBytes(value.joinToString(prefix = "[", postfix = "]"))
     override fun failWithInvalidValue(value: MutableList<Byte>): Nothing = failWithInvalidPublicKeyBytes(value.joinToString(prefix = "[", postfix = "]"))
     private fun failWithInvalidPublicKeyBytes(value: String): Nothing = failWithIllegalArgument("Bytes `$value` are not valid Tezos key bytes.")
 }
 
-private enum class PublicKeyTag(override val value: ByteArray, override val kind: PublicKeyEncoded.Kind<*>) : EncodedTag<PublicKeyEncoded.Kind<*>> {
+private enum class PublicKeyTag(override val value: ByteArray, override val kind: MetaPublicKeyEncoded.Kind<*>) : EncodedTag<MetaPublicKeyEncoded.Kind<*>> {
     Edpk(byteArrayOf(0), Ed25519PublicKey),
     Sppk(byteArrayOf(1), Secp256K1PublicKey),
     P2pk(byteArrayOf(2), P256PublicKey);
@@ -31,7 +31,7 @@ private enum class PublicKeyTag(override val value: ByteArray, override val kind
     private fun isValid(bytes: MutableList<Byte>): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until min(value.size + kind.bytesLength, bytes.size)))
 
     companion object {
-        fun fromEncoded(encoded: PublicKeyEncoded<*>): PublicKeyTag? =
+        fun fromEncoded(encoded: MetaPublicKeyEncoded<*>): PublicKeyTag? =
             values().find { it.kind == encoded.kind }
 
         fun recognize(bytes: ByteArray): PublicKeyTag? =

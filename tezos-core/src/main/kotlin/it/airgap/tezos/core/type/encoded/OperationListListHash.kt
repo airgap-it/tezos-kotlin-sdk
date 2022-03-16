@@ -3,16 +3,19 @@ package it.airgap.tezos.core.type.encoded
 /* LLo(53) */
 
 @JvmInline
-public value class OperationListListHash(override val base58: String) : Encoded<OperationListListHash> {
+public value class OperationListListHash(override val base58: String) : Encoded, MetaEncoded<OperationListListHash> {
 
-    override val kind: Encoded.Kind<OperationListListHash>
+    override val kind: MetaEncoded.Kind<OperationListListHash>
         get() = Companion
 
     init {
         require(isValid(base58)) { "Invalid operation list list hash." }
     }
 
-    public companion object : Encoded.Kind<OperationListListHash> {
+    override fun toMetaEncoded(): MetaEncoded<*> = this
+    override fun toEncoded(): Encoded = this
+
+    public companion object : MetaEncoded.Kind<OperationListListHash> {
         override val base58Prefix: String = "LLo"
         override val base58Bytes: ByteArray = byteArrayOf(29, (159).toByte(), 109)
         override val base58Length: Int = 53

@@ -56,7 +56,7 @@ class BytesToPublicKeyConverterTest {
     @Test
     fun `should convert bytes to PublicKeyEncoded`() {
         publicKeysWithBytes.forEach {
-            assertEquals(it.first, bytesToPublicKeyConverter.convert(it.second))
+            assertEquals(it.first, bytesToPublicKeyConverter.convert(it.second).toEncoded())
             assertEquals(it.first, PublicKeyEncoded.fromBytes(it.second))
             assertEquals(it.first, PublicKeyEncoded.fromBytes(it.second, bytesToPublicKeyConverter))
         }
@@ -71,7 +71,7 @@ class BytesToPublicKeyConverterTest {
         }
     }
 
-    private val publicKeysWithBytes: List<Pair<PublicKeyEncoded<*>, ByteArray>>
+    private val publicKeysWithBytes: List<Pair<PublicKeyEncoded, ByteArray>>
         get() = listOf(
             Ed25519PublicKey("edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk") to "0d0f25d97ed5fe9bff28a71b682400b1f83348e9a4669e6fae70d840cf794d9e222243a7".asHexString().toByteArray(),
             Ed25519PublicKey("edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk") to "7ed5fe9bff28a71b682400b1f83348e9a4669e6fae70d840cf794d9e222243a7".asHexString().toByteArray(),

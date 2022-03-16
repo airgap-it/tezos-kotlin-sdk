@@ -3,16 +3,19 @@ package it.airgap.tezos.core.type.encoded
 /* tz2(36) */
 
 @JvmInline
-public value class Secp256K1PublicKeyHash(override val base58: String) : ImplicitAddress<Secp256K1PublicKeyHash> {
+public value class Secp256K1PublicKeyHash(override val base58: String) : ImplicitAddress, MetaImplicitAddress<Secp256K1PublicKeyHash> {
 
-    override val kind: ImplicitAddress.Kind<Secp256K1PublicKeyHash>
+    override val kind: MetaImplicitAddress.Kind<Secp256K1PublicKeyHash>
         get() = Companion
 
     init {
         require(isValid(base58)) { "Invalid secp256k1 public key hash." }
     }
 
-    public companion object : ImplicitAddress.Kind<Secp256K1PublicKeyHash> {
+    override fun toMetaEncoded(): MetaImplicitAddress<*> = this
+    override fun toEncoded(): ImplicitAddress = this
+
+    public companion object : MetaImplicitAddress.Kind<Secp256K1PublicKeyHash> {
         override val base58Prefix: String = "tz2"
         override val base58Bytes: ByteArray = byteArrayOf(6, (161).toByte(), (161).toByte())
         override val base58Length: Int = 36

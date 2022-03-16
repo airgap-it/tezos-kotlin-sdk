@@ -600,67 +600,67 @@ public fun Secp256K1Signature.Companion.decodeConsumingFromBytes(
 
 // -- Address <-> ByteArray --
 
-public fun Address<*>.encodeToBytes(
+public fun Address.encodeToBytes(
     addressBytesCoder: AddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().addressBytesCoder,
-): ByteArray = addressBytesCoder.encode(this)
+): ByteArray = addressBytesCoder.encode(toMetaEncoded())
 
 public fun Address.Companion.decodeFromBytes(
     bytes: ByteArray,
     addressBytesCoder: AddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().addressBytesCoder,
-): Address<*> = addressBytesCoder.decode(bytes)
+): Address = addressBytesCoder.decode(bytes).toEncoded()
 
 public fun Address.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     addressBytesCoder: AddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().addressBytesCoder,
-): Address<*> = addressBytesCoder.decodeConsuming(bytes)
+): Address = addressBytesCoder.decodeConsuming(bytes).toEncoded()
 
 // -- ImplicitAddress <-> ByteArray --
 
-public fun ImplicitAddress<*>.encodeToBytes(
+public fun ImplicitAddress.encodeToBytes(
     implicitAddressBytesCoder: ImplicitAddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().implicitAddressBytesCoder,
-): ByteArray = implicitAddressBytesCoder.encode(this)
+): ByteArray = implicitAddressBytesCoder.encode(toMetaEncoded())
 
 public fun ImplicitAddress.Companion.decodeFromBytes(
     bytes: ByteArray,
     implicitAddressBytesCoder: ImplicitAddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().implicitAddressBytesCoder,
-): ImplicitAddress<*> = implicitAddressBytesCoder.decode(bytes)
+): ImplicitAddress = implicitAddressBytesCoder.decode(bytes).toEncoded()
 
 public fun ImplicitAddress.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     implicitAddressBytesCoder: ImplicitAddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().implicitAddressBytesCoder,
-): ImplicitAddress<*> = implicitAddressBytesCoder.decodeConsuming(bytes)
+): ImplicitAddress = implicitAddressBytesCoder.decodeConsuming(bytes).toEncoded()
 
 // -- PublicKeyEncoded <-> ByteArray --
 
-public fun PublicKeyEncoded<*>.encodeToBytes(
+public fun PublicKeyEncoded.encodeToBytes(
     publicKeyBytesCoder: PublicKeyBytesCoder = TezosSdk.instance.dependencyRegistry.core().publicKeyBytesCoder,
-): ByteArray = publicKeyBytesCoder.encode(this)
+): ByteArray = publicKeyBytesCoder.encode(toMetaEncoded())
 
 public fun PublicKeyEncoded.Companion.decodeFromBytes(
     bytes: ByteArray,
     publicKeyBytesCoder: PublicKeyBytesCoder = TezosSdk.instance.dependencyRegistry.core().publicKeyBytesCoder,
-): PublicKeyEncoded<*> = publicKeyBytesCoder.decode(bytes)
+): PublicKeyEncoded = publicKeyBytesCoder.decode(bytes).toEncoded()
 
 public fun PublicKeyEncoded.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     publicKeyBytesCoder: PublicKeyBytesCoder = TezosSdk.instance.dependencyRegistry.core().publicKeyBytesCoder,
-): PublicKeyEncoded<*> = publicKeyBytesCoder.decodeConsuming(bytes)
+): PublicKeyEncoded = publicKeyBytesCoder.decodeConsuming(bytes).toEncoded()
 
 // -- SignatureEncoded <-> ByteArray --
 
-public fun SignatureEncoded<*>.encodeToBytes(
+public fun SignatureEncoded.encodeToBytes(
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
-): ByteArray = signatureBytesCoder.encode(this)
+): ByteArray = signatureBytesCoder.encode(toMetaEncoded())
 
 public fun SignatureEncoded.Companion.decodeFromBytes(
     bytes: ByteArray,
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
-): SignatureEncoded<*> = signatureBytesCoder.decode(bytes)
+): SignatureEncoded = signatureBytesCoder.decode(bytes).toEncoded()
 
 public fun SignatureEncoded.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
-): SignatureEncoded<*> = signatureBytesCoder.decodeConsuming(bytes)
+): SignatureEncoded = signatureBytesCoder.decodeConsuming(bytes).toEncoded()
 
 // -- ZarithInteger <-> ByteArray --
 

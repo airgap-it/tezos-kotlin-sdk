@@ -39,7 +39,7 @@ class StringToSignatureConverterTest {
     @Test
     fun `should convert string to SignatureEncoded`() {
         signaturesWithStrings.forEach {
-            assertEquals(it.first, stringToSignatureConverter.convert(it.second))
+            assertEquals(it.first, stringToSignatureConverter.convert(it.second).toEncoded())
             assertEquals(it.first, SignatureEncoded.fromString(it.second))
             assertEquals(it.first, SignatureEncoded.fromString(it.second, stringToSignatureConverter))
         }
@@ -54,7 +54,7 @@ class StringToSignatureConverterTest {
         }
     }
 
-    private val signaturesWithStrings: List<Pair<SignatureEncoded<*>, String>>
+    private val signaturesWithStrings: List<Pair<SignatureEncoded, String>>
         get() = listOf(
             Ed25519Signature("edsigu69u68mAZ4KhBDPWshZVCDhSgrzkc5Mgihxakzh7FceNgwdQqQYQM3pjN3b4gjrLVo5Dxre41mzCDt8JFtFytWLLnMmHfz") to "edsigu69u68mAZ4KhBDPWshZVCDhSgrzkc5Mgihxakzh7FceNgwdQqQYQM3pjN3b4gjrLVo5Dxre41mzCDt8JFtFytWLLnMmHfz",
             Secp256K1Signature("spsig1UdNgjqzaZxkbNyqVo3wm4Stoc4RXf6nybVGzANnKNHxTYBY8XGB2pgiVp5BYaYkLkmyaxMCq5xCsqCMDaFQWCeFBG2NNM") to "spsig1UdNgjqzaZxkbNyqVo3wm4Stoc4RXf6nybVGzANnKNHxTYBY8XGB2pgiVp5BYaYkLkmyaxMCq5xCsqCMDaFQWCeFBG2NNM",

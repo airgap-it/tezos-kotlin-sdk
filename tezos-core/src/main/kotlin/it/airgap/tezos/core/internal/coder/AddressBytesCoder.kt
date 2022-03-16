@@ -5,26 +5,23 @@ import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.consumeUntil
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.startsWith
-import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.ContractHash
-import it.airgap.tezos.core.type.encoded.ImplicitAddress
-import it.airgap.tezos.core.type.encoded.OriginatedAddress
+import it.airgap.tezos.core.type.encoded.*
 
 @InternalTezosSdkApi
 public class AddressBytesCoder(
-    private val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress<*>>,
+    private val implicitAddressBytesCoder: ConsumingBytesCoder<MetaImplicitAddress<*>>,
     private val encodedBytesCoder: EncodedBytesCoder,
-) : ConsumingBytesCoder<Address<*>> {
-    override fun encode(value: Address<*>): ByteArray =
+) : ConsumingBytesCoder<MetaAddress<*>> {
+    override fun encode(value: MetaAddress<*>): ByteArray =
         when (value) {
-            is ImplicitAddress<*> -> AddressTag.Implicit + implicitAddressBytesCoder.encode(value)
-            is OriginatedAddress<*> -> AddressTag.Originated + encodedBytesCoder.encode(value)
+            is MetaImplicitAddress<*> -> AddressTag.Implicit + implicitAddressBytesCoder.encode(value)
+            is MetaOriginatedAddress<*> -> AddressTag.Originated + encodedBytesCoder.encode(value)
         }
 
-    override fun decode(value: ByteArray): Address<*> {
+    override fun decode(value: ByteArray): MetaAddress<*> {
         val tag = AddressTag.recognize(value) ?: failWithInvalidAddressBytes(value)
 
-        val decoder: (ByteArray) -> Address<*> = when (tag) {
+        val decoder: (ByteArray) -> MetaAddress<*> = when (tag) {
             AddressTag.Implicit -> implicitAddressBytesCoder::decode
             AddressTag.Originated -> ({ encodedBytesCoder.decode(it, ContractHash) })
         }
@@ -32,11 +29,11 @@ public class AddressBytesCoder(
         return decoder(value.sliceArray(tag.value.size until value.size))
     }
 
-    override fun decodeConsuming(value: MutableList<Byte>): Address<*> {
+    override fun decodeConsuming(value: MutableList<Byte>): MetaAddress<*> {
         val tag = AddressTag.recognize(value) ?: failWithInvalidAddressBytes(value)
         value.consumeUntil(tag.value.size)
 
-        val decoder: (MutableList<Byte>) -> Address<*> = when (tag) {
+        val decoder: (MutableList<Byte>) -> MetaAddress<*> = when (tag) {
             AddressTag.Implicit -> implicitAddressBytesCoder::decodeConsuming
             AddressTag.Originated -> ({ encodedBytesCoder.decodeConsuming(it, ContractHash) })
         }

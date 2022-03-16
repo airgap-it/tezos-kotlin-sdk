@@ -249,7 +249,7 @@ public class OperationContentBytesCoder(
         val seedNonceHashPresence = encodeBooleanToBytes(seedNonceHashBytes.isNotEmpty())
 
         val liquidityBankingEscapeVoteBytes = encodeBooleanToBytes(liquidityBakingEscapeVote)
-        val signatureBytes = signatureBytesCoder.encode(signature)
+        val signatureBytes = signatureBytesCoder.encode(signature.toMetaEncoded())
 
         levelBytes +
                 protoBytes +
@@ -563,7 +563,7 @@ public class OperationContentBytesCoder(
 
     private fun <T : OperationContent.Manager> decodeManagerOperation(
         bytes: MutableList<Byte>,
-        create: (source: ImplicitAddress<*>, fee: ZarithNatural, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
+        create: (source: ImplicitAddress, fee: ZarithNatural, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
     ): T {
         val source = ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder)
         val fee = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
@@ -577,7 +577,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedEndorsement(bytes: MutableList<Byte>): InlinedEndorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodeEndorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes)
+        val signature = signatureBytesCoder.decodeConsuming(bytes).toEncoded()
 
         return InlinedEndorsement(branch, operations, signature)
     }
@@ -602,7 +602,7 @@ public class OperationContentBytesCoder(
         val seedNonceHash = if (seedNonceHashPresence) NonceHash.decodeConsumingFromBytes(bytes, encodedBytesCoder) else null
 
         val liquidityBankingEscapeVote = decodeBoolean(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes)
+        val signature = signatureBytesCoder.decodeConsuming(bytes).toEncoded()
 
         return FullHeader(
             level,
@@ -625,7 +625,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedPreendorsement(bytes: MutableList<Byte>): InlinedPreendorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodePreendorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes)
+        val signature = signatureBytesCoder.decodeConsuming(bytes).toEncoded()
 
         return InlinedPreendorsement(branch, operations, signature)
     }

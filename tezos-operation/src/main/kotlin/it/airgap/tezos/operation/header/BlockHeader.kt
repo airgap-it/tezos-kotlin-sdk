@@ -21,5 +21,5 @@ public interface ProtocolBlockHeader {
     public val proofOfWorkNonce: HexString
     public val seedNonceHash: NonceHash?
     public val liquidityBakingEscapeVote: Boolean
-    public val signature: SignatureEncoded<*>
+    public val signature: SignatureEncoded
 }

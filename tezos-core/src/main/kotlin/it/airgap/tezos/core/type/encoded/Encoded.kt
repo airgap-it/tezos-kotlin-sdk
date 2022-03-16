@@ -1,13 +1,30 @@
 package it.airgap.tezos.core.type.encoded
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.startsWith
 
-public sealed interface Encoded<out Self : Encoded<Self>> {
+// -- Encoded --
+
+public sealed interface Encoded {
+    public val base58: String
+
+    public fun toMetaEncoded(): MetaEncoded<*>
+
+    public companion object {}
+}
+
+// -- MetaEncoded --
+
+@InternalTezosSdkApi
+public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
     public val kind: Kind<Self>
     public val base58: String
 
-    public sealed interface Kind<out E : Encoded<E>> {
+    public fun toEncoded(): Encoded
+
+    @InternalTezosSdkApi
+    public sealed interface Kind<out E : MetaEncoded<E>> {
         public val base58Prefix: String
         public val base58Bytes: ByteArray
         public val base58Length: Int
@@ -84,6 +101,4 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
             public fun recognize(bytes: List<Byte>): Kind<*>? = values.find { it.isValid(bytes) }
         }
     }
-
-    public companion object {}
 }

@@ -39,7 +39,7 @@ class StringToAddressConverterTest {
     @Test
     fun `should convert string to Address`() {
         addressesWithStrings.forEach {
-            assertEquals(it.first, stringToAddressConverter.convert(it.second))
+            assertEquals(it.first, stringToAddressConverter.convert(it.second).toEncoded())
             assertEquals(it.first, Address.fromString(it.second))
             assertEquals(it.first, Address.fromString(it.second, stringToAddressConverter))
         }
@@ -54,7 +54,7 @@ class StringToAddressConverterTest {
         }
     }
 
-    private val addressesWithStrings: List<Pair<Address<*>, String>>
+    private val addressesWithStrings: List<Pair<Address, String>>
         get() = listOf(
             Ed25519PublicKeyHash("tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk") to "tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk",
             Secp256K1PublicKeyHash("tz2VyE3NHiJL5bFjjJHGsbbP4dTZ6rFzHNiw") to "tz2VyE3NHiJL5bFjjJHGsbbP4dTZ6rFzHNiw",

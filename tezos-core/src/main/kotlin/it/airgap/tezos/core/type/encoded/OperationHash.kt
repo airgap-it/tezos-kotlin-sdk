@@ -3,16 +3,19 @@ package it.airgap.tezos.core.type.encoded
 /* o(51) */
 
 @JvmInline
-public value class OperationHash(override val base58: String) : Encoded<OperationHash> {
+public value class OperationHash(override val base58: String) : Encoded, MetaEncoded<OperationHash> {
 
-    override val kind: Encoded.Kind<OperationHash>
+    override val kind: MetaEncoded.Kind<OperationHash>
         get() = Companion
 
     init {
         require(isValid(base58)) { "Invalid operation hash." }
     }
 
-    public companion object : Encoded.Kind<OperationHash> {
+    override fun toMetaEncoded(): MetaEncoded<*> = this
+    override fun toEncoded(): Encoded = this
+
+    public companion object : MetaEncoded.Kind<OperationHash> {
         override val base58Prefix: String = "o"
         override val base58Bytes: ByteArray = byteArrayOf(5, 116)
         override val base58Length: Int = 51

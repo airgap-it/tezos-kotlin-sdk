@@ -64,7 +64,7 @@ class GenericSignatureToEd25519SignatureConverterTest {
         }
     }
 
-    private val signaturesWithGenerics: List<Pair<SignatureEncoded<*>, GenericSignature>>
+    private val signaturesWithGenerics: List<Pair<SignatureEncoded, GenericSignature>>
         get() = listOf(
             Ed25519Signature("edsigtczTq2EC9VQNRRT53gzcs25DJFg1iZeTzQxY7jBtjradZb8qqZaqzAYSbVWvg1abvqFpQCV8TgqotDwckJiTJ9fJ2eYESb") to GenericSignature("sigTAzhy1HsZDLNETmuf9RuinhXRb5jvmscjCoPPBujWZgFmCFLffku7JXYtu8aYQFVHnCUghmd4t39RuR6ANV76bCCYTR9u"),
         )

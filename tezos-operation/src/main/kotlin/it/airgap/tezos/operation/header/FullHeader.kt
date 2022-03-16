@@ -18,5 +18,5 @@ public data class FullHeader(
     override val proofOfWorkNonce: HexString,
     override val seedNonceHash: NonceHash?,
     override val liquidityBakingEscapeVote: Boolean,
-    override val signature: SignatureEncoded<*>,
+    override val signature: SignatureEncoded,
 ) : ShellBlockHeader, ProtocolBlockHeader

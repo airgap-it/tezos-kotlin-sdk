@@ -52,7 +52,7 @@ class AddressBytesCoderTest {
     @Test
     fun `should encode Address to bytes`() {
         addressesWithBytes.forEach {
-            assertContentEquals(it.second, addressBytesCoder.encode(it.first))
+            assertContentEquals(it.second, addressBytesCoder.encode(it.first.toMetaEncoded()))
             assertContentEquals(it.second, it.first.encodeToBytes(addressBytesCoder))
         }
     }
@@ -60,8 +60,8 @@ class AddressBytesCoderTest {
     @Test
     fun `should decode Address from bytes`() {
         addressesWithBytes.forEach {
-            assertEquals(it.first, addressBytesCoder.decode(it.second))
-            assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()))
+            assertEquals(it.first, addressBytesCoder.decode(it.second).toEncoded())
+            assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()).toEncoded())
             assertEquals(it.first, Address.decodeFromBytes(it.second, addressBytesCoder))
             assertEquals(it.first, Address.decodeConsumingFromBytes(it.second.toMutableList(), addressBytesCoder))
         }
@@ -88,7 +88,7 @@ class AddressBytesCoderTest {
         }
     }
 
-    private val addressesWithBytes: List<Pair<Address<*>, ByteArray>>
+    private val addressesWithBytes: List<Pair<Address, ByteArray>>
         get() = listOf(
             Ed25519PublicKeyHash("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") to "0000d7a60d4e90e8a33ec835159191b14ce4452f12f8".asHexString().toByteArray(),
             Ed25519PublicKeyHash("tz1VmzGTgLxb2qw8tXQvvM5QMRigMMoStTDR") to "00006f328fa5c2ea6fd8596b63eafeabf91a78d37ae0".asHexString().toByteArray(),

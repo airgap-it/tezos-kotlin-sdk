@@ -3,16 +3,19 @@ package it.airgap.tezos.core.type.encoded
 /* id(30) */
 
 @JvmInline
-public value class CryptoboxPublicKeyHash(override val base58: String) : Encoded<CryptoboxPublicKeyHash> {
+public value class CryptoboxPublicKeyHash(override val base58: String) : Encoded, MetaEncoded<CryptoboxPublicKeyHash> {
 
-    override val kind: Encoded.Kind<CryptoboxPublicKeyHash>
+    override val kind: MetaEncoded.Kind<CryptoboxPublicKeyHash>
         get() = Companion
 
     init {
         require(isValid(base58)) { "Invalid Cryptobox key hash." }
     }
 
-    public companion object : Encoded.Kind<CryptoboxPublicKeyHash> {
+    override fun toMetaEncoded(): MetaEncoded<*> = this
+    override fun toEncoded(): Encoded = this
+
+    public companion object : MetaEncoded.Kind<CryptoboxPublicKeyHash> {
         override val base58Prefix: String = "id"
         override val base58Bytes: ByteArray = byteArrayOf((153).toByte(), (103).toByte())
         override val base58Length: Int = 30

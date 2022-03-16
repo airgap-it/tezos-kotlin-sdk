@@ -42,7 +42,7 @@ class StringToPublicKeyConverterTest {
     @Test
     fun `should convert string to PublicKeyEncoded`() {
         publicKeysWithStrings.forEach {
-            assertEquals(it.first, stringToPublicKeyConverter.convert(it.second))
+            assertEquals(it.first, stringToPublicKeyConverter.convert(it.second).toEncoded())
             assertEquals(it.first, PublicKeyEncoded.fromString(it.second))
             assertEquals(it.first, PublicKeyEncoded.fromString(it.second, stringToPublicKeyConverter))
         }
@@ -57,7 +57,7 @@ class StringToPublicKeyConverterTest {
         }
     }
 
-    private val publicKeysWithStrings: List<Pair<PublicKeyEncoded<*>, String>>
+    private val publicKeysWithStrings: List<Pair<PublicKeyEncoded, String>>
         get() = listOf(
             Ed25519PublicKey("edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk") to "edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk",
             Secp256K1PublicKey("sppk9yNXbVZv1ByJq5ENkKszqiGXbvhVYymJM8DXPEqXTmKssW6nBP2") to "sppk9yNXbVZv1ByJq5ENkKszqiGXbvhVYymJM8DXPEqXTmKssW6nBP2",

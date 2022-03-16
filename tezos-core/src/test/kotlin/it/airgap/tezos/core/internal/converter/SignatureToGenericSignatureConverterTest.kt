@@ -56,13 +56,13 @@ class SignatureToGenericSignatureConverterTest {
     @Test
     fun `should convert SignatureEncoded to GenericSignature`() {
         signaturesWithGenerics.forEach {
-            assertEquals(it.second, signatureToGenericSignatureConverter.convert(it.first))
+            assertEquals(it.second, signatureToGenericSignatureConverter.convert(it.first.toMetaEncoded()))
             assertEquals(it.second, it.second.toGenericSignature())
             assertEquals(it.second, it.second.toGenericSignature(signatureToGenericSignatureConverter))
         }
     }
 
-    private val signaturesWithGenerics: List<Pair<SignatureEncoded<*>, GenericSignature>>
+    private val signaturesWithGenerics: List<Pair<SignatureEncoded, GenericSignature>>
         get() = listOf(
             Ed25519Signature("edsigtczTq2EC9VQNRRT53gzcs25DJFg1iZeTzQxY7jBtjradZb8qqZaqzAYSbVWvg1abvqFpQCV8TgqotDwckJiTJ9fJ2eYESb") to GenericSignature("sigTAzhy1HsZDLNETmuf9RuinhXRb5jvmscjCoPPBujWZgFmCFLffku7JXYtu8aYQFVHnCUghmd4t39RuR6ANV76bCCYTR9u"),
             Secp256K1Signature("spsig1PptyKUAGumWN9qs9aW2MafGp8kXekDAzEPCpoJUUPjVzQwmKdNBti5CA3nMTVcUaM3dcS2JSQwUNGtbYvHbSeU5eTTK6Z") to GenericSignature("sigg1DeFruoZoMyyr7BRwshfytuJxxagaUWfFt419AfVonZMHx94HowabLTgDGQ6YcVdJUsUAg1GnkGzBV33c6XRvyAQ3tby"),

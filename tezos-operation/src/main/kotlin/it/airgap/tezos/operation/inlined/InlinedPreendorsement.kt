@@ -7,5 +7,5 @@ import it.airgap.tezos.operation.OperationContent
 public data class InlinedPreendorsement(
     public val branch: BlockHash,
     public val operations: OperationContent.Preendorsement,
-    public val signature: SignatureEncoded<*>,
+    public val signature: SignatureEncoded,
 )
