@@ -1,8 +1,11 @@
 package it.airgap.tezos.rpc.internal.utils
 
+import it.airgap.tezos.core.type.encoded.MetaEncoded
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -43,6 +46,19 @@ internal interface KJsonSerializer<T> : KSerializer<T> {
 
     private fun failWithExpectedJsonEncoder(actual: KClass<out Encoder>): Nothing =
         throw SerializationException("Expected Json encoder, got $actual.")
+}
+
+internal abstract class KEncodedSerializer<E : MetaEncoded<E>>(
+    protected val kind: MetaEncoded.Kind<E>,
+    kClass: KClass<E>,
+) : KSerializer<E> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(kClass.toString(), PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): E = kind.createValue(decoder.decodeString())
+
+    override fun serialize(encoder: Encoder, value: E) {
+        encoder.encodeString(value.base58)
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)

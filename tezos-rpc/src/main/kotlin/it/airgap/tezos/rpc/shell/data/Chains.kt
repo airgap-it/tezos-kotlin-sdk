@@ -3,7 +3,7 @@ package it.airgap.tezos.rpc.shell.data
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.type.RpcChainStatus
-import it.airgap.tezos.rpc.type.RpcInvalidBlock
+import it.airgap.tezos.rpc.type.block.RpcInvalidBlock
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
