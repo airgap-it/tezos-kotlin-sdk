@@ -2,10 +2,6 @@ package it.airgap.tezos.rpc.type
 
 import kotlinx.serialization.Serializable
 
-// -- RpcProtocolHash --
-
-internal typealias TransitionalRpcProtocolHash = Unistring
-
 // -- RpcProtocolComponent --
 
 @Serializable

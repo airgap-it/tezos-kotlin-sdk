@@ -17,7 +17,7 @@ internal object RpcIPAddressSerializer : KSerializer<RpcIPAddress> {
     override fun deserialize(decoder: Decoder): RpcIPAddress {
         val string = decoder.decodeString()
 
-        return RpcIPAddress.fromStringOrNull(string) ?: failWithInvalidIPAddress(string)
+        return RpcIPAddress.fromStringOrNull(string) ?: failWithInvalidSerializedValue(string)
     }
 
     override fun serialize(encoder: Encoder, value: RpcIPAddress) {
@@ -27,5 +27,6 @@ internal object RpcIPAddressSerializer : KSerializer<RpcIPAddress> {
         }
     }
 
-    private fun failWithInvalidIPAddress(value: String): Nothing = throw SerializationException("Value `$value` is not a valid IP address.")
+    private fun failWithInvalidSerializedValue(value: String): Nothing =
+        throw SerializationException("Could not deserialize, `$value` is not a valid IP address.")
 }

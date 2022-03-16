@@ -2,50 +2,96 @@ package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
+import it.airgap.tezos.rpc.shell.data.RpcAdditionalCycles
 import it.airgap.tezos.rpc.type.RpcHistoryMode
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
-internal object RpcHistoryModeSerializer : KJsonSerializer<RpcHistoryMode> {
-    private object SerialName {
-        const val ARCHIVE = "archive"
-        const val FULL = "full"
-        const val ROLLING = "rolling"
-    }
-
+internal object RpcHistoryModeSerializer : KSerializer<RpcHistoryMode> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor(RpcHistoryMode::class.toString())
 
-    override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): RpcHistoryMode =
+    override fun deserialize(decoder: Decoder): RpcHistoryMode {
+        val surrogate = decoder.decodeSerializableValue(RpcHistoryModeSurrogate.serializer())
+        return surrogate.toTarget()
+    }
+
+    override fun serialize(encoder: Encoder, value: RpcHistoryMode) {
+        val surrogate = RpcHistoryModeSurrogate(value)
+        encoder.encodeSerializableValue(RpcHistoryModeSurrogate.serializer(), surrogate)
+    }
+}
+
+// -- surrogate --
+
+@Serializable(with = RpcHistoryModeSurrogateSerializer::class)
+private sealed interface RpcHistoryModeSurrogate {
+
+    fun toTarget(): RpcHistoryMode
+
+    @Serializable
+    enum class Primitive : RpcHistoryModeSurrogate {
+        @SerialName("archive") Archive,
+        @SerialName("full") Full,
+        @SerialName("rolling") Rolling;
+
+        override fun toTarget(): RpcHistoryMode =
+            when (this) {
+                Archive -> RpcHistoryMode.Archive
+                Full -> RpcHistoryMode.Full()
+                Rolling -> RpcHistoryMode.Rolling()
+            }
+    }
+
+    @Serializable
+    data class Object(
+        val full: RpcAdditionalCycles? = null,
+        val rolling: RpcAdditionalCycles? = null,
+    ) : RpcHistoryModeSurrogate {
+        override fun toTarget(): RpcHistoryMode =
+            when {
+                full != null && rolling == null -> RpcHistoryMode.Full(full)
+                full == null && rolling != null -> RpcHistoryMode.Rolling(rolling)
+                else -> failWithInvalidSerializedValue(this)
+            }
+
+        private fun failWithInvalidSerializedValue(value: RpcHistoryModeSurrogate): Nothing =
+            throw SerializationException("Could not deserialize, `$value` is not a valid HistoryMode value.")
+    }
+
+    companion object {
+        fun serializer(): KSerializer<RpcHistoryModeSurrogate> = RpcHistoryModeSurrogateSerializer
+    }
+}
+
+private fun RpcHistoryModeSurrogate(historyMode: RpcHistoryMode): RpcHistoryModeSurrogate = with(historyMode) {
+    when (this) {
+        RpcHistoryMode.Archive -> RpcHistoryModeSurrogate.Primitive.Archive
+        is RpcHistoryMode.Full -> if (full != null) RpcHistoryModeSurrogate.Object(full = full) else RpcHistoryModeSurrogate.Primitive.Full
+        is RpcHistoryMode.Rolling -> if (rolling != null) RpcHistoryModeSurrogate.Object(rolling = rolling) else RpcHistoryModeSurrogate.Primitive.Rolling
+    }
+}
+
+private object RpcHistoryModeSurrogateSerializer : KJsonSerializer<RpcHistoryModeSurrogate> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(RpcHistoryModeSurrogate::class.toString())
+
+    override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): RpcHistoryModeSurrogate =
         when (jsonElement) {
-            is JsonPrimitive -> deserializePrimitive(jsonElement)
-            is JsonObject -> deserializeObject(jsonDecoder, jsonElement)
+            is JsonPrimitive -> jsonDecoder.decodeSerializableValue(RpcHistoryModeSurrogate.Primitive.serializer())
+            is JsonObject -> jsonDecoder.decodeSerializableValue(RpcHistoryModeSurrogate.Object.serializer())
             else -> failWithUnexpectedJsonType(jsonElement::class)
         }
 
-    private fun deserializePrimitive(jsonPrimitive: JsonPrimitive): RpcHistoryMode =
-        when (jsonPrimitive.content) {
-            SerialName.ARCHIVE -> RpcHistoryMode.Archive
-            SerialName.FULL -> RpcHistoryMode.Full()
-            SerialName.ROLLING -> RpcHistoryMode.Rolling()
-            else -> failWithUnknownValue(jsonPrimitive.content)
-        }
-
-    private fun deserializeObject(jsonDecoder: JsonDecoder, jsonObject: JsonObject): RpcHistoryMode =
-        when {
-            jsonObject.containsKey(SerialName.FULL) -> jsonDecoder.decodeSerializableValue(RpcHistoryMode.Full.serializer())
-            jsonObject.containsKey(SerialName.ROLLING) -> jsonDecoder.decodeSerializableValue(RpcHistoryMode.Rolling.serializer())
-            else -> failWithUnknownValue(jsonObject.toString())
-        }
-
-    override fun serialize(jsonEncoder: JsonEncoder, value: RpcHistoryMode) {
+    override fun serialize(jsonEncoder: JsonEncoder, value: RpcHistoryModeSurrogate) {
         when (value) {
-            RpcHistoryMode.Archive -> jsonEncoder.encodeString(SerialName.ARCHIVE)
-            is RpcHistoryMode.Full -> value.full?.run { jsonEncoder.encodeSerializableValue(RpcHistoryMode.Full.serializer(), value) } ?: run { jsonEncoder.encodeString(SerialName.FULL) }
-            is RpcHistoryMode.Rolling -> value.rolling?.run { jsonEncoder.encodeSerializableValue(RpcHistoryMode.Rolling.serializer(), value) } ?: run { jsonEncoder.encodeString(SerialName.ROLLING) }
+            is RpcHistoryModeSurrogate.Primitive -> jsonEncoder.encodeSerializableValue(RpcHistoryModeSurrogate.Primitive.serializer(), value)
+            is RpcHistoryModeSurrogate.Object -> jsonEncoder.encodeSerializableValue(RpcHistoryModeSurrogate.Object.serializer(), value)
         }
     }
-
-    private fun failWithUnknownValue(value: String): Nothing = throw SerializationException("Unknown HistoryMode value `$value`.")
 }

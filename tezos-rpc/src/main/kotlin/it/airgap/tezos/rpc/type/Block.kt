@@ -9,35 +9,27 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// -- RpcBlockHash --
-
-internal typealias TransitionalRpcBlockHash = Unistring
-
 // -- RpcBlockHeader --
 
 @Serializable
-public data class GenericRpcBlockHeader<BlockHash, Timestamp, OperationListListHash, ContextHash>(
-    public val hash: BlockHash,
+public data class RpcBlockHeader(
+    public val hash: @Contextual BlockHash,
     public val level: Int,
     public val proto: UByte,
-    public val predecessor: BlockHash,
-    public val timestamp: Timestamp,
+    public val predecessor: @Contextual BlockHash,
+    public val timestamp: @Contextual Timestamp,
     @SerialName("validation_pass") public val validationPass: UByte,
-    @SerialName("operations_hash") public val operationsHash: OperationListListHash,
+    @SerialName("operations_hash") public val operationsHash: @Contextual OperationListListHash,
     public val fitness: List<@Contextual HexString>,
-    public val context: ContextHash,
+    public val context: @Contextual ContextHash,
     @SerialName("protocol_data") public val protocolData: @Contextual HexString,
 )
-internal typealias TransitionalRpcBlockHeader = GenericRpcBlockHeader<TransitionalRpcBlockHash, TransitionalRpcTimestamp, TransitionalRpcOperationListListHash, TransitionalRpcContextHash>
-public typealias RpcBlockHeader = GenericRpcBlockHeader<@Contextual BlockHash, @Contextual Timestamp, @Contextual OperationListListHash, @Contextual ContextHash>
 
 // -- RpcInvalidBlock --
 
 @Serializable
-public data class GenericRpcInvalidBlock<BlockHash>(
-    public val block: BlockHash,
+public data class RpcInvalidBlock(
+    public val block: @Contextual BlockHash,
     public val level: Int,
     public val errors: List<RpcError>,
 )
-internal typealias TransitionalRpcInvalidBlock = GenericRpcInvalidBlock<TransitionalRpcBlockHash>
-public typealias RpcInvalidBlock = GenericRpcInvalidBlock<@Contextual BlockHash>

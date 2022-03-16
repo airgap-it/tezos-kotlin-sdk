@@ -2,37 +2,28 @@ package it.airgap.tezos.rpc.type.p2p
 
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.rpc.type.RpcIPAddress
-import it.airgap.tezos.rpc.type.TransitionalRpcIPAddress
-import it.airgap.tezos.rpc.type.TransitionalRpcTimestamp
-import it.airgap.tezos.rpc.type.Unistring
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// -- RpcCryptoboxPublicKeyHash --
-
-internal typealias TransitionalRpcCryptoboxPublicKeyHash = Unistring
-
 // -- RpcPeer --
 
 @Serializable
-public data class GenericRpcPeer<PeerMetadata, ConnectionId, Timestamp>(
+public data class RpcPeer(
     public val score: Long,
     public val trusted: Boolean,
     @SerialName("conn_metadata") public val connectionMetadata: RpcConnectionMetadata? = null,
-    @SerialName("peer_metadata") public val peerMetadata: PeerMetadata,
+    @SerialName("peer_metadata") public val peerMetadata: RpcPeerMetadata,
     public val state: RpcPeerState,
-    @SerialName("reachable_at") public val reachableAt: ConnectionId? = null,
+    @SerialName("reachable_at") public val reachableAt: RpcConnectionId? = null,
     public val stat: RpcNetworkStat,
-    @SerialName("last_failed_connection") public val lastFailedConnection: Pair<ConnectionId, Timestamp>? = null,
-    @SerialName("last_rejected_connection") public val lastRejectedConnection: Pair<ConnectionId, Timestamp>? = null,
-    @SerialName("last_established_connection") public val lastEstablishedConnection: Pair<ConnectionId, Timestamp>? = null,
-    @SerialName("last_disconnection") public val lastDisconnection: Pair<ConnectionId, Timestamp>? = null,
-    @SerialName("last_seen") public val lastMiss: Pair<ConnectionId, Timestamp>? = null,
-    @SerialName("last_miss") public val lastSeen: Pair<ConnectionId, Timestamp>? = null,
+    @SerialName("last_failed_connection") public val lastFailedConnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_rejected_connection") public val lastRejectedConnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_established_connection") public val lastEstablishedConnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_disconnection") public val lastDisconnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_seen") public val lastMiss: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_miss") public val lastSeen: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
 )
-internal typealias TransitionalRpcPeer = GenericRpcPeer<RpcPeerMetadata, TransitionalRpcConnectionId, TransitionalRpcTimestamp>
-public typealias RpcPeer = GenericRpcPeer<RpcPeerMetadata, RpcConnectionId, @Contextual Timestamp>
 
 // -- RpcPeerState --
 
@@ -44,10 +35,10 @@ public enum class RpcPeerState {
 }
 
 @Serializable
-public data class GenericRpcPeerPoolEvent<Timestamp, Address>(
+public data class RpcPeerPoolEvent(
     public val kind: Kind,
-    public val timestamp: Timestamp,
-    @SerialName("addr") public val address: Address,
+    public val timestamp: @Contextual Timestamp,
+    @SerialName("addr") public val address: RpcIPAddress,
     public val port: UShort? = null,
 ) {
 
@@ -61,5 +52,3 @@ public data class GenericRpcPeerPoolEvent<Timestamp, Address>(
         @SerialName("request_rejected") RequestRejected,
     }
 }
-internal typealias TransitionalRpcPeerPoolEvent = GenericRpcPeerPoolEvent<TransitionalRpcTimestamp, TransitionalRpcIPAddress>
-public typealias RpcPeerPoolEvent = GenericRpcPeerPoolEvent<@Contextual Timestamp, RpcIPAddress>

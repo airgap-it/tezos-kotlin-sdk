@@ -68,11 +68,11 @@ public sealed class RpcPeerMetadataEntry {
     public data class V0(
         override val branch: String,
         override val head: String,
-        override val blockHeader: String,
+        @SerialName("block_header") override val blockHeader: String,
         override val operations: String,
         override val protocols: String,
-        override val operationHashesForBlock: String,
-        override val operationsForBlock: String,
+        @SerialName("operation_hashes_for_block") override val operationHashesForBlock: String,
+        @SerialName("operations_for_block") override val operationsForBlock: String,
         override val other: String,
     ) : RpcPeerMetadataEntry()
 

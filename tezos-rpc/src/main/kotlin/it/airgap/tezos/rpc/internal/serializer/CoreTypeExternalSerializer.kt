@@ -44,7 +44,7 @@ internal object TimestampSerializer : KJsonSerializer<Timestamp> {
         return when {
             jsonPrimitive.isRfc3339DateString() -> Timestamp.Rfc3339(jsonPrimitive.content)
             jsonPrimitive.isMillis() -> Timestamp.Millis(jsonPrimitive.long)
-            else -> failWithInvalidTimestampValue(jsonPrimitive.content)
+            else -> failWithInvalidSerializedValue(jsonPrimitive.content)
         }
     }
 
@@ -58,7 +58,7 @@ internal object TimestampSerializer : KJsonSerializer<Timestamp> {
     private fun JsonPrimitive.isRfc3339DateString(): Boolean = isString && Timestamp.Rfc3339.isValid(content)
     private fun JsonPrimitive.isMillis(): Boolean = longOrNull != null
 
-    private fun failWithInvalidTimestampValue(value: String): Nothing = throw SerializationException("Could not deserialize, `$value` is not a valid Timestamp value.")
+    private fun failWithInvalidSerializedValue(value: String): Nothing = throw SerializationException("Could not deserialize, `$value` is not a valid Timestamp value.")
 }
 
 @Serializer(forClass = Timestamp.Rfc3339::class)

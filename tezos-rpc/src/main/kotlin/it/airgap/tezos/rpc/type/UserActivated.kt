@@ -8,19 +8,15 @@ import kotlinx.serialization.Serializable
 // -- RpcUserActivatedProtocolOverride --
 
 @Serializable
-public data class GenericRpcUserActivatedProtocolOverride<ProtocolHash>(
-    @SerialName("replaced_protocol") public val replacedProtocol: ProtocolHash,
-    @SerialName("replacement_protocol") public val replacementProtocol: ProtocolHash,
+public data class RpcUserActivatedProtocolOverride<ProtocolHash>(
+    @SerialName("replaced_protocol") public val replacedProtocol: @Contextual ProtocolHash,
+    @SerialName("replacement_protocol") public val replacementProtocol: @Contextual ProtocolHash,
 )
-internal typealias TransitionalRpcUserActivatedProtocolOverride = GenericRpcUserActivatedProtocolOverride<Unistring>
-public typealias RpcUserActivatedProtocolOverride = GenericRpcUserActivatedProtocolOverride<@Contextual ProtocolHash>
 
 // -- RpcUserActivatedUpgrade --
 
 @Serializable
-public data class GenericRpcUserActivatedUpgrade<ProtocolHash>(
+public data class RpcUserActivatedUpgrade(
     public val level: Int,
-    @SerialName("replacement_protocol") public val replacementProtocol: ProtocolHash,
+    @SerialName("replacement_protocol") public val replacementProtocol: @Contextual ProtocolHash,
 )
-internal typealias TransitionalRpcUserActivatedUpgrade = GenericRpcUserActivatedUpgrade<Unistring>
-public typealias RpcUserActivatedUpgrade = GenericRpcUserActivatedUpgrade<@Contextual ProtocolHash>

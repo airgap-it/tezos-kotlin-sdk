@@ -1,6 +1,8 @@
 package it.airgap.tezos.rpc.shell.data
 
-import it.airgap.tezos.rpc.type.*
+import it.airgap.tezos.rpc.type.RpcHistoryMode
+import it.airgap.tezos.rpc.type.RpcUserActivatedProtocolOverride
+import it.airgap.tezos.rpc.type.RpcUserActivatedUpgrade
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -25,17 +27,9 @@ public typealias SetLoggingResponse = Unit
 
 @Serializable
 @JvmInline
-internal value class GetUserActivatedProtocolOverridesTransitionalResponse(val overrides: List<TransitionalRpcUserActivatedProtocolOverride>)
-
-@Serializable
-@JvmInline
 public value class GetUserActivatedProtocolOverridesResponse(public val overrides: List<RpcUserActivatedProtocolOverride>)
 
 // -- /network/user_activated_upgrades --
-
-@Serializable
-@JvmInline
-internal value class GetUserActivatedUpgradesTransitionalResponse(val upgrades: List<TransitionalRpcUserActivatedUpgrade>)
 
 @Serializable
 @JvmInline

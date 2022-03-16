@@ -9,8 +9,6 @@ import java.net.InetAddress
 
 // -- RpcIPAddress --
 
-internal typealias TransitionalRpcIPAddress = Unistring
-
 @Serializable(with = RpcIPAddressSerializer::class)
 public sealed interface RpcIPAddress {
     public companion object {

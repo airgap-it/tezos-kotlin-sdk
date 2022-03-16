@@ -4,7 +4,8 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.OperationHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
-import it.airgap.tezos.rpc.type.*
+import it.airgap.tezos.rpc.type.RpcOperation
+import it.airgap.tezos.rpc.type.RpcProtocolComponent
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,10 +22,6 @@ public data class InjectBlockRequest(
 
 @Serializable
 @JvmInline
-internal value class InjectBlockTransitionalResponse(val hash: TransitionalRpcBlockHash)
-
-@Serializable
-@JvmInline
 public value class InjectBlockResponse(public val hash: @Contextual BlockHash)
 
 // -- /operation --
@@ -32,10 +29,6 @@ public value class InjectBlockResponse(public val hash: @Contextual BlockHash)
 @Serializable
 @JvmInline
 public value class InjectOperationRequest(public val data: @Contextual HexString)
-
-@Serializable
-@JvmInline
-internal value class InjectOperationTransitionalResponse(val hash: TransitionalRpcOperationHash)
 
 @Serializable
 @JvmInline
@@ -48,10 +41,6 @@ public data class InjectProtocolRequest(
     @SerialName("expected_env_version") public val expectedEnvVersion: UShort,
     public val components: List<RpcProtocolComponent>,
 )
-
-@Serializable
-@JvmInline
-internal value class InjectProtocolTransitionalResponse(val hash: TransitionalRpcProtocolHash)
 
 @Serializable
 @JvmInline
