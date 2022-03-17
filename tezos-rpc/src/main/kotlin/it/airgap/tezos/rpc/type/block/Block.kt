@@ -17,6 +17,7 @@ public data class RpcBlock(
     public val hash: @Contextual BlockHash,
     public val header: RpcShellBlockHeader,
     public val metadata: RpcBlockHeaderMetadata? = null,
+    public val operations: List<List<@Contextual Any>>, // TODO: type
 )
 
 // -- RpcInvalidBlock --

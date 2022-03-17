@@ -8,8 +8,8 @@ import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.RpcAcl
-import it.airgap.tezos.rpc.type.RpcOperation
 import it.airgap.tezos.rpc.type.RpcProtocolComponent
+import it.airgap.tezos.rpc.type.operation.RpcOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
 
 // https://tezos.gitlab.io/shell/rpc.html

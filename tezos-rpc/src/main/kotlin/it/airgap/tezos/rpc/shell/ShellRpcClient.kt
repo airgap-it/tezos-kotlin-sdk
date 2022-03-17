@@ -9,8 +9,8 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.RpcAcl
-import it.airgap.tezos.rpc.type.RpcOperation
 import it.airgap.tezos.rpc.type.RpcProtocolComponent
+import it.airgap.tezos.rpc.type.operation.RpcOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
