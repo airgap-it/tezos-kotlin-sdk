@@ -3,6 +3,7 @@ package it.airgap.tezos.rpc.type.block
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.NonceHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
+import it.airgap.tezos.rpc.type.chain.RpcTestChainStatus
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,7 +12,7 @@ import kotlinx.serialization.Serializable
 public data class RpcBlockHeaderMetadata(
     public val protocol: @Contextual ProtocolHash,
     @SerialName("next_protocol") public val nextProtocol: @Contextual ProtocolHash,
-    @SerialName("test_chain_status") public val testChainStatus: @Contextual Any, // TODO: define type
+    @SerialName("test_chain_status") public val testChainStatus: RpcTestChainStatus,
     @SerialName("max_operations_ttl") public val maxOperationsTtl: Int,
     @SerialName("max_operation_data_length") public val maxOperationDataLength: Int,
     @SerialName("max_block_header_length") public val maxBlockHeaderLength: Int,

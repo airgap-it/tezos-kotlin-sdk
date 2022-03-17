@@ -3,10 +3,7 @@ package it.airgap.tezos.rpc.internal.serializer
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.ProtocolHash
-import it.airgap.tezos.rpc.type.RpcActiveChain
-import it.airgap.tezos.rpc.type.RpcMainChain
-import it.airgap.tezos.rpc.type.RpcStoppingChain
-import it.airgap.tezos.rpc.type.RpcTestChain
+import it.airgap.tezos.rpc.type.chain.RpcActiveChain
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -39,9 +36,9 @@ private data class RpcActiveChainSurrogate(
 
     fun toTarget(): RpcActiveChain =
         when {
-            chainId != null && testProtocol == null && expirationDate == null && stopping == null -> RpcMainChain(chainId)
-            chainId != null && testProtocol != null && expirationDate != null && stopping == null -> RpcTestChain(chainId, testProtocol, expirationDate)
-            chainId == null && testProtocol == null && expirationDate == null && stopping != null -> RpcStoppingChain(stopping)
+            chainId != null && testProtocol == null && expirationDate == null && stopping == null -> RpcActiveChain.Main(chainId)
+            chainId != null && testProtocol != null && expirationDate != null && stopping == null -> RpcActiveChain.Test(chainId, testProtocol, expirationDate)
+            chainId == null && testProtocol == null && expirationDate == null && stopping != null -> RpcActiveChain.Stopping(stopping)
             else -> failWithInvalidSerializedValue(this)
         }
 

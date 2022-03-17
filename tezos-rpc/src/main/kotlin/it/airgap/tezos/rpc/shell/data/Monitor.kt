@@ -3,7 +3,7 @@ package it.airgap.tezos.rpc.shell.data
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
-import it.airgap.tezos.rpc.type.RpcActiveChain
+import it.airgap.tezos.rpc.type.chain.RpcActiveChain
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
