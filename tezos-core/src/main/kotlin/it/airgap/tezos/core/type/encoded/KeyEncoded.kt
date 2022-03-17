@@ -5,19 +5,19 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 // -- Key --
 
 public sealed interface KeyEncoded : Encoded {
-    override fun toMetaEncoded(): MetaKeyEncoded<*>
+    override val meta: MetaKeyEncoded<*>
 
     public companion object {}
 }
 
 public sealed interface SecretKeyEncoded : KeyEncoded {
-    override fun toMetaEncoded(): MetaSecretKeyEncoded<*>
+    override val meta: MetaSecretKeyEncoded<*>
 
     public companion object {}
 }
 
 public sealed interface PublicKeyEncoded : KeyEncoded {
-    override fun toMetaEncoded(): MetaPublicKeyEncoded<*>
+    override val meta: MetaPublicKeyEncoded<*>
 
     public companion object {}
 }
@@ -25,13 +25,13 @@ public sealed interface PublicKeyEncoded : KeyEncoded {
 // -- EncryptedKey --
 
 public sealed interface EncryptedKeyEncoded : Encoded {
-    override fun toMetaEncoded(): MetaEncryptedKeyEncoded<*>
+    override val meta: MetaEncryptedKeyEncoded<*>
 
     public companion object {}
 }
 
 public sealed interface EncryptedSecretKeyEncoded : EncryptedKeyEncoded {
-    override fun toMetaEncoded(): MetaEncryptedSecretKeyEncoded<*>
+    override val meta: MetaEncryptedSecretKeyEncoded<*>
 
     public companion object {}
 }
@@ -40,7 +40,7 @@ public sealed interface EncryptedSecretKeyEncoded : EncryptedKeyEncoded {
 
 @InternalTezosSdkApi
 public sealed interface MetaKeyEncoded<out Self : MetaKeyEncoded<Self>> : MetaEncoded<Self> {
-    override fun toEncoded(): KeyEncoded
+    override val encoded: KeyEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaKeyEncoded<E>> : MetaEncoded.Kind<E>
@@ -48,7 +48,7 @@ public sealed interface MetaKeyEncoded<out Self : MetaKeyEncoded<Self>> : MetaEn
 
 @InternalTezosSdkApi
 public sealed interface MetaSecretKeyEncoded<out Self : MetaSecretKeyEncoded<Self>> : MetaKeyEncoded<Self> {
-    override fun toEncoded(): SecretKeyEncoded
+    override val encoded: SecretKeyEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaSecretKeyEncoded<E>> : MetaKeyEncoded.Kind<E>
@@ -56,7 +56,7 @@ public sealed interface MetaSecretKeyEncoded<out Self : MetaSecretKeyEncoded<Sel
 
 @InternalTezosSdkApi
 public sealed interface MetaPublicKeyEncoded<out Self : MetaPublicKeyEncoded<Self>> : MetaKeyEncoded<Self> {
-    override fun toEncoded(): PublicKeyEncoded
+    override val encoded: PublicKeyEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaPublicKeyEncoded<E>> : MetaKeyEncoded.Kind<E>
@@ -66,7 +66,7 @@ public sealed interface MetaPublicKeyEncoded<out Self : MetaPublicKeyEncoded<Sel
 
 @InternalTezosSdkApi
 public sealed interface MetaEncryptedKeyEncoded<out Self : MetaEncryptedKeyEncoded<Self>> : MetaEncoded<Self> {
-    override fun toEncoded(): EncryptedKeyEncoded
+    override val encoded: EncryptedKeyEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaEncryptedKeyEncoded<E>> : MetaEncoded.Kind<E>
@@ -74,7 +74,7 @@ public sealed interface MetaEncryptedKeyEncoded<out Self : MetaEncryptedKeyEncod
 
 @InternalTezosSdkApi
 public sealed interface MetaEncryptedSecretKeyEncoded<out Self : MetaEncryptedKeyEncoded<Self>> : MetaEncryptedKeyEncoded<Self> {
-    override fun toEncoded(): EncryptedSecretKeyEncoded
+    override val encoded: EncryptedSecretKeyEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaEncryptedSecretKeyEncoded<E>> : MetaEncryptedKeyEncoded.Kind<E>

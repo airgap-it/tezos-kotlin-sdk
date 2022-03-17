@@ -56,7 +56,7 @@ class BytesToImplicitAddressConverterTest {
     @Test
     fun `should convert bytes to ImplicitAddress`() {
         addressesWithBytes.forEach {
-            assertEquals(it.first, bytesToImplicitAddressConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, bytesToImplicitAddressConverter.convert(it.second).encoded)
             assertEquals(it.first, ImplicitAddress.fromBytes(it.second))
             assertEquals(it.first, ImplicitAddress.fromBytes(it.second, bytesToImplicitAddressConverter))
         }

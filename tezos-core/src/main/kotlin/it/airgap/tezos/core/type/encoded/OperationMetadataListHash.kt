@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class OperationMetadataListHash(override val base58: String) : Encoded, MetaEncoded<OperationMetadataListHash> {
 
-    override val kind: MetaEncoded.Kind<OperationMetadataListHash>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid operation metadata list hash." }
     }
 
-    override fun toMetaEncoded(): MetaEncoded<*> = this
-    override fun toEncoded(): Encoded = this
+    override val kind: MetaEncoded.Kind<OperationMetadataListHash>
+        get() = Companion
+
+    override val meta: MetaEncoded<*>
+        get() = this
+
+    override val encoded: Encoded
+        get() = this
 
     public companion object : MetaEncoded.Kind<OperationMetadataListHash> {
         override val base58Prefix: String = "Lr"

@@ -32,6 +32,12 @@ internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegist
     override val bytesToPublicKeyConverter: BytesToPublicKeyConverter by lazy { BytesToPublicKeyConverter(base58Check) }
     override val stringToPublicKeyConverter: StringToPublicKeyConverter = StringToPublicKeyConverter()
 
+    override val bytesToPublicKeyHashConverter: BytesToPublicKeyHashConverter by lazy { BytesToPublicKeyHashConverter(base58Check) }
+    override val stringToPublicKeyHashConverter: StringToPublicKeyHashConverter = StringToPublicKeyHashConverter()
+
+    override val bytesToBlindedPublicKeyHashConverter: BytesToBlindedPublicKeyHashConverter by lazy { BytesToBlindedPublicKeyHashConverter(base58Check) }
+    override val stringToBlindedPublicKeyHashConverter: StringToBlindedPublicKeyHashConverter = StringToBlindedPublicKeyHashConverter()
+
     override val bytesToSignatureConverter: BytesToSignatureConverter by lazy { BytesToSignatureConverter(base58Check) }
     override val stringToSignatureConverter: StringToSignatureConverter = StringToSignatureConverter()
 

@@ -52,7 +52,7 @@ class AddressBytesCoderTest {
     @Test
     fun `should encode Address to bytes`() {
         addressesWithBytes.forEach {
-            assertContentEquals(it.second, addressBytesCoder.encode(it.first.toMetaEncoded()))
+            assertContentEquals(it.second, addressBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(addressBytesCoder))
         }
     }
@@ -60,8 +60,8 @@ class AddressBytesCoderTest {
     @Test
     fun `should decode Address from bytes`() {
         addressesWithBytes.forEach {
-            assertEquals(it.first, addressBytesCoder.decode(it.second).toEncoded())
-            assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()).toEncoded())
+            assertEquals(it.first, addressBytesCoder.decode(it.second).encoded)
+            assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()).encoded)
             assertEquals(it.first, Address.decodeFromBytes(it.second, addressBytesCoder))
             assertEquals(it.first, Address.decodeConsumingFromBytes(it.second.toMutableList(), addressBytesCoder))
         }

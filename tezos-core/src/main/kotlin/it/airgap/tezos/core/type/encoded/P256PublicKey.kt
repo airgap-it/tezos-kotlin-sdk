@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class P256PublicKey(override val base58: String) : PublicKeyEncoded, MetaPublicKeyEncoded<P256PublicKey> {
 
-    override val kind: MetaPublicKeyEncoded.Kind<P256PublicKey>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid P256 public key." }
     }
 
-    override fun toMetaEncoded(): MetaPublicKeyEncoded<*> = this
-    override fun toEncoded(): PublicKeyEncoded = this
+    override val kind: MetaPublicKeyEncoded.Kind<P256PublicKey>
+        get() = Companion
+
+    override val meta: MetaPublicKeyEncoded<*>
+        get() = this
+
+    override val encoded: PublicKeyEncoded
+        get() = this
 
     public companion object : MetaPublicKeyEncoded.Kind<P256PublicKey> {
         override val base58Prefix: String = "p2pk"

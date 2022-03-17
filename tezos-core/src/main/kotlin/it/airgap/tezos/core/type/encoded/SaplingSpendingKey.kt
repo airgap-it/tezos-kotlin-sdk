@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class SaplingSpendingKey(override val base58: String) : Encoded, MetaEncoded<SaplingSpendingKey> {
 
-    override val kind: MetaEncoded.Kind<SaplingSpendingKey>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid Sapling spending key." }
     }
 
-    override fun toMetaEncoded(): MetaEncoded<*> = this
-    override fun toEncoded(): Encoded = this
+    override val kind: MetaEncoded.Kind<SaplingSpendingKey>
+        get() = Companion
+
+    override val meta: MetaEncoded<*>
+        get() = this
+
+    override val encoded: Encoded
+        get() = this
 
     public companion object : MetaEncoded.Kind<SaplingSpendingKey> {
         override val base58Prefix: String = "sask"

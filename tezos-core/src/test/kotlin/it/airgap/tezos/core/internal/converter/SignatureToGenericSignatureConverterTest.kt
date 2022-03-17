@@ -56,7 +56,7 @@ class SignatureToGenericSignatureConverterTest {
     @Test
     fun `should convert SignatureEncoded to GenericSignature`() {
         signaturesWithGenerics.forEach {
-            assertEquals(it.second, signatureToGenericSignatureConverter.convert(it.first.toMetaEncoded()))
+            assertEquals(it.second, signatureToGenericSignatureConverter.convert(it.first.meta))
             assertEquals(it.second, it.second.toGenericSignature())
             assertEquals(it.second, it.second.toGenericSignature(signatureToGenericSignatureConverter))
         }

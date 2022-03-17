@@ -39,7 +39,7 @@ class StringToAddressConverterTest {
     @Test
     fun `should convert string to Address`() {
         addressesWithStrings.forEach {
-            assertEquals(it.first, stringToAddressConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, stringToAddressConverter.convert(it.second).encoded)
             assertEquals(it.first, Address.fromString(it.second))
             assertEquals(it.first, Address.fromString(it.second, stringToAddressConverter))
         }

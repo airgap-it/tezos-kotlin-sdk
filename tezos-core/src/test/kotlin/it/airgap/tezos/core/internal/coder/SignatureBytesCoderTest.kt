@@ -50,7 +50,7 @@ class SignatureBytesCoderTest {
     @Test
     fun `should encode SignatureEncoded to bytes`() {
         signaturesWithBytes.forEach {
-            assertContentEquals(it.second, signatureBytesCoder.encode(it.first.toMetaEncoded()))
+            assertContentEquals(it.second, signatureBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(signatureBytesCoder))
         }
     }
@@ -58,8 +58,8 @@ class SignatureBytesCoderTest {
     @Test
     fun `should decode SignatureEncoded from bytes`() {
         bytesWithSignatures.forEach {
-            assertEquals(it.second, signatureBytesCoder.decode(it.first).toEncoded())
-            assertEquals(it.second, signatureBytesCoder.decodeConsuming(it.first.toMutableList()).toEncoded())
+            assertEquals(it.second, signatureBytesCoder.decode(it.first).encoded)
+            assertEquals(it.second, signatureBytesCoder.decodeConsuming(it.first.toMutableList()).encoded)
             assertEquals(it.second, SignatureEncoded.decodeFromBytes(it.first, signatureBytesCoder))
             assertEquals(it.second, SignatureEncoded.decodeConsumingFromBytes(it.first.toMutableList(), signatureBytesCoder))
         }

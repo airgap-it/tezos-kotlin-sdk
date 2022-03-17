@@ -53,7 +53,7 @@ class BytesToSignatureConverterTest {
     @Test
     fun `should convert bytes to SignatureEncoded`() {
         signaturesWithBytes.forEach {
-            assertEquals(it.first, bytesToSignatureConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, bytesToSignatureConverter.convert(it.second).encoded)
             assertEquals(it.first, SignatureEncoded.fromBytes(it.second))
             assertEquals(it.first, SignatureEncoded.fromBytes(it.second, bytesToSignatureConverter))
         }

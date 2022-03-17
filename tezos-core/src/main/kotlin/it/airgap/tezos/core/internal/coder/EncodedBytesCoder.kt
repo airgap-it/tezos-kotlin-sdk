@@ -4,7 +4,6 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.utils.consumeUntil
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.type.encoded.Encoded
 import it.airgap.tezos.core.type.encoded.MetaEncoded
 
 @InternalTezosSdkApi
@@ -12,7 +11,7 @@ public class EncodedBytesCoder(private val base58Check: Base58Check): ConsumingB
 
     override fun encode(value: MetaEncoded<*>): ByteArray = encode(value, keepPrefix = false)
     public fun encode(value: MetaEncoded<*>, keepPrefix: Boolean): ByteArray {
-        val decoded = base58Check.decode(value.base58)
+        val decoded = base58Check.decode(value.encoded.base58)
         val bytesStart = if (keepPrefix) 0 else value.kind.base58Bytes.size
 
         return decoded.sliceArray( bytesStart until decoded.size)

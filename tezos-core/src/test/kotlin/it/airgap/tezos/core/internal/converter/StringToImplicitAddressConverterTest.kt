@@ -42,7 +42,7 @@ class StringToImplicitAddressConverterTest {
     @Test
     fun `should convert string to ImplicitAddress`() {
         addressesWithStrings.forEach {
-            assertEquals(it.first, stringToImplicitAddressConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, stringToImplicitAddressConverter.convert(it.second).encoded)
             assertEquals(it.first, ImplicitAddress.fromString(it.second))
             assertEquals(it.first, ImplicitAddress.fromString(it.second, stringToImplicitAddressConverter))
         }

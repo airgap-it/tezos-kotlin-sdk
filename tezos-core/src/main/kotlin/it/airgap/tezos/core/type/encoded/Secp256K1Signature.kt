@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Secp256K1Signature(override val base58: String) : SignatureEncoded, MetaSignatureEncoded<Secp256K1Signature> {
 
-    override val kind: MetaSignatureEncoded.Kind<Secp256K1Signature>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid secp256k1 signature." }
     }
 
-    override fun toMetaEncoded(): MetaSignatureEncoded<*> = this
-    override fun toEncoded(): SignatureEncoded = this
+    override val kind: MetaSignatureEncoded.Kind<Secp256K1Signature>
+        get() = Companion
+
+    override val meta: MetaSignatureEncoded<*>
+        get() = this
+
+    override val encoded: SignatureEncoded
+        get() = this
 
     public companion object : MetaSignatureEncoded.Kind<Secp256K1Signature> {
         override val base58Prefix: String = "spsig1"

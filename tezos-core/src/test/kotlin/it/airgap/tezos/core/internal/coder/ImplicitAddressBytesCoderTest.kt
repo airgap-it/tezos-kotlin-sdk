@@ -53,7 +53,7 @@ class ImplicitAddressBytesCoderTest {
     @Test
     fun `should encode ImplicitAddress to bytes`() {
         keyHashesWithBytes.forEach {
-            assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first.toMetaEncoded()))
+            assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(implicitAddressBytesCoder))
         }
     }
@@ -61,8 +61,8 @@ class ImplicitAddressBytesCoderTest {
     @Test
     fun `should decode ImplicitAddress from bytes`() {
         keyHashesWithBytes.forEach {
-            assertEquals(it.first, implicitAddressBytesCoder.decode(it.second).toEncoded())
-            assertEquals(it.first, implicitAddressBytesCoder.decodeConsuming(it.second.toMutableList()).toEncoded())
+            assertEquals(it.first, implicitAddressBytesCoder.decode(it.second).encoded)
+            assertEquals(it.first, implicitAddressBytesCoder.decodeConsuming(it.second.toMutableList()).encoded)
             assertEquals(it.first, ImplicitAddress.decodeFromBytes(it.second, implicitAddressBytesCoder))
             assertEquals(it.first, ImplicitAddress.decodeConsumingFromBytes(it.second.toMutableList(), implicitAddressBytesCoder))
         }

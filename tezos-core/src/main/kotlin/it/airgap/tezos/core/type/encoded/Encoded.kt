@@ -9,7 +9,8 @@ import it.airgap.tezos.core.internal.utils.startsWith
 public sealed interface Encoded {
     public val base58: String
 
-    public fun toMetaEncoded(): MetaEncoded<*>
+    @InternalTezosSdkApi
+    public val meta: MetaEncoded<*>
 
     public companion object {}
 }
@@ -19,11 +20,8 @@ public sealed interface Encoded {
 @InternalTezosSdkApi
 public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
     public val kind: Kind<Self>
-    public val base58: String
+    public val encoded: Encoded
 
-    public fun toEncoded(): Encoded
-
-    @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaEncoded<E>> {
         public val base58Prefix: String
         public val base58Bytes: ByteArray

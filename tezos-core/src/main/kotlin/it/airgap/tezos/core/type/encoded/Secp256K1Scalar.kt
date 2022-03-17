@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Secp256K1Scalar(override val base58: String) : ScalarEncoded, MetaScalarEncoded<Secp256K1Scalar> {
 
-    override val kind: MetaScalarEncoded.Kind<Secp256K1Scalar>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid secp256k1 scalar." }
     }
 
-    override fun toMetaEncoded(): MetaScalarEncoded<*> = this
-    override fun toEncoded(): ScalarEncoded = this
+    override val kind: MetaScalarEncoded.Kind<Secp256K1Scalar>
+        get() = Companion
+
+    override val meta: MetaScalarEncoded<*>
+        get() = this
+
+    override val encoded: ScalarEncoded
+        get() = this
 
     public companion object : MetaScalarEncoded.Kind<Secp256K1Scalar> {
         override val base58Prefix: String = "SSp"

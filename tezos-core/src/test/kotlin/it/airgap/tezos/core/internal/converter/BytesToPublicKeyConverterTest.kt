@@ -56,7 +56,7 @@ class BytesToPublicKeyConverterTest {
     @Test
     fun `should convert bytes to PublicKeyEncoded`() {
         publicKeysWithBytes.forEach {
-            assertEquals(it.first, bytesToPublicKeyConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, bytesToPublicKeyConverter.convert(it.second).encoded)
             assertEquals(it.first, PublicKeyEncoded.fromBytes(it.second))
             assertEquals(it.first, PublicKeyEncoded.fromBytes(it.second, bytesToPublicKeyConverter))
         }

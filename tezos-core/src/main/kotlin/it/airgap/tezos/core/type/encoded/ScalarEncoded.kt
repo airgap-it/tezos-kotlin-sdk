@@ -5,7 +5,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 // -- Scalar --
 
 public sealed interface ScalarEncoded : Encoded {
-    override fun toMetaEncoded(): MetaScalarEncoded<*>
+    override val meta: MetaScalarEncoded<*>
 
     public companion object {}
 }
@@ -13,7 +13,7 @@ public sealed interface ScalarEncoded : Encoded {
 // -- EncryptedScalar --
 
 public sealed interface EncryptedScalarEncoded : Encoded {
-    override fun toMetaEncoded(): MetaEncryptedScalarEncoded<*>
+    override val meta: MetaEncryptedScalarEncoded<*>
 
     public companion object {}
 }
@@ -22,7 +22,7 @@ public sealed interface EncryptedScalarEncoded : Encoded {
 
 @InternalTezosSdkApi
 public sealed interface MetaScalarEncoded<out Self : MetaScalarEncoded<Self>> : MetaEncoded<Self> {
-    override fun toEncoded(): ScalarEncoded
+    override val encoded: ScalarEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaScalarEncoded<E>> : MetaEncoded.Kind<E>
@@ -32,7 +32,7 @@ public sealed interface MetaScalarEncoded<out Self : MetaScalarEncoded<Self>> : 
 
 @InternalTezosSdkApi
 public sealed interface MetaEncryptedScalarEncoded<out Self : MetaEncryptedScalarEncoded<Self>> : MetaEncoded<Self> {
-    override fun toEncoded(): EncryptedScalarEncoded
+    override val encoded: EncryptedScalarEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaEncryptedScalarEncoded<E>> : MetaEncoded.Kind<E>

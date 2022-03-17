@@ -53,7 +53,7 @@ class BytesToAddressConverterTest {
     @Test
     fun `should convert bytes to Address`() {
         addressesWithBytes.forEach {
-            assertEquals(it.first, bytesToAddressConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, bytesToAddressConverter.convert(it.second).encoded)
             assertEquals(it.first, Address.fromBytes(it.second))
             assertEquals(it.first, Address.fromBytes(it.second, bytesToAddressConverter))
         }

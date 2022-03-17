@@ -42,7 +42,7 @@ class StringToPublicKeyConverterTest {
     @Test
     fun `should convert string to PublicKeyEncoded`() {
         publicKeysWithStrings.forEach {
-            assertEquals(it.first, stringToPublicKeyConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, stringToPublicKeyConverter.convert(it.second).encoded)
             assertEquals(it.first, PublicKeyEncoded.fromString(it.second))
             assertEquals(it.first, PublicKeyEncoded.fromString(it.second, stringToPublicKeyConverter))
         }

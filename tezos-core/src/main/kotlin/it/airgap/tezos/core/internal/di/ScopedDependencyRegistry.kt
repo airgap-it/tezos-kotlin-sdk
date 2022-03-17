@@ -33,6 +33,12 @@ public interface ScopedDependencyRegistry : DependencyRegistry {
     public val bytesToPublicKeyConverter: BytesToPublicKeyConverter
     public val stringToPublicKeyConverter: StringToPublicKeyConverter
 
+    public val bytesToPublicKeyHashConverter: BytesToPublicKeyHashConverter
+    public val stringToPublicKeyHashConverter: StringToPublicKeyHashConverter
+
+    public val bytesToBlindedPublicKeyHashConverter: BytesToBlindedPublicKeyHashConverter
+    public val stringToBlindedPublicKeyHashConverter: StringToBlindedPublicKeyHashConverter
+
     public val bytesToSignatureConverter: BytesToSignatureConverter
     public val stringToSignatureConverter: StringToSignatureConverter
 

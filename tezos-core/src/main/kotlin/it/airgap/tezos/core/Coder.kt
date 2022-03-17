@@ -602,65 +602,65 @@ public fun Secp256K1Signature.Companion.decodeConsumingFromBytes(
 
 public fun Address.encodeToBytes(
     addressBytesCoder: AddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().addressBytesCoder,
-): ByteArray = addressBytesCoder.encode(toMetaEncoded())
+): ByteArray = addressBytesCoder.encode(meta)
 
 public fun Address.Companion.decodeFromBytes(
     bytes: ByteArray,
     addressBytesCoder: AddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().addressBytesCoder,
-): Address = addressBytesCoder.decode(bytes).toEncoded()
+): Address = addressBytesCoder.decode(bytes).encoded
 
 public fun Address.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     addressBytesCoder: AddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().addressBytesCoder,
-): Address = addressBytesCoder.decodeConsuming(bytes).toEncoded()
+): Address = addressBytesCoder.decodeConsuming(bytes).encoded
 
 // -- ImplicitAddress <-> ByteArray --
 
 public fun ImplicitAddress.encodeToBytes(
     implicitAddressBytesCoder: ImplicitAddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().implicitAddressBytesCoder,
-): ByteArray = implicitAddressBytesCoder.encode(toMetaEncoded())
+): ByteArray = implicitAddressBytesCoder.encode(meta)
 
 public fun ImplicitAddress.Companion.decodeFromBytes(
     bytes: ByteArray,
     implicitAddressBytesCoder: ImplicitAddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().implicitAddressBytesCoder,
-): ImplicitAddress = implicitAddressBytesCoder.decode(bytes).toEncoded()
+): ImplicitAddress = implicitAddressBytesCoder.decode(bytes).encoded
 
 public fun ImplicitAddress.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     implicitAddressBytesCoder: ImplicitAddressBytesCoder = TezosSdk.instance.dependencyRegistry.core().implicitAddressBytesCoder,
-): ImplicitAddress = implicitAddressBytesCoder.decodeConsuming(bytes).toEncoded()
+): ImplicitAddress = implicitAddressBytesCoder.decodeConsuming(bytes).encoded
 
 // -- PublicKeyEncoded <-> ByteArray --
 
 public fun PublicKeyEncoded.encodeToBytes(
     publicKeyBytesCoder: PublicKeyBytesCoder = TezosSdk.instance.dependencyRegistry.core().publicKeyBytesCoder,
-): ByteArray = publicKeyBytesCoder.encode(toMetaEncoded())
+): ByteArray = publicKeyBytesCoder.encode(meta)
 
 public fun PublicKeyEncoded.Companion.decodeFromBytes(
     bytes: ByteArray,
     publicKeyBytesCoder: PublicKeyBytesCoder = TezosSdk.instance.dependencyRegistry.core().publicKeyBytesCoder,
-): PublicKeyEncoded = publicKeyBytesCoder.decode(bytes).toEncoded()
+): PublicKeyEncoded = publicKeyBytesCoder.decode(bytes).encoded
 
 public fun PublicKeyEncoded.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     publicKeyBytesCoder: PublicKeyBytesCoder = TezosSdk.instance.dependencyRegistry.core().publicKeyBytesCoder,
-): PublicKeyEncoded = publicKeyBytesCoder.decodeConsuming(bytes).toEncoded()
+): PublicKeyEncoded = publicKeyBytesCoder.decodeConsuming(bytes).encoded
 
 // -- SignatureEncoded <-> ByteArray --
 
 public fun SignatureEncoded.encodeToBytes(
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
-): ByteArray = signatureBytesCoder.encode(toMetaEncoded())
+): ByteArray = signatureBytesCoder.encode(meta)
 
 public fun SignatureEncoded.Companion.decodeFromBytes(
     bytes: ByteArray,
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
-): SignatureEncoded = signatureBytesCoder.decode(bytes).toEncoded()
+): SignatureEncoded = signatureBytesCoder.decode(bytes).encoded
 
 public fun SignatureEncoded.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
-): SignatureEncoded = signatureBytesCoder.decodeConsuming(bytes).toEncoded()
+): SignatureEncoded = signatureBytesCoder.decodeConsuming(bytes).encoded
 
 // -- ZarithInteger <-> ByteArray --
 

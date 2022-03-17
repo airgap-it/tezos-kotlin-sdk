@@ -39,7 +39,7 @@ class StringToSignatureConverterTest {
     @Test
     fun `should convert string to SignatureEncoded`() {
         signaturesWithStrings.forEach {
-            assertEquals(it.first, stringToSignatureConverter.convert(it.second).toEncoded())
+            assertEquals(it.first, stringToSignatureConverter.convert(it.second).encoded)
             assertEquals(it.first, SignatureEncoded.fromString(it.second))
             assertEquals(it.first, SignatureEncoded.fromString(it.second, stringToSignatureConverter))
         }

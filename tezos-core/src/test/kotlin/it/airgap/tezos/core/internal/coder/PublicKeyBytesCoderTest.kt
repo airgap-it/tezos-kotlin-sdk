@@ -53,7 +53,7 @@ class PublicKeyBytesCoderTest {
     @Test
     fun `should encode PublicKeyEncoded to bytes`() {
         keysWithBytes.forEach {
-            assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first.toMetaEncoded()))
+            assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(publicKeyBytesCoder))
         }
     }
@@ -61,8 +61,8 @@ class PublicKeyBytesCoderTest {
     @Test
     fun `should decode PublicKeyEncoded from bytes`() {
         keysWithBytes.forEach {
-            assertEquals(it.first, publicKeyBytesCoder.decode(it.second).toEncoded())
-            assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()).toEncoded())
+            assertEquals(it.first, publicKeyBytesCoder.decode(it.second).encoded)
+            assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()).encoded)
             assertEquals(it.first, PublicKeyEncoded.decodeFromBytes(it.second, publicKeyBytesCoder))
             assertEquals(it.first, PublicKeyEncoded.decodeConsumingFromBytes(it.second.toMutableList(), publicKeyBytesCoder))
         }

@@ -1,19 +1,25 @@
 package it.airgap.tezos.core.type.encoded
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+
 /* vh(52) */
 
 @JvmInline
 public value class BlockPayloadHash(override val base58: String) : Encoded, MetaEncoded<BlockPayloadHash> {
 
-    override val kind: MetaEncoded.Kind<BlockPayloadHash>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid block payload hash." }
     }
 
-    override fun toMetaEncoded(): MetaEncoded<*> = this
-    override fun toEncoded(): Encoded = this
+    override val kind: MetaEncoded.Kind<BlockPayloadHash>
+        get() = Companion
+
+    @InternalTezosSdkApi
+    override val meta: MetaEncoded<*>
+        get() = this
+
+    override val encoded: Encoded
+        get() = this
 
     public companion object : MetaEncoded.Kind<BlockPayloadHash> {
         override val base58Prefix: String = "vh"

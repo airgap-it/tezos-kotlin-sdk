@@ -5,7 +5,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 // -- Signature --
 
 public sealed interface SignatureEncoded : Encoded {
-    override fun toMetaEncoded(): MetaSignatureEncoded<*>
+    override val meta: MetaSignatureEncoded<*>
 
     public companion object {}
 }
@@ -14,7 +14,7 @@ public sealed interface SignatureEncoded : Encoded {
 
 @InternalTezosSdkApi
 public sealed interface MetaSignatureEncoded<out Self : MetaSignatureEncoded<Self>> : MetaEncoded<Self> {
-    override fun toEncoded(): SignatureEncoded
+    override val encoded: SignatureEncoded
 
     @InternalTezosSdkApi
     public sealed interface Kind<out E : MetaSignatureEncoded<E>> : MetaEncoded.Kind<E>

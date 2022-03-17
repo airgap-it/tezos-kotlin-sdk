@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class NonceHash(override val base58: String) : Encoded, MetaEncoded<NonceHash> {
 
-    override val kind: MetaEncoded.Kind<NonceHash>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid nonce hash." }
     }
 
-    override fun toMetaEncoded(): MetaEncoded<*> = this
-    override fun toEncoded(): Encoded = this
+    override val kind: MetaEncoded.Kind<NonceHash>
+        get() = Companion
+
+    override val meta: MetaEncoded<*>
+        get() = this
+
+    override val encoded: Encoded
+        get() = this
 
     public companion object : MetaEncoded.Kind<NonceHash> {
         override val base58Prefix: String = "nce"

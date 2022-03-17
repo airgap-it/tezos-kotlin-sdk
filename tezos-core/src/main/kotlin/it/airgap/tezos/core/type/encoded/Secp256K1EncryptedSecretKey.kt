@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Secp256K1EncryptedSecretKey(override val base58: String) : EncryptedSecretKeyEncoded, MetaEncryptedSecretKeyEncoded<Secp256K1EncryptedSecretKey> {
 
-    override val kind: MetaEncryptedSecretKeyEncoded.Kind<Secp256K1EncryptedSecretKey>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid secp256k1 encrypted secret key." }
     }
 
-    override fun toMetaEncoded(): MetaEncryptedSecretKeyEncoded<*> = this
-    override fun toEncoded(): EncryptedSecretKeyEncoded = this
+    override val kind: MetaEncryptedSecretKeyEncoded.Kind<Secp256K1EncryptedSecretKey>
+        get() = Companion
+
+    override val meta: MetaEncryptedSecretKeyEncoded<*>
+        get() = this
+
+    override val encoded: EncryptedSecretKeyEncoded
+        get() = this
 
     public companion object : MetaEncryptedSecretKeyEncoded.Kind<Secp256K1EncryptedSecretKey> {
         override val base58Prefix: String = "spesk"

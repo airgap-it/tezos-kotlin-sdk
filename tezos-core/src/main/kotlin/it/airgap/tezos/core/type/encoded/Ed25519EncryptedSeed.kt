@@ -5,15 +5,18 @@ package it.airgap.tezos.core.type.encoded
 @JvmInline
 public value class Ed25519EncryptedSeed(override val base58: String) : EncryptedSeedEncoded, MetaEncryptedSeedEncoded<Ed25519EncryptedSeed> {
 
-    override val kind: MetaEncryptedSeedEncoded.Kind<Ed25519EncryptedSeed>
-        get() = Companion
-
     init {
         require(isValid(base58)) { "Invalid Ed25519 encrypted seed." }
     }
 
-    override fun toMetaEncoded(): MetaEncryptedSeedEncoded<*> = this
-    override fun toEncoded(): EncryptedSeedEncoded = this
+    override val kind: MetaEncryptedSeedEncoded.Kind<Ed25519EncryptedSeed>
+        get() = Companion
+
+    override val meta: MetaEncryptedSeedEncoded<*>
+        get() = this
+
+    override val encoded: EncryptedSeedEncoded
+        get() = this
 
     public companion object : MetaEncryptedSeedEncoded.Kind<Ed25519EncryptedSeed> {
         override val base58Prefix: String = "edesk"
