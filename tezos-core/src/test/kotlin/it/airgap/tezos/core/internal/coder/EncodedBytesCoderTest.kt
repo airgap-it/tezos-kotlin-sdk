@@ -209,6 +209,13 @@ class EncodedBytesCoderTest {
         assertEquals(cryptoboxPublicKeyHash.first, CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second, encodedBytesCoder))
         assertEquals(cryptoboxPublicKeyHash.first, CryptoboxPublicKeyHash.decodeConsumingFromBytes(cryptoboxPublicKeyHash.second.toMutableList(), encodedBytesCoder))
 
+        assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decode(ed25519BlindedPublicKeyHash.first.kind.base58Bytes + ed25519BlindedPublicKeyHash.second))
+        assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decodeConsuming((ed25519BlindedPublicKeyHash.first.kind.base58Bytes + ed25519BlindedPublicKeyHash.second).toMutableList()))
+        assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decode(ed25519BlindedPublicKeyHash.second, ed25519BlindedPublicKeyHash.first.kind))
+        assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decodeConsuming(ed25519BlindedPublicKeyHash.second.toMutableList(), ed25519BlindedPublicKeyHash.first.kind))
+        assertEquals(ed25519BlindedPublicKeyHash.first, Ed25519BlindedPublicKeyHash.decodeFromBytes(ed25519BlindedPublicKeyHash.second, encodedBytesCoder))
+        assertEquals(ed25519BlindedPublicKeyHash.first, Ed25519BlindedPublicKeyHash.decodeConsumingFromBytes(ed25519BlindedPublicKeyHash.second.toMutableList(), encodedBytesCoder))
+
         assertEquals(ed25519EncryptedSeed.first, encodedBytesCoder.decode(ed25519EncryptedSeed.first.kind.base58Bytes + ed25519EncryptedSeed.second))
         assertEquals(ed25519EncryptedSeed.first, encodedBytesCoder.decodeConsuming((ed25519EncryptedSeed.first.kind.base58Bytes + ed25519EncryptedSeed.second).toMutableList()))
         assertEquals(ed25519EncryptedSeed.first, encodedBytesCoder.decode(ed25519EncryptedSeed.second, ed25519EncryptedSeed.first.kind))
@@ -363,6 +370,13 @@ class EncodedBytesCoderTest {
         assertEquals(saplingSpendingKey.first, SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second, encodedBytesCoder))
         assertEquals(saplingSpendingKey.first, SaplingSpendingKey.decodeConsumingFromBytes(saplingSpendingKey.second.toMutableList(), encodedBytesCoder))
 
+        assertEquals(scriptExprHash.first, encodedBytesCoder.decode(scriptExprHash.first.kind.base58Bytes + scriptExprHash.second))
+        assertEquals(scriptExprHash.first, encodedBytesCoder.decodeConsuming((scriptExprHash.first.kind.base58Bytes + scriptExprHash.second).toMutableList()))
+        assertEquals(scriptExprHash.first, encodedBytesCoder.decode(scriptExprHash.second, scriptExprHash.first.kind))
+        assertEquals(scriptExprHash.first, encodedBytesCoder.decodeConsuming(scriptExprHash.second.toMutableList(), scriptExprHash.first.kind))
+        assertEquals(scriptExprHash.first, ScriptExprHash.decodeFromBytes(scriptExprHash.second, encodedBytesCoder))
+        assertEquals(scriptExprHash.first, ScriptExprHash.decodeConsumingFromBytes(scriptExprHash.second.toMutableList(), encodedBytesCoder))
+
         assertEquals(secp256K1Element.first, encodedBytesCoder.decode(secp256K1Element.first.kind.base58Bytes + secp256K1Element.second))
         assertEquals(secp256K1Element.first, encodedBytesCoder.decodeConsuming((secp256K1Element.first.kind.base58Bytes + secp256K1Element.second).toMutableList()))
         assertEquals(secp256K1Element.first, encodedBytesCoder.decode(secp256K1Element.second, secp256K1Element.first.kind))
@@ -511,6 +525,19 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             CryptoboxPublicKeyHash.decodeConsumingFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            encodedBytesCoder.decode(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), ed25519BlindedPublicKeyHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            encodedBytesCoder.decodeConsuming(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), ed25519BlindedPublicKeyHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), encodedBytesCoder)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeConsumingFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
         }
 
         assertFailsWith<IllegalArgumentException> {
@@ -800,6 +827,19 @@ class EncodedBytesCoderTest {
         }
 
         assertFailsWith<IllegalArgumentException> {
+            encodedBytesCoder.decode(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), scriptExprHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            encodedBytesCoder.decodeConsuming(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), scriptExprHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), encodedBytesCoder)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeConsumingFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), encodedBytesCoder)
+        }
+
+        assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decode(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), secp256K1Element.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -925,6 +965,9 @@ class EncodedBytesCoderTest {
     private val cryptoboxPublicKeyHash: Pair<CryptoboxPublicKeyHash, ByteArray>
         get() = CryptoboxPublicKeyHash("idtUTwDSLeHFCKR1JnCPSj68HXnLT5") to "daceb7e6e75e421edad81355b5f29c49".asHexString().toByteArray()
 
+    private val ed25519BlindedPublicKeyHash: Pair<Ed25519BlindedPublicKeyHash, ByteArray>
+        get() = Ed25519BlindedPublicKeyHash("btz1UNpWMmyMW9AK57KKSAfpeX8rLZhkY7Cp3") to "585bacaceb7e6dca94941d372992e8b576872aea".asHexString().toByteArray()
+
     private val ed25519EncryptedSeed: Pair<Ed25519EncryptedSeed, ByteArray>
         get() = Ed25519EncryptedSeed("edesk1NB3aVLiqAeWz37PeEamUce1ms21SDh4BL8meLkKwHibhDkW7QWNzZCHAfexwCoAtMZofdzHiectcbNrrj9") to "22d4dd44b2671a05cf265b7a81f3d94abe7dc2aa508d1c29bf2fe0728d90a09c6208d97d81359565517bf2614c95acd8d4ccb219ea3be014".asHexString().toByteArray()
 
@@ -990,6 +1033,9 @@ class EncodedBytesCoderTest {
 
     private val saplingSpendingKey: Pair<SaplingSpendingKey, ByteArray>
         get() = SaplingSpendingKey("sask453Y2atFNQUwtPjN5M7Bzddnz29Q2tm2K6NWz2yPMTCGek9nVrUHK4GjH4F4bbvt5z5GpEuHmU4HoF9XrJsMGA8G6ogkhezKiFTcpTVBgkP6YoAr3rq7HgsFWGmaFTZkrUGB9u1rpRcCzK2ED2NGBxXnRJPEVqFSEjdKeGVnxyQ65DLNBwTA1CnfcCF3gAVMJnxEWPGwZCRZvRSx7DgoXDEBHz13tK9cK26Fwaod3Fjay") to "af453ddd281f2bf058c9b18d4a774bd3b98d51c1b2c02412deb526798f3d198510e4ef7e6c16cdc31ce3a8cbb21e643d3cfb356af15b7cd1b1eb9d861dd71f55e91a7baf9e081708bdf74245c807a2411d4dfb6aed8d5f31e940a750efedd2273449d5351c74c690b10ebf2ca13429500c44315ef9af69df029005423850b6e7e9201e35c2dace8a753f8ff6898757d92fc7e79cceca737caab16838d256f04c94012769ece782f8b6".asHexString().toByteArray()
+
+    private val scriptExprHash: Pair<ScriptExprHash, ByteArray>
+        get() = ScriptExprHash("exprvB6vfUhdorBq2p6HB6L36TkkwBEfEAwRmWxfuKXFtSbE5AWCxB") to "da7d5ea272aeafc6cf403ccca11a3d59524480ec4842bf27d8722f34f5759d6b".asHexString().toByteArray()
 
     private val secp256K1Element: Pair<Secp256K1Element, ByteArray>
         get() = Secp256K1Element("GSpE16ugxznfKSd2ckNWbUNCdXfUYauPPfYyRRugcg71LgFBkNKAv6") to "a99a2d68d47c292ade55906ecece24e17af3451a957a5f0bb1f9ff86e7d9357988".asHexString().toByteArray()

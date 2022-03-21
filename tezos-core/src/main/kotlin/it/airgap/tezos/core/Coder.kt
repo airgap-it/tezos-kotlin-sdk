@@ -118,6 +118,22 @@ public fun CryptoboxPublicKeyHash.Companion.decodeConsumingFromBytes(
     encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
 ): CryptoboxPublicKeyHash = encodedBytesCoder.decodeConsuming(bytes, CryptoboxPublicKeyHash)
 
+// -- Ed25519BlindedPublicKeyHash <-> ByteArray --
+
+public fun Ed25519BlindedPublicKeyHash.encodeToBytes(
+    encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
+): ByteArray = encodedBytesCoder.encode(this)
+
+public fun Ed25519BlindedPublicKeyHash.Companion.decodeFromBytes(
+    bytes: ByteArray,
+    encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
+): Ed25519BlindedPublicKeyHash = encodedBytesCoder.decode(bytes, Ed25519BlindedPublicKeyHash)
+
+public fun Ed25519BlindedPublicKeyHash.Companion.decodeConsumingFromBytes(
+    bytes: MutableList<Byte>,
+    encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
+): Ed25519BlindedPublicKeyHash = encodedBytesCoder.decodeConsuming(bytes, Ed25519BlindedPublicKeyHash)
+
 // -- Ed25519EncryptedSeed <-> ByteArray --
 
 public fun Ed25519EncryptedSeed.encodeToBytes(
@@ -469,6 +485,22 @@ public fun SaplingSpendingKey.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
 ): SaplingSpendingKey = encodedBytesCoder.decodeConsuming(bytes, SaplingSpendingKey)
+
+// -- ScriptExprHashEncoded <-> ByteArray --
+
+public fun ScriptExprHash.encodeToBytes(
+    encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
+): ByteArray = encodedBytesCoder.encode(this)
+
+public fun ScriptExprHash.Companion.decodeFromBytes(
+    bytes: ByteArray,
+    encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
+): ScriptExprHash = encodedBytesCoder.decode(bytes, ScriptExprHash)
+
+public fun ScriptExprHash.Companion.decodeConsumingFromBytes(
+    bytes: MutableList<Byte>,
+    encodedBytesCoder: EncodedBytesCoder = TezosSdk.instance.dependencyRegistry.core().encodedBytesCoder,
+): ScriptExprHash = encodedBytesCoder.decodeConsuming(bytes, ScriptExprHash)
 
 // -- Secp256K1Element <-> ByteArray --
 

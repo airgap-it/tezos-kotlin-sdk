@@ -2,6 +2,8 @@ package it.airgap.tezos.core.type.encoded
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 
+/* btz1(37) */
+
 @JvmInline
 public value class Ed25519BlindedPublicKeyHash(override val base58: String) : BlindedPublicKeyHashEncoded, MetaBlindedPublicKeyHashEncoded<Ed25519BlindedPublicKeyHash> {
 

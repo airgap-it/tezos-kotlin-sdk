@@ -59,6 +59,7 @@ public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
                     NonceHash, /* nce(53) */
 
                     Ed25519PublicKeyHash, /* tz1(36) */
+                    Ed25519BlindedPublicKeyHash, /* btz1(37) */
                     Secp256K1PublicKeyHash, /* tz2(36) */
                     P256PublicKeyHash, /* tz3(36) */
                     ContractHash, /* KT1(36) */
@@ -92,6 +93,8 @@ public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
 
                     SaplingSpendingKey, /* sask(241) */
                     SaplingAddress, /* zet1(69) */
+
+                    ScriptExprHash, /* expr(54) */
                 )
 
             public fun recognize(string: String): Kind<*>? = values.find { it.isValid(string) }

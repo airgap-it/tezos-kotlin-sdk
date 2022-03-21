@@ -49,45 +49,45 @@ class Ed25519BlindedPublicKeyHashTest {
 
     private val validStrings: List<String>
         get() = listOf(
-            "btz1ZqQDoqbzUenjA5XXXa2EtBNTberdjj7Tt",
-            "btz1cjgXx6gbcTccNzinzfAqNN7C6kES8c3Np",
-            "btz1hFdJy1jMbGCXNBh2C2BsysxcxJYJ9UtY4",
-            "btz1TuiwEo8Wtn3HKL2Y7oRcpPQgbEGMH8dcK",
-            "btz1ZWzfsGu6bndRJzEyqgc8v9yGUBXdmAnou",
-            "btz1Ro2B83RjpwQNF7UqrcrmPLpxgv96oZvmN",
+            "btz1Tx4dqRwTNBiK6F5Jyq88Cwjn4cec4NM3R",
+            "btz1fLh5y8tLXZeeQzyVSsbiPxEsXy8FP6eun",
+            "btz1PygiUsaqj9Vwh2YfKSwzLfWMUtGGHdKgd",
+            "btz1QT48NpP7XN8eEQfCNam15vBVwR7jEnSCi",
+            "btz1cRC5WSgVvn4YmnxzU9mRE4ENHxFVF7c81",
+            "btz1UQFdA6Sk6BMQ73x5DWWMspoCLCKKzKiZS",
         )
 
     private val invalidStrings: List<String>
         get() = listOf(
             "",
             "abc",
-            "Z9oh78VxaDbKJqhLKWsiteTSkBiJFkpcr",
-            "btz1ZqQDoqbzUenjA5XXXa2EtBNT",
-            "btz1cjgXx6gbcTccNzinzfAqNN7C6kES8c3Np5Ag",
+            "Tx4dqRwTNBiK6F5Jyq88Cwjn4cec4NM3R",
+            "btz1fLh5y8tLXZeeQzyVSsbiPxEsXy8F",
+            "btz1PygiUsaqj9Vwh2YfKSwzLfWMUtGGHdKgd5Q1s",
         )
 
     private val validBytes: List<ByteArray>
         get() = listOf(
-            "943b4312dbf184b88d2b31e90be9cb0996e696b0",
-            "010231df943b4312dbf184b88d2b31e90be9cb0996e696b0",
-            "b40ec2c58ec749e5c6413b41dae8616af10463dc",
-            "010231dfb40ec2c58ec749e5c6413b41dae8616af10463dc",
-            "e5990d3a1bfe31a737ca8c260ae3814be031574d",
-            "010231dfe5990d3a1bfe31a737ca8c260ae3814be031574d",
-            "533bcb06f47f89a64f829dbb7e9bdb294686fd10",
-            "010231df533bcb06f47f89a64f829dbb7e9bdb294686fd10",
-            "90c01d9530e8a2f010737dcecfa88aadcf26a0e2",
-            "010231df90c01d9530e8a2f010737dcecfa88aadcf26a0e2",
-            "3c07053e05348eae56e5d009a06a6d9fecb384af",
-            "010231df3c07053e05348eae56e5d009a06a6d9fecb384af",
+            "53ad11d727f4b0c72e2f6be6e9a296ea6946c92b",
+            "010231df53ad11d727f4b0c72e2f6be6e9a296ea6946c92b",
+            "d09e0828b039c128217d1b3169681f84474e8f92",
+            "010231dfd09e0828b039c128217d1b3169681f84474e8f92",
+            "281b19c50f7a46a9fe07042e49f926517e0b788d",
+            "010231df281b19c50f7a46a9fe07042e49f926517e0b788d",
+            "2d4834993c3a5c25be9c53112d73a860e0443f6d",
+            "010231df2d4834993c3a5c25be9c53112d73a860e0443f6d",
+            "b08f850c9ea335afdbfdb70dfca2b0ec141f2f8c",
+            "010231dfb08f850c9ea335afdbfdb70dfca2b0ec141f2f8c",
+            "58a10ea9664a9a687e03a46105ff00860ff9627d",
+            "010231df58a10ea9664a9a687e03a46105ff00860ff9627d",
         ).map { it.asHexString().toByteArray() }
 
     private val invalidBytes: List<ByteArray>
         get() = listOf(
             "",
             "00",
-            "943b4312dbf184b88d2b31e90be9cb09",
-            "b40ec2c58ec749e5c6413b41dae8616af10463dc0ec2",
-            "16a19f3c07053e05348eae56e5d009a06a6d9fecb384af",
+            "3d9ebef11bc002f9cd055e1207affae6872b47",
+            "010231dfc8ffade42aca4cb7e1262f282bfd35956a1d",
+            "110231df6e097851dd5636f8a320b47b974d63418524c13d",
         ).map { it.asHexString().toByteArray() }
 }
