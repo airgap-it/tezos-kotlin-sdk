@@ -5,6 +5,7 @@ import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.rpc.type.chain.RpcTestChainStatus
 import it.airgap.tezos.rpc.type.operation.RpcBalanceUpdate
+import it.airgap.tezos.rpc.type.operation.RpcSuccessfulManagerOperationResult
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,7 +28,7 @@ public data class RpcBlockHeaderMetadata(
     public val deactivated: List<@Contextual PublicKeyHashEncoded>,
     @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
     @SerialName("liquidity_baking_escape_ema") public val liquidityBakingEscapeEma: Int,
-    @SerialName("implicit_operations_results") public val implicitOperationsResults: @Contextual Any, // TODO: define type
+    @SerialName("implicit_operations_results") public val implicitOperationsResults: @Contextual RpcSuccessfulManagerOperationResult,
 )
 
 @Serializable

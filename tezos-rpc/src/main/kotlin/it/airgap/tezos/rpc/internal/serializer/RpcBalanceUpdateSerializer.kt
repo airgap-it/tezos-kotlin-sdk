@@ -8,6 +8,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonClassDiscriminator
 
 internal object RpcBalanceUpdateSerializer : KSerializer<RpcBalanceUpdate> {
     override val descriptor: SerialDescriptor = RpcBalanceUpdateSurrogate.serializer().descriptor
@@ -25,8 +26,9 @@ internal object RpcBalanceUpdateSerializer : KSerializer<RpcBalanceUpdate> {
 
 // -- surrogate --
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
-@SerialName(RpcBalanceUpdateSurrogate.CLASS_DISCRIMINATOR)
+@JsonClassDiscriminator(RpcBalanceUpdateSurrogate.CLASS_DISCRIMINATOR)
 private sealed class RpcBalanceUpdateSurrogate {
     abstract val change: Long
     abstract val origin: RpcBalanceUpdate.Origin

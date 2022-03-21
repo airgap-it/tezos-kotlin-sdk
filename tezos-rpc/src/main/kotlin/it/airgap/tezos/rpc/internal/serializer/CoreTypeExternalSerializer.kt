@@ -103,5 +103,6 @@ internal object OperationListListHashSerializer : KEncodedSerializer<OperationLi
 internal object P256PublicKeyHashSerializer : KEncodedSerializer<P256PublicKeyHash>(P256PublicKeyHash, P256PublicKeyHash::class)
 internal object P256SignatureSerializer : KEncodedSerializer<P256Signature>(P256Signature, P256Signature::class)
 internal object ProtocolHashSerializer : KEncodedSerializer<ProtocolHash>(ProtocolHash, ProtocolHash::class)
+internal object ScriptExprHashSerializer : KEncodedSerializer<ScriptExprHash>(ScriptExprHash, ScriptExprHash::class)
 internal object Secp256K1PublicKeyHashSerializer : KEncodedSerializer<Secp256K1PublicKeyHash>(Secp256K1PublicKeyHash, Secp256K1PublicKeyHash::class)
 internal object Secp256K1SignatureSerializer : KEncodedSerializer<Secp256K1Signature>(Secp256K1Signature, Secp256K1Signature::class)
