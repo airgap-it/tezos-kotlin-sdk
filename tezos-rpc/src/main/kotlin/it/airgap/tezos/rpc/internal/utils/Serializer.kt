@@ -49,7 +49,7 @@ internal interface KJsonSerializer<T> : KSerializer<T> {
         throw SerializationException("Expected Json encoder, got $actual.")
 }
 
-internal abstract class KBaseEncodedSerializer<E : Encoded>(
+internal open class KBaseEncodedSerializer<E : Encoded>(
     private val createValue: (String) -> E,
     kClass: KClass<E>,
 ) : KSerializer<E> {
@@ -62,7 +62,7 @@ internal abstract class KBaseEncodedSerializer<E : Encoded>(
     }
 }
 
-internal abstract class KEncodedSerializer<E>(protected val kind: MetaEncoded.Kind<E>, kClass: KClass<E>) : KBaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E>
+internal open class KEncodedSerializer<E>(kind: MetaEncoded.Kind<E>, kClass: KClass<E>) : KBaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E>
 
 @OptIn(ExperimentalSerializationApi::class)
 public val SerialDescriptor.elementIndices: Iterable<Int>
