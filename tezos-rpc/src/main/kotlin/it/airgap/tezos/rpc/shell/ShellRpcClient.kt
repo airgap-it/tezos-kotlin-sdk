@@ -10,7 +10,7 @@ import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.RpcAcl
 import it.airgap.tezos.rpc.type.RpcProtocolComponent
-import it.airgap.tezos.rpc.type.operation.RpcOperation
+import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -92,7 +92,7 @@ internal class ShellRpcClient(
 
     override suspend fun injectBlock(
         data: HexString,
-        operations: List<List<RpcOperation>>,
+        operations: List<List<RpcInjectableOperation>>,
         async: Boolean?,
         force: Boolean?,
         chain: ChainId?,

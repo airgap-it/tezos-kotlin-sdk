@@ -89,6 +89,7 @@ internal object BlindedPublicKeyHashEncodedSerializer : KBaseEncodedSerializer<B
 internal object SignatureEncodedSerializer : KBaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)
 
 internal object BlockHashSerializer : KEncodedSerializer<BlockHash>(BlockHash, BlockHash::class)
+internal object BlockPayloadHashSerializer : KEncodedSerializer<BlockPayloadHash>(BlockPayloadHash, BlockPayloadHash::class)
 internal object ChainIdSerializer : KEncodedSerializer<ChainId>(ChainId, ChainId::class)
 internal object ContractHashSerializer : KEncodedSerializer<ContractHash>(ContractHash, ContractHash::class)
 internal object ContextHashSerializer : KEncodedSerializer<ContextHash>(ContextHash, ContextHash::class)

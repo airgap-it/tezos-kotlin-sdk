@@ -9,7 +9,7 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.RpcAcl
 import it.airgap.tezos.rpc.type.RpcProtocolComponent
-import it.airgap.tezos.rpc.type.operation.RpcOperation
+import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
 
 // https://tezos.gitlab.io/shell/rpc.html
@@ -43,7 +43,7 @@ public interface ShellRpc {
 
     // -- /injection --
 
-    public suspend fun injectBlock(data: HexString, operations: List<List<RpcOperation>>, async: Boolean? = null, force: Boolean? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): InjectBlockResponse
+    public suspend fun injectBlock(data: HexString, operations: List<List<RpcInjectableOperation>>, async: Boolean? = null, force: Boolean? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): InjectBlockResponse
     public suspend fun injectOperation(data: HexString, async: Boolean? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): InjectOperationResponse
     public suspend fun injectProtocol(expectedEnvVersion: UShort, components: List<RpcProtocolComponent>, async: Boolean? = null, headers: List<HttpHeader> = emptyList()): InjectProtocolResponse
 

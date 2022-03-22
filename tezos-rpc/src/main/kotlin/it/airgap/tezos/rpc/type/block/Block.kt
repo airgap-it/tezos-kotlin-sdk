@@ -4,6 +4,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.type.RpcError
+import it.airgap.tezos.rpc.type.operation.RpcOperation
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,7 +18,7 @@ public data class RpcBlock(
     public val hash: @Contextual BlockHash,
     public val header: RpcShellBlockHeader,
     public val metadata: RpcBlockHeaderMetadata? = null,
-    public val operations: List<List<@Contextual Any>>, // TODO: type
+    public val operations: List<List<RpcOperation>>,
 )
 
 // -- RpcInvalidBlock --
