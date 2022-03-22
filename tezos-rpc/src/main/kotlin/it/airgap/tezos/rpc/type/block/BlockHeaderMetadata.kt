@@ -10,6 +10,8 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// -- RpcBlockHeaderMetadata --
+
 @Serializable
 public data class RpcBlockHeaderMetadata(
     public val protocol: @Contextual ProtocolHash,
@@ -28,7 +30,7 @@ public data class RpcBlockHeaderMetadata(
     public val deactivated: List<@Contextual PublicKeyHashEncoded>,
     @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
     @SerialName("liquidity_baking_escape_ema") public val liquidityBakingEscapeEma: Int,
-    @SerialName("implicit_operations_results") public val implicitOperationsResults: @Contextual RpcSuccessfulManagerOperationResult,
+    @SerialName("implicit_operations_results") public val implicitOperationsResults: List<@Contextual RpcSuccessfulManagerOperationResult>,
 )
 
 @Serializable

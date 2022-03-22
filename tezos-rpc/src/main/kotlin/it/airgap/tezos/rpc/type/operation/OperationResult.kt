@@ -7,6 +7,8 @@ import it.airgap.tezos.rpc.type.storage.RpcLazyStorageDiff
 import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonClassDiscriminator
 
+// -- RpcSuccessfulManagerOperationResult --
+
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 @JsonClassDiscriminator(RpcSuccessfulManagerOperationResult.CLASS_DISCRIMINATOR)

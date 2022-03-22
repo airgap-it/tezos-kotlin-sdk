@@ -3,6 +3,8 @@ package it.airgap.tezos.rpc.type.block
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// -- RpcLevelInfo --
+
 @Serializable
 public data class RpcLevelInfo(
     public val level: Int,
