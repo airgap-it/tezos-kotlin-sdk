@@ -1,8 +1,8 @@
 package it.airgap.tezos.rpc.shell.data
 
 import it.airgap.tezos.rpc.type.RpcHistoryMode
-import it.airgap.tezos.rpc.type.RpcUserActivatedProtocolOverride
-import it.airgap.tezos.rpc.type.RpcUserActivatedUpgrade
+import it.airgap.tezos.rpc.type.protocol.RpcUserActivatedProtocolOverride
+import it.airgap.tezos.rpc.type.protocol.RpcUserActivatedUpgrade
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

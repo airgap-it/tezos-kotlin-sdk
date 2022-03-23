@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.type
+package it.airgap.tezos.rpc.type.protocol
 
 import kotlinx.serialization.Serializable
 
