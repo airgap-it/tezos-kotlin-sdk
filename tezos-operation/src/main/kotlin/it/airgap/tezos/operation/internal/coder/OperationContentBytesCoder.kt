@@ -19,7 +19,7 @@ import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.fromTagOrNull
 import it.airgap.tezos.operation.header.Fitness
-import it.airgap.tezos.operation.header.FullHeader
+import it.airgap.tezos.operation.header.FullBlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
@@ -229,7 +229,7 @@ public class OperationContentBytesCoder(
         branchBytes + operationsBytes + signatureBytes
     }
 
-    private fun encodeFullHeader(header: FullHeader): ByteArray = with(header) {
+    private fun encodeFullHeader(header: FullBlockHeader): ByteArray = with(header) {
         val levelBytes = encodeInt32ToBytes(level)
         val protoBytes = encodeUInt8ToBytes(proto)
         val predecessorBytes = predecessor.encodeToBytes(encodedBytesCoder)
@@ -582,7 +582,7 @@ public class OperationContentBytesCoder(
         return InlinedEndorsement(branch, operations, signature)
     }
 
-    private fun decodeFullHeader(bytes: MutableList<Byte>): FullHeader {
+    private fun decodeFullHeader(bytes: MutableList<Byte>): FullBlockHeader {
         val level = decodeConsumingInt32FromBytes(bytes)
         val proto = decodeUInt8(bytes)
         val predecessor = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
@@ -604,7 +604,7 @@ public class OperationContentBytesCoder(
         val liquidityBankingEscapeVote = decodeBoolean(bytes)
         val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
 
-        return FullHeader(
+        return FullBlockHeader(
             level,
             proto,
             predecessor,

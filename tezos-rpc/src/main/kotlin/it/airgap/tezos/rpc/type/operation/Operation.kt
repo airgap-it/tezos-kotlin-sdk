@@ -33,7 +33,7 @@ public sealed class RpcOperation {
         @SerialName("chain_id") override val chainId: @Contextual ChainId,
         override val hash: @Contextual OperationHash,
         override val branch: @Contextual BlockHash,
-        public val contents: List<RpcOperationContentWithResults>,
+        public val contents: List<RpcOperationContentWithResult>,
         override val signature: @Contextual SignatureEncoded,
     ) : RpcOperation()
 }

@@ -16,7 +16,7 @@ public data class RpcBlock(
     public val protocol: @Contextual ProtocolHash,
     @SerialName("chain_id") public val chainId: @Contextual ChainId,
     public val hash: @Contextual BlockHash,
-    public val header: RpcShellBlockHeader,
+    public val header: RpcBlockHeader,
     public val metadata: RpcBlockHeaderMetadata? = null,
     public val operations: List<List<RpcOperation>>,
 )

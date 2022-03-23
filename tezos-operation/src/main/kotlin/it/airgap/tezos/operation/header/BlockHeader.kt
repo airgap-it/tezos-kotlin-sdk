@@ -23,3 +23,20 @@ public interface ProtocolBlockHeader {
     public val liquidityBakingEscapeVote: Boolean
     public val signature: SignatureEncoded
 }
+
+public data class FullBlockHeader(
+    override val level: Int,
+    override val proto: UByte,
+    override val predecessor: BlockHash,
+    override val timestamp: Timestamp,
+    override val validationPass: UByte,
+    override val operationsHash: OperationHash,
+    override val fitness: List<Fitness>,
+    override val context: ContextHash,
+    override val payloadHash: BlockPayloadHash,
+    override val payloadRound: Int,
+    override val proofOfWorkNonce: HexString,
+    override val seedNonceHash: NonceHash?,
+    override val liquidityBakingEscapeVote: Boolean,
+    override val signature: SignatureEncoded,
+) : ShellBlockHeader, ProtocolBlockHeader

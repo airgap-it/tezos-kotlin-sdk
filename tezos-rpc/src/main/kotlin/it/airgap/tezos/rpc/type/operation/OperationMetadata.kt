@@ -9,6 +9,92 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+// -- RpcOperationMetadata --
+
+public sealed class RpcOperationMetadata {
+
+    @Serializable
+    public data class Endorsement(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        public val delegate: @Contextual PublicKeyHashEncoded,
+        @SerialName("endorsement_power") public val endorsementPower: Int,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class Preendorsement(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        public val delegate: @Contextual PublicKeyHashEncoded,
+        @SerialName("preendorsement_power") public val preendorsementPower: Int,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class SeedNonceRevelation(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class DoubleEndorsementEvidence(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class DoublePreendorsementEvidence(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class DoubleBakingEvidence(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class ActivateAccount(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public object Proposals : RpcOperationMetadata()
+
+    @Serializable
+    public object Ballot : RpcOperationMetadata()
+
+    @Serializable
+    public data class Reveal(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        /* TODO: operation_result, internal_operation_result */
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class Transaction(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        /* TODO: operation_result, internal_operation_result */
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class Origination(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        /* TODO: operation_result, internal_operation_result */
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class Delegation(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        /* TODO: operation_result, internal_operation_result */
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class SetDepositsLimit(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        /* TODO: operation_result, internal_operation_result */
+    ) : RpcOperationMetadata()
+
+    @Serializable
+    public data class RegisterGlobalConstant(
+        @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
+        /* TODO: operation_result, internal_operation_result */
+    ) : RpcOperationMetadata()
+}
+
 // -- RpcBalanceUpdate --
 
 @Serializable(with = RpcBalanceUpdateSerializer::class)

@@ -22,7 +22,7 @@ import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.Fitness
-import it.airgap.tezos.operation.header.FullHeader
+import it.airgap.tezos.operation.header.FullBlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
@@ -138,7 +138,7 @@ class OperationContentBytesCoderTest {
                 ),
             ) to "020000008b611895c74249d0a90db97644942543d9a9f9efdf48f6fae039f1f72b07ad9ed415000100000001000000017afe70591b8fce15d79383d3b2d1215e11d49672901d733842d6221562a98324767251a73e10b6bbe72a662576abb35bb3161f9a662ead7207e26ca95dbd1c0a3b086470822e83160f916415e00f07840cecfb897e61945255c3ab943bebc1e60000008b6f9a5a686491dc1af62fe3f0c3b2d8d6e1f5883f50592029980d55864a6b24b015000200000002000000029b53a37d056c73de29fef1e17abfaab06876147aa7083b52b0ef6ba92bf5a50c870fd592cf831578551c230a5cc324c7d26c67e5185f071b3fdb797ef89f3be013d51b0f3cf181cb842f13bf35c29a2343908b348b7b5db2e38caa505d5dfc34".asHexString().toByteArray(),
             OperationContent.DoubleBakingEvidence(
-                FullHeader(
+                FullBlockHeader(
                     1,
                     1U,
                     BlockHash("BKsP8FYgikDmqbUiVxfgXVjWuay5LQZY6LP4EvcsFK8uuqj4wQD"),
@@ -154,7 +154,7 @@ class OperationContentBytesCoderTest {
                     true,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
-                FullHeader(
+                FullBlockHeader(
                     2,
                     2U,
                     BlockHash("BMaBxGyVhtTiMKd7KA8HXJnbTK4e1TzffNc94G18op55HGQYVRk"),
@@ -172,7 +172,7 @@ class OperationContentBytesCoderTest {
                 ),
             ) to "03000000e0000000010114a98b361825acd1997319b0b01069908d1103df26a5646bf998cd6df80b95c6000000000000000101c0efd85b061cfea4510bf84273d13d0cbd698da8bdaf040a158a61360281ed8500000000dc8d5cafd036ba185119ba904aefbdefd6d30de1f5e4a49fb20b0997ea2cdc357b08b37679350e62ea1bff3287d151c79156f0160b296bdade0ffa7f16f26b6300000001d4d34b5686c98ae100ff9d584824e3bf8b4817abdce782d94d93df6c60581e581990767cb8c0c07c577c328cddebd2da2433736411e17c2cfb282c8067e89c5a3e48246f50eca5e7525f000001000000000202f5043ad9d3aeea868db43f2abda52e1b7f176f928742964ce1db62d8f48cd67f0000000000000002022fd8fa6814b0cb93eff1236a970f9265819b0930b861333f5f15f4e7f866d17d000000008e84ab5712175f8ab1ce14bcf5185d712c472a4e6abf51093a06c7e9042e59d258ef5ec7e36bb4004a4e7f10cb94032d59b65f8a86450c20a63d802ad749546200000002336ebf95efce0475ff37ad10c119adb450d7456104f3971536fb486124a262549c00d3310cd93e6820001dad11dad4d16f110476a24734b1414725506b354e01de4e54a4fdcec01604fda840b53f2cac4109c32680fe58600d96749b1d2891a0aa22b222ba36c864f001".asHexString().toByteArray(),
             OperationContent.DoubleBakingEvidence(
-                FullHeader(
+                FullBlockHeader(
                     1,
                     1U,
                     BlockHash("BKsP8FYgikDmqbUiVxfgXVjWuay5LQZY6LP4EvcsFK8uuqj4wQD"),
@@ -188,7 +188,7 @@ class OperationContentBytesCoderTest {
                     true,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
-                FullHeader(
+                FullBlockHeader(
                     2,
                     2U,
                     BlockHash("BMaBxGyVhtTiMKd7KA8HXJnbTK4e1TzffNc94G18op55HGQYVRk"),

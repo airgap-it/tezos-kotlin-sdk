@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 // -- RpcBlockHeader --
 
 @Serializable
-public data class RpcShellBlockHeader(
+public data class RpcBlockHeader(
     public val level: Int,
     public val proto: UByte,
     public val predecessor: @Contextual BlockHash,

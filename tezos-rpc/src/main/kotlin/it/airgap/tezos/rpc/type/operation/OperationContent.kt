@@ -3,7 +3,14 @@ package it.airgap.tezos.rpc.type.operation
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.micheline.MichelineNode
-import kotlinx.serialization.*
+import it.airgap.tezos.rpc.internal.serializer.RpcOperationContentWithResultSerializer
+import it.airgap.tezos.rpc.type.block.RpcBlockHeader
+import it.airgap.tezos.rpc.type.contract.RpcParameters
+import it.airgap.tezos.rpc.type.contract.RpcScript
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -51,8 +58,8 @@ public sealed class RpcOperationContent {
     @Serializable
     @SerialName(DoubleEndorsementEvidence.KIND)
     public data class DoubleEndorsementEvidence(
-        public val op1: InlinedEndorsement,
-        public val op2: InlinedEndorsement,
+        public val op1: RpcInlinedEndorsement,
+        public val op2: RpcInlinedEndorsement,
     ) : RpcOperationContent()  {
         public companion object {
             internal const val KIND = "double_endorsement_evidence"
@@ -62,8 +69,8 @@ public sealed class RpcOperationContent {
     @Serializable
     @SerialName(DoublePreendorsementEvidence.KIND)
     public data class DoublePreendorsementEvidence(
-        public val op1: InlinedPreendorsement,
-        public val op2: InlinedPreendorsement,
+        public val op1: RpcInlinedPreendorsement,
+        public val op2: RpcInlinedPreendorsement,
     ) : RpcOperationContent() {
         public companion object {
             internal const val KIND = "double_preendorsement_evidence"
@@ -73,8 +80,8 @@ public sealed class RpcOperationContent {
     @Serializable
     @SerialName(DoubleBakingEvidence.KIND)
     public data class DoubleBakingEvidence(
-        public val bh1: FullHeader,
-        public val bh2: FullHeader,
+        public val bh1: RpcBlockHeader,
+        public val bh2: RpcBlockHeader,
     ) : RpcOperationContent() {
         public companion object {
             internal const val KIND = "double_baking_evidence"
@@ -150,7 +157,7 @@ public sealed class RpcOperationContent {
         public val storageLimit: String,
         public val amount: String,
         public val destination: @Contextual Address,
-        public val parameters: Parameters? = null,
+        public val parameters: RpcParameters? = null,
     ) : RpcOperationContent() {
         public companion object {
             internal const val KIND = "transaction"
@@ -167,7 +174,7 @@ public sealed class RpcOperationContent {
         public val storageLimit: String,
         public val balance: String,
         public val delegate: @Contextual ImplicitAddress? = null,
-        public val script: Script,
+        public val script: RpcScript,
     ) : RpcOperationContent() {
         public companion object {
             internal const val KIND = "origination"
@@ -234,7 +241,128 @@ public sealed class RpcOperationContent {
     }
 }
 
-@Serializable
-public sealed class RpcOperationContentWithResults {
+@Serializable(with = RpcOperationContentWithResultSerializer::class)
+public sealed class RpcOperationContentWithResult {
 
+    @Serializable
+    public data class Endorsement(
+        public val content: RpcOperationContent.Endorsement,
+        public val metadata: RpcOperationMetadata.Endorsement,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Preendorsement(
+        public val content: RpcOperationContent.Preendorsement,
+        public val metadata: RpcOperationMetadata.Preendorsement,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class SeedNonceRevelation(
+        public val content: RpcOperationContent.SeedNonceRevelation,
+        public val metadata: RpcOperationMetadata.SeedNonceRevelation,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class DoubleEndorsementEvidence(
+        public val content: RpcOperationContent.DoubleEndorsementEvidence,
+        public val metadata: RpcOperationMetadata.DoubleEndorsementEvidence,
+    ) : RpcOperationContentWithResult()  {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class DoublePreendorsementEvidence(
+        public val content: RpcOperationContent.DoublePreendorsementEvidence,
+        public val metadata: RpcOperationMetadata.DoublePreendorsementEvidence,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class DoubleBakingEvidence(
+        public val content: RpcOperationContent.DoubleBakingEvidence,
+        public val metadata: RpcOperationMetadata.DoubleBakingEvidence,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class ActivateAccount(
+        public val content: RpcOperationContent.ActivateAccount,
+        public val metadata: RpcOperationMetadata.ActivateAccount,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Proposals(
+        public val content: RpcOperationContent.Proposals,
+        public val metadata: RpcOperationMetadata.Proposals,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Ballot(
+        public val content: RpcOperationContent.Ballot,
+        public val metadata: RpcOperationMetadata.Ballot,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Reveal(
+        public val content: RpcOperationContent.Reveal,
+        public val metadata: RpcOperationMetadata.Reveal,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Transaction(
+        public val content: RpcOperationContent.Transaction,
+        public val metadata: RpcOperationMetadata.Transaction,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Origination(
+        public val content: RpcOperationContent.Origination,
+        public val metadata: RpcOperationMetadata.Origination,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class Delegation(
+        public val content: RpcOperationContent.Delegation,
+        public val metadata: RpcOperationMetadata.Delegation,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class SetDepositsLimit(
+        public val content: RpcOperationContent.SetDepositsLimit,
+        public val metadata: RpcOperationMetadata.SetDepositsLimit,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    @Serializable
+    public data class RegisterGlobalConstant(
+        public val content: RpcOperationContent.RegisterGlobalConstant,
+        public val metadata: RpcOperationMetadata.RegisterGlobalConstant,
+    ) : RpcOperationContentWithResult() {
+        public companion object {}
+    }
+
+    public companion object {}
 }
