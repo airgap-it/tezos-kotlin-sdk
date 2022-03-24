@@ -3,7 +3,7 @@ package it.airgap.tezos.rpc.type.operation
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.micheline.MichelineNode
-import it.airgap.tezos.rpc.internal.serializer.RpcOperationContentWithResultSerializer
+import it.airgap.tezos.rpc.internal.serializer.*
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.contract.RpcParameters
 import it.airgap.tezos.rpc.type.contract.RpcScript
@@ -244,7 +244,7 @@ public sealed class RpcOperationContent {
 @Serializable(with = RpcOperationContentWithResultSerializer::class)
 public sealed class RpcOperationContentWithResult {
 
-    @Serializable
+    @Serializable(with = RpcEndorsementOperationContentWithResultSerializer::class)
     public data class Endorsement(
         public val content: RpcOperationContent.Endorsement,
         public val metadata: RpcOperationMetadata.Endorsement,
@@ -252,7 +252,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcPreendorsementOperationContentWithResultSerializer::class)
     public data class Preendorsement(
         public val content: RpcOperationContent.Preendorsement,
         public val metadata: RpcOperationMetadata.Preendorsement,
@@ -260,7 +260,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcSeedNonceRevelationOperationContentWithResultSerializer::class)
     public data class SeedNonceRevelation(
         public val content: RpcOperationContent.SeedNonceRevelation,
         public val metadata: RpcOperationMetadata.SeedNonceRevelation,
@@ -268,7 +268,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcDoubleEndorsementEvidenceOperationContentWithResultSerializer::class)
     public data class DoubleEndorsementEvidence(
         public val content: RpcOperationContent.DoubleEndorsementEvidence,
         public val metadata: RpcOperationMetadata.DoubleEndorsementEvidence,
@@ -276,7 +276,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcDoublePreendorsementEvidenceOperationContentWithResultSerializer::class)
     public data class DoublePreendorsementEvidence(
         public val content: RpcOperationContent.DoublePreendorsementEvidence,
         public val metadata: RpcOperationMetadata.DoublePreendorsementEvidence,
@@ -284,7 +284,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcDoubleBakingEvidenceOperationContentWithResultSerializer::class)
     public data class DoubleBakingEvidence(
         public val content: RpcOperationContent.DoubleBakingEvidence,
         public val metadata: RpcOperationMetadata.DoubleBakingEvidence,
@@ -292,7 +292,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcActivateAccountOperationContentWithResultSerializer::class)
     public data class ActivateAccount(
         public val content: RpcOperationContent.ActivateAccount,
         public val metadata: RpcOperationMetadata.ActivateAccount,
@@ -300,7 +300,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcProposalsOperationContentWithResultSerializer::class)
     public data class Proposals(
         public val content: RpcOperationContent.Proposals,
         public val metadata: RpcOperationMetadata.Proposals,
@@ -308,7 +308,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcBallotOperationContentWithResultSerializer::class)
     public data class Ballot(
         public val content: RpcOperationContent.Ballot,
         public val metadata: RpcOperationMetadata.Ballot,
@@ -316,7 +316,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcRevealOperationContentWithResultSerializer::class)
     public data class Reveal(
         public val content: RpcOperationContent.Reveal,
         public val metadata: RpcOperationMetadata.Reveal,
@@ -324,7 +324,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcTransactionOperationContentWithResultSerializer::class)
     public data class Transaction(
         public val content: RpcOperationContent.Transaction,
         public val metadata: RpcOperationMetadata.Transaction,
@@ -332,7 +332,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcOriginationOperationContentWithResultSerializer::class)
     public data class Origination(
         public val content: RpcOperationContent.Origination,
         public val metadata: RpcOperationMetadata.Origination,
@@ -340,7 +340,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcDelegationOperationContentWithResultSerializer::class)
     public data class Delegation(
         public val content: RpcOperationContent.Delegation,
         public val metadata: RpcOperationMetadata.Delegation,
@@ -348,7 +348,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcSetDepositsLimitOperationContentWithResultSerializer::class)
     public data class SetDepositsLimit(
         public val content: RpcOperationContent.SetDepositsLimit,
         public val metadata: RpcOperationMetadata.SetDepositsLimit,
@@ -356,7 +356,7 @@ public sealed class RpcOperationContentWithResult {
         public companion object {}
     }
 
-    @Serializable
+    @Serializable(with = RpcRegisterGlobalConstantOperationContentWithResultSerializer::class)
     public data class RegisterGlobalConstant(
         public val content: RpcOperationContent.RegisterGlobalConstant,
         public val metadata: RpcOperationMetadata.RegisterGlobalConstant,
