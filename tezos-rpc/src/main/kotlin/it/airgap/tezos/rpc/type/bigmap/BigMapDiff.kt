@@ -11,7 +11,7 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 public sealed class RpcBigMapDiff {
 
     @Transient
-    public open val bigNum: String? = null
+    public open val bigMap: String? = null
 
     @Transient
     public open val keyHash: @Contextual ScriptExprHash? = null
@@ -37,8 +37,8 @@ public sealed class RpcBigMapDiff {
     @Serializable
     @SerialName(Update.KIND)
     public data class Update(
-        override val bigNum: String,
-        override val keyHash: @Contextual ScriptExprHash,
+        @SerialName("big_map") override val bigMap: String,
+        @SerialName("key_hash") override val keyHash: @Contextual ScriptExprHash,
         override val key: MichelineNode,
         override val value: MichelineNode? = null,
     ) : RpcBigMapDiff() {
@@ -49,7 +49,7 @@ public sealed class RpcBigMapDiff {
 
     @Serializable
     @SerialName(Remove.KIND)
-    public data class Remove(override val bigNum: String) : RpcBigMapDiff() {
+    public data class Remove(@SerialName("big_map") override val bigMap: String) : RpcBigMapDiff() {
         public companion object {
             internal const val KIND = "remove"
         }
@@ -58,8 +58,8 @@ public sealed class RpcBigMapDiff {
     @Serializable
     @SerialName(Copy.KIND)
     public data class Copy(
-        override val sourceBigMap: String,
-        override val destinationBigMap: String,
+        @SerialName("source_big_map") override val sourceBigMap: String,
+        @SerialName("destination_big_map") override val destinationBigMap: String,
     ) : RpcBigMapDiff() {
         public companion object {
             internal const val KIND = "copy"
@@ -69,9 +69,9 @@ public sealed class RpcBigMapDiff {
     @Serializable
     @SerialName(Alloc.KIND)
     public data class Alloc(
-        override val bigNum: String,
-        override val keyType: MichelineNode,
-        override val valueType: MichelineNode,
+        @SerialName("big_map") override val bigMap: String,
+        @SerialName("key_type") override val keyType: MichelineNode,
+        @SerialName("value_type") override val valueType: MichelineNode,
     ) : RpcBigMapDiff() {
         public companion object {
             internal const val KIND = "alloc"

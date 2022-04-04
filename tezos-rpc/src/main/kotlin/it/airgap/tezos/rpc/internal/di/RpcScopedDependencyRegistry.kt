@@ -8,6 +8,7 @@ import it.airgap.tezos.core.internal.utils.failWithIllegalState
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 
 internal class RpcScopedDependencyRegistry(
     httpClientProvider: HttpClientProvider,
@@ -16,19 +17,19 @@ internal class RpcScopedDependencyRegistry(
 
     // -- serialization --
 
-    override val json: Json by lazyWeak { Json { /* TODO: configuration */ } }
+    override val json: Json by lazyWeak {
+        Json {
+            serializersModule = SerializersModule {
+                /* TODO: Configuration */
+            }
+            ignoreUnknownKeys = true
+            prettyPrint = false
+        }
+    }
 
     // -- network --
 
-    override val httpClient: HttpClient by lazyWeak {
-        HttpClient(
-            httpClientProvider,
-            Json {
-                ignoreUnknownKeys = true
-                prettyPrint = true
-            }
-        )
-    }
+    override val httpClient: HttpClient by lazyWeak { HttpClient(httpClientProvider, json) }
 }
 
 @InternalTezosSdkApi
