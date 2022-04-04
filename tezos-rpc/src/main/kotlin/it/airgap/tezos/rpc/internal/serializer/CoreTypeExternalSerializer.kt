@@ -6,8 +6,6 @@ import it.airgap.tezos.core.fromString
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
-import it.airgap.tezos.rpc.internal.utils.KBaseEncodedSerializer
-import it.airgap.tezos.rpc.internal.utils.KEncodedSerializer
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -20,6 +18,7 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import kotlin.reflect.KClass
 
 // -- HexString --
 
@@ -83,27 +82,42 @@ internal object TimestampMillisSerializer : KSerializer<Timestamp.Millis> {
 
 // -- Encoded --
 
-internal object AddressSerializer : KBaseEncodedSerializer<Address>(Address.Companion::fromString, Address::class)
-internal object PublicKeyHashEncodedSerializer : KBaseEncodedSerializer<PublicKeyHashEncoded>(PublicKeyHashEncoded.Companion::fromString, PublicKeyHashEncoded::class)
-internal object BlindedPublicKeyHashEncodedSerializer : KBaseEncodedSerializer<BlindedPublicKeyHashEncoded>(BlindedPublicKeyHashEncoded.Companion::fromString, BlindedPublicKeyHashEncoded::class)
-internal object SignatureEncodedSerializer : KBaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)
+internal object AddressSerializer : BaseEncodedSerializer<Address>(Address.Companion::fromString, Address::class)
+internal object PublicKeyHashEncodedSerializer : BaseEncodedSerializer<PublicKeyHashEncoded>(PublicKeyHashEncoded.Companion::fromString, PublicKeyHashEncoded::class)
+internal object BlindedPublicKeyHashEncodedSerializer : BaseEncodedSerializer<BlindedPublicKeyHashEncoded>(BlindedPublicKeyHashEncoded.Companion::fromString, BlindedPublicKeyHashEncoded::class)
+internal object SignatureEncodedSerializer : BaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)
 
-internal object BlockHashSerializer : KEncodedSerializer<BlockHash>(BlockHash, BlockHash::class)
-internal object BlockPayloadHashSerializer : KEncodedSerializer<BlockPayloadHash>(BlockPayloadHash, BlockPayloadHash::class)
-internal object ChainIdSerializer : KEncodedSerializer<ChainId>(ChainId, ChainId::class)
-internal object ContractHashSerializer : KEncodedSerializer<ContractHash>(ContractHash, ContractHash::class)
-internal object ContextHashSerializer : KEncodedSerializer<ContextHash>(ContextHash, ContextHash::class)
-internal object CryptoboxPublicKeyHashSerializer : KEncodedSerializer<CryptoboxPublicKeyHash>(CryptoboxPublicKeyHash, CryptoboxPublicKeyHash::class)
-internal object Ed25519BlindedPublicKeyHashSerializer : KEncodedSerializer<Ed25519BlindedPublicKeyHash>(Ed25519BlindedPublicKeyHash, Ed25519BlindedPublicKeyHash::class)
-internal object Ed25519PublicKeyHashSerializer : KEncodedSerializer<Ed25519PublicKeyHash>(Ed25519PublicKeyHash, Ed25519PublicKeyHash::class)
-internal object Ed25519SignatureSerializer : KEncodedSerializer<Ed25519Signature>(Ed25519Signature, Ed25519Signature::class)
-internal object GenericSignatureSerializer : KEncodedSerializer<GenericSignature>(GenericSignature, GenericSignature::class)
-internal object NonceHashSerializer : KEncodedSerializer<NonceHash>(NonceHash, NonceHash::class)
-internal object OperationHashSerializer : KEncodedSerializer<OperationHash>(OperationHash, OperationHash::class)
-internal object OperationListListHashSerializer : KEncodedSerializer<OperationListListHash>(OperationListListHash, OperationListListHash::class)
-internal object P256PublicKeyHashSerializer : KEncodedSerializer<P256PublicKeyHash>(P256PublicKeyHash, P256PublicKeyHash::class)
-internal object P256SignatureSerializer : KEncodedSerializer<P256Signature>(P256Signature, P256Signature::class)
-internal object ProtocolHashSerializer : KEncodedSerializer<ProtocolHash>(ProtocolHash, ProtocolHash::class)
-internal object ScriptExprHashSerializer : KEncodedSerializer<ScriptExprHash>(ScriptExprHash, ScriptExprHash::class)
-internal object Secp256K1PublicKeyHashSerializer : KEncodedSerializer<Secp256K1PublicKeyHash>(Secp256K1PublicKeyHash, Secp256K1PublicKeyHash::class)
-internal object Secp256K1SignatureSerializer : KEncodedSerializer<Secp256K1Signature>(Secp256K1Signature, Secp256K1Signature::class)
+internal object BlockHashSerializer : EncodedSerializer<BlockHash>(BlockHash, BlockHash::class)
+internal object BlockPayloadHashSerializer : EncodedSerializer<BlockPayloadHash>(BlockPayloadHash, BlockPayloadHash::class)
+internal object ChainIdSerializer : EncodedSerializer<ChainId>(ChainId, ChainId::class)
+internal object ContractHashSerializer : EncodedSerializer<ContractHash>(ContractHash, ContractHash::class)
+internal object ContextHashSerializer : EncodedSerializer<ContextHash>(ContextHash, ContextHash::class)
+internal object CryptoboxPublicKeyHashSerializer : EncodedSerializer<CryptoboxPublicKeyHash>(CryptoboxPublicKeyHash, CryptoboxPublicKeyHash::class)
+internal object Ed25519BlindedPublicKeyHashSerializer : EncodedSerializer<Ed25519BlindedPublicKeyHash>(Ed25519BlindedPublicKeyHash, Ed25519BlindedPublicKeyHash::class)
+internal object Ed25519PublicKeyHashSerializer : EncodedSerializer<Ed25519PublicKeyHash>(Ed25519PublicKeyHash, Ed25519PublicKeyHash::class)
+internal object Ed25519SignatureSerializer : EncodedSerializer<Ed25519Signature>(Ed25519Signature, Ed25519Signature::class)
+internal object GenericSignatureSerializer : EncodedSerializer<GenericSignature>(GenericSignature, GenericSignature::class)
+internal object NonceHashSerializer : EncodedSerializer<NonceHash>(NonceHash, NonceHash::class)
+internal object OperationHashSerializer : EncodedSerializer<OperationHash>(OperationHash, OperationHash::class)
+internal object OperationListListHashSerializer : EncodedSerializer<OperationListListHash>(OperationListListHash, OperationListListHash::class)
+internal object P256PublicKeyHashSerializer : EncodedSerializer<P256PublicKeyHash>(P256PublicKeyHash, P256PublicKeyHash::class)
+internal object P256SignatureSerializer : EncodedSerializer<P256Signature>(P256Signature, P256Signature::class)
+internal object ProtocolHashSerializer : EncodedSerializer<ProtocolHash>(ProtocolHash, ProtocolHash::class)
+internal object ScriptExprHashSerializer : EncodedSerializer<ScriptExprHash>(ScriptExprHash, ScriptExprHash::class)
+internal object Secp256K1PublicKeyHashSerializer : EncodedSerializer<Secp256K1PublicKeyHash>(Secp256K1PublicKeyHash, Secp256K1PublicKeyHash::class)
+internal object Secp256K1SignatureSerializer : EncodedSerializer<Secp256K1Signature>(Secp256K1Signature, Secp256K1Signature::class)
+
+internal open class BaseEncodedSerializer<E : Encoded>(
+    private val createValue: (String) -> E,
+    kClass: KClass<E>,
+) : KSerializer<E> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(kClass.toString(), PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): E = createValue(decoder.decodeString())
+
+    override fun serialize(encoder: Encoder, value: E) {
+        encoder.encodeString(value.base58)
+    }
+}
+
+internal open class EncodedSerializer<E>(kind: MetaEncoded.Kind<E>, kClass: KClass<E>) : BaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E>
