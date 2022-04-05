@@ -14,6 +14,7 @@ import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.replacingAt
 import it.airgap.tezos.core.internal.utils.startsWith
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
@@ -201,7 +202,7 @@ public class MichelinePacker(
         prePackStringToBytes(value, schema) { SignatureEncoded.fromString(it, stringToSignatureConverter).encodeToBytes(signatureBytesCoder) }
 
     private fun prePackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToInt(value, schema, timestampBigIntCoder::encode)
+        prePackStringToInt(value, schema) { timestampBigIntCoder.encode(Timestamp.Rfc3339(it)) }
 
     private fun prePackStringToBytes(value: MichelineNode, schema: MichelinePrimitiveApplication, prePackMethod: (String) -> ByteArray): MichelineNode =
         when (value) {
@@ -413,7 +414,7 @@ public class MichelinePacker(
         postUnpackBytesToString(value, schema) { SignatureEncoded.decodeFromBytes(it, signatureBytesCoder).base58 }
 
     private fun postUnpackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBigIntToString(value, schema, timestampBigIntCoder::decode)
+        postUnpackBigIntToString(value, schema) { timestampBigIntCoder.decode(it).toRfc3339().dateString }
 
     private fun postUnpackBytesToString(value: MichelineNode, schema: MichelinePrimitiveApplication, postUnpackMethod: (ByteArray) -> String): MichelineNode =
         when (value) {

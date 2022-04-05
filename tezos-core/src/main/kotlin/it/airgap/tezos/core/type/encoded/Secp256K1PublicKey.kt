@@ -3,16 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* sppk(55) */
 
 @JvmInline
-public value class Secp256K1PublicKey(override val base58: String) : PublicKeyEncoded<Secp256K1PublicKey> {
-
-    override val kind: PublicKeyEncoded.Kind<Secp256K1PublicKey>
-        get() = Companion
+public value class Secp256K1PublicKey(override val base58: String) : PublicKeyEncoded, MetaPublicKeyEncoded<Secp256K1PublicKey> {
 
     init {
         require(isValid(base58)) { "Invalid secp256k1 public key." }
     }
 
-    public companion object : PublicKeyEncoded.Kind<Secp256K1PublicKey> {
+    override val kind: MetaPublicKeyEncoded.Kind<Secp256K1PublicKey>
+        get() = Companion
+
+    override val meta: MetaPublicKeyEncoded<*>
+        get() = this
+
+    override val encoded: PublicKeyEncoded
+        get() = this
+
+    public companion object : MetaPublicKeyEncoded.Kind<Secp256K1PublicKey> {
         override val base58Prefix: String = "sppk"
         override val base58Bytes: ByteArray = byteArrayOf(3, (254).toByte(), (226).toByte(), 86)
         override val base58Length: Int = 55

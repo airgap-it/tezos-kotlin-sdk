@@ -3,47 +3,24 @@ package it.airgap.tezos.core.internal.coder
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import java.time.DateTimeException
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import it.airgap.tezos.core.type.Timestamp
 
 @InternalTezosSdkApi
-public class TimestampBigIntCoder : Coder<String, BigInt> {
-    override fun encode(value: String): BigInt {
-        val timestamp = dateToTimestamp(value)
-        return BigInt.valueOf(timestamp)
+public class TimestampBigIntCoder : Coder<Timestamp, BigInt> {
+    override fun encode(value: Timestamp): BigInt {
+        val long = value.toMillis().long
+        return BigInt.valueOf(long)
     }
 
-    override fun decode(value: BigInt): String {
+    override fun decode(value: BigInt): Timestamp {
         try {
-            val timestamp = value.toLongExact()
-            return timestampToDate(timestamp)
+            val long = value.toLongExact()
+            return Timestamp.Millis(long).toRfc3339()
         } catch (e: ArithmeticException) {
-            failWithInvalidTimestamp(value)
-        }
-    }
-
-    private fun dateToTimestamp(value: String): Long {
-        // replace with https://github.com/Kotlin/kotlinx-datetime once it's stable
-        try {
-            return Instant.parse(value).toEpochMilli()
-        } catch (e: DateTimeParseException) {
-            failWithInvalidTimestamp(value)
-        }
-    }
-
-    private fun timestampToDate(value: Long): String {
-        // replace with https://github.com/Kotlin/kotlinx-datetime once it's stable
-        try {
-            val instant = Instant.ofEpochMilli(value)
-            return DateTimeFormatter.ISO_INSTANT.format(instant)
-        } catch (e: DateTimeException) {
             failWithInvalidTimestamp(value)
         }
     }
 
     private fun failWithInvalidTimestamp(value: String): Nothing = failWithIllegalArgument("Value `$value` is not a valid Tezos timestamp.")
     private fun failWithInvalidTimestamp(value: BigInt): Nothing = failWithInvalidTimestamp(value.toString())
-    private fun failWithInvalidTimestamp(value: Long): Nothing = failWithInvalidTimestamp(value.toString())
 }

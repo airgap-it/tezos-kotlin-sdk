@@ -42,7 +42,7 @@ class StringToImplicitAddressConverterTest {
     @Test
     fun `should convert string to ImplicitAddress`() {
         addressesWithStrings.forEach {
-            assertEquals(it.first, stringToImplicitAddressConverter.convert(it.second))
+            assertEquals(it.first, stringToImplicitAddressConverter.convert(it.second).encoded)
             assertEquals(it.first, ImplicitAddress.fromString(it.second))
             assertEquals(it.first, ImplicitAddress.fromString(it.second, stringToImplicitAddressConverter))
         }
@@ -57,7 +57,7 @@ class StringToImplicitAddressConverterTest {
         }
     }
 
-    private val addressesWithStrings: List<Pair<ImplicitAddress<*>, String>>
+    private val addressesWithStrings: List<Pair<ImplicitAddress, String>>
         get() = listOf(
             Ed25519PublicKeyHash("tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk") to "tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk",
             Secp256K1PublicKeyHash("tz2VyE3NHiJL5bFjjJHGsbbP4dTZ6rFzHNiw") to "tz2VyE3NHiJL5bFjjJHGsbbP4dTZ6rFzHNiw",

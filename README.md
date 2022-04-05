@@ -26,6 +26,7 @@ The plugin modules are optional and come with additional functionality. They sho
 |--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
 | `:tezos-michelson` | Provides [Michelson](https://tezos.gitlab.io/active/michelson.html) and [Micheline](https://tezos.gitlab.io/shell/micheline.html) types and actions, e.g. `pack`/`unpack`.                                    | `:tezos-core`       |
 | `:tezos-operation` | Provides Tezos Operation structures as defined in [the P2P message format](https://tezos.gitlab.io/shell/p2p_api.html) and actions that can be performed on them, e.g. `forge`/`unforge` and `sign`/`verify`. | `:tezos-core`       |
+| `:tezos-rpc`       | Provides a Tezos RPC client which should be used to interact with Tezos nodes.                                                                                                                                | `:tezos-core`       |
 
 ### Default Provider Modules
 The default provider modules are optional and come with default implementations of various components that can be provided externally.

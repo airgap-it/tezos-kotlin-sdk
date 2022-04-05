@@ -53,7 +53,7 @@ class BytesToAddressConverterTest {
     @Test
     fun `should convert bytes to Address`() {
         addressesWithBytes.forEach {
-            assertEquals(it.first, bytesToAddressConverter.convert(it.second))
+            assertEquals(it.first, bytesToAddressConverter.convert(it.second).encoded)
             assertEquals(it.first, Address.fromBytes(it.second))
             assertEquals(it.first, Address.fromBytes(it.second, bytesToAddressConverter))
         }
@@ -68,7 +68,7 @@ class BytesToAddressConverterTest {
         }
     }
 
-    private val addressesWithBytes: List<Pair<Address<*>, ByteArray>>
+    private val addressesWithBytes: List<Pair<Address, ByteArray>>
         get() = listOf(
             Ed25519PublicKeyHash("tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk") to "06a19f8b570c01097efde52239e836dc76c790bb9d38e5".asHexString().toByteArray(),
             Ed25519PublicKeyHash("tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk") to "8b570c01097efde52239e836dc76c790bb9d38e5".asHexString().toByteArray(),

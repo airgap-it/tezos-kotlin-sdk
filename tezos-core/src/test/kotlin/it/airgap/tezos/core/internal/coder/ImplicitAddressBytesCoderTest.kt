@@ -53,7 +53,7 @@ class ImplicitAddressBytesCoderTest {
     @Test
     fun `should encode ImplicitAddress to bytes`() {
         keyHashesWithBytes.forEach {
-            assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first))
+            assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(implicitAddressBytesCoder))
         }
     }
@@ -61,8 +61,8 @@ class ImplicitAddressBytesCoderTest {
     @Test
     fun `should decode ImplicitAddress from bytes`() {
         keyHashesWithBytes.forEach {
-            assertEquals(it.first, implicitAddressBytesCoder.decode(it.second))
-            assertEquals(it.first, implicitAddressBytesCoder.decodeConsuming(it.second.toMutableList()))
+            assertEquals(it.first, implicitAddressBytesCoder.decode(it.second).encoded)
+            assertEquals(it.first, implicitAddressBytesCoder.decodeConsuming(it.second.toMutableList()).encoded)
             assertEquals(it.first, ImplicitAddress.decodeFromBytes(it.second, implicitAddressBytesCoder))
             assertEquals(it.first, ImplicitAddress.decodeConsumingFromBytes(it.second.toMutableList(), implicitAddressBytesCoder))
         }
@@ -88,7 +88,7 @@ class ImplicitAddressBytesCoderTest {
         }
     }
 
-    private val keyHashesWithBytes: List<Pair<ImplicitAddress<*>, ByteArray>>
+    private val keyHashesWithBytes: List<Pair<ImplicitAddress, ByteArray>>
         get() = listOf(
             Ed25519PublicKeyHash("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") to "00d7a60d4e90e8a33ec835159191b14ce4452f12f8".asHexString().toByteArray(),
             Ed25519PublicKeyHash("tz1VmzGTgLxb2qw8tXQvvM5QMRigMMoStTDR") to "006f328fa5c2ea6fd8596b63eafeabf91a78d37ae0".asHexString().toByteArray(),

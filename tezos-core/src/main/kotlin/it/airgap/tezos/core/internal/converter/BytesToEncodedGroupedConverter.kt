@@ -3,11 +3,11 @@ package it.airgap.tezos.core.internal.converter
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.utils.startsWith
-import it.airgap.tezos.core.type.encoded.Encoded
+import it.airgap.tezos.core.type.encoded.MetaEncoded
 
 @InternalTezosSdkApi
-public abstract class BytesToEncodedGroupedConverter<out E : Encoded<E>>(private val base58Check: Base58Check) : Converter<ByteArray, E> {
-    protected abstract val kinds: List<Encoded.Kind<E>>
+public abstract class BytesToEncodedGroupedConverter<out E : MetaEncoded<E>>(private val base58Check: Base58Check) : Converter<ByteArray, E> {
+    protected abstract val kinds: List<MetaEncoded.Kind<E>>
     protected abstract fun failWithInvalidValue(value: ByteArray): Nothing
 
     override fun convert(value: ByteArray): E {
@@ -17,9 +17,9 @@ public abstract class BytesToEncodedGroupedConverter<out E : Encoded<E>>(private
         return kind.createValue(base58)
     }
 
-    private fun ByteArray.prefixed(kind: Encoded.Kind<E>): ByteArray =
+    private fun ByteArray.prefixed(kind: MetaEncoded.Kind<E>): ByteArray =
         if (isPrefixed(kind)) this else kind.base58Bytes + this
 
-    private fun ByteArray.isPrefixed(kind: Encoded.Kind<E>): Boolean =
+    private fun ByteArray.isPrefixed(kind: MetaEncoded.Kind<E>): Boolean =
         startsWith(kind.base58Bytes) && size == kind.base58Bytes.size + kind.bytesLength
 }

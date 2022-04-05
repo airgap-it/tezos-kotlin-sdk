@@ -53,7 +53,7 @@ class PublicKeyBytesCoderTest {
     @Test
     fun `should encode PublicKeyEncoded to bytes`() {
         keysWithBytes.forEach {
-            assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first))
+            assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(publicKeyBytesCoder))
         }
     }
@@ -61,8 +61,8 @@ class PublicKeyBytesCoderTest {
     @Test
     fun `should decode PublicKeyEncoded from bytes`() {
         keysWithBytes.forEach {
-            assertEquals(it.first, publicKeyBytesCoder.decode(it.second))
-            assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()))
+            assertEquals(it.first, publicKeyBytesCoder.decode(it.second).encoded)
+            assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()).encoded)
             assertEquals(it.first, PublicKeyEncoded.decodeFromBytes(it.second, publicKeyBytesCoder))
             assertEquals(it.first, PublicKeyEncoded.decodeConsumingFromBytes(it.second.toMutableList(), publicKeyBytesCoder))
         }
@@ -88,7 +88,7 @@ class PublicKeyBytesCoderTest {
         }
     }
 
-    private val keysWithBytes: List<Pair<PublicKeyEncoded<*>, ByteArray>>
+    private val keysWithBytes: List<Pair<PublicKeyEncoded, ByteArray>>
         get() = listOf(
             Ed25519PublicKey("edpkuHhTYggbo1d3vRJTtoKy9hFnZGc8Vpr6qEzbZMXWV69odaM3a4") to "0055172873cf63b37a6e5b4ef3058fe13bd1885419325730cadc59fa1a0bdf7273".asHexString().toByteArray(),
             Ed25519PublicKey("edpkuD7yUDwnwVyThg8s3THVTem2cvFSub7iJjf4zXMqxoHPcBE1dD") to "004ab2761a1c7560400d0e3c9d26dc14e6368cd33854959e5524855ade324244be".asHexString().toByteArray(),

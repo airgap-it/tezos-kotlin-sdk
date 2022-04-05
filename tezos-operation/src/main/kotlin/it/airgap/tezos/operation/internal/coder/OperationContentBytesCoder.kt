@@ -4,7 +4,9 @@ import it.airgap.tezos.core.decodeConsumingFromBytes
 import it.airgap.tezos.core.encodeToBytes
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.*
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.decodeFromBytes
@@ -17,7 +19,7 @@ import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.fromTagOrNull
 import it.airgap.tezos.operation.header.Fitness
-import it.airgap.tezos.operation.header.FullHeader
+import it.airgap.tezos.operation.header.FullBlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
@@ -31,6 +33,7 @@ public class OperationContentBytesCoder(
     private val signatureBytesCoder: SignatureBytesCoder,
     private val zarithNaturalBytesCoder: ZarithNaturalBytesCoder,
     private val michelineBytesCoder: MichelineBytesCoder,
+    private val timestampBigIntCoder: TimestampBigIntCoder,
     private val tagToOperationContentKindConverter: TagToOperationContentKindConverter,
 ) : ConsumingBytesCoder<OperationContent> {
     override fun encode(value: OperationContent): ByteArray =
@@ -226,11 +229,11 @@ public class OperationContentBytesCoder(
         branchBytes + operationsBytes + signatureBytes
     }
 
-    private fun encodeFullHeader(header: FullHeader): ByteArray = with(header) {
+    private fun encodeFullHeader(header: FullBlockHeader): ByteArray = with(header) {
         val levelBytes = encodeInt32ToBytes(level)
         val protoBytes = encodeUInt8ToBytes(proto)
         val predecessorBytes = predecessor.encodeToBytes(encodedBytesCoder)
-        val timestampBytes = encodeInt64ToBytes(timestamp)
+        val timestampBytes = encodeTimestamp(timestamp)
         val validationPassBytes = encodeUInt8ToBytes(validationPass)
         val operationsHashBytes = operationsHash.encodeToBytes(encodedBytesCoder)
 
@@ -246,7 +249,7 @@ public class OperationContentBytesCoder(
         val seedNonceHashPresence = encodeBooleanToBytes(seedNonceHashBytes.isNotEmpty())
 
         val liquidityBankingEscapeVoteBytes = encodeBooleanToBytes(liquidityBakingEscapeVote)
-        val signatureBytes = signatureBytesCoder.encode(signature)
+        val signatureBytes = signatureBytesCoder.encode(signature.meta)
 
         levelBytes +
                 protoBytes +
@@ -320,6 +323,11 @@ public class OperationContentBytesCoder(
                 Entrypoint.Named.tag + length + bytes
             }
         }
+    }
+
+    private fun encodeTimestamp(timestamp: Timestamp): ByteArray {
+        val long = timestampBigIntCoder.encode(timestamp).toLongExact()
+        return encodeInt64ToBytes(long)
     }
 
     private fun decodeSeedNonceRevelation(bytes: MutableList<Byte>): OperationContent.SeedNonceRevelation {
@@ -555,7 +563,7 @@ public class OperationContentBytesCoder(
 
     private fun <T : OperationContent.Manager> decodeManagerOperation(
         bytes: MutableList<Byte>,
-        create: (source: ImplicitAddress<*>, fee: ZarithNatural, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
+        create: (source: ImplicitAddress, fee: ZarithNatural, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
     ): T {
         val source = ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder)
         val fee = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
@@ -569,16 +577,16 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedEndorsement(bytes: MutableList<Byte>): InlinedEndorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodeEndorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes)
+        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
 
         return InlinedEndorsement(branch, operations, signature)
     }
 
-    private fun decodeFullHeader(bytes: MutableList<Byte>): FullHeader {
+    private fun decodeFullHeader(bytes: MutableList<Byte>): FullBlockHeader {
         val level = decodeConsumingInt32FromBytes(bytes)
         val proto = decodeUInt8(bytes)
         val predecessor = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
-        val timestamp = decodeConsumingInt64FromBytes(bytes)
+        val timestamp = decodeTimestamp(bytes)
         val validationPass = decodeUInt8(bytes)
         val operationsHash = OperationHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
 
@@ -594,9 +602,9 @@ public class OperationContentBytesCoder(
         val seedNonceHash = if (seedNonceHashPresence) NonceHash.decodeConsumingFromBytes(bytes, encodedBytesCoder) else null
 
         val liquidityBankingEscapeVote = decodeBoolean(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes)
+        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
 
-        return FullHeader(
+        return FullBlockHeader(
             level,
             proto,
             predecessor,
@@ -617,7 +625,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedPreendorsement(bytes: MutableList<Byte>): InlinedPreendorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodePreendorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes)
+        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
 
         return InlinedPreendorsement(branch, operations, signature)
     }
@@ -670,6 +678,11 @@ public class OperationContentBytesCoder(
             }
             else -> failWithInvalidEncodedOperationContent()
         }
+
+    private fun decodeTimestamp(bytes: MutableList<Byte>): Timestamp {
+        val bigInt = BigInt.valueOf(decodeConsumingInt64FromBytes(bytes))
+        return timestampBigIntCoder.decode(bigInt)
+    }
 
     private fun decodeUInt8(bytes: MutableList<Byte>): UByte = decodeConsumingUInt8FromBytes(bytes) ?: failWithInvalidEncodedOperationContent()
     private fun decodeBoolean(bytes: MutableList<Byte>): Boolean = decodeConsumingBooleanFromBytes(bytes) ?: failWithInvalidEncodedOperationContent()

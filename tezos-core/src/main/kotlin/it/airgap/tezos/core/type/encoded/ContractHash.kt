@@ -1,18 +1,27 @@
 package it.airgap.tezos.core.type.encoded
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+
 /* KT1(36) */
 
 @JvmInline
-public value class ContractHash(override val base58: String) : OriginatedAddress<ContractHash> {
-
-    override val kind: OriginatedAddress.Kind<ContractHash>
-        get() = Companion
+public value class ContractHash(override val base58: String) : OriginatedAddress, MetaOriginatedAddress<ContractHash> {
 
     init {
         require(isValid(base58)) { "Invalid contract hash." }
     }
 
-    public companion object : OriginatedAddress.Kind<ContractHash> {
+    override val kind: MetaOriginatedAddress.Kind<ContractHash>
+        get() = Companion
+
+    @InternalTezosSdkApi
+    override val meta: MetaOriginatedAddress<*>
+        get() = this
+
+    override val encoded: OriginatedAddress
+        get() = this
+
+    public companion object : MetaOriginatedAddress.Kind<ContractHash> {
         override val base58Prefix: String = "KT1"
         override val base58Bytes: ByteArray = byteArrayOf(2, 90, 121)
         override val base58Length: Int = 36
