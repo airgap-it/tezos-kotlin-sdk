@@ -64,7 +64,7 @@ class GenericSignatureToP256SignatureConverterTest {
         }
     }
 
-    private val signaturesWithGenerics: List<Pair<SignatureEncoded<*>, GenericSignature>>
+    private val signaturesWithGenerics: List<Pair<SignatureEncoded, GenericSignature>>
         get() = listOf(
             P256Signature("p2sigr37wjbaL4XCywZcB3YXdGf7Jz8ibYkTK6VjHXQrPyV98w5Y6S3XJMfV7fdrMfvwqwy2Pryf3eHztYaxCAXUivBupwUEDK") to GenericSignature("sigriu6eW2EbbAX1JqvKwzqmCKvbUVLTL36eisu7xR6m2rbPokn3zS55V4pUhL8EjNXKwWNnjii9LgX9u2Ta5HHeVZvj6kjP"),
         )

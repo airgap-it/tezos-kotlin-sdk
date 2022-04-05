@@ -1,13 +1,28 @@
 package it.airgap.tezos.core.type.encoded
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.startsWith
 
-public sealed interface Encoded<out Self : Encoded<Self>> {
-    public val kind: Kind<Self>
+// -- Encoded --
+
+public sealed interface Encoded {
     public val base58: String
 
-    public sealed interface Kind<out E : Encoded<E>> {
+    @InternalTezosSdkApi
+    public val meta: MetaEncoded<*>
+
+    public companion object {}
+}
+
+// -- MetaEncoded --
+
+@InternalTezosSdkApi
+public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
+    public val kind: Kind<Self>
+    public val encoded: Encoded
+
+    public sealed interface Kind<out E : MetaEncoded<E>> {
         public val base58Prefix: String
         public val base58Bytes: ByteArray
         public val base58Length: Int
@@ -44,6 +59,7 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
                     NonceHash, /* nce(53) */
 
                     Ed25519PublicKeyHash, /* tz1(36) */
+                    Ed25519BlindedPublicKeyHash, /* btz1(37) */
                     Secp256K1PublicKeyHash, /* tz2(36) */
                     P256PublicKeyHash, /* tz3(36) */
                     ContractHash, /* KT1(36) */
@@ -77,6 +93,8 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
 
                     SaplingSpendingKey, /* sask(241) */
                     SaplingAddress, /* zet1(69) */
+
+                    ScriptExprHash, /* expr(54) */
                 )
 
             public fun recognize(string: String): Kind<*>? = values.find { it.isValid(string) }
@@ -84,6 +102,4 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
             public fun recognize(bytes: List<Byte>): Kind<*>? = values.find { it.isValid(bytes) }
         }
     }
-
-    public companion object {}
 }

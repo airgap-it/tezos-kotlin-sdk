@@ -7,7 +7,7 @@ import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
-import it.airgap.tezos.operation.header.FullHeader
+import it.airgap.tezos.operation.header.FullBlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 
@@ -57,8 +57,8 @@ public sealed interface OperationContent {
     }
 
     public data class DoubleBakingEvidence(
-        public val bh1: FullHeader,
-        public val bh2: FullHeader,
+        public val bh1: FullBlockHeader,
+        public val bh2: FullBlockHeader,
     ) : OperationContent {
         public companion object : Kind {
             override val tag: UByte = 3U
@@ -75,7 +75,7 @@ public sealed interface OperationContent {
     }
 
     public data class Proposals(
-        public val source: ImplicitAddress<*>,
+        public val source: ImplicitAddress,
         public val period: Int,
         public val proposals: List<ProtocolHash>,
     ) : OperationContent {
@@ -85,7 +85,7 @@ public sealed interface OperationContent {
     }
 
     public data class Ballot(
-        public val source: ImplicitAddress<*>,
+        public val source: ImplicitAddress,
         public val period: Int,
         public val proposal: ProtocolHash,
         public val ballot: BallotType,
@@ -154,7 +154,7 @@ public sealed interface OperationContent {
     // -- manager --
 
     public sealed interface Manager : OperationContent {
-        public val source: ImplicitAddress<*>
+        public val source: ImplicitAddress
         public val fee: ZarithNatural
         public val counter: ZarithNatural
         public val gasLimit: ZarithNatural
@@ -162,12 +162,12 @@ public sealed interface OperationContent {
     }
 
     public data class Reveal(
-        override val source: ImplicitAddress<*>,
+        override val source: ImplicitAddress,
         override val fee: ZarithNatural,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
-        public val publicKey: PublicKeyEncoded<*>,
+        public val publicKey: PublicKeyEncoded,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 107U
@@ -175,13 +175,13 @@ public sealed interface OperationContent {
     }
 
     public data class Transaction(
-        override val source: ImplicitAddress<*>,
+        override val source: ImplicitAddress,
         override val fee: ZarithNatural,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
         public val amount: ZarithNatural,
-        public val destination: Address<*>,
+        public val destination: Address,
         public val parameters: Parameters? = null,
     ) : Manager {
         public companion object : Kind {
@@ -190,13 +190,13 @@ public sealed interface OperationContent {
     }
 
     public data class Origination(
-        override val source: ImplicitAddress<*>,
+        override val source: ImplicitAddress,
         override val fee: ZarithNatural,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
         public val balance: ZarithNatural,
-        public val delegate: ImplicitAddress<*>? = null,
+        public val delegate: ImplicitAddress? = null,
         public val script: Script,
     ) : Manager {
         public companion object : Kind {
@@ -205,12 +205,12 @@ public sealed interface OperationContent {
     }
 
     public data class Delegation(
-        override val source: ImplicitAddress<*>,
+        override val source: ImplicitAddress,
         override val fee: ZarithNatural,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
-        public val delegate: ImplicitAddress<*>? = null,
+        public val delegate: ImplicitAddress? = null,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 110U
@@ -218,7 +218,7 @@ public sealed interface OperationContent {
     }
 
     public data class RegisterGlobalConstant(
-        override val source: ImplicitAddress<*>,
+        override val source: ImplicitAddress,
         override val fee: ZarithNatural,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
@@ -231,7 +231,7 @@ public sealed interface OperationContent {
     }
 
     public data class SetDepositsLimit(
-        override val source: ImplicitAddress<*>,
+        override val source: ImplicitAddress,
         override val fee: ZarithNatural,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,

@@ -3,12 +3,14 @@ package it.airgap.tezos.core.internal.di
 import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.TimestampBigIntCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.delegate.lazyWeak
 import kotlin.reflect.KClass
 
-internal class CoreDependencyRegistry(private val cryptoProvider: CryptoProvider) : DependencyRegistry {
+internal class CoreDependencyRegistry(
+    cryptoProvider: CryptoProvider,
+    scopedDependencyRegistryFactories: List<DependencyRegistryFactory> = emptyList(),
+) : DependencyRegistry {
 
     // -- scoped --
 
@@ -27,6 +29,10 @@ internal class CoreDependencyRegistry(private val cryptoProvider: CryptoProvider
         return scoped[key] as T?
     }
 
+    init {
+        scopedDependencyRegistryFactories.forEach { addScoped(it(this)) }
+    }
+
     // -- base58 --
 
     override val base58: Base58 by lazyWeak { Base58() }
@@ -35,8 +41,4 @@ internal class CoreDependencyRegistry(private val cryptoProvider: CryptoProvider
     // -- crypto --
 
     override val crypto: Crypto by lazyWeak { Crypto(cryptoProvider) }
-
-    // -- coder --
-
-    override val timestampBigIntCoder: TimestampBigIntCoder = TimestampBigIntCoder()
 }

@@ -3,16 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* GSp(54) */
 
 @JvmInline
-public value class Secp256K1Element(override val base58: String) : Encoded<Secp256K1Element> {
-
-    override val kind: Encoded.Kind<Secp256K1Element>
-        get() = Companion
+public value class Secp256K1Element(override val base58: String) : Encoded, MetaEncoded<Secp256K1Element> {
 
     init {
         require(isValid(base58)) { "Invalid secp256k1 element." }
     }
 
-    public companion object : Encoded.Kind<Secp256K1Element> {
+    override val kind: MetaEncoded.Kind<Secp256K1Element>
+        get() = Companion
+
+    override val meta: MetaEncoded<*>
+        get() = this
+
+    override val encoded: Encoded
+        get() = this
+
+    public companion object : MetaEncoded.Kind<Secp256K1Element> {
         override val base58Prefix: String = "GSp"
         override val base58Bytes: ByteArray = byteArrayOf(5, 92, 0)
         override val base58Length: Int = 54

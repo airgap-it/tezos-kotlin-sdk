@@ -3,12 +3,13 @@ package it.airgap.tezos.core.internal.coder
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.EncodedTag
 import it.airgap.tezos.core.type.encoded.Encoded
+import it.airgap.tezos.core.type.encoded.MetaEncoded
 
 @InternalTezosSdkApi
-public abstract class EncodedGroupBytesCoder<E : Encoded<E>>(private val encodedBytesCoder: EncodedBytesCoder) : ConsumingBytesCoder<E> {
-    protected abstract fun tag(encoded: E): EncodedTag<Encoded.Kind<E>>?
-    protected abstract fun tag(bytes: ByteArray): EncodedTag<Encoded.Kind<E>>?
-    protected abstract fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<Encoded.Kind<E>>?
+public abstract class EncodedGroupBytesCoder<E : MetaEncoded<E>>(private val encodedBytesCoder: EncodedBytesCoder) : ConsumingBytesCoder<E> {
+    protected abstract fun tag(encoded: E): EncodedTag<MetaEncoded.Kind<E>>?
+    protected abstract fun tag(bytes: ByteArray): EncodedTag<MetaEncoded.Kind<E>>?
+    protected abstract fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<MetaEncoded.Kind<E>>?
 
     protected abstract fun failWithInvalidValue(value: E): Nothing
     protected abstract fun failWithInvalidValue(value: ByteArray): Nothing

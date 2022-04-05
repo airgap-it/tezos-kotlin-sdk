@@ -4,7 +4,7 @@ import it.airgap.tezos.core.internal.utils.asHexString
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class EncodedKindTest {
+class MetaEncodedKindTest {
 
     @Test
     fun `should recognize Encoded Kind`() {
@@ -53,9 +53,9 @@ class EncodedKindTest {
             val bytes = it.first.second.asHexString().toByteArray()
             val kind = it.second
 
-            assertEquals(kind, Encoded.Kind.recognize(string))
-            assertEquals(kind, Encoded.Kind.recognize(bytes))
-            assertEquals(kind, Encoded.Kind.recognize(bytes.toList()))
+            assertEquals(kind, MetaEncoded.Kind.recognize(string))
+            assertEquals(kind, MetaEncoded.Kind.recognize(bytes))
+            assertEquals(kind, MetaEncoded.Kind.recognize(bytes.toList()))
         }
     }
 }

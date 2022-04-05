@@ -1,6 +1,6 @@
 object Dependencies {
     private object Version {
-        const val kotlinxSerialization = "1.3.1"
+        const val kotlinxSerialization = "1.3.2"
 
         const val bouncyCastle = "1.70"
 

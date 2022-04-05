@@ -3,16 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* SSp(53) */
 
 @JvmInline
-public value class Secp256K1Scalar(override val base58: String) : ScalarEncoded<Secp256K1Scalar> {
-
-    override val kind: ScalarEncoded.Kind<Secp256K1Scalar>
-        get() = Companion
+public value class Secp256K1Scalar(override val base58: String) : ScalarEncoded, MetaScalarEncoded<Secp256K1Scalar> {
 
     init {
         require(isValid(base58)) { "Invalid secp256k1 scalar." }
     }
 
-    public companion object : ScalarEncoded.Kind<Secp256K1Scalar> {
+    override val kind: MetaScalarEncoded.Kind<Secp256K1Scalar>
+        get() = Companion
+
+    override val meta: MetaScalarEncoded<*>
+        get() = this
+
+    override val encoded: ScalarEncoded
+        get() = this
+
+    public companion object : MetaScalarEncoded.Kind<Secp256K1Scalar> {
         override val base58Prefix: String = "SSp"
         override val base58Bytes: ByteArray = byteArrayOf(38, (248).toByte(), (136).toByte())
         override val base58Length: Int = 53

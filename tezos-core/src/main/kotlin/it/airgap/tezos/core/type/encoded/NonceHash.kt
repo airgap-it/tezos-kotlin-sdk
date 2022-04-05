@@ -3,16 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* nce(53) */
 
 @JvmInline
-public value class NonceHash(override val base58: String) : Encoded<NonceHash> {
-
-    override val kind: Encoded.Kind<NonceHash>
-        get() = Companion
+public value class NonceHash(override val base58: String) : Encoded, MetaEncoded<NonceHash> {
 
     init {
         require(isValid(base58)) { "Invalid nonce hash." }
     }
 
-    public companion object : Encoded.Kind<NonceHash> {
+    override val kind: MetaEncoded.Kind<NonceHash>
+        get() = Companion
+
+    override val meta: MetaEncoded<*>
+        get() = this
+
+    override val encoded: Encoded
+        get() = this
+
+    public companion object : MetaEncoded.Kind<NonceHash> {
         override val base58Prefix: String = "nce"
         override val base58Bytes: ByteArray = byteArrayOf(69, (220).toByte(), (169).toByte())
         override val base58Length: Int = 53

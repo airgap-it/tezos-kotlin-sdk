@@ -50,7 +50,7 @@ class SignatureBytesCoderTest {
     @Test
     fun `should encode SignatureEncoded to bytes`() {
         signaturesWithBytes.forEach {
-            assertContentEquals(it.second, signatureBytesCoder.encode(it.first))
+            assertContentEquals(it.second, signatureBytesCoder.encode(it.first.meta))
             assertContentEquals(it.second, it.first.encodeToBytes(signatureBytesCoder))
         }
     }
@@ -58,8 +58,8 @@ class SignatureBytesCoderTest {
     @Test
     fun `should decode SignatureEncoded from bytes`() {
         bytesWithSignatures.forEach {
-            assertEquals(it.second, signatureBytesCoder.decode(it.first))
-            assertEquals(it.second, signatureBytesCoder.decodeConsuming(it.first.toMutableList()))
+            assertEquals(it.second, signatureBytesCoder.decode(it.first).encoded)
+            assertEquals(it.second, signatureBytesCoder.decodeConsuming(it.first.toMutableList()).encoded)
             assertEquals(it.second, SignatureEncoded.decodeFromBytes(it.first, signatureBytesCoder))
             assertEquals(it.second, SignatureEncoded.decodeConsumingFromBytes(it.first.toMutableList(), signatureBytesCoder))
         }
@@ -84,7 +84,7 @@ class SignatureBytesCoderTest {
         }
     }
 
-    private val signaturesWithBytes: List<Pair<SignatureEncoded<*>, ByteArray>>
+    private val signaturesWithBytes: List<Pair<SignatureEncoded, ByteArray>>
         get() = listOf(
             Ed25519Signature("edsigtxXiEKRsdooVzfiJJL9SLAmaYg233QfsmEjcLuauLFJwE2MChg48rZ544YLDQDWf7nzBmLECC3FT5CW2rEhAFJAitfYk2J") to "bcf9811419cb597b55df14881b8b67f2ea2d17351feae37d652d0f79f6651a9668a6a9c513f4c47c2361514ab1c6524c96601b06bcb2288b15dbc22b02566368".asHexString().toByteArray(),
             Ed25519Signature("edsigtafnpWiNw8aLQ4tgsrQZuuTtiMxHXiGWyvD7QUaTHmJ8xiBS522J4TxKJVvt6oyE9rvSr21cbj3WgfcA8aJMCF762PwGNT") to "15e156a579e57146f934f5f38727eb007dec5e64f7cc270a8e92e043a968b19b2af414174f49307f3810efac23a5931902b24c11c484a2de80cec4ae1b0b0ea1".asHexString().toByteArray(),
@@ -100,7 +100,7 @@ class SignatureBytesCoderTest {
             GenericSignature("sigVqdm9m4wgMVpA8ohYbZaaEgUg9D1h1JKfSHYA82txA6wkT2eefVh92f5HNrhAgXDdHRj6gN9mf9cyP1m6cZKoAKJZFzM3") to "3c01e957560eba18f19acb4fea78468c2d8c72ff5313acfaa3a84800545ee16f144b36d7526e05936916dbee3fdf94d2556923836c6ed2201a2d7bb9cd19fbd8".asHexString().toByteArray(),
         )
 
-    private val bytesWithSignatures: List<Pair<ByteArray, SignatureEncoded<*>>>
+    private val bytesWithSignatures: List<Pair<ByteArray, SignatureEncoded>>
         get() = listOf(
             "61a0d3372d23ad3bdd6bb01a94afedfd34981fd12e9ea33383c940730367f3db212f364d8a616ca145ba9feef447e80eb0c755444cd36ee883de868e289de7b9".asHexString().toByteArray() to GenericSignature("sigam6vGztkR17zFCMSUUh4Jr8YyJ92VppSj4C8rT7hhVf5Lp41XHciua81J3MstkuhPofUdT5X9GymkDb7SeFdVuJSL1y6g"),
             "6286a35a791569ead2bd995aabedd91e9347a68abb99240a4cb4342e712bdd3f6e2815cb3b74aecd44b3fdb76ac06775bed41537cdd20770079b2d94dec98392".asHexString().toByteArray() to GenericSignature("sigasv1LKpPRjxUo5Bz6nCAowqUbAW6srqdrjLUmJSnRA4oWmhhhDYa5y6PgAhbAJTtKmThDFjfLAUXPZg9NjhriJBu8s9Vf"),

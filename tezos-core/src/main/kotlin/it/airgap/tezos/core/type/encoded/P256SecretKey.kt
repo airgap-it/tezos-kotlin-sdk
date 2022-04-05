@@ -3,16 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* p2sk(54) */
 
 @JvmInline
-public value class P256SecretKey(override val base58: String) : SecretKeyEncoded<P256SecretKey> {
-
-    override val kind: SecretKeyEncoded.Kind<P256SecretKey>
-        get() = Companion
+public value class P256SecretKey(override val base58: String) : SecretKeyEncoded, MetaSecretKeyEncoded<P256SecretKey> {
 
     init {
         require(isValid(base58)) { "Invalid P256 secret key." }
     }
 
-    public companion object : SecretKeyEncoded.Kind<P256SecretKey> {
+    override val kind: MetaSecretKeyEncoded.Kind<P256SecretKey>
+        get() = Companion
+
+    override val meta: MetaSecretKeyEncoded<*>
+        get() = this
+
+    override val encoded: SecretKeyEncoded
+        get() = this
+
+    public companion object : MetaSecretKeyEncoded.Kind<P256SecretKey> {
         override val base58Prefix: String = "p2sk"
         override val base58Bytes: ByteArray = byteArrayOf(16, 81, (238).toByte(), (189).toByte())
         override val base58Length: Int = 54
