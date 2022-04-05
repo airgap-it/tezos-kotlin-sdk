@@ -3,6 +3,9 @@ package it.airgap.tezos.rpc.internal.utils
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -46,6 +49,47 @@ internal interface KJsonSerializer<T> : KSerializer<T> {
     private fun failWithExpectedJsonEncoder(actual: KClass<out Encoder>): Nothing =
         throw SerializationException("Expected Json encoder, got $actual.")
 }
+
+// -- String --
+
+internal abstract class KStringSerializer<T : Any>(targetClass: KClass<T>) : KSerializer<T> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(targetClass.toString(), PrimitiveKind.STRING)
+
+    protected abstract fun valueFromString(string: String): T
+    protected abstract fun valueToString(value: T): String
+
+    override fun deserialize(decoder: Decoder): T {
+        val string = decoder.decodeString()
+        return valueFromString(string)
+    }
+
+    override fun serialize(encoder: Encoder, value: T) {
+        val string = valueToString(value)
+        encoder.encodeString(string)
+    }
+}
+
+// -- List<List<T>> --
+
+internal abstract class KListListSerializer<T, S>(elementSerializer: KSerializer<S>) : KSerializer<T> {
+    protected val delegateSerializer = ListSerializer(ListSerializer(elementSerializer))
+    override val descriptor: SerialDescriptor = delegateSerializer.descriptor
+
+    protected abstract fun valueFromListList(list: List<List<S>>): T
+    protected abstract fun valueToListList(value: T): List<List<S>>
+
+    override fun deserialize(decoder: Decoder): T {
+        val list = delegateSerializer.deserialize(decoder)
+        return valueFromListList(list)
+    }
+
+    override fun serialize(encoder: Encoder, value: T) {
+        val list = valueToListList(value)
+        encoder.encodeSerializableValue(delegateSerializer, list)
+    }
+}
+
+// -- extensions --
 
 @OptIn(ExperimentalSerializationApi::class)
 public val SerialDescriptor.elementIndices: Iterable<Int>

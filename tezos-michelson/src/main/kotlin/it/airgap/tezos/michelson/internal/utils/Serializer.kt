@@ -1,7 +1,5 @@
 package it.airgap.tezos.michelson.internal.utils
 
-import it.airgap.tezos.michelson.micheline.MichelineNode
-import it.airgap.tezos.michelson.micheline.MichelineSequence
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
@@ -12,6 +10,8 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
 import kotlin.reflect.KClass
+
+// -- JSON --
 
 internal interface KJsonSerializer<T> : KSerializer<T> {
     override fun deserialize(decoder: Decoder): T {
@@ -38,6 +38,8 @@ internal interface KJsonSerializer<T> : KSerializer<T> {
         throw SerializationException("Expected Json encoder, got $actual.")
 }
 
+// -- List<T> --
+
 internal abstract class KListSerializer<T, S>(elementSerializer: KSerializer<S>) : KSerializer<T> {
     protected val delegateSerializer = ListSerializer(elementSerializer)
     override val descriptor: SerialDescriptor = delegateSerializer.descriptor
@@ -46,11 +48,12 @@ internal abstract class KListSerializer<T, S>(elementSerializer: KSerializer<S>)
     protected abstract fun valueToList(value: T): List<S>
 
     override fun deserialize(decoder: Decoder): T {
-        val nodes = delegateSerializer.deserialize(decoder)
-        return valueFromList(nodes)
+        val list = delegateSerializer.deserialize(decoder)
+        return valueFromList(list)
     }
 
     override fun serialize(encoder: Encoder, value: T) {
-        encoder.encodeSerializableValue(delegateSerializer, valueToList(value))
+        val list = valueToList(value)
+        encoder.encodeSerializableValue(delegateSerializer, list)
     }
 }

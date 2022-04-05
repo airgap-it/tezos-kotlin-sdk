@@ -4,6 +4,7 @@ import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.data.GetBigMapValueResponse
 import it.airgap.tezos.rpc.active.data.GetBigMapValuesResponse
 import it.airgap.tezos.rpc.active.data.GetBlockResponse
+import it.airgap.tezos.rpc.active.data.GetConstants
 import it.airgap.tezos.rpc.http.HttpHeader
 
 // https://tezos.gitlab.io/active/rpc.html
@@ -31,4 +32,8 @@ public interface ActiveRpc {
         key: ScriptExprHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetBigMapValueResponse
+
+    // -- ../<block_id>/context/constants --
+
+    public suspend fun getConstants(chainId: String, blockId: String, headers: List<HttpHeader> = emptyList()): GetConstants
 }
