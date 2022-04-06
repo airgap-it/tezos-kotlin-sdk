@@ -196,4 +196,15 @@ public interface ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateVotingPowerResponse
+
+    // -- ../<block_id>/context/sapling --
+
+    public suspend fun getSaplingStateDiff(
+        chainId: String,
+        blockId: String,
+        stateId: String,
+        commitmentOffset: ULong? = null,
+        nullifierOffset: ULong? = null,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetSaplingStateDiffResponse
 }

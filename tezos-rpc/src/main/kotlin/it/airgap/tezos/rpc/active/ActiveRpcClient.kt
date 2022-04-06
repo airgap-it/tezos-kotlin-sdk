@@ -36,7 +36,7 @@ internal class ActiveRpcClient(
             parameters = buildList {
                 offset?.let { add("offset" to it.toString()) }
                 length?.let { add("length" to it.toString()) }
-            }
+            },
         )
 
     override suspend fun getBigMapValue(
@@ -136,7 +136,7 @@ internal class ActiveRpcClient(
             parameters = buildList {
                 commitmentOffset?.let { add("offset_commitment" to it.toString()) }
                 nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
-            }
+            },
         )
 
     override suspend fun getContractStorage(
@@ -244,4 +244,24 @@ internal class ActiveRpcClient(
         headers: List<HttpHeader>,
     ): GetDelegateVotingPowerResponse =
         httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/voting_power", headers)
+
+    // -- ../<block_id>/context/sapling --
+
+    override suspend fun getSaplingStateDiff(
+        chainId: String,
+        blockId: String,
+        stateId: String,
+        commitmentOffset: ULong?,
+        nullifierOffset: ULong?,
+        headers: List<HttpHeader>,
+    ): GetSaplingStateDiffResponse =
+        httpClient.get(
+            nodeUrl,
+            "/chains/$chainId/blocks/$blockId/context/sapling/$stateId/get_diff",
+            headers,
+            parameters = buildList {
+                commitmentOffset?.let { add("offset_commitment" to it.toString()) }
+                nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
+            },
+        )
 }
