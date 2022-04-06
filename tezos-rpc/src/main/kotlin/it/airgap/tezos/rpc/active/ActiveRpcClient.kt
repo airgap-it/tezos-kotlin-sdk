@@ -6,6 +6,8 @@ import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
+import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
+import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
 internal class ActiveRpcClient(
     private val nodeUrl: String,
@@ -273,4 +275,32 @@ internal class ActiveRpcClient(
         headers: List<HttpHeader>,
     ): GetBlockHeaderResponse =
         httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/header", headers)
+
+    // -- ../<block_id>/helpers --
+
+    override suspend fun preapplyOperations(
+        chainId: String,
+        blockId: String,
+        operations: List<RpcApplicableOperation>,
+        headers: List<HttpHeader>,
+    ): PreapplyOperationsResponse =
+        httpClient.post(
+            nodeUrl,
+            "/chains/$chainId/blocks/$blockId/helpers/preapply/operations",
+            headers,
+            request = PreapplyOperationsRequest(operations),
+        )
+
+    override suspend fun runOperation(
+        chainId: String,
+        blockId: String,
+        operation: RpcRunnableOperation,
+        headers: List<HttpHeader>,
+    ): RunOperationResponse =
+        httpClient.post(
+            nodeUrl,
+            "/chains/$chainId/blocks/$blockId/helpers/scripts/run_operation",
+            headers,
+            request = RunOperationRequest(operation)
+        )
 }

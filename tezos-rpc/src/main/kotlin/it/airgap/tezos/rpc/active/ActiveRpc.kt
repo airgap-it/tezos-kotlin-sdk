@@ -5,6 +5,8 @@ import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
+import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
 // https://tezos.gitlab.io/active/rpc.html
 public interface ActiveRpc {
@@ -215,4 +217,20 @@ public interface ActiveRpc {
         blockId: String,
         headers: List<HttpHeader> = emptyList(),
     ): GetBlockHeaderResponse
+
+    // -- ../<block_id>/helpers --
+
+    public suspend fun preapplyOperations(
+        chainId: String,
+        blockId: String,
+        operations: List<RpcApplicableOperation>,
+        headers: List<HttpHeader> = emptyList(),
+    ): PreapplyOperationsResponse
+
+    public suspend fun runOperation(
+        chainId: String,
+        blockId: String,
+        operation: RpcRunnableOperation,
+        headers: List<HttpHeader> = emptyList(),
+    ): RunOperationResponse
 }
