@@ -8,9 +8,9 @@ import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.RpcAcl
-import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
+import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 
 // https://tezos.gitlab.io/shell/rpc.html
 public interface ShellRpc {
@@ -70,6 +70,6 @@ public interface ShellRpc {
     public suspend fun getPeers(filter: RpcPeerState? = null, headers: List<HttpHeader> = emptyList()): GetPeersResponse
     public suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): GetPeerResponse
     public suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader> = emptyList()): ChangePeerPermissionResponse
-    public suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): BannedPeerResponse
+    public suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader> = emptyList()): GetPeerBannedStatusResponse
     public suspend fun getPeerEvents(peerId: CryptoboxPublicKeyHash, monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()): GetPeerEventsResponse
 }

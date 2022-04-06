@@ -30,13 +30,13 @@ public value class GetContractBalanceResponse(public val balance: String)
 
 @Serializable
 @JvmInline
-public value class GetContractCounterResponse(public val counter: String)
+public value class GetContractCounterResponse(public val counter: String? = null)
 
 // -- /<contract_id>/delegate --
 
 @Serializable
 @JvmInline
-public value class GetContractDelegateResponse(public val delegate: @Contextual ImplicitAddress)
+public value class GetContractDelegateResponse(public val delegate: @Contextual ImplicitAddress? = null)
 
 // -- /<contract_id>/entrypoints --
 
@@ -62,7 +62,7 @@ public value class GetContractManagerResponse(public val manager: String)
 
 @Serializable
 @JvmInline
-public value class GetContractScriptResponse(public val script: RpcScript)
+public value class GetContractScriptResponse(public val script: RpcScript? = null)
 
 // -- /<contract_id>/single_sapling_get_diff --
 

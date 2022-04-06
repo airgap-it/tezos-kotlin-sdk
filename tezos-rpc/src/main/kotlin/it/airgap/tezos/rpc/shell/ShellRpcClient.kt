@@ -9,9 +9,9 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.shell.data.*
 import it.airgap.tezos.rpc.type.RpcAcl
-import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
+import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -267,7 +267,7 @@ internal class ShellRpcClient(
             request = ChangePeerPermissionRequest(acl),
         )
 
-    override suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): BannedPeerResponse =
+    override suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): GetPeerBannedStatusResponse =
         httpClient.get(nodeUrl, "/network/peers/${peerId.base58}/banned", headers)
 
     override suspend fun getPeerEvents(

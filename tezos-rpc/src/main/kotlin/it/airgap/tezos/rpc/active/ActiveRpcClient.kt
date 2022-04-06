@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.active
 
 import it.airgap.tezos.core.type.encoded.ContractHash
+import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -77,7 +78,7 @@ internal class ActiveRpcClient(
         contractId: ContractHash,
         headers: List<HttpHeader>,
     ): GetContractCounterResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/counter", headers)
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/counter", headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractDelegate(
         chainId: String,
@@ -85,7 +86,7 @@ internal class ActiveRpcClient(
         contractId: ContractHash,
         headers: List<HttpHeader>,
     ): GetContractDelegateResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/delegate", headers)
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/delegate", headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractEntrypoints(
         chainId: String,
@@ -118,7 +119,7 @@ internal class ActiveRpcClient(
         contractId: ContractHash,
         headers: List<HttpHeader>,
     ): GetContractScriptResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/script", headers)
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/script", headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractSaplingStateDiff(
         chainId: String,
@@ -145,4 +146,102 @@ internal class ActiveRpcClient(
         headers: List<HttpHeader>,
     ): GetContractStorageResponse =
         httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/storage", headers)
+
+    // -- ../<block_id>/context/delegates --
+
+    override suspend fun getDelegateDetails(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateDetailsResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}", headers)
+
+    override suspend fun getDelegateCurrentFrozenDeposits(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateCurrentFrozenDepositsResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/current_frozen_deposits", headers)
+
+    override suspend fun isDelegateDeactivated(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateDeactivatedStatusResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/deactivated", headers)
+
+    override suspend fun getDelegateDelegatedBalance(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateDelegatedBalanceResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/delegated_balance", headers)
+
+    override suspend fun getDelegateDelegatedContracts(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateDelegatedContractsResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/delegated_contracts", headers)
+
+    override suspend fun getDelegateFrozenDeposits(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateFrozenDepositsResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/frozen_deposits", headers)
+
+    override suspend fun getDelegateFrozenDepositsLimit(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateFrozenDepositsLimitResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/frozen_deposits_limit", headers)
+
+    override suspend fun getDelegateFullBalance(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateFullBalanceResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/full_balance", headers)
+
+    override suspend fun getDelegateGracePeriod(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateGracePeriodResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/grace_period", headers)
+
+    override suspend fun getDelegateParticipation(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateParticipationResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/participation", headers)
+
+    override suspend fun getDelegateStakingBalance(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateStakingBalanceResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/staking_balance", headers)
+
+    override suspend fun getDelegateVotingPower(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader>,
+    ): GetDelegateVotingPowerResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/voting_power", headers)
 }

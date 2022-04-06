@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.active
 
 import it.airgap.tezos.core.type.encoded.ContractHash
+import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -109,4 +110,90 @@ public interface ActiveRpc {
         contractId: ContractHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractStorageResponse
+
+    // -- ../<block_id>/context/delegates --
+
+    public suspend fun getDelegateDetails(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateDetailsResponse
+
+    public suspend fun getDelegateCurrentFrozenDeposits(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateCurrentFrozenDepositsResponse
+
+    public suspend fun isDelegateDeactivated(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateDeactivatedStatusResponse
+
+    public suspend fun getDelegateDelegatedBalance(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateDelegatedBalanceResponse
+
+    public suspend fun getDelegateDelegatedContracts(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateDelegatedContractsResponse
+
+    public suspend fun getDelegateFrozenDeposits(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateFrozenDepositsResponse
+
+    public suspend fun getDelegateFrozenDepositsLimit(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateFrozenDepositsLimitResponse
+
+    public suspend fun getDelegateFullBalance(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateFullBalanceResponse
+
+    public suspend fun getDelegateGracePeriod(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateGracePeriodResponse
+
+    public suspend fun getDelegateParticipation(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateParticipationResponse
+
+    public suspend fun getDelegateStakingBalance(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateStakingBalanceResponse
+
+    public suspend fun getDelegateVotingPower(
+        chainId: String,
+        blockId: String,
+        publicKeyHash: PublicKeyHashEncoded,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetDelegateVotingPowerResponse
 }
