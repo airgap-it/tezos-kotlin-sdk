@@ -1,10 +1,8 @@
 package it.airgap.tezos.rpc.active
 
+import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
-import it.airgap.tezos.rpc.active.data.GetBigMapValueResponse
-import it.airgap.tezos.rpc.active.data.GetBigMapValuesResponse
-import it.airgap.tezos.rpc.active.data.GetBlockResponse
-import it.airgap.tezos.rpc.active.data.GetConstants
+import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
 
 // https://tezos.gitlab.io/active/rpc.html
@@ -35,5 +33,80 @@ public interface ActiveRpc {
 
     // -- ../<block_id>/context/constants --
 
-    public suspend fun getConstants(chainId: String, blockId: String, headers: List<HttpHeader> = emptyList()): GetConstants
+    public suspend fun getConstants(chainId: String, blockId: String, headers: List<HttpHeader> = emptyList()): GetConstantsResponse
+
+    // -- ../<block_id>/context/contracts --
+
+    public suspend fun getContractDetails(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractDetailsResponse
+
+    public suspend fun getContractBalance(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractBalanceResponse
+
+    public suspend fun getContractCounter(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractCounterResponse
+
+    public suspend fun getContractDelegate(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractDelegateResponse
+
+    public suspend fun getContractEntrypoints(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractEntrypointsResponse
+
+    public suspend fun getContractEntrypointType(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        entrypoint: String,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractEntrypointTypeResponse
+
+    public suspend fun getContractManager(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractManagerResponse
+
+    public suspend fun getContractScript(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractScriptResponse
+
+    public suspend fun getContractSaplingStateDiff(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        commitmentOffset: ULong? = null,
+        nullifierOffset: ULong? = null,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractSaplingStateDiffResponse
+
+    public suspend fun getContractStorage(
+        chainId: String,
+        blockId: String,
+        contractId: ContractHash,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetContractStorageResponse
 }

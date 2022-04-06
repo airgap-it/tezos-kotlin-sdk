@@ -9,4 +9,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @JvmInline
-public value class GetConstants(public val value: RpcConstants)
+public value class GetConstantsResponse(public val constants: RpcConstants)
