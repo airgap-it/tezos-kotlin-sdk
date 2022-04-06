@@ -264,4 +264,13 @@ internal class ActiveRpcClient(
                 nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
             },
         )
+
+    // -- ../<block_id>/header --
+
+    override suspend fun getBlockHeader(
+        chainId: String,
+        blockId: String,
+        headers: List<HttpHeader>,
+    ): GetBlockHeaderResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/header", headers)
 }

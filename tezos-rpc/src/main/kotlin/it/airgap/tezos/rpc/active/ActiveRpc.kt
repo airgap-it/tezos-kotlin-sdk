@@ -207,4 +207,12 @@ public interface ActiveRpc {
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
     ): GetSaplingStateDiffResponse
+
+    // -- ../<block_id>/header --
+
+    public suspend fun getBlockHeader(
+        chainId: String,
+        blockId: String,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetBlockHeaderResponse
 }
