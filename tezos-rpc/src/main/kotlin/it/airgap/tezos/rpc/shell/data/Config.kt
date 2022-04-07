@@ -11,9 +11,6 @@ import kotlinx.serialization.Serializable
 // -- /history_mode --
 
 @Serializable
-public data class RpcAdditionalCycles(@SerialName("additional_cycles") public val additionalCycles: UInt)
-
-@Serializable
 public data class GetHistoryModeResponse(@SerialName("history_mode") public val historyMode: RpcHistoryMode)
 
 // -- /logging --

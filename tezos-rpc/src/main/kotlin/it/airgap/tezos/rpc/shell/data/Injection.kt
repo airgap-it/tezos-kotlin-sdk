@@ -4,8 +4,8 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.OperationHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
-import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
+import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
