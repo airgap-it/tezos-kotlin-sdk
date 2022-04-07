@@ -233,4 +233,12 @@ public interface ActiveRpc {
         operation: RpcRunnableOperation,
         headers: List<HttpHeader> = emptyList(),
     ): RunOperationResponse
+
+    // -- ../<block_id>/operations --
+
+    public suspend fun getOperations(
+        chainId: String,
+        blockId: String,
+        headers: List<HttpHeader> = emptyList(),
+    ): GetBlockOperationsResponse
 }

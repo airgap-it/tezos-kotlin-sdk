@@ -303,4 +303,13 @@ internal class ActiveRpcClient(
             headers,
             request = RunOperationRequest(operation)
         )
+
+    // -- ../<block_id>/operations --
+
+    override suspend fun getOperations(
+        chainId: String,
+        blockId: String,
+        headers: List<HttpHeader>,
+    ): GetBlockOperationsResponse =
+        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/operations", headers)
 }
