@@ -73,7 +73,7 @@ public value class ChangePeerPermissionResponse(public val peer: RpcPeer)
 
 @Serializable
 @JvmInline
-public value class BannedPeerResponse(public val isBanned: Boolean)
+public value class GetPeerBannedStatusResponse(public val isBanned: Boolean)
 
 // -- /peers/<peer_id>/log
 

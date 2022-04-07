@@ -16,3 +16,12 @@ public data class RpcSaplingCiphertext(
     @SerialName("payload_out") public val payloadOut: @Contextual HexString,
     @SerialName("nonce_out") public val nonceOut: @Contextual HexString,
 )
+
+// -- RpcSaplingStateDiff --
+
+@Serializable
+public data class RpcSaplingStateDiff(
+    public val root: @Contextual HexString,
+    @SerialName("commitments_and_ciphertexts") public val commitmentsAndCiphertexts: List<Pair<@Contextual HexString, RpcSaplingCiphertext>>,
+    public val nullifiers: List<@Contextual HexString>,
+)

@@ -2,7 +2,9 @@ package it.airgap.tezos.rpc.type.operation
 
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.rpc.internal.serializer.RpcRunnableOperationSerializer
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // -- RpcOperation --
@@ -10,11 +12,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class RpcOperation (
     public val protocol: @Contextual ProtocolHash,
-    public val chainId: @Contextual ChainId,
+    @SerialName("chain_id") public val chainId: @Contextual ChainId,
     public val hash: @Contextual OperationHash,
     public val branch: @Contextual BlockHash,
     public val contents: List<RpcOperationContent>,
     public val signature: @Contextual SignatureEncoded?,
+)
+
+// -- RpcApplicableOperation --
+
+@Serializable
+public data class RpcApplicableOperation(
+    public val protocol: @Contextual ProtocolHash,
+    public val branch: @Contextual BlockHash,
+    public val contents: List<RpcOperationContent>,
+    public val signature: @Contextual SignatureEncoded,
 )
 
 // -- RpcInjectableOperation --
@@ -24,3 +36,13 @@ public data class RpcInjectableOperation(
     public val branch: @Contextual BlockHash,
     public val data: @Contextual HexString,
 )
+
+// -- RpcRunnableOperation --
+
+@Serializable(with = RpcRunnableOperationSerializer::class)
+ public data class RpcRunnableOperation(
+    @SerialName("chain_id") public val chainId: @Contextual ChainId,
+    public val branch: @Contextual BlockHash,
+    public val contents: List<RpcOperationContent>,
+    public val signature: @Contextual SignatureEncoded,
+ )

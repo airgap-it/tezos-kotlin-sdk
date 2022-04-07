@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 // ==== ../<block_id> ====
 
+// -- / --
+
 @Serializable
 @JvmInline
 public value class GetBlockResponse(public val block: RpcBlock)
