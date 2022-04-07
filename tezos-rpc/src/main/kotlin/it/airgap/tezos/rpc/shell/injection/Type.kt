@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.shell.data
+package it.airgap.tezos.rpc.shell.injection
 
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
@@ -10,9 +10,7 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// ==== /injection ====
-
-// -- /block --
+// -- /injection/block --
 
 @Serializable
 public data class InjectBlockRequest(
@@ -24,7 +22,7 @@ public data class InjectBlockRequest(
 @JvmInline
 public value class InjectBlockResponse(public val hash: @Contextual BlockHash)
 
-// -- /operation --
+// -- /injection/operation --
 
 @Serializable
 @JvmInline
@@ -34,7 +32,7 @@ public value class InjectOperationRequest(public val data: @Contextual HexString
 @JvmInline
 public value class InjectOperationResponse(public val hash: @Contextual OperationHash)
 
-// -- /protocol --
+// -- /injection/protocol --
 
 @Serializable
 public data class InjectProtocolRequest(

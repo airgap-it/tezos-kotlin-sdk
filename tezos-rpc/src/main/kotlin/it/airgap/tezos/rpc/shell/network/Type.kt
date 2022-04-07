@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.shell.data
+package it.airgap.tezos.rpc.shell.network
 
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
@@ -12,15 +12,13 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// ==== /network ====
-
-// -- /connections --
+// -- /network/connections --
 
 @Serializable
 @JvmInline
 public value class GetConnectionsResponse(public val connections: List<RpcConnection>)
 
-// -- /connections/<peer_id> --
+// -- /network/connections/<peer_id> --
 
 @Serializable
 @JvmInline
@@ -28,34 +26,34 @@ public value class GetConnectionResponse(public val connection: RpcConnection)
 
 public typealias CloseConnectionResponse = Unit
 
-// -- /greylist --
+// -- /network/greylist --
 
 public typealias ClearGreylistResponse = Unit
 
-// -- /greylist/ips --
+// -- /network/greylist/ips --
 
 @Serializable
 public data class GetGreylistedIPsResponse(public val ips: List<RpcIPAddress>, @SerialName("not_reliable_since") val notReliableSince: Timestamp)
 
-// -- /greylist/peers --
+// -- /network/greylist/peers --
 
 @Serializable
 @JvmInline
 public value class GetLastGreylistedPeersResponse(public val peers: List<@Contextual CryptoboxPublicKeyHash>)
 
-// -- /log --
+// -- /network/log --
 
 @Serializable
 @JvmInline
 public value class GetLogResponse(public val events: List<RpcConnectionPoolEvent>)
 
-// -- /peers --
+// -- /network/peers --
 
 @Serializable
 @JvmInline
 public value class GetPeersResponse(public val peers: List<Pair<@Contextual CryptoboxPublicKeyHash, RpcPeer>>)
 
-// -- /peers/<peer_id> --
+// -- /network/peers/<peer_id> --
 
 @Serializable
 @JvmInline
@@ -69,13 +67,13 @@ public value class ChangePeerPermissionRequest(public val acl: RpcAcl?)
 @JvmInline
 public value class ChangePeerPermissionResponse(public val peer: RpcPeer)
 
-// -- /peers/<peer_id>/banned --
+// -- /network/peers/<peer_id>/banned --
 
 @Serializable
 @JvmInline
 public value class GetPeerBannedStatusResponse(public val isBanned: Boolean)
 
-// -- /peers/<peer_id>/log
+// -- /network/peers/<peer_id>/log
 
 @Serializable
 @JvmInline

@@ -6,87 +6,73 @@ import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.http.HttpHeader
-import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.shell.data.*
+import it.airgap.tezos.rpc.shell.chains.*
+import it.airgap.tezos.rpc.shell.config.*
+import it.airgap.tezos.rpc.shell.injection.InjectBlockResponse
+import it.airgap.tezos.rpc.shell.injection.InjectOperationResponse
+import it.airgap.tezos.rpc.shell.injection.InjectProtocolResponse
+import it.airgap.tezos.rpc.shell.injection.Injection
+import it.airgap.tezos.rpc.shell.monitor.*
+import it.airgap.tezos.rpc.shell.network.*
 import it.airgap.tezos.rpc.type.RpcAcl
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.p2p.RpcPeerState
 import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
+// https://tezos.gitlab.io/shell/rpc.html
 internal class ShellRpcClient(
-    private val nodeUrl: String,
-    private val httpClient: HttpClient,
-    private val json: Json,
+    private val chains: Chains,
+    private val config: Config,
+    private val injection: Injection,
+    private val monitor: Monitor,
+    private val network: Network,
 ) : ShellRpc {
-
-    // ==== RPC (https://tezos.gitlab.io/shell/rpc.html) ====
 
     // -- /chains --
 
-    override suspend fun setBootstrapped(
-        chainId: String,
-        bootstrapped: Boolean,
-        headers: List<HttpHeader>,
-    ): SetBootstrappedResponse =
-        httpClient.patch(nodeUrl, "/chains/$chainId", headers, request = SetBootstrappedRequest(bootstrapped))
+    override suspend fun setBootstrapped(chainId: String, bootstrapped: Boolean, headers: List<HttpHeader>): SetBootstrappedResponse =
+        chains.chainId(chainId).patch(bootstrapped, headers)
 
-    override suspend fun getBlocks(
-        chainId: String,
-        length: UInt?,
-        head: BlockHash?,
-        minDate: String?,
-        headers: List<HttpHeader>,
-    ): GetBlocksResponse =
-        httpClient.get(
-            nodeUrl,
-            "/chains/$chainId",
-            headers,
-            parameters = buildList {
-                length?.let { add("length" to length.toString()) }
-                head?.let { add("head" to head.base58) }
-                minDate?.let { add("min_date" to minDate) }
-            }
-        )
+    override suspend fun getBlocks(chainId: String, length: UInt?, head: BlockHash?, minDate: String?, headers: List<HttpHeader>): GetBlocksResponse =
+        chains.chainId(chainId).blocks.get(length, head, minDate, headers)
 
     override suspend fun getChainId(chainId: String, headers: List<HttpHeader>): GetChainIdResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/chain_id", headers)
+        chains.chainId(chainId).chainId.get(headers)
 
     override suspend fun getInvalidBlocks(chainId: String, headers: List<HttpHeader>): GetInvalidBlocksResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/invalid_blocks", headers)
+        chains.chainId(chainId).invalidBlocks.get(headers)
 
     override suspend fun getInvalidBlock(chainId: String, blockHash: BlockHash, headers: List<HttpHeader>): GetInvalidBlockResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/invalid_blocks/${blockHash.base58}", headers)
+        chains.chainId(chainId).invalidBlocks.blockHash(blockHash).get(headers)
 
     override suspend fun deleteInvalidBlock(chainId: String, blockHash: BlockHash, headers: List<HttpHeader>): DeleteInvalidBlockResponse =
-        httpClient.delete(nodeUrl, "/chains/${chainId}/invalid_blocks/${blockHash.base58}", headers)
+        chains.chainId(chainId).invalidBlocks.blockHash(blockHash).delete(headers)
 
-    override suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader>): IsBootstrappedResponse =
-        httpClient.get(nodeUrl, "/chains/${chainId}/is_bootstrapped", headers)
+    override suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader>): GetIsBootstrappedResponse =
+        chains.chainId(chainId).isBootstrapped.get(headers)
 
     override suspend fun getCaboose(chainId: String, headers: List<HttpHeader>): GetCabooseResponse =
-        httpClient.get(nodeUrl, "/chains/${chainId}/levels/caboose", headers)
+        chains.chainId(chainId).levels.caboose.get(headers)
 
     override suspend fun getCheckpoint(chainId: String, headers: List<HttpHeader>): GetCheckpointResponse =
-        httpClient.get(nodeUrl, "/chains/${chainId}/levels/checkpoint", headers)
+        chains.chainId(chainId).levels.checkpoint.get(headers)
 
     override suspend fun getSavepoint(chainId: String, headers: List<HttpHeader>): GetSavepointResponse =
-        httpClient.get(nodeUrl, "/chains/${chainId}/levels/savepoint", headers)
+        chains.chainId(chainId).levels.savepoint.get(headers)
 
     // -- /config --
 
     override suspend fun getHistoryMode(headers: List<HttpHeader>): GetHistoryModeResponse =
-        httpClient.get(nodeUrl, "/config/history_mode", headers)
+        config.historyMode.get(headers)
 
     override suspend fun setLogging(activeSinks: String, headers: List<HttpHeader>): SetLoggingResponse =
-        httpClient.put(nodeUrl, "/config/logging", headers, request = SetLoggingRequest(activeSinks))
+        config.logging.put(activeSinks, headers)
 
     override suspend fun getUserActivatedProtocolOverrides(headers: List<HttpHeader>): GetUserActivatedProtocolOverridesResponse =
-        httpClient.get(nodeUrl, "/config/network/user_activated_protocol_overrides", headers)
+        config.network.userActivatedProtocolOverrides.get(headers)
 
     override suspend fun getUserActivatedUpgrades(headers: List<HttpHeader>): GetUserActivatedUpgradesResponse =
-        httpClient.get(nodeUrl, "/config/network/user_activated_upgrades", headers)
+        config.network.userActivatedUpgrades.get(headers)
 
     // -- /injection --
 
@@ -98,17 +84,7 @@ internal class ShellRpcClient(
         chain: ChainId?,
         headers: List<HttpHeader>,
     ): InjectBlockResponse =
-        httpClient.post(
-            nodeUrl,
-            "/injection/block",
-            headers,
-            parameters = buildList {
-                async?.takeIf { it }?.let { add("async" to null) }
-                force?.takeIf { it }?.let { add("force" to null) }
-                chain?.let { add("chain" to chain.base58) }
-            },
-            request = InjectBlockRequest(data, operations),
-        )
+        injection.block.post(data, operations, async, force, chain, headers)
 
     override suspend fun injectOperation(
         data: HexString,
@@ -116,16 +92,7 @@ internal class ShellRpcClient(
         chain: ChainId?,
         headers: List<HttpHeader>,
     ): InjectOperationResponse =
-        httpClient.post(
-            nodeUrl,
-            "/injection/operation",
-            headers,
-            parameters = buildList {
-                async?.takeIf { it }?.let { add("async" to null) }
-                chain?.let { add("chain" to chain.base58) }
-            },
-            request = InjectOperationRequest(data),
-        )
+        injection.operation.post(data, async, chain, headers)
 
     override suspend fun injectProtocol(
         expectedEnvVersion: UShort,
@@ -133,154 +100,60 @@ internal class ShellRpcClient(
         async: Boolean?,
         headers: List<HttpHeader>,
     ): InjectProtocolResponse =
-        httpClient.post(
-            nodeUrl,
-            "/injection/protocol",
-            headers,
-            parameters = buildList {
-                async?.takeIf { it }?.let { add("async" to null) }
-            },
-            request = InjectProtocolRequest(expectedEnvVersion, components),
-        )
+        injection.protocol.post(expectedEnvVersion, components, async, headers)
 
     // -- /monitor --
 
     override suspend fun monitorActiveChains(headers: List<HttpHeader>): MonitorActiveChainsResponse =
-        httpClient.get(nodeUrl, "/monitor/active_chains", headers)
+        monitor.activeChains.get(headers)
 
     override suspend fun monitorBootstrapped(headers: List<HttpHeader>): MonitorBootstrappedResponse =
-        httpClient.get(nodeUrl, "/monitor/bootstrapped", headers)
+        monitor.bootstrapped.get(headers)
 
-    override suspend fun monitorHeads(
-        chainId: ChainId,
-        nextProtocol: ProtocolHash?,
-        headers: List<HttpHeader>,
-    ): MonitorHeadsResponse =
-        httpClient.get(
-            nodeUrl,
-            "/monitor/heads/$chainId",
-            headers,
-            parameters = buildList {
-                nextProtocol?.let { add("next_protocol" to it.base58) }
-            },
-        )
+    override suspend fun monitorHeads(chainId: String, nextProtocol: ProtocolHash?, headers: List<HttpHeader>): MonitorHeadResponse =
+        monitor.heads.chainId(chainId).get(nextProtocol, headers)
 
     override suspend fun monitorProtocols(headers: List<HttpHeader>): MonitorProtocolsResponse =
-        httpClient.get(nodeUrl, "/monitor/protocols", headers)
+        monitor.protocols.get(headers)
 
-    override suspend fun monitorValidBlocks(
-        protocol: ProtocolHash?,
-        nextProtocol: ProtocolHash?,
-        chain: ChainId?,
-        headers: List<HttpHeader>,
-    ): MonitorValidBlocksResponse =
-        httpClient.get(
-            nodeUrl,
-            "/monitor/valid_blocks",
-            headers,
-            parameters = buildList {
-                protocol?.let { add("protocol" to it.base58) }
-                nextProtocol?.let { add("next_protocol" to it.base58) }
-                chain?.let { add("chain" to it.base58) }
-            },
-        )
+    override suspend fun monitorValidBlocks(protocol: ProtocolHash?, nextProtocol: ProtocolHash?, chain: String?, headers: List<HttpHeader>): MonitorValidBlocksResponse =
+        monitor.validBlocks.get(protocol, nextProtocol, chain, headers)
 
     // -- /network --
-    override suspend fun getConnections(headers: List<HttpHeader>): GetConnectionsResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/connections",
-            headers,
-        )
 
-    override suspend fun getConnection(
-        peerId: CryptoboxPublicKeyHash,
-        headers: List<HttpHeader>,
-    ): GetConnectionResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/connections/${peerId.base58}",
-            headers,
-        )
+    override suspend fun getConnections(headers: List<HttpHeader>): GetConnectionsResponse =
+        network.connections.get(headers)
+
+    override suspend fun getConnection(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): GetConnectionResponse =
+        network.connections.peerId(peerId).get(headers)
 
     override suspend fun closeConnection(peerId: CryptoboxPublicKeyHash, wait: Boolean?, headers: List<HttpHeader>): CloseConnectionResponse =
-        httpClient.delete(
-            nodeUrl,
-            "/network/connections/${peerId.base58}",
-            headers,
-            parameters = buildList {
-                wait?.takeIf { it }?.let { add("wait" to null) }
-            },
-        )
+        network.connections.peerId(peerId).delete(wait, headers)
 
     override suspend fun clearGreylist(headers: List<HttpHeader>): ClearGreylistResponse =
-        httpClient.delete(nodeUrl, "/network/greylist", headers, )
+        network.greylist.delete(headers)
 
     override suspend fun getGreylistedIPs(headers: List<HttpHeader>): GetGreylistedIPsResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/greylist/ips",
-            headers,
-        )
-
+        network.greylist.ips.get(headers)
 
     override suspend fun getLastGreylistedPeers(headers: List<HttpHeader>): GetLastGreylistedPeersResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/greylist/peers",
-            headers,
-        )
+        network.greylist.peers.get(headers)
 
     override suspend fun getLogs(headers: List<HttpHeader>): GetLogResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/log",
-            headers,
-        )
+        network.log.get(headers)
 
     override suspend fun getPeers(filter: RpcPeerState?, headers: List<HttpHeader>): GetPeersResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/peers",
-            headers,
-            parameters = buildList {
-                filter?.let { add("filter" to json.encodeToString(it)) }
-            },
-        )
+        network.peers.get(filter, headers)
 
     override suspend fun getPeer(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): GetPeerResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/peers/${peerId.base58}",
-            headers,
-        )
+        network.peers.peerId(peerId).get(headers)
 
-    override suspend fun changePeerPermissions(
-        peerId: CryptoboxPublicKeyHash,
-        acl: RpcAcl,
-        headers: List<HttpHeader>,
-    ): ChangePeerPermissionResponse =
-        httpClient.patch(
-            nodeUrl,
-            "/network/peers/${peerId.base58}",
-            headers,
-            request = ChangePeerPermissionRequest(acl),
-        )
+    override suspend fun changePeerPermissions(peerId: CryptoboxPublicKeyHash, acl: RpcAcl, headers: List<HttpHeader>): ChangePeerPermissionResponse =
+        network.peers.peerId(peerId).patch(acl, headers)
 
     override suspend fun isPeerBanned(peerId: CryptoboxPublicKeyHash, headers: List<HttpHeader>): GetPeerBannedStatusResponse =
-        httpClient.get(nodeUrl, "/network/peers/${peerId.base58}/banned", headers)
+        network.peers.peerId(peerId).banned.get(headers)
 
-    override suspend fun getPeerEvents(
-        peerId: CryptoboxPublicKeyHash,
-        monitor: Boolean?,
-        headers: List<HttpHeader>,
-    ): GetPeerEventsResponse =
-        httpClient.get(
-            nodeUrl,
-            "/network/peers/${peerId.base58}/log",
-            headers,
-            parameters = buildList {
-                monitor?.takeIf { it }?.let { add("monitor" to null) }
-            }
-        )
+    override suspend fun getPeerEvents(peerId: CryptoboxPublicKeyHash, monitor: Boolean?, headers: List<HttpHeader>): GetPeerEventsResponse =
+        network.peers.peerId(peerId).log.get(monitor, headers)
 }

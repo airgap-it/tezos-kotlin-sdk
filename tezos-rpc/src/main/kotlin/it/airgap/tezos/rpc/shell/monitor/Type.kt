@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.shell.data
+package it.airgap.tezos.rpc.shell.monitor
 
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
@@ -8,23 +8,21 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// ==== /monitor ====
-
-// -- /active_chains --
+// -- /monitor/active_chains --
 
 @Serializable
 @JvmInline
 public value class MonitorActiveChainsResponse(public val chains: List<RpcActiveChain>)
 
-// -- /bootstrapped --
+// -- /monitor/bootstrapped --
 
 @Serializable
 public data class MonitorBootstrappedResponse(public val block: @Contextual BlockHash, public val timestamp: @Contextual Timestamp)
 
-// -- /heads/<chain_id> --
+// -- /monitor/heads/<chain_id> --
 
 @Serializable
-public data class MonitorHeadsResponse(
+public data class MonitorHeadResponse(
     public val hash: @Contextual BlockHash,
     public val level: Int,
     public val proto: UByte,
@@ -37,13 +35,13 @@ public data class MonitorHeadsResponse(
     @SerialName("protocol_data") public val protocolData: @Contextual HexString,
 )
 
-// -- /protocols --
+// -- /monitor/protocols --
 
 @Serializable
 @JvmInline
 public value class MonitorProtocolsResponse(public val hash: @Contextual ProtocolHash)
 
-// -- valid_blocks --
+// -- /monitor/valid_blocks --
 
 @Serializable
 public data class MonitorValidBlocksResponse(
