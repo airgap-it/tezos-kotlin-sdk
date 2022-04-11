@@ -32,7 +32,7 @@ private class BlockContextClient(parentUrl: String, private val httpClient: Http
 private class BlockContextBigMapsClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.BigMaps {
     private val baseUrl: String = /* ../<block_id>/context/big_maps */ "$parentUrl/big_maps"
 
-    override fun bigMapId(bigMapId: String): Block.Context.BigMaps.BigMap = BlockContextBigMapsBigMapClient(baseUrl, bigMapId, httpClient)
+    override operator fun invoke(bigMapId: String): Block.Context.BigMaps.BigMap = BlockContextBigMapsBigMapClient(baseUrl, bigMapId, httpClient)
 }
 
 private class BlockContextBigMapsBigMapClient(parentUrl: String, bigMapId: String, private val httpClient: HttpClient) : Block.Context.BigMaps.BigMap {
@@ -49,7 +49,7 @@ private class BlockContextBigMapsBigMapClient(parentUrl: String, bigMapId: Strin
             },
         )
 
-    override fun scriptExpr(scriptExpr: ScriptExprHash): Block.Context.BigMaps.BigMap.Value = BlockContextBigMapsBigMapValueClient(baseUrl, scriptExpr, httpClient)
+    override operator fun invoke(scriptExpr: ScriptExprHash): Block.Context.BigMaps.BigMap.Value = BlockContextBigMapsBigMapValueClient(baseUrl, scriptExpr, httpClient)
 }
 
 private class BlockContextBigMapsBigMapValueClient(parentUrl: String, scriptExpr: ScriptExprHash, private val httpClient: HttpClient) : Block.Context.BigMaps.BigMap.Value {
@@ -67,7 +67,7 @@ private class BlockContextConstantsClient(parentUrl: String, private val httpCli
 private class BlockContextContractsClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Contracts {
     private val baseUrl: String = /* ../<block_id>/context/contracts */ "$parentUrl/contracts"
 
-    override suspend fun contractId(contractId: Address): Block.Context.Contracts.Contract = BlockContextContractsContractClient(baseUrl, contractId, httpClient)
+    override operator fun invoke(contractId: Address): Block.Context.Contracts.Contract = BlockContextContractsContractClient(baseUrl, contractId, httpClient)
 }
 
 private class BlockContextContractsContractClient(parentUrl: String, contractId: Address, private val httpClient: HttpClient) : Block.Context.Contracts.Contract {
@@ -108,7 +108,7 @@ private class BlockContextContractsContractEntrypointsClient(parentUrl: String, 
 
     override suspend fun get(headers: List<HttpHeader>): GetContractEntrypointsResponse = httpClient.get(baseUrl, "/", headers)
 
-    override fun string(string: String): Block.Context.Contracts.Contract.Entrypoints.Entrypoint = BlockContextContractsContractEntrypointsEntrypointClient(baseUrl, string, httpClient)
+    override operator fun invoke(string: String): Block.Context.Contracts.Contract.Entrypoints.Entrypoint = BlockContextContractsContractEntrypointsEntrypointClient(baseUrl, string, httpClient)
 }
 
 private class BlockContextContractsContractEntrypointsEntrypointClient(parentUrl: String, string: String, private val httpClient: HttpClient) : Block.Context.Contracts.Contract.Entrypoints.Entrypoint {
@@ -153,7 +153,7 @@ private class BlockContextContractsContractStorageClient(parentUrl: String, priv
 private class BlockContextDelegatesClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Delegates {
     private val baseUrl: String = /* ../<block_id>/context/delegates */ "$parentUrl/delegates"
 
-    override fun pkh(publicKeyHash: PublicKeyHashEncoded): Block.Context.Delegates.Delegate = BlockContextDelegatesDelegateClient(baseUrl, publicKeyHash, httpClient)
+    override operator fun invoke(publicKeyHash: PublicKeyHashEncoded): Block.Context.Delegates.Delegate = BlockContextDelegatesDelegateClient(baseUrl, publicKeyHash, httpClient)
 }
 
 private class BlockContextDelegatesDelegateClient(parentUrl: String, publicKeyHash: PublicKeyHashEncoded, private val httpClient: HttpClient) : Block.Context.Delegates.Delegate {
@@ -244,7 +244,7 @@ private class BlockContextDelegatesDelegateVotingPower(parentUrl: String, privat
 private class BlockContextSapling(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Sapling {
     private val baseUrl: String = /* ../<block_id>/context/sapling */ "$parentUrl/sapling"
 
-    override fun saplingStateId(stateId: String): Block.Context.Sapling.State = BlockContextSaplingStateClient(baseUrl, stateId, httpClient)
+    override operator fun invoke(stateId: String): Block.Context.Sapling.State = BlockContextSaplingStateClient(baseUrl, stateId, httpClient)
 }
 
 private class BlockContextSaplingStateClient(parentUrl: String, stateId: String, private val httpClient: HttpClient) : Block.Context.Sapling.State {

@@ -10,12 +10,12 @@ import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
 // https://tezos.gitlab.io/active/rpc.html
-internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
+internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSimplifiedRpc {
 
     // -- ../<block_id> --
 
     override suspend fun getBlock(chainId: String, blockId: String, headers: List<HttpHeader>): GetBlockResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).get(headers)
+        chains(chainId).blocks(blockId).get(headers)
 
     // -- ../<block_id>/context/big_maps --
 
@@ -27,7 +27,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         length: UInt?,
         headers: List<HttpHeader>,
     ): GetBigMapValuesResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.bigMaps.bigMapId(bigMapId).get(offset, length, headers)
+        chains(chainId).blocks(blockId).context.bigMaps(bigMapId).get(offset, length, headers)
 
     override suspend fun getBigMapValue(
         chainId: String,
@@ -36,12 +36,12 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         key: ScriptExprHash,
         headers: List<HttpHeader>,
     ): GetBigMapValueResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.bigMaps.bigMapId(bigMapId).scriptExpr(key).get(headers)
+        chains(chainId).blocks(blockId).context.bigMaps(bigMapId)(key).get(headers)
 
     // -- ../<block_id>/context/constants --
 
     override suspend fun getConstants(chainId: String, blockId: String, headers: List<HttpHeader>): GetConstantsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.constants.get(headers)
+        chains(chainId).blocks(blockId).context.constants.get(headers)
 
     // -- ../<block_id>/context/contracts --
 
@@ -51,7 +51,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractDetailsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).get(headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).get(headers)
 
     override suspend fun getContractBalance(
         chainId: String,
@@ -59,7 +59,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractBalanceResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).balance.get(headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).balance.get(headers)
 
     override suspend fun getContractCounter(
         chainId: String,
@@ -67,7 +67,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractCounterResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).counter.get(headers) // TODO: handle error when resource is missing
+        chains(chainId).blocks(blockId).context.contracts(contractId).counter.get(headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractDelegate(
         chainId: String,
@@ -75,7 +75,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractDelegateResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).delegate.get(headers) // TODO: handle error when resource is missing
+        chains(chainId).blocks(blockId).context.contracts(contractId).delegate.get(headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractEntrypoints(
         chainId: String,
@@ -83,7 +83,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractEntrypointsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).entrypoints.get(headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).entrypoints.get(headers)
 
     override suspend fun getContractEntrypointType(
         chainId: String,
@@ -92,7 +92,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         entrypoint: String,
         headers: List<HttpHeader>,
     ): GetContractEntrypointTypeResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).entrypoints.string(entrypoint).get(headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).entrypoints(entrypoint).get(headers)
 
     override suspend fun getContractManager(
         chainId: String,
@@ -100,7 +100,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractManagerResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).managerKey.get(headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).managerKey.get(headers)
 
     override suspend fun getContractScript(
         chainId: String,
@@ -108,7 +108,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractScriptResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).script.get(headers) // TODO: handle error when resource is missing
+        chains(chainId).blocks(blockId).context.contracts(contractId).script.get(headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractSaplingStateDiff(
         chainId: String,
@@ -118,7 +118,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         nullifierOffset: ULong?,
         headers: List<HttpHeader>,
     ): GetContractSaplingStateDiffResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).singleSaplingGetDiff.get(commitmentOffset, nullifierOffset, headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).singleSaplingGetDiff.get(commitmentOffset, nullifierOffset, headers)
 
     override suspend fun getContractStorage(
         chainId: String,
@@ -126,7 +126,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractStorageResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).storage.get(headers)
+        chains(chainId).blocks(blockId).context.contracts(contractId).storage.get(headers)
 
     // -- ../<block_id>/context/delegates --
 
@@ -136,7 +136,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDetailsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).get(headers)
 
     override suspend fun getDelegateCurrentFrozenDeposits(
         chainId: String,
@@ -144,7 +144,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateCurrentFrozenDepositsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).currentFrozenDeposits.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).currentFrozenDeposits.get(headers)
 
     override suspend fun isDelegateDeactivated(
         chainId: String,
@@ -152,7 +152,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDeactivatedStatusResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).deactivated.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).deactivated.get(headers)
 
     override suspend fun getDelegateDelegatedBalance(
         chainId: String,
@@ -160,7 +160,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedBalanceResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).delegatedBalance.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).delegatedBalance.get(headers)
 
     override suspend fun getDelegateDelegatedContracts(
         chainId: String,
@@ -168,7 +168,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedContractsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).delegatedContracts.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).delegatedContracts.get(headers)
 
     override suspend fun getDelegateFrozenDeposits(
         chainId: String,
@@ -176,7 +176,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).frozenDeposits.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).frozenDeposits.get(headers)
 
     override suspend fun getDelegateFrozenDepositsLimit(
         chainId: String,
@@ -184,7 +184,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsLimitResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).frozenDepositsLimit.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).frozenDepositsLimit.get(headers)
 
     override suspend fun getDelegateFullBalance(
         chainId: String,
@@ -192,7 +192,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFullBalanceResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).fullBalance.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).fullBalance.get(headers)
 
     override suspend fun getDelegateGracePeriod(
         chainId: String,
@@ -200,7 +200,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateGracePeriodResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).gracePeriod.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).gracePeriod.get(headers)
 
     override suspend fun getDelegateParticipation(
         chainId: String,
@@ -208,7 +208,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateParticipationResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).participation.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).participation.get(headers)
 
     override suspend fun getDelegateStakingBalance(
         chainId: String,
@@ -216,7 +216,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateStakingBalanceResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).stakingBalance.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).stakingBalance.get(headers)
 
     override suspend fun getDelegateVotingPower(
         chainId: String,
@@ -224,7 +224,7 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateVotingPowerResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).votingPower.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).votingPower.get(headers)
 
     // -- ../<block_id>/context/sapling --
 
@@ -236,23 +236,23 @@ internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
         nullifierOffset: ULong?,
         headers: List<HttpHeader>,
     ): GetSaplingStateDiffResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).context.sapling.saplingStateId(stateId).getDiff.get(commitmentOffset, nullifierOffset, headers)
+        chains(chainId).blocks(blockId).context.sapling(stateId).getDiff.get(commitmentOffset, nullifierOffset, headers)
 
     // -- ../<block_id>/header --
 
     override suspend fun getBlockHeader(chainId: String, blockId: String, headers: List<HttpHeader>): GetBlockHeaderResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).header.get(headers)
+        chains(chainId).blocks(blockId).header.get(headers)
 
     // -- ../<block_id>/helpers --
 
     override suspend fun preapplyOperations(chainId: String, blockId: String, operations: List<RpcApplicableOperation>, headers: List<HttpHeader>): PreapplyOperationsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).helpers.preapply.operations.post(operations, headers)
+        chains(chainId).blocks(blockId).helpers.preapply.operations.post(operations, headers)
 
     override suspend fun runOperation(chainId: String, blockId: String, operation: RpcRunnableOperation, headers: List<HttpHeader>): RunOperationResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).helpers.scripts.runOperation.post(operation, headers)
+        chains(chainId).blocks(blockId).helpers.scripts.runOperation.post(operation, headers)
 
     // -- ../<block_id>/operations --
 
     override suspend fun getOperations(chainId: String, blockId: String, headers: List<HttpHeader>): GetBlockOperationsResponse =
-        chains.chainId(chainId).blocks.blockId(blockId).operations.get(headers)
+        chains(chainId).blocks(blockId).operations.get(headers)
 }

@@ -20,13 +20,13 @@ internal class ShellSimplifiedRpcClient(
     // -- /chains --
 
     override suspend fun getBlocks(chainId: String, length: UInt?, head: BlockHash?, minDate: String?, headers: List<HttpHeader>): GetBlocksResponse =
-        chains.chainId(chainId).blocks.get(length, head, minDate, headers)
+        chains(chainId).blocks.get(length, head, minDate, headers)
 
     override suspend fun getChainId(chainId: String, headers: List<HttpHeader>): GetChainIdResponse =
-        chains.chainId(chainId).chainId.get(headers)
+        chains(chainId).chainId.get(headers)
 
     override suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader>): GetIsBootstrappedResponse =
-        chains.chainId(chainId).isBootstrapped.get(headers)
+        chains(chainId).isBootstrapped.get(headers)
 
     // -- /injection --
 

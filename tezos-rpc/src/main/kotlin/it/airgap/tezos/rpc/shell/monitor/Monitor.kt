@@ -22,13 +22,13 @@ public interface Monitor {
 
     public interface Heads {
         public val main: Head
-            get() = chainId(Constants.Chain.MAIN)
+            get() = invoke(Constants.Chain.MAIN)
 
         public val test: Head
-            get() = chainId(Constants.Chain.TEST)
+            get() = invoke(Constants.Chain.TEST)
 
-        public fun chainId(chainId: String): Head
-        public fun chainId(chainId: ChainId): Head = chainId(chainId.base58)
+        public operator fun invoke(chainId: String): Head
+        public operator fun invoke(chainId: ChainId): Head = invoke(chainId.base58)
 
         public interface Head {
             public suspend fun get(nextProtocol: ProtocolHash? = null, headers: List<HttpHeader> = emptyList()): MonitorHeadResponse

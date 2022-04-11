@@ -22,7 +22,7 @@ private class NetworkConnectionsClient(parentUrl: String, private val httpClient
 
     override suspend fun get(headers: List<HttpHeader>): GetConnectionsResponse = httpClient.get(baseUrl, "/", headers)
 
-    override fun peerId(peerId: CryptoboxPublicKeyHash): Network.Connections.Connection = NetworkConnectionsConnectionClient(baseUrl, peerId, httpClient)
+    override operator fun invoke(peerId: CryptoboxPublicKeyHash): Network.Connections.Connection = NetworkConnectionsConnectionClient(baseUrl, peerId, httpClient)
 }
 
 private class NetworkConnectionsConnectionClient(parentUrl: String, peerId: CryptoboxPublicKeyHash, private val httpClient: HttpClient) : Network.Connections.Connection {
@@ -80,7 +80,7 @@ private class NetworkPeersClient(parentUrl: String, private val httpClient: Http
             },
         )
 
-    override fun peerId(peerId: CryptoboxPublicKeyHash): Network.Peers.Peer = NetworkPeersPeerClient(baseUrl, peerId, httpClient)
+    override fun peer(peerId: CryptoboxPublicKeyHash): Network.Peers.Peer = NetworkPeersPeerClient(baseUrl, peerId, httpClient)
 }
 
 private class NetworkPeersPeerClient(parentUrl: String, peerId: CryptoboxPublicKeyHash, private val httpClient: HttpClient) : Network.Peers.Peer {

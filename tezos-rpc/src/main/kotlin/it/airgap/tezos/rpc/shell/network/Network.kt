@@ -14,7 +14,7 @@ public interface Network {
     public interface Connections {
         public suspend fun get(headers: List<HttpHeader> = emptyList()): GetConnectionsResponse
 
-        public fun peerId(peerId: CryptoboxPublicKeyHash): Connection
+        public operator fun invoke(peerId: CryptoboxPublicKeyHash): Connection
 
         public interface Connection {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetConnectionResponse
@@ -44,7 +44,7 @@ public interface Network {
     public interface Peers {
         public suspend fun get(filter: RpcPeerState?, headers: List<HttpHeader> = emptyList()): GetPeersResponse
 
-        public fun peerId(peerId: CryptoboxPublicKeyHash): Peer
+        public fun peer(peerId: CryptoboxPublicKeyHash): Peer
 
         public interface Peer {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetPeerResponse

@@ -25,12 +25,12 @@ public interface Block {
 
         public interface BigMaps {
 
-            public fun bigMapId(bigMapId: String): BigMap
+            public operator fun invoke(bigMapId: String): BigMap
 
             public interface BigMap {
                 public suspend fun get(offset: UInt? = null, length: UInt? = null, headers: List<HttpHeader> = emptyList()): GetBigMapValuesResponse
 
-                public fun scriptExpr(scriptExpr: ScriptExprHash): Value
+                public operator fun invoke(scriptExpr: ScriptExprHash): Value
 
                 public interface Value {
                     public suspend fun get(headers: List<HttpHeader> = emptyList()): GetBigMapValueResponse
@@ -43,7 +43,7 @@ public interface Block {
         }
 
         public interface Contracts {
-            public suspend fun contractId(contractId: Address): Contract
+            public operator fun invoke(contractId: Address): Contract
 
             public interface Contract {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractDetailsResponse
@@ -72,7 +72,7 @@ public interface Block {
                 public interface Entrypoints {
                     public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractEntrypointsResponse
 
-                    public fun string(string: String): Entrypoint
+                    public operator fun invoke(string: String): Entrypoint
 
                     public interface Entrypoint {
                         public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractEntrypointTypeResponse
@@ -98,7 +98,7 @@ public interface Block {
         }
 
         public interface Delegates {
-            public fun pkh(publicKeyHash: PublicKeyHashEncoded): Delegate
+            public operator fun invoke(publicKeyHash: PublicKeyHashEncoded): Delegate
 
             public interface Delegate {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetDelegateDetailsResponse
@@ -162,7 +162,7 @@ public interface Block {
         }
 
         public interface Sapling {
-            public fun saplingStateId(stateId: String): State
+            public operator fun invoke(stateId: String): State
 
             public interface State {
                 public val getDiff: GetDiff

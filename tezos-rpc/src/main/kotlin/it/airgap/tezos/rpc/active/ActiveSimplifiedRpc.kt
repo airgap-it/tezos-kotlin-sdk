@@ -8,7 +8,7 @@ import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
 // https://tezos.gitlab.io/active/rpc.html
-public interface ActiveRpc {
+public interface ActiveSimplifiedRpc {
 
     // -- ../<block_id> --
 

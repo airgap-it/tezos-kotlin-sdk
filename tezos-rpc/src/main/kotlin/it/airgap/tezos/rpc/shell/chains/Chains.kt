@@ -8,13 +8,13 @@ import it.airgap.tezos.rpc.internal.utils.Constants
 
 public interface Chains {
     public val main: Chain
-        get() = chainId(Constants.Chain.MAIN)
+        get() = invoke(Constants.Chain.MAIN)
 
     public val test: Chain
-        get() = chainId(Constants.Chain.TEST)
+        get() = invoke(Constants.Chain.TEST)
 
-    public fun chainId(chainId: String): Chain
-    public fun chainId(chainId: ChainId): Chain = chainId(chainId.base58)
+    public operator fun invoke(chainId: String): Chain
+    public operator fun invoke(chainId: ChainId): Chain = invoke(chainId.base58)
 
     public interface Chain {
         public suspend fun patch(bootstrapped: Boolean, headers: List<HttpHeader> = emptyList()): SetBootstrappedResponse
@@ -34,13 +34,11 @@ public interface Chains {
                 headers: List<HttpHeader> = emptyList(),
             ): GetBlocksResponse
 
-            // TODO: replace ActiveRpc with proper Block service
-
             public val head: Block
-                get() = blockId(Constants.Block.HEAD)
+                get() = invoke(Constants.Block.HEAD)
 
-            public fun blockId(blockId: String): Block
-            public fun blockId(blockId: BlockHash): Block = blockId(blockId.base58)
+            public operator fun invoke(blockId: String): Block
+            public operator fun invoke(blockId: BlockHash): Block = invoke(blockId.base58)
         }
 
         public interface ChainId {
@@ -50,8 +48,8 @@ public interface Chains {
         public interface InvalidBlocks {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetInvalidBlocksResponse
 
-            public fun blockHash(blockHash: String): Block
-            public fun blockHash(blockHash: BlockHash): Block = blockHash(blockHash.base58)
+            public operator fun invoke(blockHash: String): Block
+            public operator fun invoke(blockHash: BlockHash): Block = invoke(blockHash.base58)
 
             public interface Block {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetInvalidBlockResponse

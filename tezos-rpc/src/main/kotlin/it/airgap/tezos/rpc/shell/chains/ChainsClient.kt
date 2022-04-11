@@ -2,13 +2,14 @@ package it.airgap.tezos.rpc.shell.chains
 
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.rpc.active.block.Block
+import it.airgap.tezos.rpc.active.block.BlockClient
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 
 internal class ChainsClient(parentUrl: String, private val httpClient: HttpClient) : Chains {
     private val baseUrl: String = /* /chains */ "$parentUrl/chains"
 
-    override fun chainId(chainId: String): Chains.Chain = ChainsChainClient(baseUrl, chainId, httpClient)
+    override operator fun invoke(chainId: String): Chains.Chain = ChainsChainClient(baseUrl, chainId, httpClient)
 }
 
 private class ChainsChainClient(parentUrl: String, chainId: String, private val httpClient: HttpClient) : Chains.Chain {
@@ -45,9 +46,7 @@ private class ChainsChainBlocksClient(parentUrl: String, private val httpClient:
             }
         )
 
-    override fun blockId(blockId: String): Block {
-        TODO("Not yet implemented")
-    }
+    override operator fun invoke(blockId: String): Block = BlockClient(baseUrl, blockId, httpClient)
 }
 
 private class ChainsChainChainIdClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.ChainId {
@@ -61,7 +60,7 @@ private class ChainsChainInvalidBlocksClient(parentUrl: String, private val http
 
     override suspend fun get(headers: List<HttpHeader>): GetInvalidBlocksResponse = httpClient.get(baseUrl, "/", headers)
 
-    override fun blockHash(blockHash: String): Chains.Chain.InvalidBlocks.Block = InvalidBlockClient(baseUrl, blockHash, httpClient)
+    override operator fun invoke(blockHash: String): Chains.Chain.InvalidBlocks.Block = InvalidBlockClient(baseUrl, blockHash, httpClient)
 }
 
 private class InvalidBlockClient(parentUrl: String, blockHash: String, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks.Block {
