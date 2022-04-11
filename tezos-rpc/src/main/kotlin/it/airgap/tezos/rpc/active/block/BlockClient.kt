@@ -3,7 +3,6 @@ package it.airgap.tezos.rpc.active.block
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
-import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation

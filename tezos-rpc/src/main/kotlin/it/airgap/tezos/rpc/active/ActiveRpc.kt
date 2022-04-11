@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.active
 
 import it.airgap.tezos.core.type.encoded.*
-import it.airgap.tezos.rpc.active.data.*
+import it.airgap.tezos.rpc.active.block.*
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.utils.Constants
 import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
