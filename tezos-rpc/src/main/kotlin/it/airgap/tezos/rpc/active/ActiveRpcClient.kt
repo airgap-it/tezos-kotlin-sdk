@@ -1,25 +1,21 @@
 package it.airgap.tezos.rpc.active
 
-import it.airgap.tezos.core.type.encoded.ContractHash
+import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.data.*
 import it.airgap.tezos.rpc.http.HttpHeader
-import it.airgap.tezos.rpc.internal.http.HttpClient
+import it.airgap.tezos.rpc.shell.chains.Chains
 import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
-internal class ActiveRpcClient(
-    private val nodeUrl: String,
-    private val httpClient: HttpClient,
-) : ActiveRpc {
+// https://tezos.gitlab.io/active/rpc.html
+internal class ActiveRpcClient(private val chains: Chains) : ActiveRpc {
 
-    // ==== RPC (https://tezos.gitlab.io/active/rpc.html) ====
-
-    // -- ../ --
+    // -- ../<block_id> --
 
     override suspend fun getBlock(chainId: String, blockId: String, headers: List<HttpHeader>): GetBlockResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).get(headers)
 
     // -- ../<block_id>/context/big_maps --
 
@@ -31,15 +27,7 @@ internal class ActiveRpcClient(
         length: UInt?,
         headers: List<HttpHeader>,
     ): GetBigMapValuesResponse =
-        httpClient.get(
-            nodeUrl,
-            "/chains/$chainId/blocks/$blockId/context/big_maps/$bigMapId",
-            headers,
-            parameters = buildList {
-                offset?.let { add("offset" to it.toString()) }
-                length?.let { add("length" to it.toString()) }
-            },
-        )
+        chains.chainId(chainId).blocks.blockId(blockId).context.bigMaps.bigMapId(bigMapId).get(offset, length, headers)
 
     override suspend fun getBigMapValue(
         chainId: String,
@@ -48,106 +36,97 @@ internal class ActiveRpcClient(
         key: ScriptExprHash,
         headers: List<HttpHeader>,
     ): GetBigMapValueResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/big_maps/$bigMapId/${key.base58}", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.bigMaps.bigMapId(bigMapId).scriptExpr(key).get(headers)
 
     // -- ../<block_id>/context/constants --
 
     override suspend fun getConstants(chainId: String, blockId: String, headers: List<HttpHeader>): GetConstantsResponse =
-        // TODO: caching?
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/constants", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.constants.get(headers)
 
     // -- ../<block_id>/context/contracts --
 
     override suspend fun getContractDetails(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractDetailsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).get(headers)
 
     override suspend fun getContractBalance(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractBalanceResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/balance", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).balance.get(headers)
 
     override suspend fun getContractCounter(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractCounterResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/counter", headers) // TODO: handle error when resource is missing
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).counter.get(headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractDelegate(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractDelegateResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/delegate", headers) // TODO: handle error when resource is missing
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).delegate.get(headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractEntrypoints(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractEntrypointsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/entrypoints", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).entrypoints.get(headers)
 
     override suspend fun getContractEntrypointType(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         entrypoint: String,
         headers: List<HttpHeader>,
     ): GetContractEntrypointTypeResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/entrypoints/$entrypoint", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).entrypoints.string(entrypoint).get(headers)
 
     override suspend fun getContractManager(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractManagerResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/manager_key", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).managerKey.get(headers)
 
     override suspend fun getContractScript(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractScriptResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/script", headers) // TODO: handle error when resource is missing
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).script.get(headers) // TODO: handle error when resource is missing
 
     override suspend fun getContractSaplingStateDiff(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         commitmentOffset: ULong?,
         nullifierOffset: ULong?,
         headers: List<HttpHeader>,
     ): GetContractSaplingStateDiffResponse =
-        httpClient.get(
-            nodeUrl,
-            "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/single_sapling_get_diff",
-            headers,
-            parameters = buildList {
-                commitmentOffset?.let { add("offset_commitment" to it.toString()) }
-                nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
-            },
-        )
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).singleSaplingGetDiff.get(commitmentOffset, nullifierOffset, headers)
 
     override suspend fun getContractStorage(
         chainId: String,
         blockId: String,
-        contractId: ContractHash,
+        contractId: Address,
         headers: List<HttpHeader>,
     ): GetContractStorageResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/storage", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.contracts.contractId(contractId).storage.get(headers)
 
     // -- ../<block_id>/context/delegates --
 
@@ -157,7 +136,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDetailsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).get(headers)
 
     override suspend fun getDelegateCurrentFrozenDeposits(
         chainId: String,
@@ -165,7 +144,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateCurrentFrozenDepositsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/current_frozen_deposits", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).currentFrozenDeposits.get(headers)
 
     override suspend fun isDelegateDeactivated(
         chainId: String,
@@ -173,7 +152,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDeactivatedStatusResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/deactivated", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).deactivated.get(headers)
 
     override suspend fun getDelegateDelegatedBalance(
         chainId: String,
@@ -181,7 +160,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedBalanceResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/delegated_balance", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).delegatedBalance.get(headers)
 
     override suspend fun getDelegateDelegatedContracts(
         chainId: String,
@@ -189,7 +168,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedContractsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/delegated_contracts", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).delegatedContracts.get(headers)
 
     override suspend fun getDelegateFrozenDeposits(
         chainId: String,
@@ -197,7 +176,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/frozen_deposits", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).frozenDeposits.get(headers)
 
     override suspend fun getDelegateFrozenDepositsLimit(
         chainId: String,
@@ -205,7 +184,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsLimitResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/frozen_deposits_limit", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).frozenDepositsLimit.get(headers)
 
     override suspend fun getDelegateFullBalance(
         chainId: String,
@@ -213,7 +192,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFullBalanceResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/full_balance", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).fullBalance.get(headers)
 
     override suspend fun getDelegateGracePeriod(
         chainId: String,
@@ -221,7 +200,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateGracePeriodResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/grace_period", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).gracePeriod.get(headers)
 
     override suspend fun getDelegateParticipation(
         chainId: String,
@@ -229,7 +208,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateParticipationResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/participation", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).participation.get(headers)
 
     override suspend fun getDelegateStakingBalance(
         chainId: String,
@@ -237,7 +216,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateStakingBalanceResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/staking_balance", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).stakingBalance.get(headers)
 
     override suspend fun getDelegateVotingPower(
         chainId: String,
@@ -245,7 +224,7 @@ internal class ActiveRpcClient(
         publicKeyHash: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateVotingPowerResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/context/contracts/${publicKeyHash.base58}/voting_power", headers)
+        chains.chainId(chainId).blocks.blockId(blockId).context.delegates.pkh(publicKeyHash).votingPower.get(headers)
 
     // -- ../<block_id>/context/sapling --
 
@@ -257,59 +236,23 @@ internal class ActiveRpcClient(
         nullifierOffset: ULong?,
         headers: List<HttpHeader>,
     ): GetSaplingStateDiffResponse =
-        httpClient.get(
-            nodeUrl,
-            "/chains/$chainId/blocks/$blockId/context/sapling/$stateId/get_diff",
-            headers,
-            parameters = buildList {
-                commitmentOffset?.let { add("offset_commitment" to it.toString()) }
-                nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
-            },
-        )
+        chains.chainId(chainId).blocks.blockId(blockId).context.sapling.saplingStateId(stateId).getDiff.get(commitmentOffset, nullifierOffset, headers)
 
     // -- ../<block_id>/header --
 
-    override suspend fun getBlockHeader(
-        chainId: String,
-        blockId: String,
-        headers: List<HttpHeader>,
-    ): GetBlockHeaderResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/header", headers)
+    override suspend fun getBlockHeader(chainId: String, blockId: String, headers: List<HttpHeader>): GetBlockHeaderResponse =
+        chains.chainId(chainId).blocks.blockId(blockId).header.get(headers)
 
     // -- ../<block_id>/helpers --
 
-    override suspend fun preapplyOperations(
-        chainId: String,
-        blockId: String,
-        operations: List<RpcApplicableOperation>,
-        headers: List<HttpHeader>,
-    ): PreapplyOperationsResponse =
-        httpClient.post(
-            nodeUrl,
-            "/chains/$chainId/blocks/$blockId/helpers/preapply/operations",
-            headers,
-            request = PreapplyOperationsRequest(operations),
-        )
+    override suspend fun preapplyOperations(chainId: String, blockId: String, operations: List<RpcApplicableOperation>, headers: List<HttpHeader>): PreapplyOperationsResponse =
+        chains.chainId(chainId).blocks.blockId(blockId).helpers.preapply.operations.post(operations, headers)
 
-    override suspend fun runOperation(
-        chainId: String,
-        blockId: String,
-        operation: RpcRunnableOperation,
-        headers: List<HttpHeader>,
-    ): RunOperationResponse =
-        httpClient.post(
-            nodeUrl,
-            "/chains/$chainId/blocks/$blockId/helpers/scripts/run_operation",
-            headers,
-            request = RunOperationRequest(operation)
-        )
+    override suspend fun runOperation(chainId: String, blockId: String, operation: RpcRunnableOperation, headers: List<HttpHeader>): RunOperationResponse =
+        chains.chainId(chainId).blocks.blockId(blockId).helpers.scripts.runOperation.post(operation, headers)
 
     // -- ../<block_id>/operations --
 
-    override suspend fun getOperations(
-        chainId: String,
-        blockId: String,
-        headers: List<HttpHeader>,
-    ): GetBlockOperationsResponse =
-        httpClient.get(nodeUrl, "/chains/$chainId/blocks/$blockId/operations", headers)
+    override suspend fun getOperations(chainId: String, blockId: String, headers: List<HttpHeader>): GetBlockOperationsResponse =
+        chains.chainId(chainId).blocks.blockId(blockId).operations.get(headers)
 }

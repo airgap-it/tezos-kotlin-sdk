@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.shell.chains
 
 import it.airgap.tezos.core.type.encoded.BlockHash
-import it.airgap.tezos.rpc.active.ActiveRpc
+import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 
@@ -45,7 +45,7 @@ private class ChainsChainBlocksClient(parentUrl: String, private val httpClient:
             }
         )
 
-    override fun blockId(blockId: String): ActiveRpc {
+    override fun blockId(blockId: String): Block {
         TODO("Not yet implemented")
     }
 }

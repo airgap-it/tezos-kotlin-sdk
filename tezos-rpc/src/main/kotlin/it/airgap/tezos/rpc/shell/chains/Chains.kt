@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.shell.chains
 
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
-import it.airgap.tezos.rpc.active.ActiveRpc
+import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.utils.Constants
 
@@ -36,11 +36,11 @@ public interface Chains {
 
             // TODO: replace ActiveRpc with proper Block service
 
-            public val head: ActiveRpc
+            public val head: Block
                 get() = blockId(Constants.Block.HEAD)
 
-            public fun blockId(blockId: String): ActiveRpc
-            public fun blockId(blockId: BlockHash): ActiveRpc = blockId(blockId.base58)
+            public fun blockId(blockId: String): Block
+            public fun blockId(blockId: BlockHash): Block = blockId(blockId.base58)
         }
 
         public interface ChainId {
