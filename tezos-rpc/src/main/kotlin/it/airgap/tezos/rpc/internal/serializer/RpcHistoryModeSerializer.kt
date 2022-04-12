@@ -83,8 +83,8 @@ private object RpcHistoryModeSurrogateSerializer : KJsonSerializer<RpcHistoryMod
 
     override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): RpcHistoryModeSurrogate =
         when (jsonElement) {
-            is JsonPrimitive -> jsonDecoder.decodeSerializableValue(RpcHistoryModeSurrogate.Primitive.serializer())
-            is JsonObject -> jsonDecoder.decodeSerializableValue(RpcHistoryModeSurrogate.Object.serializer())
+            is JsonPrimitive -> jsonDecoder.json.decodeFromJsonElement(RpcHistoryModeSurrogate.Primitive.serializer(), jsonElement)
+            is JsonObject -> jsonDecoder.json.decodeFromJsonElement(RpcHistoryModeSurrogate.Object.serializer(), jsonElement)
             else -> failWithUnexpectedJsonType(jsonElement::class)
         }
 

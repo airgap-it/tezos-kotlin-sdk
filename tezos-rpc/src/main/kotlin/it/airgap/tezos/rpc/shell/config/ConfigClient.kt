@@ -32,13 +32,13 @@ private class ConfigNetworkClient(parentUrl: String, private val httpClient: Htt
 }
 
 private class ConfigNetworkUserActivatedProtocolOverridesClient(parentUrl: String, private val httpClient: HttpClient) : Config.Network.UserActivatedProtocolOverrides {
-    private val baseUrl: String = /* /config/network/user_activated_protocol_overrides */ "$parentUrl/network/user_activated_protocol_overrides"
+    private val baseUrl: String = /* /config/network/user_activated_protocol_overrides */ "$parentUrl/user_activated_protocol_overrides"
 
     override suspend fun get(headers: List<HttpHeader>): GetUserActivatedProtocolOverridesResponse = httpClient.get(baseUrl, "/", headers)
 }
 
 private class ConfigNetworkUserActivatedUpgradesClient(parentUrl: String, private val httpClient: HttpClient) : Config.Network.UserActivatedUpgrades {
-    private val baseUrl: String = /* /config/network/user_activated_upgrades */ "$parentUrl/network/user_activated_upgrades"
+    private val baseUrl: String = /* /config/network/user_activated_upgrades */ "$parentUrl/user_activated_upgrades"
 
     override suspend fun get(headers: List<HttpHeader>): GetUserActivatedUpgradesResponse = httpClient.get(baseUrl, "/", headers)
 }
