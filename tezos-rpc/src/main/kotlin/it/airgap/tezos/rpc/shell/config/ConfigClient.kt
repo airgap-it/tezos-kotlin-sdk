@@ -20,7 +20,7 @@ private class ConfigHistoryModeClient(parentUrl: String, private val httpClient:
 private class ConfigLoggingClient(parentUrl: String, private val httpClient: HttpClient) : Config.Logging {
     private val baseUrl: String = /* /config/logging */ "$parentUrl/logging"
 
-    override suspend fun put(activeSinks: String, headers: List<HttpHeader>): SetLoggingResponse =
+    override suspend fun put(activeSinks: List<String>, headers: List<HttpHeader>): SetLoggingResponse =
         httpClient.put(baseUrl, "/", headers, request = SetLoggingRequest(activeSinks))
 }
 

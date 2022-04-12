@@ -14,7 +14,7 @@ public data class GetHistoryModeResponse(@SerialName("history_mode") public val 
 // -- /config/logging --
 
 @Serializable
-public data class SetLoggingRequest(@SerialName("active_sinks") public val activeSinks: String)
+public data class SetLoggingRequest(@SerialName("active_sinks") public val activeSinks: List<String>)
 
 public typealias SetLoggingResponse = Unit
 

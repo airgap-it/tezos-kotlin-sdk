@@ -7,8 +7,8 @@ import it.airgap.tezos.core.internal.di.findScoped
 import it.airgap.tezos.core.internal.utils.failWithIllegalState
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.internal.http.HttpClient
+import it.airgap.tezos.rpc.internal.serializer.rpcJson
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 
 internal class RpcScopedDependencyRegistry(
     httpClientProvider: HttpClientProvider,
@@ -18,11 +18,7 @@ internal class RpcScopedDependencyRegistry(
     // -- serialization --
 
     override val json: Json by lazyWeak {
-        Json {
-            serializersModule = SerializersModule {
-                /* TODO: Configuration */
-            }
-            ignoreUnknownKeys = true
+        Json(from = rpcJson) {
             prettyPrint = false
         }
     }

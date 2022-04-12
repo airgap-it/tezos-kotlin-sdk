@@ -12,7 +12,7 @@ public interface Config {
     }
 
     public interface Logging {
-        public suspend fun put(activeSinks: String, headers: List<HttpHeader> = emptyList()): SetLoggingResponse
+        public suspend fun put(activeSinks: List<String>, headers: List<HttpHeader> = emptyList()): SetLoggingResponse
     }
 
     public interface Network {

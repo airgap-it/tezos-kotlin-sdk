@@ -23,7 +23,6 @@ private class ChainsChainClient(parentUrl: String, chainId: String, private val 
     override val invalidBlocks: Chains.Chain.InvalidBlocks by lazy { ChainsChainInvalidBlocksClient(baseUrl, httpClient) }
     override val isBootstrapped: Chains.Chain.IsBootstrapped by lazy { ChainsChainIsBootstrappedClient(baseUrl, httpClient) }
     override val levels: Chains.Chain.Levels by lazy { ChainsChainLevelsClient(baseUrl, httpClient) }
-
 }
 
 private class ChainsChainBlocksClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.Blocks {
@@ -60,10 +59,10 @@ private class ChainsChainInvalidBlocksClient(parentUrl: String, private val http
 
     override suspend fun get(headers: List<HttpHeader>): GetInvalidBlocksResponse = httpClient.get(baseUrl, "/", headers)
 
-    override operator fun invoke(blockHash: String): Chains.Chain.InvalidBlocks.Block = InvalidBlockClient(baseUrl, blockHash, httpClient)
+    override operator fun invoke(blockHash: String): Chains.Chain.InvalidBlocks.Block = ChainsInvalidBlockClient(baseUrl, blockHash, httpClient)
 }
 
-private class InvalidBlockClient(parentUrl: String, blockHash: String, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks.Block {
+private class ChainsInvalidBlockClient(parentUrl: String, blockHash: String, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks.Block {
     private val baseUrl: String = /* /chains/<chain_id>/invalid_blocks/<block_hash> */  "$parentUrl/$blockHash"
 
     override suspend fun get(headers: List<HttpHeader>): GetInvalidBlockResponse = httpClient.get(baseUrl, "/", headers)

@@ -58,5 +58,9 @@ public class HttpClient(
     internal inline fun <reified T : Any> T.encodeAsRequest(): String = json.encodeToString(this)
 
     @PublishedApi
-    internal inline fun <reified T : Any> String.decodeAsResponse(): T = json.decodeFromString(this)
+    internal inline fun <reified T : Any> String.decodeAsResponse(): T =
+        when (T::class) {
+            Unit::class -> Unit as T
+            else -> json.decodeFromString(this)
+        }
 }
