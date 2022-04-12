@@ -19,14 +19,14 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
 
     // -- ../<block_id>/context/big_maps --
 
-    override suspend fun getBigMapValues(
+    override suspend fun getBigMap(
         chainId: String,
         blockId: String,
         bigMapId: String,
         offset: UInt?,
         length: UInt?,
         headers: List<HttpHeader>,
-    ): GetBigMapValuesResponse =
+    ): GetBigMapResponse =
         chains(chainId).blocks(blockId).context.bigMaps(bigMapId).get(offset, length, headers)
 
     override suspend fun getBigMapValue(
@@ -53,7 +53,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractDetailsResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).get(headers)
 
-    override suspend fun getContractBalance(
+    override suspend fun getBalance(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -61,7 +61,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractBalanceResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).balance.get(headers)
 
-    override suspend fun getContractCounter(
+    override suspend fun getCounter(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -69,7 +69,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractCounterResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).counter.get(headers) // TODO: handle error when resource is missing
 
-    override suspend fun getContractDelegate(
+    override suspend fun getDelegate(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -77,7 +77,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractDelegateResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).delegate.get(headers) // TODO: handle error when resource is missing
 
-    override suspend fun getContractEntrypoints(
+    override suspend fun getEntrypoints(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -85,24 +85,24 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractEntrypointsResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).entrypoints.get(headers)
 
-    override suspend fun getContractEntrypointType(
+    override suspend fun getEntrypoint(
         chainId: String,
         blockId: String,
         contractId: Address,
         entrypoint: String,
         headers: List<HttpHeader>,
-    ): GetContractEntrypointTypeResponse =
+    ): GetContractEntrypointResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).entrypoints(entrypoint).get(headers)
 
-    override suspend fun getContractManager(
+    override suspend fun getManagerKey(
         chainId: String,
         blockId: String,
         contractId: Address,
         headers: List<HttpHeader>,
-    ): GetContractManagerResponse =
+    ): GetContractManagerKeyResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).managerKey.get(headers)
 
-    override suspend fun getContractScript(
+    override suspend fun getScript(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -110,7 +110,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractScriptResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).script.get(headers) // TODO: handle error when resource is missing
 
-    override suspend fun getContractSaplingStateDiff(
+    override suspend fun getSaplingStateDiff(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -120,7 +120,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     ): GetContractSaplingStateDiffResponse =
         chains(chainId).blocks(blockId).context.contracts(contractId).singleSaplingGetDiff.get(commitmentOffset, nullifierOffset, headers)
 
-    override suspend fun getContractStorage(
+    override suspend fun getStorage(
         chainId: String,
         blockId: String,
         contractId: Address,
@@ -133,98 +133,98 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getDelegateDetails(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDetailsResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).get(headers)
 
-    override suspend fun getDelegateCurrentFrozenDeposits(
+    override suspend fun getCurrentFrozenDeposits(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateCurrentFrozenDepositsResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).currentFrozenDeposits.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).currentFrozenDeposits.get(headers)
 
-    override suspend fun isDelegateDeactivated(
+    override suspend fun isDeactivated(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDeactivatedStatusResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).deactivated.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).deactivated.get(headers)
 
-    override suspend fun getDelegateDelegatedBalance(
+    override suspend fun getDelegatedBalance(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedBalanceResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).delegatedBalance.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).delegatedBalance.get(headers)
 
-    override suspend fun getDelegateDelegatedContracts(
+    override suspend fun getDelegatedContracts(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedContractsResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).delegatedContracts.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).delegatedContracts.get(headers)
 
-    override suspend fun getDelegateFrozenDeposits(
+    override suspend fun getFrozenDeposits(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).frozenDeposits.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).frozenDeposits.get(headers)
 
-    override suspend fun getDelegateFrozenDepositsLimit(
+    override suspend fun getFrozenDepositsLimit(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsLimitResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).frozenDepositsLimit.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).frozenDepositsLimit.get(headers)
 
-    override suspend fun getDelegateFullBalance(
+    override suspend fun getFullBalance(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateFullBalanceResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).fullBalance.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).fullBalance.get(headers)
 
-    override suspend fun getDelegateGracePeriod(
+    override suspend fun getGracePeriod(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateGracePeriodResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).gracePeriod.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).gracePeriod.get(headers)
 
-    override suspend fun getDelegateParticipation(
+    override suspend fun getParticipation(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateParticipationResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).participation.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).participation.get(headers)
 
-    override suspend fun getDelegateStakingBalance(
+    override suspend fun getStakingBalance(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateStakingBalanceResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).stakingBalance.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).stakingBalance.get(headers)
 
-    override suspend fun getDelegateVotingPower(
+    override suspend fun getVotingPower(
         chainId: String,
         blockId: String,
-        publicKeyHash: PublicKeyHashEncoded,
+        delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader>,
     ): GetDelegateVotingPowerResponse =
-        chains(chainId).blocks(blockId).context.delegates(publicKeyHash).votingPower.get(headers)
+        chains(chainId).blocks(blockId).context.delegates(delegateId).votingPower.get(headers)
 
     // -- ../<block_id>/context/sapling --
 

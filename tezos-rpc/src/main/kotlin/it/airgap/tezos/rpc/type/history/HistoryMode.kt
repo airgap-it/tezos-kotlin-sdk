@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.type
+package it.airgap.tezos.rpc.type.history
 
 import it.airgap.tezos.rpc.internal.serializer.RpcHistoryModeSerializer
 import kotlinx.serialization.SerialName

@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.type.p2p
+package it.airgap.tezos.rpc.type.network
 
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
 import it.airgap.tezos.rpc.type.RpcIPAddress

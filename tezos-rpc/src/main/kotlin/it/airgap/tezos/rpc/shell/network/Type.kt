@@ -2,12 +2,8 @@ package it.airgap.tezos.rpc.shell.network
 
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
-import it.airgap.tezos.rpc.type.RpcAcl
 import it.airgap.tezos.rpc.type.RpcIPAddress
-import it.airgap.tezos.rpc.type.p2p.RpcConnection
-import it.airgap.tezos.rpc.type.p2p.RpcConnectionPoolEvent
-import it.airgap.tezos.rpc.type.p2p.RpcPeer
-import it.airgap.tezos.rpc.type.p2p.RpcPeerPoolEvent
+import it.airgap.tezos.rpc.type.network.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -4,8 +4,8 @@ import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.utils.encodeToString
-import it.airgap.tezos.rpc.type.RpcAcl
-import it.airgap.tezos.rpc.type.p2p.RpcPeerState
+import it.airgap.tezos.rpc.type.network.RpcAcl
+import it.airgap.tezos.rpc.type.network.RpcPeerState
 import kotlinx.serialization.json.Json
 
 internal class NetworkClient(parentUrl: String, private val httpClient: HttpClient, private val json: Json) : Network {

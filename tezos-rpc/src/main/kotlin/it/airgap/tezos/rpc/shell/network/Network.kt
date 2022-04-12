@@ -2,8 +2,8 @@ package it.airgap.tezos.rpc.shell.network
 
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
 import it.airgap.tezos.rpc.http.HttpHeader
-import it.airgap.tezos.rpc.type.RpcAcl
-import it.airgap.tezos.rpc.type.p2p.RpcPeerState
+import it.airgap.tezos.rpc.type.network.RpcAcl
+import it.airgap.tezos.rpc.type.network.RpcPeerState
 
 public interface Network {
     public val connections: Connections

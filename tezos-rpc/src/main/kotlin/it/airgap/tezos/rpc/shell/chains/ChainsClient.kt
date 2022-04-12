@@ -73,7 +73,7 @@ private class InvalidBlockClient(parentUrl: String, blockHash: String, private v
 private class ChainsChainIsBootstrappedClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.IsBootstrapped {
     private val baseUrl: String = /* /chains/<chain_id>/is_bootstrapped */ "$parentUrl/is_bootstrapped"
 
-    override suspend fun get(headers: List<HttpHeader>): GetIsBootstrappedResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(headers: List<HttpHeader>): GetBootstrappedStatusResponse = httpClient.get(baseUrl, "/", headers)
 
 }
 

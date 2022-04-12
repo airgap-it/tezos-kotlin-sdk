@@ -28,7 +28,7 @@ public value class GetBlockResponse(public val block: RpcBlock)
 
 @Serializable
 @JvmInline
-public value class GetBigMapValuesResponse(public val values: List<MichelineNode>)
+public value class GetBigMapResponse(public val values: List<MichelineNode>)
 
 // -- ../<block_id>/context/big_maps/<big_map_id>/<script_expr> --
 
@@ -82,13 +82,13 @@ public data class GetContractEntrypointsResponse(
 
 @Serializable
 @JvmInline
-public value class GetContractEntrypointTypeResponse(public val entrypoint: MichelineNode)
+public value class GetContractEntrypointResponse(public val entrypoint: MichelineNode)
 
 // -- ../<block_id>/context/contracts/<contract_id>/manager_key --
 
 @Serializable
 @JvmInline
-public value class GetContractManagerResponse(public val manager: String)
+public value class GetContractManagerKeyResponse(public val manager: String)
 
 // -- ../<block_id>/context/contracts/<contract_id>/script --
 

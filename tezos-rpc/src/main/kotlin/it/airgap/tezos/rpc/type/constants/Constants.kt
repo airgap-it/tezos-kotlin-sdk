@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.type.constants
 
-import it.airgap.tezos.rpc.type.RpcRatio
 import it.airgap.tezos.rpc.type.delegate.RpcDelegateSelection
+import it.airgap.tezos.rpc.type.primitive.RpcRatio
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

@@ -45,7 +45,7 @@ public typealias DeleteInvalidBlockResponse = Unit
 // -- /chains/<chain_id>/is_bootstrapped --
 
 @Serializable
-public data class GetIsBootstrappedResponse(public val bootstrapped: Boolean, @SerialName("sync_state") public val syncState: RpcChainStatus)
+public data class GetBootstrappedStatusResponse(public val bootstrapped: Boolean, @SerialName("sync_state") public val syncState: RpcChainStatus)
 
 // -- /chains/<chain_id>/levels/caboose --
 

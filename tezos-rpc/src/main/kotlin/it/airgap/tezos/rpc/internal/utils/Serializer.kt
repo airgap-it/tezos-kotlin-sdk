@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
@@ -88,13 +87,3 @@ internal abstract class KListListSerializer<T, S>(elementSerializer: KSerializer
         encoder.encodeSerializableValue(delegateSerializer, list)
     }
 }
-
-// -- extensions --
-
-@OptIn(ExperimentalSerializationApi::class)
-public val SerialDescriptor.elementIndices: Iterable<Int>
-    get() = (0 until elementsCount)
-
-@OptIn(ExperimentalSerializationApi::class)
-public fun SerialDescriptor.getElementNames(indices: Collection<Int>): List<String> =
-    indices.map { getElementName(it) }

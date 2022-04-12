@@ -1,12 +1,14 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.rpc.type.p2p.RpcPeerMetadataEntry
-import kotlinx.serialization.*
+import it.airgap.tezos.rpc.type.network.RpcPeerMetadataEntry
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-@OptIn(ExperimentalSerializationApi::class)
 internal object RpcPeerMetadataEntrySerializer : KSerializer<RpcPeerMetadataEntry> {
     override val descriptor: SerialDescriptor = RpcPeerMetadataEntrySurrogate.serializer().descriptor
 

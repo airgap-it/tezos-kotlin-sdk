@@ -5,6 +5,7 @@ import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.rpc.type.chain.RpcTestChainStatus
 import it.airgap.tezos.rpc.type.operation.RpcBalanceUpdate
+import it.airgap.tezos.rpc.type.operation.RpcOperationListMetadata
 import it.airgap.tezos.rpc.type.operation.RpcSuccessfulManagerOperationResult
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -31,10 +32,4 @@ public data class RpcBlockHeaderMetadata(
     @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
     @SerialName("liquidity_baking_escape_ema") public val liquidityBakingEscapeEma: Int,
     @SerialName("implicit_operations_results") public val implicitOperationsResults: List<@Contextual RpcSuccessfulManagerOperationResult>,
-)
-
-@Serializable
-public data class RpcOperationListMetadata(
-    @SerialName("max_size") public val maxSize: Int,
-    @SerialName("max_op") public val maxOperations: Int,
 )

@@ -2,8 +2,8 @@ package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
-import it.airgap.tezos.rpc.type.RpcAdditionalCycles
-import it.airgap.tezos.rpc.type.RpcHistoryMode
+import it.airgap.tezos.rpc.type.history.RpcAdditionalCycles
+import it.airgap.tezos.rpc.type.history.RpcHistoryMode
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

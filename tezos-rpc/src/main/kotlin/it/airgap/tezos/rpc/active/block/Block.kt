@@ -28,7 +28,7 @@ public interface Block {
             public operator fun invoke(bigMapId: String): BigMap
 
             public interface BigMap {
-                public suspend fun get(offset: UInt? = null, length: UInt? = null, headers: List<HttpHeader> = emptyList()): GetBigMapValuesResponse
+                public suspend fun get(offset: UInt? = null, length: UInt? = null, headers: List<HttpHeader> = emptyList()): GetBigMapResponse
 
                 public operator fun invoke(scriptExpr: ScriptExprHash): Value
 
@@ -75,12 +75,12 @@ public interface Block {
                     public operator fun invoke(string: String): Entrypoint
 
                     public interface Entrypoint {
-                        public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractEntrypointTypeResponse
+                        public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractEntrypointResponse
                     }
                 }
 
                 public interface ManagerKey {
-                    public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractManagerResponse
+                    public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractManagerKeyResponse
                 }
 
                 public interface Script {

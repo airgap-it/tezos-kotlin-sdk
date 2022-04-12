@@ -1,6 +1,6 @@
-package it.airgap.tezos.rpc.type.p2p
+package it.airgap.tezos.rpc.type.network
 
-import it.airgap.tezos.rpc.type.Unistring
+import it.airgap.tezos.rpc.type.primitive.Unistring
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

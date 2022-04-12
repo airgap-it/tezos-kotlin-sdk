@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.type
+package it.airgap.tezos.rpc.type.primitive
 
 import it.airgap.tezos.rpc.internal.serializer.UnistringSerializer
 import kotlinx.serialization.SerialName
@@ -12,7 +12,8 @@ public sealed interface Unistring {
     public value class PlainUtf8(public val string: String) : Unistring
 
     @Serializable
-    public data class InvalidUtf8(@SerialName("invalid_utf8_string") public val invalidUtf8String: ByteArray) : Unistring {
+    public data class InvalidUtf8(@SerialName("invalid_utf8_string") public val invalidUtf8String: ByteArray) :
+        Unistring {
         override fun equals(other: Any?): Boolean =
             when {
                 this === other -> true

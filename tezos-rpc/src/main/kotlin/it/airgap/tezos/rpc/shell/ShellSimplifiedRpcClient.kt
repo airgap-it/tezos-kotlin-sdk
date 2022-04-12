@@ -6,8 +6,8 @@ import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.shell.chains.Chains
 import it.airgap.tezos.rpc.shell.chains.GetBlocksResponse
+import it.airgap.tezos.rpc.shell.chains.GetBootstrappedStatusResponse
 import it.airgap.tezos.rpc.shell.chains.GetChainIdResponse
-import it.airgap.tezos.rpc.shell.chains.GetIsBootstrappedResponse
 import it.airgap.tezos.rpc.shell.injection.InjectOperationResponse
 import it.airgap.tezos.rpc.shell.injection.Injection
 
@@ -25,7 +25,7 @@ internal class ShellSimplifiedRpcClient(
     override suspend fun getChainId(chainId: String, headers: List<HttpHeader>): GetChainIdResponse =
         chains(chainId).chainId.get(headers)
 
-    override suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader>): GetIsBootstrappedResponse =
+    override suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader>): GetBootstrappedStatusResponse =
         chains(chainId).isBootstrapped.get(headers)
 
     // -- /injection --

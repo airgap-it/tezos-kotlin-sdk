@@ -38,7 +38,7 @@ private class BlockContextBigMapsClient(parentUrl: String, private val httpClien
 private class BlockContextBigMapsBigMapClient(parentUrl: String, bigMapId: String, private val httpClient: HttpClient) : Block.Context.BigMaps.BigMap {
     private val baseUrl: String = /* ../<block_id>/context/big_maps/<big_map_id> */ "$parentUrl/$bigMapId"
 
-    override suspend fun get(offset: UInt?, length: UInt?, headers: List<HttpHeader>): GetBigMapValuesResponse =
+    override suspend fun get(offset: UInt?, length: UInt?, headers: List<HttpHeader>): GetBigMapResponse =
         httpClient.get(
             baseUrl,
             "/",
@@ -114,13 +114,13 @@ private class BlockContextContractsContractEntrypointsClient(parentUrl: String, 
 private class BlockContextContractsContractEntrypointsEntrypointClient(parentUrl: String, string: String, private val httpClient: HttpClient) : Block.Context.Contracts.Contract.Entrypoints.Entrypoint {
     private val baseUrl: String = /* ../<block_id>/context/contracts/<contract_id>/entrypoints/<string> */ "$parentUrl/$string"
 
-    override suspend fun get(headers: List<HttpHeader>): GetContractEntrypointTypeResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(headers: List<HttpHeader>): GetContractEntrypointResponse = httpClient.get(baseUrl, "/", headers)
 }
 
 private class BlockContextContractsContractManagerKeyClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Contracts.Contract.ManagerKey {
     private val baseUrl: String = /* ../<block_id>/context/contracts/<contract_id>/manager_key */ "$parentUrl/manager_key"
 
-    override suspend fun get(headers: List<HttpHeader>): GetContractManagerResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(headers: List<HttpHeader>): GetContractManagerKeyResponse = httpClient.get(baseUrl, "/", headers)
 }
 
 private class BlockContextContractsContractScriptClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Contracts.Contract.Script {

@@ -58,7 +58,7 @@ public interface Chains {
         }
 
         public interface IsBootstrapped {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetIsBootstrappedResponse
+            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetBootstrappedStatusResponse
         }
 
         public interface Levels {
