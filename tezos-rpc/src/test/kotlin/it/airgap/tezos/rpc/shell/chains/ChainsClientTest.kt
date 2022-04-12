@@ -14,7 +14,6 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.serializer.rpcJson
-import it.airgap.tezos.rpc.internal.utils.encodeToString
 import it.airgap.tezos.rpc.type.RpcError
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
@@ -23,6 +22,7 @@ import it.airgap.tezos.rpc.type.chain.RpcChainStatus
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import mockTezosSdk
+import normalizeWith
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -66,7 +66,7 @@ class ChainsClientTest {
         val chainId = "chainId"
         val bootstrapped = true
 
-        val (expectedRequest, expectedResponse, jsonResponse) = chainPatchRequestConfiguration(bootstrapped)
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = chainPatchRequestConfiguration(bootstrapped)
         coEvery { httpClientProvider.patch(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -75,7 +75,7 @@ class ChainsClientTest {
             assertEquals(expectedResponse, response)
 
             coVerify { httpClient.patch("$nodeUrl/chains/$chainId", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.patch("$nodeUrl/chains/$chainId", "/", headers = headers, parameters = emptyList(), body = json.encodeToString(expectedRequest)) }
+            coVerify { httpClientProvider.patch("$nodeUrl/chains/$chainId", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
@@ -92,11 +92,11 @@ class ChainsClientTest {
             Parameters(length = 1U, head = BlockHash("BLnJawGEsLm4H3o6uoCtB5Di99QVNGtrtVC7rhBHqUbY6TqwtdE"), minDate = "date"),
         )
 
+        val (_, expectedResponse, _, jsonResponse) = chainBlocksGetRequestConfiguration
+        coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
+
         headers.forEach { headers ->
             parameters.forEach {  parameters ->
-                val (_, expectedResponse, jsonResponse) = chainBlocksGetRequestConfiguration
-                coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
-
                 val (length, head, minDate) = parameters
                 val expectedParameters = buildList<HttpParameter> {
                     length?.let { add("length" to it.toString()) }
@@ -119,7 +119,7 @@ class ChainsClientTest {
         val blockId = "blockId"
 
         headers.forEach { headers ->
-            val (_, expectedResponse, jsonResponse) = chainBlocksBlockGetRequestConfiguration
+            val (_, expectedResponse, _, jsonResponse) = chainBlocksBlockGetRequestConfiguration
             coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
             val response = runBlocking { chainsClient(chainId).blocks(blockId).get(headers = headers) }
@@ -135,7 +135,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - chain_id'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, jsonResponse) = chainChainIdRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainChainIdRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -152,7 +152,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - invalid_blocks'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, jsonResponse) = chainInvalidBlocksRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -170,7 +170,7 @@ class ChainsClientTest {
         val chainId = "chainId"
         val blockHash = "blockHash"
 
-        val (_, expectedResponse, jsonResponse) = chainInvalidBlocksBlockRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksBlockRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -187,7 +187,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - is_bootstrapped'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, jsonResponse) = chainIsBootstrappedRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainIsBootstrappedRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -204,7 +204,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - levels - caboose'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, jsonResponse) = chainLevelsCabooseRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainLevelsCabooseRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -221,7 +221,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - levels - checkpoint'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, jsonResponse) = chainLevelsCheckpointRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainLevelsCheckpointRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -238,7 +238,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - levels - savepoint'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, jsonResponse) = chainLevelsSavepointRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainLevelsSavepointRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -261,6 +261,11 @@ class ChainsClientTest {
         RequestConfiguration(
             request = SetBootstrappedRequest(bootstrapped),
             response = SetBootstrappedResponse,
+            jsonRequest = """
+                {
+                  "bootstrapped": $bootstrapped
+                }
+            """.trimIndent(),
             jsonResponse = "",
         )
 
@@ -492,6 +497,6 @@ class ChainsClientTest {
             """.trimIndent()
         )
 
-    private data class RequestConfiguration<Req, Res>(val request: Req, val response: Res, val jsonResponse: String)
-    private fun <Res> RequestConfiguration(response: Res, jsonResponse: String): RequestConfiguration<Unit, Res> = RequestConfiguration(Unit, response, jsonResponse)
+    private data class RequestConfiguration<Req, Res>(val request: Req, val response: Res, val jsonRequest: String?, val jsonResponse: String)
+    private fun <Res> RequestConfiguration(response: Res, jsonResponse: String): RequestConfiguration<Unit, Res> = RequestConfiguration(Unit, response, null, jsonResponse)
 }

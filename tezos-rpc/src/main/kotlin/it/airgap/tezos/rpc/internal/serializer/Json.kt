@@ -16,6 +16,7 @@ internal val rpcSerializersModule: SerializersModule = SerializersModule {
     contextual(BlockPayloadHash::class, BlockPayloadHashSerializer)
     contextual(ChainId::class, ChainIdSerializer)
     contextual(ContextHash::class, ContextHashSerializer)
+    contextual(OperationHash::class, OperationHashSerializer)
     contextual(OperationListListHash::class, OperationListListHashSerializer)
     contextual(ProtocolHash::class, ProtocolHashSerializer)
 }

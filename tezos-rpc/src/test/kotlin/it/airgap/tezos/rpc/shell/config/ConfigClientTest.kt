@@ -10,13 +10,14 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.serializer.rpcJson
-import it.airgap.tezos.rpc.internal.utils.encodeToString
 import it.airgap.tezos.rpc.shell.config.*
 import it.airgap.tezos.rpc.type.history.RpcHistoryMode
 import it.airgap.tezos.rpc.type.protocol.RpcUserActivatedProtocolOverride
 import it.airgap.tezos.rpc.type.protocol.RpcUserActivatedUpgrade
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import normalizeWith
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -51,7 +52,7 @@ class ConfigClientTest {
 
     @Test
     fun `should call GET on 'config - history_mode'`() {
-        val (_, expectedResponse, jsonResponse) = configHistoryModeRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = configHistoryModeRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -68,7 +69,7 @@ class ConfigClientTest {
     fun `should call PUT on 'config - logging'`() {
         val activeSinks = listOf("sink")
 
-        val (expectedRequest, expectedResponse, jsonResponse) = configLoggingRequestConfiguration(activeSinks)
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = configLoggingRequestConfiguration(activeSinks)
         coEvery { httpClientProvider.put(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -77,13 +78,13 @@ class ConfigClientTest {
             assertEquals(expectedResponse, response)
 
             coVerify { httpClient.put("$nodeUrl/config/logging", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.put("$nodeUrl/config/logging", "/", headers = headers, parameters = emptyList(), body = json.encodeToString(expectedRequest)) }
+            coVerify { httpClientProvider.put("$nodeUrl/config/logging", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
     @Test
     fun `should call GET on 'config - network - user_activated_protocol_overrides'`() {
-        val (_, expectedResponse, jsonResponse) = configNetworkUserActivatedProtocolOverridesRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = configNetworkUserActivatedProtocolOverridesRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -98,7 +99,7 @@ class ConfigClientTest {
 
     @Test
     fun `should call GET on 'config - network - user_activated_upgrades'`() {
-        val (_, expectedResponse, jsonResponse) = configNetworkUserActivatedUpgradesRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = configNetworkUserActivatedUpgradesRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -131,6 +132,11 @@ class ConfigClientTest {
         RequestConfiguration(
             request = SetLoggingRequest(activeSinks),
             response = SetLoggingResponse,
+            jsonRequest = """
+                {
+                  "active_sinks": ${json.encodeToString(activeSinks)}
+                }
+            """.trimIndent(),
             jsonResponse = "",
         )
 
@@ -198,6 +204,6 @@ class ConfigClientTest {
             """.trimIndent()
         )
 
-    private data class RequestConfiguration<Req, Res>(val request: Req, val response: Res, val jsonResponse: String)
-    private fun <Res> RequestConfiguration(response: Res, jsonResponse: String): RequestConfiguration<Unit, Res> = RequestConfiguration(Unit, response, jsonResponse)
+    private data class RequestConfiguration<Req, Res>(val request: Req, val response: Res, val jsonRequest: String?, val jsonResponse: String)
+    private fun <Res> RequestConfiguration(response: Res, jsonResponse: String): RequestConfiguration<Unit, Res> = RequestConfiguration(Unit, response, null, jsonResponse)
 }
