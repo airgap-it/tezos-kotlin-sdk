@@ -29,11 +29,11 @@ public interface Network {
         public suspend fun delete(headers: List<HttpHeader> = emptyList()): ClearGreylistResponse
 
         public interface Ips {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetGreylistedIPsResponse
+            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetGreylistedIpsResponse
         }
 
         public interface Peers {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetLastGreylistedPeersResponse
+            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetGreylistedPeersResponse
         }
     }
 
@@ -42,9 +42,9 @@ public interface Network {
     }
 
     public interface Peers {
-        public suspend fun get(filter: RpcPeerState?, headers: List<HttpHeader> = emptyList()): GetPeersResponse
+        public suspend fun get(filter: RpcPeerState? = null, headers: List<HttpHeader> = emptyList()): GetPeersResponse
 
-        public fun peer(peerId: CryptoboxPublicKeyHash): Peer
+        public operator fun invoke(peerId: CryptoboxPublicKeyHash): Peer
 
         public interface Peer {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetPeerResponse

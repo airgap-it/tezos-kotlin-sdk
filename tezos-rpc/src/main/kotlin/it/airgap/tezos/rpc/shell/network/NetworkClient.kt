@@ -43,8 +43,8 @@ private class NetworkConnectionsConnectionClient(parentUrl: String, peerId: Cryp
 private class NetworkGreylistClient(parentUrl: String, private val httpClient: HttpClient) : Network.Greylist {
     private val baseUrl: String = /* /network/greylist */ "$parentUrl/greylist"
 
-    override val ips: Network.Greylist.Ips by lazy { NetworkGreylistIpsClient(parentUrl, httpClient) }
-    override val peers: Network.Greylist.Peers by lazy { NetworkGreylistPeersClient(parentUrl, httpClient) }
+    override val ips: Network.Greylist.Ips by lazy { NetworkGreylistIpsClient(baseUrl, httpClient) }
+    override val peers: Network.Greylist.Peers by lazy { NetworkGreylistPeersClient(baseUrl, httpClient) }
 
     override suspend fun delete(headers: List<HttpHeader>): ClearGreylistResponse = httpClient.delete(baseUrl, "/", headers)
 }
@@ -52,13 +52,13 @@ private class NetworkGreylistClient(parentUrl: String, private val httpClient: H
 private class NetworkGreylistIpsClient(parentUrl: String, private val httpClient: HttpClient) : Network.Greylist.Ips {
     private val baseUrl: String = /* /network/greylist/ips */ "$parentUrl/ips"
 
-    override suspend fun get(headers: List<HttpHeader>): GetGreylistedIPsResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(headers: List<HttpHeader>): GetGreylistedIpsResponse = httpClient.get(baseUrl, "/", headers)
 }
 
 private class NetworkGreylistPeersClient(parentUrl: String, private val httpClient: HttpClient) : Network.Greylist.Peers {
     private val baseUrl: String = /* /network/greylist/peers */ "$parentUrl/peers"
 
-    override suspend fun get(headers: List<HttpHeader>): GetLastGreylistedPeersResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(headers: List<HttpHeader>): GetGreylistedPeersResponse = httpClient.get(baseUrl, "/", headers)
 }
 
 private class NetworkLogClient(parentUrl: String, private val httpClient: HttpClient) : Network.Log {
@@ -80,7 +80,7 @@ private class NetworkPeersClient(parentUrl: String, private val httpClient: Http
             },
         )
 
-    override fun peer(peerId: CryptoboxPublicKeyHash): Network.Peers.Peer = NetworkPeersPeerClient(baseUrl, peerId, httpClient)
+    override operator fun invoke(peerId: CryptoboxPublicKeyHash): Network.Peers.Peer = NetworkPeersPeerClient(baseUrl, peerId, httpClient)
 }
 
 private class NetworkPeersPeerClient(parentUrl: String, peerId: CryptoboxPublicKeyHash, private val httpClient: HttpClient) : Network.Peers.Peer {

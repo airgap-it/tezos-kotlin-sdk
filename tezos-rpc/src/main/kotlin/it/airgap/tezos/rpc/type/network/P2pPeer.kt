@@ -19,12 +19,12 @@ public data class RpcPeer(
     public val state: RpcPeerState,
     @SerialName("reachable_at") public val reachableAt: RpcConnectionId? = null,
     public val stat: RpcNetworkStat,
-    @SerialName("last_failed_connection") public val lastFailedConnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
-    @SerialName("last_rejected_connection") public val lastRejectedConnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
-    @SerialName("last_established_connection") public val lastEstablishedConnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
-    @SerialName("last_disconnection") public val lastDisconnection: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
-    @SerialName("last_seen") public val lastMiss: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
-    @SerialName("last_miss") public val lastSeen: Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_failed_connection") public val lastFailedConnection: @Contextual Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_rejected_connection") public val lastRejectedConnection: @Contextual Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_established_connection") public val lastEstablishedConnection: @Contextual Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_disconnection") public val lastDisconnection: @Contextual Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_seen") public val lastMiss: @Contextual Pair<RpcConnectionId, @Contextual Timestamp>? = null,
+    @SerialName("last_miss") public val lastSeen: @Contextual Pair<RpcConnectionId, @Contextual Timestamp>? = null,
 )
 
 // -- RpcPeerState --

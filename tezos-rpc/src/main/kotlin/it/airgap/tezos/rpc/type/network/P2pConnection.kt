@@ -62,7 +62,7 @@ public sealed class RpcConnectionPoolEvent {
     public open val idPoint: RpcConnectionId? = null
 
     @Transient
-    public open val identity: Pair<RpcConnectionId, @Contextual CryptoboxPublicKeyHash>? = null
+    public open val identity: @Contextual Pair<RpcConnectionId, @Contextual CryptoboxPublicKeyHash>? = null
 
     @Transient
     public open val source: @Contextual CryptoboxPublicKeyHash? = null
@@ -152,7 +152,7 @@ public data class RpcRejectingRequestEvent(
 @SerialName(RpcRequestRejectedEvent.KIND)
 public data class RpcRequestRejectedEvent(
     override val point: RpcConnectionPointId,
-    override val identity: Pair<RpcConnectionId, @Contextual CryptoboxPublicKeyHash>? = null,
+    override val identity: @Contextual Pair<RpcConnectionId, @Contextual CryptoboxPublicKeyHash>? = null,
 ) : RpcConnectionPoolEvent() {
     public companion object {
         internal const val KIND = "request_rejected"
@@ -166,7 +166,7 @@ public data class RpcConnectionEstablishedEvent(
     @SerialName("peer_id") override val peerId: @Contextual CryptoboxPublicKeyHash,
 ) : RpcConnectionPoolEvent() {
     public companion object {
-        internal const val KIND = "accepting_request"
+        internal const val KIND = "connection_established"
     }
 }
 

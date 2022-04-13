@@ -72,7 +72,7 @@ class InjectionClientTest {
             )
         )
 
-        val (expectedRequest, expectedResponse, jsonRequest ,jsonResponse) = injectionBlockRequestConfiguration(data, operations)
+        val (expectedRequest, expectedResponse, jsonRequest ,jsonResponse) = blockPostRequestConfiguration(data, operations)
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -106,7 +106,7 @@ class InjectionClientTest {
         )
         val data = HexString("a8a043507783594ede53ddbee766b4a3")
 
-        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = injectionOperationRequestConfiguration(data)
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = operationPostRequestConfiguration(data)
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -138,7 +138,7 @@ class InjectionClientTest {
         val expectedEnvVersion = 1.toUShort()
         val components = listOf<RpcProtocolComponent>()
 
-        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = injectionProtocolRequestConfiguration(expectedEnvVersion, components)
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = protocolPostRequestConfiguration(expectedEnvVersion, components)
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -163,7 +163,7 @@ class InjectionClientTest {
             listOf("Authorization" to "Bearer")
         )
 
-    private fun injectionBlockRequestConfiguration(data: HexString, operations: List<List<RpcInjectableOperation>>): RequestConfiguration<InjectBlockRequest, InjectBlockResponse> =
+    private fun blockPostRequestConfiguration(data: HexString, operations: List<List<RpcInjectableOperation>>): RequestConfiguration<InjectBlockRequest, InjectBlockResponse> =
         RequestConfiguration(
             request = InjectBlockRequest(data, operations),
             response = InjectBlockResponse(BlockHash("BLnJawGEsLm4H3o6uoCtB5Di99QVNGtrtVC7rhBHqUbY6TqwtdE")),
@@ -178,7 +178,7 @@ class InjectionClientTest {
             """.trimIndent(),
         )
 
-    private fun injectionOperationRequestConfiguration(data: HexString): RequestConfiguration<InjectOperationRequest, InjectOperationResponse> =
+    private fun operationPostRequestConfiguration(data: HexString): RequestConfiguration<InjectOperationRequest, InjectOperationResponse> =
         RequestConfiguration(
             request = InjectOperationRequest(data),
             response = InjectOperationResponse(OperationHash("oooRdEmr6yG7GPjE77N6cFCF2JTyDvkdkCMFqNSe1S67ZKG9Pvn")),
@@ -190,7 +190,7 @@ class InjectionClientTest {
             """.trimIndent(),
         )
 
-    private fun injectionProtocolRequestConfiguration(expectedEnvVersion: UShort, components: List<RpcProtocolComponent>): RequestConfiguration<InjectProtocolRequest, InjectProtocolResponse> =
+    private fun protocolPostRequestConfiguration(expectedEnvVersion: UShort, components: List<RpcProtocolComponent>): RequestConfiguration<InjectProtocolRequest, InjectProtocolResponse> =
         RequestConfiguration(
             request = InjectProtocolRequest(expectedEnvVersion, components),
             response = InjectProtocolResponse(ProtocolHash("PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt")),

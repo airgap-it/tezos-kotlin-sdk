@@ -12,8 +12,8 @@ internal object UnistringSerializer : KJsonSerializer<Unistring> {
 
     override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): Unistring =
         when (jsonElement) {
-            is JsonPrimitive -> jsonDecoder.decodeSerializableValue(Unistring.PlainUtf8.serializer())
-            is JsonObject -> jsonDecoder.decodeSerializableValue(Unistring.InvalidUtf8.serializer())
+            is JsonPrimitive -> jsonDecoder.json.decodeFromJsonElement(Unistring.PlainUtf8.serializer(),  jsonElement)
+            is JsonObject -> jsonDecoder.json.decodeFromJsonElement(Unistring.InvalidUtf8.serializer(), jsonElement)
             else -> failWithUnexpectedJsonType(jsonElement::class)
         }
 

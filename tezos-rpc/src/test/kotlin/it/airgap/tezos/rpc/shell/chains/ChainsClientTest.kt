@@ -118,10 +118,10 @@ class ChainsClientTest {
         val chainId = "chainId"
         val blockId = "blockId"
 
-        headers.forEach { headers ->
-            val (_, expectedResponse, _, jsonResponse) = chainBlocksBlockGetRequestConfiguration
-            coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
+        val (_, expectedResponse, _, jsonResponse) = chainBlocksBlockGetRequestConfiguration
+        coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
+        headers.forEach { headers ->
             val response = runBlocking { chainsClient(chainId).blocks(blockId).get(headers = headers) }
 
             assertEquals(expectedResponse, response)
@@ -135,7 +135,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - chain_id'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, _, jsonResponse) = chainChainIdRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainChainIdGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -152,7 +152,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - invalid_blocks'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -170,7 +170,7 @@ class ChainsClientTest {
         val chainId = "chainId"
         val blockHash = "blockHash"
 
-        val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksBlockRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksBlockGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -187,7 +187,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - is_bootstrapped'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, _, jsonResponse) = chainIsBootstrappedRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainIsBootstrappedGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -204,7 +204,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - levels - caboose'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, _, jsonResponse) = chainLevelsCabooseRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainLevelsCabooseGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -221,7 +221,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - levels - checkpoint'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, _, jsonResponse) = chainLevelsCheckpointRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainLevelsCheckpointGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -238,7 +238,7 @@ class ChainsClientTest {
     fun `should call GET on 'chains - $chain_id - levels - savepoint'`() {
         val chainId = "chainId"
 
-        val (_, expectedResponse, _, jsonResponse) = chainLevelsSavepointRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = chainLevelsSavepointGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -367,7 +367,7 @@ class ChainsClientTest {
             """.trimIndent(),
         )
 
-    private val chainChainIdRequestConfiguration: RequestConfiguration<Unit, GetChainIdResponse>
+    private val chainChainIdGetRequestConfiguration: RequestConfiguration<Unit, GetChainIdResponse>
         get() = RequestConfiguration(
             response = GetChainIdResponse(ChainId("NetXdQprcVkpaWU")),
             jsonResponse = """
@@ -375,7 +375,7 @@ class ChainsClientTest {
             """.trimIndent(),
         )
 
-    private val chainInvalidBlocksRequestConfiguration: RequestConfiguration<Unit, GetInvalidBlocksResponse>
+    private val chainInvalidBlocksGetRequestConfiguration: RequestConfiguration<Unit, GetInvalidBlocksResponse>
         get() = RequestConfiguration(
             response = GetInvalidBlocksResponse(listOf(
                 RpcInvalidBlock(
@@ -415,7 +415,7 @@ class ChainsClientTest {
             """.trimIndent()
         )
 
-    private val chainInvalidBlocksBlockRequestConfiguration: RequestConfiguration<Unit, GetInvalidBlockResponse>
+    private val chainInvalidBlocksBlockGetRequestConfiguration: RequestConfiguration<Unit, GetInvalidBlockResponse>
         get() = RequestConfiguration(
             response = GetInvalidBlockResponse(
                 RpcInvalidBlock(
@@ -453,7 +453,7 @@ class ChainsClientTest {
             """.trimIndent()
         )
 
-    private val chainIsBootstrappedRequestConfiguration: RequestConfiguration<Unit, GetBootstrappedStatusResponse>
+    private val chainIsBootstrappedGetRequestConfiguration: RequestConfiguration<Unit, GetBootstrappedStatusResponse>
         get() = RequestConfiguration(
             response = GetBootstrappedStatusResponse(bootstrapped = true, RpcChainStatus.Synced),
             jsonResponse = """
@@ -464,7 +464,7 @@ class ChainsClientTest {
             """.trimIndent()
         )
 
-    private val chainLevelsCabooseRequestConfiguration: RequestConfiguration<Unit, GetCabooseResponse>
+    private val chainLevelsCabooseGetRequestConfiguration: RequestConfiguration<Unit, GetCabooseResponse>
         get() = RequestConfiguration(
             response = GetCabooseResponse(BlockHash("BMTJkwYz93C7QoAdu5utKyYTiEhJL6YoC6LwBjDMEVdUgY4rn7A"), 2147483647),
             jsonResponse = """
@@ -475,7 +475,7 @@ class ChainsClientTest {
             """.trimIndent()
         )
 
-    private val chainLevelsCheckpointRequestConfiguration: RequestConfiguration<Unit, GetCheckpointResponse>
+    private val chainLevelsCheckpointGetRequestConfiguration: RequestConfiguration<Unit, GetCheckpointResponse>
         get() = RequestConfiguration(
             response = GetCheckpointResponse(BlockHash("BMTJkwYz93C7QoAdu5utKyYTiEhJL6YoC6LwBjDMEVdUgY4rn7A"), 2147483647),
             jsonResponse = """
@@ -486,7 +486,7 @@ class ChainsClientTest {
             """.trimIndent()
         )
 
-    private val chainLevelsSavepointRequestConfiguration: RequestConfiguration<Unit, GetSavepointResponse>
+    private val chainLevelsSavepointGetRequestConfiguration: RequestConfiguration<Unit, GetSavepointResponse>
         get() = RequestConfiguration(
             response = GetSavepointResponse(BlockHash("BMTJkwYz93C7QoAdu5utKyYTiEhJL6YoC6LwBjDMEVdUgY4rn7A"), 2147483647),
             jsonResponse = """

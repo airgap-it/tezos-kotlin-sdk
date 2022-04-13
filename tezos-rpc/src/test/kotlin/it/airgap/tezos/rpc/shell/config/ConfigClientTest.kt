@@ -52,7 +52,7 @@ class ConfigClientTest {
 
     @Test
     fun `should call GET on 'config - history_mode'`() {
-        val (_, expectedResponse, _, jsonResponse) = configHistoryModeRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = historyModeGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -84,7 +84,7 @@ class ConfigClientTest {
 
     @Test
     fun `should call GET on 'config - network - user_activated_protocol_overrides'`() {
-        val (_, expectedResponse, _, jsonResponse) = configNetworkUserActivatedProtocolOverridesRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = networkUserActivatedProtocolOverridesGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -99,7 +99,7 @@ class ConfigClientTest {
 
     @Test
     fun `should call GET on 'config - network - user_activated_upgrades'`() {
-        val (_, expectedResponse, _, jsonResponse) = configNetworkUserActivatedUpgradesRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = networkUserActivatedUpgradesGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -118,7 +118,7 @@ class ConfigClientTest {
             listOf("Authorization" to "Bearer")
         )
 
-    private val configHistoryModeRequestConfiguration: RequestConfiguration<Unit, GetHistoryModeResponse>
+    private val historyModeGetRequestConfiguration: RequestConfiguration<Unit, GetHistoryModeResponse>
         get() = RequestConfiguration(
             response = GetHistoryModeResponse(RpcHistoryMode.Archive),
             jsonResponse = """
@@ -140,7 +140,7 @@ class ConfigClientTest {
             jsonResponse = "",
         )
 
-    private val configNetworkUserActivatedProtocolOverridesRequestConfiguration: RequestConfiguration<Unit, GetUserActivatedProtocolOverridesResponse>
+    private val networkUserActivatedProtocolOverridesGetRequestConfiguration: RequestConfiguration<Unit, GetUserActivatedProtocolOverridesResponse>
         get() = RequestConfiguration(
             response = GetUserActivatedProtocolOverridesResponse(
                 listOf(
@@ -176,7 +176,7 @@ class ConfigClientTest {
             """.trimIndent()
         )
 
-    private val configNetworkUserActivatedUpgradesRequestConfiguration: RequestConfiguration<Unit, GetUserActivatedUpgradesResponse>
+    private val networkUserActivatedUpgradesGetRequestConfiguration: RequestConfiguration<Unit, GetUserActivatedUpgradesResponse>
         get() = RequestConfiguration(
             response = GetUserActivatedUpgradesResponse(
                 listOf(

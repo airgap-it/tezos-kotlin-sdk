@@ -50,7 +50,7 @@ class MonitorClientTest {
 
     @Test
     fun `should call GET on 'monitor - active_chains'`() {
-        val (_, expectedResponse, _, jsonResponse) = monitorActiveChainsRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = activeChainsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -65,7 +65,7 @@ class MonitorClientTest {
 
     @Test
     fun `should call GET on 'monitor - bootstrapped'`() {
-        val (_, expectedResponse, _, jsonResponse) = monitorBootstrappedRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = bootstrappedGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -88,7 +88,7 @@ class MonitorClientTest {
             Parameters(nextProtocol = ProtocolHash("PsddFKi32cMJ2qPjf43Qv5GDWLDPZb3T3bF6fLKiF5HtvHNU7aP")),
         )
 
-        val (_, expectedResponse, _, jsonResponse) = monitorHeadsHeadRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = headsHeadGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -109,7 +109,7 @@ class MonitorClientTest {
 
     @Test
     fun `should call GET on 'monitor - protocols'`() {
-        val (_, expectedResponse, _, jsonResponse) = monitorProtocolsRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = protocolsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -138,7 +138,7 @@ class MonitorClientTest {
             ),
         )
 
-        val (_, expectedResponse, _, jsonResponse) = monitorValidBlocksRequestConfiguration
+        val (_, expectedResponse, _, jsonResponse) = validBlocksGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
@@ -165,7 +165,7 @@ class MonitorClientTest {
             listOf("Authorization" to "Bearer")
         )
 
-    private val monitorActiveChainsRequestConfiguration: RequestConfiguration<Unit, MonitorActiveChainsResponse>
+    private val activeChainsGetRequestConfiguration: RequestConfiguration<Unit, MonitorActiveChainsResponse>
         get() = RequestConfiguration(
             response = MonitorActiveChainsResponse(
                 listOf(
@@ -195,7 +195,7 @@ class MonitorClientTest {
             """.trimIndent(),
         )
 
-    private val monitorBootstrappedRequestConfiguration: RequestConfiguration<Unit, MonitorBootstrappedResponse>
+    private val bootstrappedGetRequestConfiguration: RequestConfiguration<Unit, MonitorBootstrappedResponse>
         get() = RequestConfiguration(
             response = MonitorBootstrappedResponse(
                 block = BlockHash("BLnJawGEsLm4H3o6uoCtB5Di99QVNGtrtVC7rhBHqUbY6TqwtdE"),
@@ -209,7 +209,7 @@ class MonitorClientTest {
             """.trimIndent(),
         )
 
-    private val monitorHeadsHeadRequestConfiguration: RequestConfiguration<Unit, MonitorHeadResponse>
+    private val headsHeadGetRequestConfiguration: RequestConfiguration<Unit, MonitorHeadResponse>
         get() = RequestConfiguration(
             response = MonitorHeadResponse(
                 hash = BlockHash("BLnJawGEsLm4H3o6uoCtB5Di99QVNGtrtVC7rhBHqUbY6TqwtdE"),
@@ -251,7 +251,7 @@ class MonitorClientTest {
             """.trimIndent()
         )
 
-    private val monitorProtocolsRequestConfiguration: RequestConfiguration<Unit, MonitorProtocolsResponse>
+    private val protocolsGetRequestConfiguration: RequestConfiguration<Unit, MonitorProtocolsResponse>
         get() = RequestConfiguration(
             response = MonitorProtocolsResponse(ProtocolHash("PsYLVpVvgbLhAhoqAkMFUo6gudkJ9weNXhUYCiLDzcUpFpkk8Wt")),
             jsonResponse = """
@@ -259,7 +259,7 @@ class MonitorClientTest {
             """.trimIndent()
         )
 
-    private val monitorValidBlocksRequestConfiguration: RequestConfiguration<Unit, MonitorValidBlocksResponse>
+    private val validBlocksGetRequestConfiguration: RequestConfiguration<Unit, MonitorValidBlocksResponse>
         get() = RequestConfiguration(
             response = MonitorValidBlocksResponse(
                 chainId = ChainId("NetXdQprcVkpaWU"),

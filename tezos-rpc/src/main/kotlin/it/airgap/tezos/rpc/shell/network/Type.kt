@@ -29,25 +29,25 @@ public typealias ClearGreylistResponse = Unit
 // -- /network/greylist/ips --
 
 @Serializable
-public data class GetGreylistedIPsResponse(public val ips: List<RpcIPAddress>, @SerialName("not_reliable_since") val notReliableSince: Timestamp)
+public data class GetGreylistedIpsResponse(public val ips: List<RpcIPAddress>, @SerialName("not_reliable_since") val notReliableSince: @Contextual Timestamp)
 
 // -- /network/greylist/peers --
 
 @Serializable
 @JvmInline
-public value class GetLastGreylistedPeersResponse(public val peers: List<@Contextual CryptoboxPublicKeyHash>)
+public value class GetGreylistedPeersResponse(public val peers: List<@Contextual CryptoboxPublicKeyHash>)
 
 // -- /network/log --
 
 @Serializable
 @JvmInline
-public value class GetLogResponse(public val events: List<RpcConnectionPoolEvent>)
+public value class GetLogResponse(public val event: RpcConnectionPoolEvent)
 
 // -- /network/peers --
 
 @Serializable
 @JvmInline
-public value class GetPeersResponse(public val peers: List<Pair<@Contextual CryptoboxPublicKeyHash, RpcPeer>>)
+public value class GetPeersResponse(public val peers: List<@Contextual Pair<@Contextual CryptoboxPublicKeyHash, RpcPeer>>)
 
 // -- /network/peers/<peer_id> --
 
@@ -56,8 +56,7 @@ public value class GetPeersResponse(public val peers: List<Pair<@Contextual Cryp
 public value class GetPeerResponse(public val peer: RpcPeer)
 
 @Serializable
-@JvmInline
-public value class ChangePeerPermissionRequest(public val acl: RpcAcl?)
+public data class ChangePeerPermissionRequest(public val acl: RpcAcl?)
 
 @Serializable
 @JvmInline

@@ -10,6 +10,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class RpcSaplingStateDiff(
     public val root: @Contextual HexString,
-    @SerialName("commitments_and_ciphertexts") public val commitmentsAndCiphertexts: List<Pair<@Contextual HexString, RpcSaplingCiphertext>>,
+    @SerialName("commitments_and_ciphertexts") public val commitmentsAndCiphertexts: List<@Contextual Pair<@Contextual HexString, RpcSaplingCiphertext>>,
     public val nullifiers: List<@Contextual HexString>,
 )
