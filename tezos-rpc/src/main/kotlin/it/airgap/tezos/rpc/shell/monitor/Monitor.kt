@@ -41,7 +41,7 @@ public interface Monitor {
 
     public interface ValidBlocks {
         public suspend fun get(protocol: ProtocolHash? = null, nextProtocol: ProtocolHash? = null, chain: String? = null, headers: List<HttpHeader> = emptyList()): MonitorValidBlocksResponse
-        public suspend fun get(protocol: ProtocolHash? = null, nextProtocol: ProtocolHash? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): MonitorValidBlocksResponse =
-            get(protocol, nextProtocol, chain?.base58, headers)
+        public suspend fun get(protocol: ProtocolHash? = null, nextProtocol: ProtocolHash? = null, chain: ChainId, headers: List<HttpHeader> = emptyList()): MonitorValidBlocksResponse =
+            get(protocol, nextProtocol, chain.base58, headers)
     }
 }

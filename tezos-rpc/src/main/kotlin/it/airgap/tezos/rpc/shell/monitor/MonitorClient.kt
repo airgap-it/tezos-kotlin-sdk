@@ -29,10 +29,10 @@ private class MonitorBootstrappedClient(parentUrl: String, private val httpClien
 private class MonitorHeadsClient(parentUrl: String, private val httpClient: HttpClient): Monitor.Heads {
     private val baseUrl: String = /* /monitor/heads */ "$parentUrl/heads"
 
-    override operator fun invoke(chainId: String): Monitor.Heads.Head = HeadClient(baseUrl, chainId, httpClient)
+    override operator fun invoke(chainId: String): Monitor.Heads.Head = MonitorHeadsHeadClient(baseUrl, chainId, httpClient)
 }
 
-private class HeadClient(parentUrl: String, chainId: String, private val httpClient: HttpClient): Monitor.Heads.Head {
+private class MonitorHeadsHeadClient(parentUrl: String, chainId: String, private val httpClient: HttpClient): Monitor.Heads.Head {
     private val baseUrl: String = /* /monitor/heads/<chain_id> */ "$parentUrl/$chainId"
 
     override suspend fun get(nextProtocol: ProtocolHash?, headers: List<HttpHeader>): MonitorHeadResponse =

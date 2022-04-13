@@ -4,10 +4,7 @@ import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.type.chain.RpcActiveChain
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -30,9 +27,9 @@ internal object RpcActiveChainSerializer : KSerializer<RpcActiveChain> {
 
 @Serializable
 private data class RpcActiveChainSurrogate(
-    val chainId: @Contextual ChainId? = null,
-    val testProtocol: @Contextual ProtocolHash? = null,
-    val expirationDate: @Contextual Timestamp? = null,
+    @SerialName("chain_id") val chainId: @Contextual ChainId? = null,
+    @SerialName("test_protocol") val testProtocol: @Contextual ProtocolHash? = null,
+    @SerialName("expiration_date") val expirationDate: @Contextual Timestamp? = null,
     val stopping: @Contextual ChainId? = null,
 ) {
 

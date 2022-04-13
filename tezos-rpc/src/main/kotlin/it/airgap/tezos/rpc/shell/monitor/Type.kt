@@ -45,7 +45,7 @@ public value class MonitorProtocolsResponse(public val hash: @Contextual Protoco
 
 @Serializable
 public data class MonitorValidBlocksResponse(
-    public val chainId: @Contextual ChainId,
+    @SerialName("chain_id") public val chainId: @Contextual ChainId,
     public val hash: @Contextual BlockHash,
     public val level: Int,
     public val proto: UByte,
