@@ -1,6 +1,7 @@
 object Dependencies {
     private object Version {
         const val kotlinxSerialization = "1.3.2"
+        const val kotlinxCoroutines = "1.6.1"
 
         const val bouncyCastle = "1.70"
 
@@ -10,6 +11,7 @@ object Dependencies {
     }
 
     const val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}"
+    const val kotlinxCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Version.kotlinxCoroutines}"
 
     const val bouncyCastle = "org.bouncycastle:bcprov-jdk15on:${Version.bouncyCastle}"
 

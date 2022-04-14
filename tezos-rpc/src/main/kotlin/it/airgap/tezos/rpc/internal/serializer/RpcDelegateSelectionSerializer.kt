@@ -35,7 +35,7 @@ internal object RpcRandomDelegateSelectionSerializer : KStringSerializer<RpcDele
     private const val SERIAL_NAME = "random"
 
     override fun valueFromString(string: String): RpcDelegateSelection.Random {
-        if(string != SERIAL_NAME) failWithInvalidSerializedValue(string)
+        if (string != SERIAL_NAME) failWithInvalidSerializedValue(string)
         return RpcDelegateSelection.Random
     }
 

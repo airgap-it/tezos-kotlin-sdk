@@ -2,8 +2,8 @@ package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
-import it.airgap.tezos.rpc.type.RpcAdditionalCycles
-import it.airgap.tezos.rpc.type.RpcHistoryMode
+import it.airgap.tezos.rpc.type.history.RpcAdditionalCycles
+import it.airgap.tezos.rpc.type.history.RpcHistoryMode
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -83,8 +83,8 @@ private object RpcHistoryModeSurrogateSerializer : KJsonSerializer<RpcHistoryMod
 
     override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): RpcHistoryModeSurrogate =
         when (jsonElement) {
-            is JsonPrimitive -> jsonDecoder.decodeSerializableValue(RpcHistoryModeSurrogate.Primitive.serializer())
-            is JsonObject -> jsonDecoder.decodeSerializableValue(RpcHistoryModeSurrogate.Object.serializer())
+            is JsonPrimitive -> jsonDecoder.json.decodeFromJsonElement(RpcHistoryModeSurrogate.Primitive.serializer(), jsonElement)
+            is JsonObject -> jsonDecoder.json.decodeFromJsonElement(RpcHistoryModeSurrogate.Object.serializer(), jsonElement)
             else -> failWithUnexpectedJsonType(jsonElement::class)
         }
 

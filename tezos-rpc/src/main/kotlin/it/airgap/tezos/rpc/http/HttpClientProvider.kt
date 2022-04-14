@@ -10,7 +10,7 @@ public interface HttpClientProvider {
         endpoint: String,
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
-    ): Unit
+    ): String
 
     public suspend fun get(
         baseUrl: String,

@@ -12,12 +12,12 @@ public class HttpClient(
     @PublishedApi internal val json: Json,
 ) {
     @Throws(Exception::class)
-    public suspend fun delete(
+    public suspend inline fun <reified Response : Any> delete(
         baseUrl: String,
         endpoint: String,
         headers: List<HttpHeader> = emptyList(),
         parameters: List<HttpParameter> = emptyList(),
-    ): Unit = httpClientProvider.delete(baseUrl, endpoint, headers, parameters)
+    ): Response = httpClientProvider.delete(baseUrl, endpoint, headers, parameters).decodeAsResponse()
 
     @Throws(Exception::class)
     public suspend inline fun <reified Response : Any> get(
@@ -58,5 +58,9 @@ public class HttpClient(
     internal inline fun <reified T : Any> T.encodeAsRequest(): String = json.encodeToString(this)
 
     @PublishedApi
-    internal inline fun <reified T : Any> String.decodeAsResponse(): T = json.decodeFromString(this)
+    internal inline fun <reified T : Any> String.decodeAsResponse(): T =
+        when (T::class) {
+            Unit::class -> Unit as T
+            else -> json.decodeFromString(this)
+        }
 }
