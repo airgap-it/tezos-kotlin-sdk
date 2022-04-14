@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
@@ -72,7 +71,7 @@ internal abstract class KStringSerializer<T : Any>(targetClass: KClass<T>) : KSe
 // -- List<List<T>> --
 
 internal abstract class KListListSerializer<T, S>(elementSerializer: KSerializer<S>) : KSerializer<T> {
-    protected val delegateSerializer = ListSerializer(ListSerializer(elementSerializer))
+    protected val delegateSerializer: KSerializer<List<List<S>>> = ListSerializer(ListSerializer(elementSerializer))
     override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
     protected abstract fun valueFromListList(list: List<List<S>>): T
@@ -88,13 +87,3 @@ internal abstract class KListListSerializer<T, S>(elementSerializer: KSerializer
         encoder.encodeSerializableValue(delegateSerializer, list)
     }
 }
-
-// -- extensions --
-
-@OptIn(ExperimentalSerializationApi::class)
-public val SerialDescriptor.elementIndices: Iterable<Int>
-    get() = (0 until elementsCount)
-
-@OptIn(ExperimentalSerializationApi::class)
-public fun SerialDescriptor.getElementNames(indices: Collection<Int>): List<String> =
-    indices.map { getElementName(it) }

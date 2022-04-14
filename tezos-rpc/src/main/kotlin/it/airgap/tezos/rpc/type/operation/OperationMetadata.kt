@@ -318,3 +318,11 @@ public sealed class RpcBalanceUpdate {
 
     public companion object {}
 }
+
+// -- RpcOperationListMetadata
+
+@Serializable
+public data class RpcOperationListMetadata(
+    @SerialName("max_size") public val maxSize: Int,
+    @SerialName("max_op") public val maxOperations: Int,
+)

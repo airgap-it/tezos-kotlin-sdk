@@ -41,7 +41,7 @@ internal interface KJsonSerializer<T> : KSerializer<T> {
 // -- List<T> --
 
 internal abstract class KListSerializer<T, S>(elementSerializer: KSerializer<S>) : KSerializer<T> {
-    protected val delegateSerializer = ListSerializer(elementSerializer)
+    protected val delegateSerializer: KSerializer<List<S>> = ListSerializer(elementSerializer)
     override val descriptor: SerialDescriptor = delegateSerializer.descriptor
 
     protected abstract fun valueFromList(list: List<S>): T
