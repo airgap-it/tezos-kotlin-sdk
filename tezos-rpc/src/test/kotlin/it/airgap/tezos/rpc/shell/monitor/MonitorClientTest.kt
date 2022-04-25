@@ -5,7 +5,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.http.HttpClientProvider
@@ -220,14 +219,14 @@ class MonitorClientTest {
                 validationPass = 4U,
                 operationsHash = OperationListListHash("LLoZzrsq6NfsHydhDCBqXJyBTosRR9R9xNXTjm4PCtZ2juiEv9VBD"),
                 fitness = listOf(
-                    HexString("02"),
-                    HexString("0005beb3"),
-                    HexString(""),
-                    HexString("ffffffff"),
-                    HexString("00000000"),
+                    "02",
+                    "0005beb3",
+                    "",
+                    "ffffffff",
+                    "00000000",
                 ),
                 context = ContextHash("CoVuxLsBWaDZXA6jdcSuU6NW3pzrsC1Z6uggBb71e9PS8XAEgWrj"),
-                protocolData = HexString("ffffffff"),
+                protocolData = "ffffffff",
             ),
             jsonResponse = """
                 {
@@ -271,14 +270,14 @@ class MonitorClientTest {
                 validationPass = 4U,
                 operationsHash = OperationListListHash("LLoZzrsq6NfsHydhDCBqXJyBTosRR9R9xNXTjm4PCtZ2juiEv9VBD"),
                 fitness = listOf(
-                    HexString("02"),
-                    HexString("0005beb3"),
-                    HexString(""),
-                    HexString("ffffffff"),
-                    HexString("00000000"),
+                    "02",
+                    "0005beb3",
+                    "",
+                    "ffffffff",
+                    "00000000",
                 ),
                 context = ContextHash("CoVuxLsBWaDZXA6jdcSuU6NW3pzrsC1Z6uggBb71e9PS8XAEgWrj"),
-                protocolData = HexString("ffffffff"),
+                protocolData = "ffffffff",
             ),
             jsonResponse = """
                 {

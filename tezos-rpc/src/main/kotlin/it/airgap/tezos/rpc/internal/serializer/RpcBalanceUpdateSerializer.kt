@@ -72,7 +72,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Freezer.KIND)
     data class Freezer(
         val category: Category,
-        override val delegate: PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHashEncoded,
         override val cycle: Int,
         override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
@@ -164,7 +164,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Burned.KIND)
     data class Burned(
         val category: Category,
-        override val delegate: PublicKeyHashEncoded? = null,
+        override val delegate: @Contextual PublicKeyHashEncoded? = null,
         override val participation: Boolean? = null,
         override val revelation: Boolean? = null,
         override val change: Long,

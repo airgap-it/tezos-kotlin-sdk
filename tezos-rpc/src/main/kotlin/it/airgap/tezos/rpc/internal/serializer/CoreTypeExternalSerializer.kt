@@ -83,6 +83,8 @@ internal object TimestampMillisSerializer : KSerializer<Timestamp.Millis> {
 // -- Encoded --
 
 internal object AddressSerializer : BaseEncodedSerializer<Address>(Address.Companion::fromString, Address::class)
+internal object ImplicitAddressSerializer : BaseEncodedSerializer<ImplicitAddress>(ImplicitAddress.Companion::fromString, ImplicitAddress::class)
+internal object PublicKeyEncodedSerializer : BaseEncodedSerializer<PublicKeyEncoded>(PublicKeyEncoded.Companion::fromString, PublicKeyEncoded::class)
 internal object PublicKeyHashEncodedSerializer : BaseEncodedSerializer<PublicKeyHashEncoded>(PublicKeyHashEncoded.Companion::fromString, PublicKeyHashEncoded::class)
 internal object BlindedPublicKeyHashEncodedSerializer : BaseEncodedSerializer<BlindedPublicKeyHashEncoded>(BlindedPublicKeyHashEncoded.Companion::fromString, BlindedPublicKeyHashEncoded::class)
 internal object SignatureEncodedSerializer : BaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)

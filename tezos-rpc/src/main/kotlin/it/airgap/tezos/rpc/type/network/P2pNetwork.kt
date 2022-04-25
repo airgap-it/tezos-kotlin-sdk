@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.type.network
 
-import it.airgap.tezos.rpc.type.primitive.Unistring
+import it.airgap.tezos.rpc.type.primitive.RpcUnistring
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class RpcNetworkVersion(
-    @SerialName("chain_name") public val chainName: Unistring,
+    @SerialName("chain_name") public val chainName: RpcUnistring,
     @SerialName("distributed_db_version") public val distributedDbVersion: UShort,
     @SerialName("p2p_version") public val p2pVersion: UShort,
 )
