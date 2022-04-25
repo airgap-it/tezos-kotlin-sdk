@@ -1,5 +1,6 @@
 package it.airgap.tezos.michelson.internal.coder
 
+import filterValuesNotNull
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -15,6 +16,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import mockTezosSdk
 import org.junit.After
@@ -255,14 +257,15 @@ class MichelineJsonCoderTest {
         prim: String = "prim",
         args: List<MichelineNode> = emptyList(),
         annots: List<String> = emptyList(),
-    ): Pair<MichelinePrimitiveApplication, String> =
-        MichelinePrimitiveApplication(prim, args, annots) to """
-            {
-              "prim": "$prim",
-              "args": ${Json.encodeToJsonElement(args)},
-              "annots": ${Json.encodeToJsonElement(annots)}
-            }
-        """.trimIndent()
+    ): Pair<MichelinePrimitiveApplication, String> {
+        val fields = mapOf(
+            "prim" to Json.encodeToJsonElement(prim),
+            "args" to args.takeIf { it.isNotEmpty() }?.let { Json.encodeToJsonElement(it) },
+            "annots" to annots.takeIf { it.isNotEmpty() }?.let { Json.encodeToJsonElement(it) },
+        ).filterValuesNotNull()
+
+        return MichelinePrimitiveApplication(prim, args, annots) to JsonObject(fields).toString()
+    }
 
     private fun sequenceWithJson(expressions: List<MichelineNode> = emptyList()): Pair<MichelineSequence, String> =
         MichelineSequence(expressions) to Json.encodeToString(expressions)

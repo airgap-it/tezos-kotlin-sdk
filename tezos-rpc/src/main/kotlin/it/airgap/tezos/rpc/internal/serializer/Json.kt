@@ -1,33 +1,44 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.core.type.HexString
-import it.airgap.tezos.core.type.Timestamp
-import it.airgap.tezos.core.type.encoded.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 
 internal val rpcSerializersModule: SerializersModule = SerializersModule {
-    contextual(Long::class, LongSerializer)
+    contextual(LongSerializer)
     contextual(Pair::class) { typeArgumentsSerializers -> PairSerializer(typeArgumentsSerializers[0], typeArgumentsSerializers[1]) }
 
-    contextual(HexString::class, HexStringSerializer)
-    contextual(Timestamp::class, TimestampSerializer)
+    contextual(HexStringSerializer)
+    contextual(TimestampSerializer)
+    contextual(TimestampRfc3339Serializer)
+    contextual(TimestampMillisSerializer)
 
-    contextual(Address::class, AddressSerializer)
-    contextual(ImplicitAddress::class, ImplicitAddressSerializer)
-    contextual(PublicKeyEncoded::class, PublicKeyEncodedSerializer)
-    contextual(PublicKeyHashEncoded::class, PublicKeyHashEncodedSerializer)
-    contextual(BlindedPublicKeyHashEncoded::class, BlindedPublicKeyHashEncodedSerializer)
-    contextual(SignatureEncoded::class, SignatureEncodedSerializer)
+    contextual(AddressSerializer)
+    contextual(ImplicitAddressSerializer)
+    contextual(PublicKeyEncodedSerializer)
+    contextual(PublicKeyHashEncodedSerializer)
+    contextual(BlindedPublicKeyHashEncodedSerializer)
+    contextual(SignatureEncodedSerializer)
 
-    contextual(BlockHash::class, BlockHashSerializer)
-    contextual(BlockPayloadHash::class, BlockPayloadHashSerializer)
-    contextual(ChainId::class, ChainIdSerializer)
-    contextual(ContextHash::class, ContextHashSerializer)
-    contextual(CryptoboxPublicKeyHash::class, CryptoboxPublicKeyHashSerializer)
-    contextual(OperationHash::class, OperationHashSerializer)
-    contextual(OperationListListHash::class, OperationListListHashSerializer)
-    contextual(ProtocolHash::class, ProtocolHashSerializer)
+    contextual(BlockHashSerializer)
+    contextual(BlockPayloadHashSerializer)
+    contextual(ChainIdSerializer)
+    contextual(ContextHashSerializer)
+    contextual(ContractHashSerializer)
+    contextual(CryptoboxPublicKeyHashSerializer)
+    contextual(Ed25519BlindedPublicKeyHashSerializer)
+    contextual(Ed25519PublicKeyHashSerializer)
+    contextual(Ed25519SignatureSerializer)
+    contextual(NonceHashSerializer)
+    contextual(GenericSignatureSerializer)
+    contextual(OperationHashSerializer)
+    contextual(OperationListListHashSerializer)
+    contextual(P256PublicKeyHashSerializer)
+    contextual(P256SignatureSerializer)
+    contextual(ProtocolHashSerializer)
+    contextual(ScriptExprHashSerializer)
+    contextual(Secp256K1PublicKeyHashSerializer)
+    contextual(Secp256K1SignatureSerializer)
 }
 
 internal val rpcJson: Json = Json {
