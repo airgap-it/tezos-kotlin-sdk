@@ -7,11 +7,17 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 
 internal val rpcSerializersModule: SerializersModule = SerializersModule {
+    contextual(Long::class, LongSerializer)
     contextual(Pair::class) { typeArgumentsSerializers -> PairSerializer(typeArgumentsSerializers[0], typeArgumentsSerializers[1]) }
 
     contextual(HexString::class, HexStringSerializer)
     contextual(Timestamp::class, TimestampSerializer)
 
+    contextual(Address::class, AddressSerializer)
+    contextual(ImplicitAddress::class, ImplicitAddressSerializer)
+    contextual(PublicKeyEncoded::class, PublicKeyEncodedSerializer)
+    contextual(PublicKeyHashEncoded::class, PublicKeyHashEncodedSerializer)
+    contextual(BlindedPublicKeyHashEncoded::class, BlindedPublicKeyHashEncodedSerializer)
     contextual(SignatureEncoded::class, SignatureEncodedSerializer)
 
     contextual(BlockHash::class, BlockHashSerializer)

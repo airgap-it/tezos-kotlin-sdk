@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.type.operation
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
@@ -49,7 +48,7 @@ public sealed class RpcOperationContent {
     @SerialName(SeedNonceRevelation.KIND)
     public data class SeedNonceRevelation(
         public val level: Int,
-        public val nonce: @Contextual HexString,
+        public val nonce: String,
         public val metadata: RpcOperationMetadata.SeedNonceRevelation? = null,
     ) : RpcOperationContent() {
         public companion object {
@@ -97,7 +96,7 @@ public sealed class RpcOperationContent {
     @SerialName(ActivateAccount.KIND)
     public data class ActivateAccount(
         public val pkh: @Contextual Ed25519PublicKeyHash,
-        public val secret: @Contextual HexString,
+        public val secret: String,
         public val metadata: RpcOperationMetadata.ActivateAccount? = null,
     ) : RpcOperationContent() {
         public companion object {
@@ -227,7 +226,7 @@ public sealed class RpcOperationContent {
     @Serializable
     @SerialName(FailingNoop.KIND)
     public data class FailingNoop(
-        public val arbitrary: @Contextual HexString,
+        public val arbitrary: String,
     ) : RpcOperationContent() {
         public companion object {
             internal const val KIND = "failing_noop"

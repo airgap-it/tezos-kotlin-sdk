@@ -1,14 +1,16 @@
 package it.airgap.tezos.rpc.type.constants
 
+import it.airgap.tezos.rpc.internal.serializer.RpcConstantsSerializer
 import it.airgap.tezos.rpc.type.delegate.RpcDelegateSelection
 import it.airgap.tezos.rpc.type.primitive.RpcRatio
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 // -- RpcConstants --
 
-@Serializable
+@Serializable(with = RpcConstantsSerializer::class)
 public sealed class RpcConstants {
 
     public abstract val proofOfWorkNonceSize: UByte
@@ -121,7 +123,7 @@ public sealed class RpcConstants {
         @SerialName("max_micheline_node_count") override val maxMichelineNodeCount: Int,
         @SerialName("max_micheline_bytes_limit") override val maxMichelineBytesLimit: Int,
         @SerialName("max_allowed_global_constants_depth") override val maxAllowedGlobalConstantsDepth: Int,
-        @SerialName("cache_layout") override val cacheLayout: List<Long>,
+        @SerialName("cache_layout") override val cacheLayout: List<@Contextual Long>,
         @SerialName("michelson_maximum_type_size") override val michelsonMaximumTypeSize: UShort,
         @SerialName("preserved_cycles") override val preservedCycles: UByte,
         @SerialName("blocks_per_cycle") override val blocksPerCycle: Int,
@@ -130,7 +132,7 @@ public sealed class RpcConstants {
         @SerialName("blocks_per_voting_period") override val blocksPerVotingPeriod: Int,
         @SerialName("hard_gas_limit_per_operation") override val hardGasLimitPerOperation: String,
         @SerialName("hard_gas_limit_per_block") override val hardGasLimitPerBlock: String,
-        @SerialName("proof_of_work_threshold") override val proofOfWorkThreshold: Long,
+        @SerialName("proof_of_work_threshold") override val proofOfWorkThreshold: @Contextual Long,
         @SerialName("tokens_per_roll") override val tokensPerRoll: String,
         @SerialName("seed_nonce_revelation_tip") override val seedNonceRevelationTip: String,
         @SerialName("origination_size") override val originationSize: Int,
@@ -146,8 +148,8 @@ public sealed class RpcConstants {
         @SerialName("liquidity_baking_sunset_level") override val liquidityBakingSunsetLevel: Int,
         @SerialName("liquidity_baking_escape_ema_threshold") override val liquidityBakingEscapeEmaThreshold: Int,
         @SerialName("max_operations_time_to_live") override val maxOperationsTimeToLive: Short,
-        @SerialName("minimal_block_delay") override val minimalBlockDelay: Long,
-        @SerialName("delay_increment_per_round") override val delayIncrementPerRound: Long,
+        @SerialName("minimal_block_delay") override val minimalBlockDelay: @Contextual Long,
+        @SerialName("delay_increment_per_round") override val delayIncrementPerRound: @Contextual Long,
         @SerialName("consensus_committee_size") override val consensusCommitteeSize: Int,
         @SerialName("consensus_threshold") override val consensusThreshold: Int,
         @SerialName("minimal_participation_ratio") override val minimalParticipationRatio: RpcRatio,

@@ -5,7 +5,6 @@ import io.mockk.impl.annotations.MockK
 import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.core
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.active.block.GetBlockResponse
@@ -320,16 +319,16 @@ class ChainsClientTest {
                         validationPass = 4U,
                         operationsHash = OperationListListHash("LLoZzrsq6NfsHydhDCBqXJyBTosRR9R9xNXTjm4PCtZ2juiEv9VBD"),
                         fitness = listOf(
-                            HexString("02"),
-                            HexString("0005beb3"),
-                            HexString(""),
-                            HexString("ffffffff"),
-                            HexString("00000000"),
+                            "02",
+                            "0005beb3",
+                            "",
+                            "ffffffff",
+                            "00000000",
                         ),
                         context = ContextHash("CoVuxLsBWaDZXA6jdcSuU6NW3pzrsC1Z6uggBb71e9PS8XAEgWrj"),
                         payloadHash = BlockPayloadHash("vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8"),
                         payloadRound = 0,
-                        proofOfWorkNonce = HexString("61fed54075090100"),
+                        proofOfWorkNonce = "61fed54075090100",
                         liquidityBakingEscapeVote = false,
                         signature = GenericSignature("sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"),
                     ),

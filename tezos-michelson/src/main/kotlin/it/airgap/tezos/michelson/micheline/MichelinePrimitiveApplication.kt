@@ -42,7 +42,6 @@ internal fun MichelinePrimitiveApplication(
 ): MichelinePrimitiveApplication =
     MichelinePrimitiveApplication(MichelinePrimitiveApplication.Primitive(prim), args, annots.map { MichelinePrimitiveApplication.Annotation(it) })
 
-@Suppress("FunctionName")
 public fun <T : Michelson.Prim> MichelinePrimitiveApplication(
     prim: T,
     args: List<MichelineNode> = emptyList(),
