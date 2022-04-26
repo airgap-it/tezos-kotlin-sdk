@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.type.network
 
 import it.airgap.tezos.core.type.Timestamp
+import it.airgap.tezos.rpc.internal.serializer.LongSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcPeerMetadataEntrySerializer
 import it.airgap.tezos.rpc.type.RpcIPAddress
 import kotlinx.serialization.Contextual
@@ -12,7 +13,7 @@ import kotlinx.serialization.Transient
 
 @Serializable
 public data class RpcPeer(
-    public val score: Long,
+    @Serializable(with = LongSerializer::class) public val score: Long,
     public val trusted: Boolean,
     @SerialName("conn_metadata") public val connectionMetadata: RpcConnectionMetadata? = null,
     @SerialName("peer_metadata") public val peerMetadata: RpcPeerMetadata,

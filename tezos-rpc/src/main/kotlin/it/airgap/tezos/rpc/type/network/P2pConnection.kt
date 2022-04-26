@@ -56,16 +56,16 @@ public sealed class RpcConnectionPoolEvent {
     public open val point: RpcConnectionPointId? = null
 
     @Transient
-    public open val peerId: @Contextual CryptoboxPublicKeyHash? = null
+    public open val peerId: CryptoboxPublicKeyHash? = null
 
     @Transient
     public open val idPoint: RpcConnectionId? = null
 
     @Transient
-    public open val identity: @Contextual Pair<RpcConnectionId, @Contextual CryptoboxPublicKeyHash>? = null
+    public open val identity: Pair<RpcConnectionId, CryptoboxPublicKeyHash>? = null
 
     @Transient
-    public open val source: @Contextual CryptoboxPublicKeyHash? = null
+    public open val source: CryptoboxPublicKeyHash? = null
 
     public companion object {
         internal const val CLASS_DISCRIMINATOR = "event"

@@ -12,10 +12,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable(with = RpcActiveChainSerializer::class)
 public sealed class RpcActiveChain {
-    public open val chainId: @Contextual ChainId? = null
-    public open val testProtocol: @Contextual ProtocolHash? = null
-    public open val expirationDate: @Contextual Timestamp? = null
-    public open val stopping: @Contextual ChainId? = null
+    public open val chainId: ChainId? = null
+    public open val testProtocol: ProtocolHash? = null
+    public open val expirationDate: Timestamp? = null
+    public open val stopping: ChainId? = null
 
     @Serializable
     public data class Main(@SerialName("chain_id") override val chainId: @Contextual ChainId) : RpcActiveChain()

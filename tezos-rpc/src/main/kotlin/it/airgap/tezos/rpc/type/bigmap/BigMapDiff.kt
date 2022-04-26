@@ -14,7 +14,7 @@ public sealed class RpcBigMapDiff {
     public open val bigMap: String? = null
 
     @Transient
-    public open val keyHash: @Contextual ScriptExprHash? = null
+    public open val keyHash: ScriptExprHash? = null
 
     @Transient
     public open val key: MichelineNode? = null

@@ -8,24 +8,20 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
 // -- Long --
 
-internal object LongSerializer : KJsonSerializer<Long> {
+internal object LongSerializer : KSerializer<Long> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(Long::class.toString(), PrimitiveKind.LONG)
 
-    override fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): Long {
-        val jsonPrimitive = jsonElement as? JsonPrimitive ?: failWithUnexpectedJsonType(jsonElement::class)
+    override fun deserialize(decoder: Decoder): Long =
+        decoder.decodeLong()
 
-        return when {
-            jsonPrimitive.isString -> jsonPrimitive.content.toLong(10)
-            else -> jsonPrimitive.long
-        }
-    }
-
-    override fun serialize(jsonEncoder: JsonEncoder, value: Long) {
-        jsonEncoder.encodeString(value.toString())
+    override fun serialize(encoder: Encoder, value: Long) {
+        encoder.encodeString(value.toString())
     }
 
 }

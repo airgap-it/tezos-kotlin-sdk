@@ -1,5 +1,6 @@
 package it.airgap.tezos.rpc.type.constants
 
+import it.airgap.tezos.rpc.internal.serializer.LongSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcConstantsSerializer
 import it.airgap.tezos.rpc.type.delegate.RpcDelegateSelection
 import it.airgap.tezos.rpc.type.primitive.RpcRatio
@@ -132,7 +133,7 @@ public sealed class RpcConstants {
         @SerialName("blocks_per_voting_period") override val blocksPerVotingPeriod: Int,
         @SerialName("hard_gas_limit_per_operation") override val hardGasLimitPerOperation: String,
         @SerialName("hard_gas_limit_per_block") override val hardGasLimitPerBlock: String,
-        @SerialName("proof_of_work_threshold") override val proofOfWorkThreshold: @Contextual Long,
+        @SerialName("proof_of_work_threshold") @Serializable(with = LongSerializer::class) override val proofOfWorkThreshold: Long,
         @SerialName("tokens_per_roll") override val tokensPerRoll: String,
         @SerialName("seed_nonce_revelation_tip") override val seedNonceRevelationTip: String,
         @SerialName("origination_size") override val originationSize: Int,
@@ -148,8 +149,8 @@ public sealed class RpcConstants {
         @SerialName("liquidity_baking_sunset_level") override val liquidityBakingSunsetLevel: Int,
         @SerialName("liquidity_baking_escape_ema_threshold") override val liquidityBakingEscapeEmaThreshold: Int,
         @SerialName("max_operations_time_to_live") override val maxOperationsTimeToLive: Short,
-        @SerialName("minimal_block_delay") override val minimalBlockDelay: @Contextual Long,
-        @SerialName("delay_increment_per_round") override val delayIncrementPerRound: @Contextual Long,
+        @SerialName("minimal_block_delay") @Serializable(with = LongSerializer::class) override val minimalBlockDelay: Long,
+        @SerialName("delay_increment_per_round") @Serializable(with = LongSerializer::class) override val delayIncrementPerRound: Long,
         @SerialName("consensus_committee_size") override val consensusCommitteeSize: Int,
         @SerialName("consensus_threshold") override val consensusThreshold: Int,
         @SerialName("minimal_participation_ratio") override val minimalParticipationRatio: RpcRatio,

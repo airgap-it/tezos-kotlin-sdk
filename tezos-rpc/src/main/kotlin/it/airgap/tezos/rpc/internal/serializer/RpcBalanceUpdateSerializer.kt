@@ -34,10 +34,10 @@ private sealed class RpcBalanceUpdateSurrogate {
     abstract val origin: RpcBalanceUpdate.Origin
 
     @Transient
-    open val contract: @Contextual Address? = null
+    open val contract: Address? = null
 
     @Transient
-    open val delegate: @Contextual PublicKeyHashEncoded? = null
+    open val delegate: PublicKeyHashEncoded? = null
 
     @Transient
     open val cycle: Int? = null
@@ -49,7 +49,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     open val revelation: Boolean? = null
 
     @Transient
-    open val committer: @Contextual BlindedPublicKeyHashEncoded? = null
+    open val committer: BlindedPublicKeyHashEncoded? = null
 
     abstract fun toTarget(): RpcBalanceUpdate
 
@@ -57,7 +57,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Contract.KIND)
     data class Contract(
         override val contract: @Contextual Address,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 
@@ -74,7 +74,7 @@ private sealed class RpcBalanceUpdateSurrogate {
         val category: Category,
         override val delegate: @Contextual PublicKeyHashEncoded,
         override val cycle: Int,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 
@@ -102,7 +102,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Accumulator.KIND)
     data class Accumulator(
         val category: Category,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 
@@ -124,7 +124,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Minted.KIND)
     data class Minted(
         val category: Category,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 
@@ -167,7 +167,7 @@ private sealed class RpcBalanceUpdateSurrogate {
         override val delegate: @Contextual PublicKeyHashEncoded? = null,
         override val participation: Boolean? = null,
         override val revelation: Boolean? = null,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 
@@ -202,7 +202,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     data class Commitment(
         val category: Category,
         override val committer: BlindedPublicKeyHashEncoded,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 

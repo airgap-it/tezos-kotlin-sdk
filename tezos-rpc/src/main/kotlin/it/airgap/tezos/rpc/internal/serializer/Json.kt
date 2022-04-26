@@ -5,7 +5,6 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 
 internal val rpcSerializersModule: SerializersModule = SerializersModule {
-    contextual(LongSerializer)
     contextual(Pair::class) { typeArgumentsSerializers -> PairSerializer(typeArgumentsSerializers[0], typeArgumentsSerializers[1]) }
 
     contextual(HexStringSerializer)
