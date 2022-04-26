@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.shell.injection
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.OperationHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
@@ -14,7 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class InjectBlockRequest(
-    public val data: @Contextual HexString,
+    public val data: String,
     public val operations: List<List<RpcInjectableOperation>>,
 )
 
@@ -26,7 +25,7 @@ public value class InjectBlockResponse(public val hash: @Contextual BlockHash)
 
 @Serializable
 @JvmInline
-public value class InjectOperationRequest(public val data: @Contextual HexString)
+public value class InjectOperationRequest(public val data: String)
 
 @Serializable
 @JvmInline

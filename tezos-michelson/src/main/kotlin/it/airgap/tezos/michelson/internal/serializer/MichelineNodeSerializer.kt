@@ -48,13 +48,13 @@ internal sealed interface MichelineNodeSurrogate {
         val string: String? = null,
         val bytes: String? = null,
         val prim: MichelinePrimitiveApplication.Primitive? = null,
-        val args: List<MichelineNode>? = null,
-        val annots: List<MichelinePrimitiveApplication.Annotation>? = null,
+        val args: List<MichelineNode> = emptyList(),
+        val annots: List<MichelinePrimitiveApplication.Annotation> = emptyList(),
     ) : MichelineNodeSurrogate {
         override fun toTarget(): MichelineNode =
             when {
                 (int != null || string != null || bytes != null) && prim == null -> MichelineLiteralSurrogate(int, string, bytes).toTarget()
-                int == null && string == null && bytes == null && prim != null -> MichelinePrimitiveApplication(prim, args.orEmpty(), annots.orEmpty())
+                int == null && string == null && bytes == null && prim != null -> MichelinePrimitiveApplication(prim, args, annots)
                 else -> failWithInvalidSerializedValue()
             }
 

@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.shell.monitor
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.type.chain.RpcActiveChain
@@ -30,9 +29,9 @@ public data class MonitorHeadResponse(
     public val timestamp: @Contextual Timestamp,
     @SerialName("validation_pass") public val validationPass: UByte,
     @SerialName("operations_hash") public val operationsHash: @Contextual OperationListListHash,
-    public val fitness: List<@Contextual HexString>,
+    public val fitness: List<String>,
     public val context: @Contextual ContextHash,
-    @SerialName("protocol_data") public val protocolData: @Contextual HexString,
+    @SerialName("protocol_data") public val protocolData: String,
 )
 
 // -- /monitor/protocols --
@@ -53,7 +52,7 @@ public data class MonitorValidBlocksResponse(
     public val timestamp: @Contextual Timestamp,
     @SerialName("validation_pass") public val validationPass: UByte,
     @SerialName("operations_hash") public val operationsHash: @Contextual OperationListListHash,
-    public val fitness: List<@Contextual HexString>,
+    public val fitness: List<String>,
     public val context: @Contextual ContextHash,
-    @SerialName("protocol_data") public val protocolData: @Contextual HexString,
+    @SerialName("protocol_data") public val protocolData: String,
 )

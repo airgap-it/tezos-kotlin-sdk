@@ -1,8 +1,8 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.rpc.type.RpcIPAddress
-import it.airgap.tezos.rpc.type.RpcIPv4Address
-import it.airgap.tezos.rpc.type.RpcIPv6Address
+import it.airgap.tezos.rpc.type.network.RpcIPAddress
+import it.airgap.tezos.rpc.type.network.RpcIPv4Address
+import it.airgap.tezos.rpc.type.network.RpcIPv6Address
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.descriptors.PrimitiveKind

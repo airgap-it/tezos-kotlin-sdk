@@ -2,17 +2,14 @@ package it.airgap.tezos.rpc.active.block
 
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
-import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
 import it.airgap.tezos.rpc.type.constants.RpcConstants
 import it.airgap.tezos.rpc.type.contract.RpcScript
 import it.airgap.tezos.rpc.type.contract.RpcUnreachableEntrypoint
-import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
-import it.airgap.tezos.rpc.type.operation.RpcOperation
-import it.airgap.tezos.rpc.type.operation.RpcOperationContent
-import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
+import it.airgap.tezos.rpc.type.operation.*
 import it.airgap.tezos.rpc.type.sapling.RpcSaplingStateDiff
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -74,7 +71,7 @@ public value class GetContractDelegateResponse(public val delegate: @Contextual 
 
 @Serializable
 public data class GetContractEntrypointsResponse(
-    public val unreachable: List<RpcUnreachableEntrypoint>,
+    public val unreachable: List<RpcUnreachableEntrypoint> = emptyList(),
     public val entrypoints: Map<String, MichelineNode>,
 )
 
@@ -88,7 +85,7 @@ public value class GetContractEntrypointResponse(public val entrypoint: Michelin
 
 @Serializable
 @JvmInline
-public value class GetContractManagerKeyResponse(public val manager: String)
+public value class GetContractManagerKeyResponse(public val manager: @Contextual PublicKeyEncoded? = null)
 
 // -- ../<block_id>/context/contracts/<contract_id>/script --
 
@@ -205,13 +202,12 @@ public value class GetBlockHeaderResponse(public val header: RpcFullBlockHeader)
 // -- ../<block_id>/helpers/preapply/operations --
 
 @Serializable
-public data class PreapplyOperationsRequest(public val operations: List<RpcApplicableOperation>)
+@JvmInline
+public value class PreapplyOperationsRequest(public val operations: List<RpcApplicableOperation>)
 
 @Serializable
-public data class PreapplyOperationsResponse(
-    public val contents: RpcOperationContent,
-    public val signature: @Contextual SignatureEncoded? = null,
-)
+@JvmInline
+public value class PreapplyOperationsResponse(public val operations: List<RpcAppliedOperation>)
 
 // -- ../<block_id>/helpers/scripts/run_operation --
 
@@ -221,12 +217,13 @@ public value class RunOperationRequest(public val operation: RpcRunnableOperatio
 
 @Serializable
 @JvmInline
-public value class RunOperationResponse(public val contents: RpcOperationContent)
+public value class RunOperationResponse(public val contents: List<RpcOperationContent>)
 
 // -- ../<block_id>/operations --
 
 @Serializable
-public data class GetBlockOperationsResponse(public val operations: List<List<RpcOperation>>)
+@JvmInline
+public value class GetBlockOperationsResponse(public val operations: List<List<RpcOperation>>)
 
 // -- ../<block_id>/context/sapling/<sapling_state_id>/get_diff
 

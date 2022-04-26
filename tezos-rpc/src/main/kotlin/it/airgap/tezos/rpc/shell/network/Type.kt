@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.shell.network
 
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.CryptoboxPublicKeyHash
-import it.airgap.tezos.rpc.type.RpcIPAddress
+import it.airgap.tezos.rpc.type.network.RpcIPAddress
 import it.airgap.tezos.rpc.type.network.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName

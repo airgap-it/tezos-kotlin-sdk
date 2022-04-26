@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.type.network
 
-import it.airgap.tezos.rpc.type.primitive.Unistring
+import it.airgap.tezos.rpc.internal.serializer.LongSerializer
+import it.airgap.tezos.rpc.type.primitive.RpcUnistring
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class RpcNetworkVersion(
-    @SerialName("chain_name") public val chainName: Unistring,
+    @SerialName("chain_name") public val chainName: RpcUnistring,
     @SerialName("distributed_db_version") public val distributedDbVersion: UShort,
     @SerialName("p2p_version") public val p2pVersion: UShort,
 )
@@ -17,8 +18,8 @@ public data class RpcNetworkVersion(
 
 @Serializable
 public data class RpcNetworkStat(
-    @SerialName("total_sent") public val totalSent: Long,
-    @SerialName("total_recv") public val totalReceived: Long,
+    @SerialName("total_sent") @Serializable(with = LongSerializer::class) public val totalSent: Long,
+    @SerialName("total_recv") @Serializable(with = LongSerializer::class) public val totalReceived: Long,
     @SerialName("current_inflow") public val currentInflow: Int,
     @SerialName("current_outflow") public val currentOutflow: Int,
 )

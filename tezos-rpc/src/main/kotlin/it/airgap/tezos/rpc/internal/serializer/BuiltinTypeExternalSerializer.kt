@@ -4,12 +4,27 @@ import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonDecoder
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.*
+
+// -- Long --
+
+internal object LongSerializer : KSerializer<Long> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(Long::class.toString(), PrimitiveKind.LONG)
+
+    override fun deserialize(decoder: Decoder): Long =
+        decoder.decodeLong()
+
+    override fun serialize(encoder: Encoder, value: Long) {
+        encoder.encodeString(value.toString())
+    }
+
+}
 
 // -- Pair<T, S> --
 
