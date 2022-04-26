@@ -5,7 +5,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.OperationHash
@@ -65,10 +64,10 @@ class InjectionClientTest {
             Parameters(async = true, force = true, chain = ChainId("NetXdQprcVkpaWU")),
             Parameters(async = false, force = false),
         )
-        val data = HexString("a8a043507783594ede53ddbee766b4a3")
+        val data = "a8a043507783594ede53ddbee766b4a3"
         val operations = listOf(
             listOf(
-                RpcInjectableOperation(BlockHash("BKz4CFd8FhgSLJRp7muW6EwSMKMBaCmyUgzTzrSGQiwximB5dbw"), HexString("50b8461382a4826d0162f8dc814c5a9c")),
+                RpcInjectableOperation(BlockHash("BKz4CFd8FhgSLJRp7muW6EwSMKMBaCmyUgzTzrSGQiwximB5dbw"), "50b8461382a4826d0162f8dc814c5a9c"),
             )
         )
 
@@ -104,7 +103,7 @@ class InjectionClientTest {
             Parameters(async = true, chain = ChainId("NetXdQprcVkpaWU")),
             Parameters(async = false),
         )
-        val data = HexString("a8a043507783594ede53ddbee766b4a3")
+        val data = "a8a043507783594ede53ddbee766b4a3"
 
         val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = operationPostRequestConfiguration(data)
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
@@ -163,13 +162,13 @@ class InjectionClientTest {
             listOf("Authorization" to "Bearer")
         )
 
-    private fun blockPostRequestConfiguration(data: HexString, operations: List<List<RpcInjectableOperation>>): RequestConfiguration<InjectBlockRequest, InjectBlockResponse> =
+    private fun blockPostRequestConfiguration(data: String, operations: List<List<RpcInjectableOperation>>): RequestConfiguration<InjectBlockRequest, InjectBlockResponse> =
         RequestConfiguration(
             request = InjectBlockRequest(data, operations),
             response = InjectBlockResponse(BlockHash("BLnJawGEsLm4H3o6uoCtB5Di99QVNGtrtVC7rhBHqUbY6TqwtdE")),
             jsonRequest = """
                 {
-                  "data": "${data.asString(withPrefix = false)}",
+                  "data": "$data",
                   "operations": ${json.encodeToString(operations)}
                 }
             """.trimIndent(),
@@ -178,12 +177,12 @@ class InjectionClientTest {
             """.trimIndent(),
         )
 
-    private fun operationPostRequestConfiguration(data: HexString): RequestConfiguration<InjectOperationRequest, InjectOperationResponse> =
+    private fun operationPostRequestConfiguration(data: String): RequestConfiguration<InjectOperationRequest, InjectOperationResponse> =
         RequestConfiguration(
             request = InjectOperationRequest(data),
             response = InjectOperationResponse(OperationHash("oooRdEmr6yG7GPjE77N6cFCF2JTyDvkdkCMFqNSe1S67ZKG9Pvn")),
             jsonRequest = """
-                "${data.asString(withPrefix = false)}"
+                "$data"
             """.trimIndent(),
             jsonResponse = """
                 "oooRdEmr6yG7GPjE77N6cFCF2JTyDvkdkCMFqNSe1S67ZKG9Pvn"

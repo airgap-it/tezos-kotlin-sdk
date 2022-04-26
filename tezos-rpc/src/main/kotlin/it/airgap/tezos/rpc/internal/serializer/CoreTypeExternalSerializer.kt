@@ -83,6 +83,8 @@ internal object TimestampMillisSerializer : KSerializer<Timestamp.Millis> {
 // -- Encoded --
 
 internal object AddressSerializer : BaseEncodedSerializer<Address>(Address.Companion::fromString, Address::class)
+internal object ImplicitAddressSerializer : BaseEncodedSerializer<ImplicitAddress>(ImplicitAddress.Companion::fromString, ImplicitAddress::class)
+internal object PublicKeyEncodedSerializer : BaseEncodedSerializer<PublicKeyEncoded>(PublicKeyEncoded.Companion::fromString, PublicKeyEncoded::class)
 internal object PublicKeyHashEncodedSerializer : BaseEncodedSerializer<PublicKeyHashEncoded>(PublicKeyHashEncoded.Companion::fromString, PublicKeyHashEncoded::class)
 internal object BlindedPublicKeyHashEncodedSerializer : BaseEncodedSerializer<BlindedPublicKeyHashEncoded>(BlindedPublicKeyHashEncoded.Companion::fromString, BlindedPublicKeyHashEncoded::class)
 internal object SignatureEncodedSerializer : BaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)
@@ -90,8 +92,8 @@ internal object SignatureEncodedSerializer : BaseEncodedSerializer<SignatureEnco
 internal object BlockHashSerializer : EncodedSerializer<BlockHash>(BlockHash, BlockHash::class)
 internal object BlockPayloadHashSerializer : EncodedSerializer<BlockPayloadHash>(BlockPayloadHash, BlockPayloadHash::class)
 internal object ChainIdSerializer : EncodedSerializer<ChainId>(ChainId, ChainId::class)
-internal object ContractHashSerializer : EncodedSerializer<ContractHash>(ContractHash, ContractHash::class)
 internal object ContextHashSerializer : EncodedSerializer<ContextHash>(ContextHash, ContextHash::class)
+internal object ContractHashSerializer : EncodedSerializer<ContractHash>(ContractHash, ContractHash::class)
 internal object CryptoboxPublicKeyHashSerializer : EncodedSerializer<CryptoboxPublicKeyHash>(CryptoboxPublicKeyHash, CryptoboxPublicKeyHash::class)
 internal object Ed25519BlindedPublicKeyHashSerializer : EncodedSerializer<Ed25519BlindedPublicKeyHash>(Ed25519BlindedPublicKeyHash, Ed25519BlindedPublicKeyHash::class)
 internal object Ed25519PublicKeyHashSerializer : EncodedSerializer<Ed25519PublicKeyHash>(Ed25519PublicKeyHash, Ed25519PublicKeyHash::class)

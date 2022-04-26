@@ -23,16 +23,16 @@ public enum class RpcChainStatus {
 public sealed class RpcTestChainStatus {
 
     @Transient
-    public open val chainId: @Contextual ChainId? = null
+    public open val chainId: ChainId? = null
 
     @Transient
-    public open val genesis: @Contextual ProtocolHash? = null
+    public open val genesis: ProtocolHash? = null
 
     @Transient
-    public open val protocol: @Contextual ProtocolHash? = null
+    public open val protocol: ProtocolHash? = null
 
     @Transient
-    public open val expiration: @Contextual Timestamp? = null
+    public open val expiration: Timestamp? = null
 
     @Serializable
     @SerialName(NotRunning.KIND)
@@ -55,7 +55,7 @@ public sealed class RpcTestChainStatus {
     @Serializable
     @SerialName(Running.KIND)
     public data class Running(
-        override val chainId: @Contextual ChainId,
+        @SerialName("chain_id") override val chainId: @Contextual ChainId,
         override val genesis: @Contextual ProtocolHash,
         override val protocol: @Contextual ProtocolHash,
         override val expiration: @Contextual Timestamp,

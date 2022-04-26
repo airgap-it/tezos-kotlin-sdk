@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.type
+package it.airgap.tezos.rpc.type.network
 
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.rpc.internal.serializer.RpcIPAddressSerializer

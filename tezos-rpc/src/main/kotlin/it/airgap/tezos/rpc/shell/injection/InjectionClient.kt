@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.shell.injection
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
@@ -19,7 +18,7 @@ private class InjectionBlockClient(parentUrl: String, private val httpClient: Ht
     private val baseUrl: String = /* /injection/block */ "$parentUrl/block"
 
     override suspend fun post(
-        data: HexString,
+        data: String,
         operations: List<List<RpcInjectableOperation>>,
         async: Boolean?,
         force: Boolean?,
@@ -43,7 +42,7 @@ private class InjectionOperationClient(parentUrl: String, private val httpClient
     private val baseUrl: String = /* /injection/operation */ "$parentUrl/operation"
 
     override suspend fun post(
-        data: HexString,
+        data: String,
         async: Boolean?,
         chain: ChainId?,
         headers: List<HttpHeader>,

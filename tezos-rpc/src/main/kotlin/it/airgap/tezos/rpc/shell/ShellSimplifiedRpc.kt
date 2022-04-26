@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.shell
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -26,5 +25,5 @@ public interface ShellSimplifiedRpc {
 
     // -- /injection --
 
-    public suspend fun injectOperation(data: HexString, async: Boolean? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): InjectOperationResponse
+    public suspend fun injectOperation(data: String, async: Boolean? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): InjectOperationResponse
 }

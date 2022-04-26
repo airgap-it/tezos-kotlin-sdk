@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.shell
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -31,7 +30,7 @@ internal class ShellSimplifiedRpcClient(
     // -- /injection --
 
     override suspend fun injectOperation(
-        data: HexString,
+        data: String,
         async: Boolean?,
         chain: ChainId?,
         headers: List<HttpHeader>,

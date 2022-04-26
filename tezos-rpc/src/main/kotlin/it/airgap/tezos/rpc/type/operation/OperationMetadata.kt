@@ -3,6 +3,7 @@ package it.airgap.tezos.rpc.type.operation
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
+import it.airgap.tezos.rpc.internal.serializer.LongSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcBalanceUpdateSerializer
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -130,7 +131,7 @@ public sealed class RpcBalanceUpdate {
     @Serializable
     public data class Contract(
         override val contract: @Contextual Address,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -140,7 +141,7 @@ public sealed class RpcBalanceUpdate {
     public data class LegacyRewards(
         override val delegate: @Contextual PublicKeyHashEncoded,
         override val cycle: Int,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -148,7 +149,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class BlockFees(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -158,7 +159,7 @@ public sealed class RpcBalanceUpdate {
     public data class LegacyDeposits(
         override val delegate: @Contextual PublicKeyHashEncoded,
         override val cycle: Int,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -168,7 +169,7 @@ public sealed class RpcBalanceUpdate {
     public data class Deposits(
         override val delegate: @Contextual PublicKeyHashEncoded,
         override val cycle: Int,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -176,7 +177,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class NonceRevelationRewards(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -184,7 +185,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class DoubleSigningEvidenceRewards(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -192,7 +193,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class EndorsingRewards(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -200,7 +201,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class BakingRewards(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -208,7 +209,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class BakingBonuses(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -218,7 +219,7 @@ public sealed class RpcBalanceUpdate {
     public data class LegacyFees(
         override val delegate: @Contextual PublicKeyHashEncoded,
         override val cycle: Int,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -226,7 +227,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class StorageFees(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -234,7 +235,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class DoubleSigningPunishments(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -245,7 +246,7 @@ public sealed class RpcBalanceUpdate {
         override val delegate: @Contextual PublicKeyHashEncoded,
         override val participation: Boolean,
         override val revelation: Boolean,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -253,7 +254,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class LiquidityBakingSubsidies(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -261,7 +262,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class Burned(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -270,7 +271,7 @@ public sealed class RpcBalanceUpdate {
     @Serializable
     public data class Commitments(
         override val committer: @Contextual BlindedPublicKeyHashEncoded,
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -278,7 +279,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class Bootstrap(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -286,7 +287,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class Invoice(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -294,7 +295,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class InitialCommitments(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -302,7 +303,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class Minted(
-        override val change: Long,
+        @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {
         public companion object {}
@@ -324,5 +325,5 @@ public sealed class RpcBalanceUpdate {
 @Serializable
 public data class RpcOperationListMetadata(
     @SerialName("max_size") public val maxSize: Int,
-    @SerialName("max_op") public val maxOperations: Int,
+    @SerialName("max_op") public val maxOperations: Int? = null,
 )

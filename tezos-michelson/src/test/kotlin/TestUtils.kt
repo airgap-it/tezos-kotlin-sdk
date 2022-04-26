@@ -20,6 +20,9 @@ fun <T> String.inRange(range: ClosedRange<T>): Boolean where T : Comparable<T> {
     else abs.length < max.length
 }
 
+@Suppress("UNCHECKED_CAST")
+fun <K, V> Map<K, V?>.filterValuesNotNull(): Map<K, V> = filterValues { it != null } as Map<K, V>
+
 // -- data sets --
 
 val michelsonMichelinePairs: List<Pair<Michelson, MichelineNode>>

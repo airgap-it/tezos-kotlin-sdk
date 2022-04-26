@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.shell.injection
 
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
@@ -13,7 +12,7 @@ public interface Injection {
 
     public interface Block {
         public suspend fun post(
-            data: HexString,
+            data: String,
             operations: List<List<RpcInjectableOperation>>,
             async: Boolean? = null,
             force: Boolean? = null,
@@ -24,7 +23,7 @@ public interface Injection {
 
     public interface Operation {
         public suspend fun post(
-            data: HexString,
+            data: String,
             async: Boolean? = null,
             chain: ChainId? = null,
             headers: List<HttpHeader> = emptyList(),

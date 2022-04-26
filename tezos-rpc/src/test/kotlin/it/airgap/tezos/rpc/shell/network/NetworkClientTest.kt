@@ -12,9 +12,9 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.serializer.rpcJson
-import it.airgap.tezos.rpc.type.RpcIPv4Address
+import it.airgap.tezos.rpc.type.network.RpcIPv4Address
 import it.airgap.tezos.rpc.type.network.*
-import it.airgap.tezos.rpc.type.primitive.Unistring
+import it.airgap.tezos.rpc.type.primitive.RpcUnistring
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import mockTezosSdk
@@ -292,7 +292,7 @@ class NetworkClientTest {
                             ),
                             remoteSocketPort = 65535U,
                             announcedVersion = RpcNetworkVersion(
-                                chainName = Unistring.PlainUtf8("chain"),
+                                chainName = RpcUnistring.PlainUtf8("chain"),
                                 distributedDbVersion = 65535U,
                                 p2pVersion = 65535U,
                             ),
@@ -349,7 +349,7 @@ class NetworkClientTest {
                     ),
                     remoteSocketPort = 65535U,
                     announcedVersion = RpcNetworkVersion(
-                        chainName = Unistring.PlainUtf8("chain"),
+                        chainName = RpcUnistring.PlainUtf8("chain"),
                         distributedDbVersion = 65535U,
                         p2pVersion = 65535U,
                     ),
