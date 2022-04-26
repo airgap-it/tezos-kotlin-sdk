@@ -55,7 +55,7 @@ public sealed class RpcTestChainStatus {
     @Serializable
     @SerialName(Running.KIND)
     public data class Running(
-        override val chainId: @Contextual ChainId,
+        @SerialName("chain_id") override val chainId: @Contextual ChainId,
         override val genesis: @Contextual ProtocolHash,
         override val protocol: @Contextual ProtocolHash,
         override val expiration: @Contextual Timestamp,

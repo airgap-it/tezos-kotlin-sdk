@@ -3,7 +3,6 @@ package it.airgap.tezos.rpc.type.network
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.rpc.internal.serializer.LongSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcPeerMetadataEntrySerializer
-import it.airgap.tezos.rpc.type.RpcIPAddress
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

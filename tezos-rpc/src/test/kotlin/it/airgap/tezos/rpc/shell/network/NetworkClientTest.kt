@@ -12,7 +12,7 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.serializer.rpcJson
-import it.airgap.tezos.rpc.type.RpcIPv4Address
+import it.airgap.tezos.rpc.type.network.RpcIPv4Address
 import it.airgap.tezos.rpc.type.network.*
 import it.airgap.tezos.rpc.type.primitive.RpcUnistring
 import kotlinx.coroutines.runBlocking
