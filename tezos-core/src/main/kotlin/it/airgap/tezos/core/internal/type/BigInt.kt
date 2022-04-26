@@ -91,6 +91,9 @@ public interface BigInt : Comparable<BigInt> {
     public fun toString(radix: Int): String
 
     public companion object {
+        public val zero: BigInt
+            get() = valueOf(0)
+
         public fun valueOf(value: Byte): BigInt = valueOf(value.toLong())
         public fun valueOf(value: Short): BigInt = valueOf(value.toLong())
         public fun valueOf(value: Int): BigInt = valueOf(value.toLong())
@@ -99,6 +102,9 @@ public interface BigInt : Comparable<BigInt> {
         public fun valueOf(value: ByteArray): BigInt = JvmBigInt(BigInteger(value))
         public fun valueOf(value: HexString): BigInt = valueOf(value.asString(withPrefix = false), 16)
         public fun valueOf(value: String, radix: Int = 10): BigInt = JvmBigInt(BigInteger(value, radix))
+
+        public fun max(a: BigInt, b: BigInt): BigInt = if (a >= b) a else b
+        public fun min(a: BigInt, b: BigInt): BigInt = if (a <= b) a else b
     }
 }
 

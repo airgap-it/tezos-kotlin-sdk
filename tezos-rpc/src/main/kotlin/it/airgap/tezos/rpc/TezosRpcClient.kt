@@ -1,6 +1,11 @@
 package it.airgap.tezos.rpc
 
+import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.applyLimits
+import it.airgap.tezos.operation.type.FeeLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
+import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.internal.utils.withFeeFrom
 import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
 import it.airgap.tezos.rpc.shell.chains.Chains
 import it.airgap.tezos.rpc.shell.config.Config
@@ -16,4 +21,11 @@ internal class TezosRpcClient(
     override val injection: Injection,
     override val monitor: Monitor,
     override val network: Network,
-) : TezosRpc, ShellSimplifiedRpc by shellRpc, ActiveSimplifiedRpc by activeRpc
+) : TezosRpc, ShellSimplifiedRpc by shellRpc, ActiveSimplifiedRpc by activeRpc {
+
+    override suspend fun fee(chainId: String, operation: Operation, limits: FeeLimits, headers: List<HttpHeader>): Operation {
+        val runnableOperation = operation.applyLimits(limits).asRunnable()
+        val runOperationResult = chains(chainId).blocks.head.helpers.scripts.runOperation.post(runnableOperation, headers)
+        return runnableOperation.asOperation().withFeeFrom(runOperationResult.contents)
+    }
+}
