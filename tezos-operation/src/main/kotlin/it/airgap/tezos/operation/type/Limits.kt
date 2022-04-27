@@ -55,5 +55,18 @@ public data class FeeLimits internal constructor(
     )
 }
 
-internal data class FeeOperationLimits(val gas: BigInt, val storage: BigInt)
-internal data class FeeBlockLimits(val gas: BigInt)
+public data class FeeOperationLimits(val gas: BigInt, val storage: BigInt) {
+    internal operator fun plus(other: FeeOperationLimits): FeeOperationLimits =
+        FeeOperationLimits(gas + other.gas, storage + other.storage)
+
+    public companion object {
+        internal val zero: FeeOperationLimits
+            get() = FeeOperationLimits(BigInt.zero, BigInt.zero)
+    }
+}
+public data class FeeBlockLimits(val gas: BigInt) {
+    public companion object {
+        internal val zero: FeeBlockLimits
+            get() = FeeBlockLimits(BigInt.zero)
+    }
+}

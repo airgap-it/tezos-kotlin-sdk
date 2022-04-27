@@ -59,6 +59,12 @@ public interface BigInt : Comparable<BigInt> {
     public operator fun div(other: Long): BigInt
     public operator fun div(other: BigInt): BigInt
 
+    public fun div(other: Byte, roundingMode: RoundingMode): BigInt
+    public fun div(other: Short, roundingMode: RoundingMode): BigInt
+    public fun div(other: Int, roundingMode: RoundingMode): BigInt
+    public fun div(other: Long, roundingMode: RoundingMode): BigInt
+    public fun div(other: BigInt, roundingMode: RoundingMode): BigInt
+
     public operator fun rem(other: Byte): BigInt
     public operator fun rem(other: Short): BigInt
     public operator fun rem(other: Int): BigInt
@@ -89,6 +95,15 @@ public interface BigInt : Comparable<BigInt> {
 
     override fun toString(): String
     public fun toString(radix: Int): String
+
+    public enum class RoundingMode {
+        Up,
+        Down,
+        Ceiling,
+        Floor;
+
+        internal fun oneOf(vararg modes: RoundingMode): Boolean = modes.any { this == it }
+    }
 
     public companion object {
         public val zero: BigInt
@@ -191,6 +206,29 @@ internal class JvmBigInt(private val value: BigInteger) : BigInt {
     override fun div(other: BigInt): BigInt =
         if (other is JvmBigInt) this / other
         else this / BigInteger(other.toString(10), 10)
+
+    override fun div(other: Byte, roundingMode: BigInt.RoundingMode): BigInt = div(BigInteger.valueOf(other.toLong()), roundingMode)
+    override fun div(other: Short, roundingMode: BigInt.RoundingMode): BigInt = div(BigInteger.valueOf(other.toLong()), roundingMode)
+    override fun div(other: Int, roundingMode: BigInt.RoundingMode): BigInt = div(BigInteger.valueOf(other.toLong()), roundingMode)
+    override fun div(other: Long, roundingMode: BigInt.RoundingMode): BigInt = div(BigInteger.valueOf(other), roundingMode)
+    fun div(other: JvmBigInt, roundingMode: BigInt.RoundingMode): BigInt = div(other.value, roundingMode)
+    fun div(other: BigInteger, roundingMode: BigInt.RoundingMode): BigInt {
+        val isDivisible = (value % other).toInt() == 0
+        val isPositive = (value >= BigInteger.ZERO && other > BigInteger.ZERO) || (value < BigInteger.ZERO && other < BigInteger.ZERO)
+        val result = JvmBigInt(value / other)
+
+        return if (isDivisible) result
+        else when {
+            isPositive && roundingMode.oneOf(BigInt.RoundingMode.Ceiling, BigInt.RoundingMode.Up) -> result + 1
+            isPositive && roundingMode.oneOf(BigInt.RoundingMode.Floor, BigInt.RoundingMode.Down) -> result
+            !isPositive && roundingMode.oneOf(BigInt.RoundingMode.Ceiling, BigInt.RoundingMode.Down) -> result
+            !isPositive && roundingMode.oneOf(BigInt.RoundingMode.Floor, BigInt.RoundingMode.Up) -> result - 1
+            else -> result
+        }
+    }
+    override fun div(other: BigInt, roundingMode: BigInt.RoundingMode): BigInt =
+        if (other is JvmBigInt) div(other, roundingMode)
+        else  div(BigInteger(other.toString(10), 10), roundingMode)
 
 
     override fun rem(other: Byte): BigInt = this % BigInteger.valueOf(other.toLong())

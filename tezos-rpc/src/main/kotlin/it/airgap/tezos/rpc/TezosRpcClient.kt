@@ -3,6 +3,7 @@ package it.airgap.tezos.rpc
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.applyLimits
+import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.operation.type.FeeLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -23,6 +24,7 @@ internal class TezosRpcClient(
     override val injection: Injection,
     override val monitor: Monitor,
     override val network: Network,
+    private val operationContentBytesCoder: OperationContentBytesCoder,
 ) : TezosRpc, ShellSimplifiedRpc by shellRpc, ActiveSimplifiedRpc by activeRpc {
 
     private val chainIdCache: Cache<String, ChainId> = Cache { key, headers -> chains(key).chainId.get(headers).chainId }
@@ -36,7 +38,7 @@ internal class TezosRpcClient(
 
         return runnableOperation
             .asOperation()
-            .withFeeFrom(runOperationResult.contents)
+            .withFeeFrom(runOperationResult.contents, operationContentBytesCoder)
     }
 
     private suspend fun String.asChainId(headers: List<HttpHeader> = emptyList()): ChainId =
