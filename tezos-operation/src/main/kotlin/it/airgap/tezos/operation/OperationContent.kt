@@ -7,7 +7,7 @@ import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
-import it.airgap.tezos.operation.header.FullBlockHeader
+import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 
@@ -57,8 +57,8 @@ public sealed interface OperationContent {
     }
 
     public data class DoubleBakingEvidence(
-        public val bh1: FullBlockHeader,
-        public val bh2: FullBlockHeader,
+        public val bh1: BlockHeader,
+        public val bh2: BlockHeader,
     ) : OperationContent {
         public companion object : Kind {
             override val tag: UByte = 3U

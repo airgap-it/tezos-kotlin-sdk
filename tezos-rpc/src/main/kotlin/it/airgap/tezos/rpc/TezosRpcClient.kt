@@ -1,10 +1,12 @@
 package it.airgap.tezos.rpc
 
+import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.applyLimits
 import it.airgap.tezos.operation.type.FeeLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.internal.cache.Cache
 import it.airgap.tezos.rpc.internal.utils.withFeeFrom
 import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
 import it.airgap.tezos.rpc.shell.chains.Chains
@@ -23,9 +25,20 @@ internal class TezosRpcClient(
     override val network: Network,
 ) : TezosRpc, ShellSimplifiedRpc by shellRpc, ActiveSimplifiedRpc by activeRpc {
 
+    private val chainIdCache: Cache<String, ChainId> = Cache { key, headers -> chains(key).chainId.get(headers).chainId }
+
     override suspend fun fee(chainId: String, operation: Operation, limits: FeeLimits, headers: List<HttpHeader>): Operation {
-        val runnableOperation = operation.applyLimits(limits).asRunnable()
+        val runnableOperation = operation
+            .applyLimits(limits)
+            .asRunnable(chainId.asChainId(headers))
+
         val runOperationResult = chains(chainId).blocks.head.helpers.scripts.runOperation.post(runnableOperation, headers)
-        return runnableOperation.asOperation().withFeeFrom(runOperationResult.contents)
+
+        return runnableOperation
+            .asOperation()
+            .withFeeFrom(runOperationResult.contents)
     }
+
+    private suspend fun String.asChainId(headers: List<HttpHeader> = emptyList()): ChainId =
+        if (ChainId.isValid(this)) ChainId(this) else chainIdCache.get(this, headers)
 }
