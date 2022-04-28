@@ -14,7 +14,7 @@ private const val FEE_SAFETY_MARGIN_MUTEZ = 100U
 
 // -- Fee --
 
-public data class Fee internal constructor(
+public data class Fee(
     public val value: Mutez,
     internal val limits: FeeOperationLimits,
     internal val aggregatedFrom: Int = 1,
