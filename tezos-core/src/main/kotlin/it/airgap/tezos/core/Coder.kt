@@ -5,6 +5,9 @@ import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.zarith.ZarithInteger
 import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.core.type.tez.Mutez
+import it.airgap.tezos.core.type.tez.Nanotez
+import it.airgap.tezos.core.type.tez.Tez
 
 // -- BlockHash <-> ByteArray --
 
@@ -694,7 +697,7 @@ public fun SignatureEncoded.Companion.decodeConsumingFromBytes(
     signatureBytesCoder: SignatureBytesCoder = TezosSdk.instance.dependencyRegistry.core().signatureBytesCoder,
 ): SignatureEncoded = signatureBytesCoder.decodeConsuming(bytes).encoded
 
-// -- ZarithInteger <-> ByteArray --
+// -- TezosInteger <-> ByteArray --
 
 public fun ZarithInteger.encodeToBytes(
     zarithIntegerBytesCoder: ZarithIntegerBytesCoder = TezosSdk.instance.dependencyRegistry.core().zarithIntegerBytesCoder,
@@ -710,7 +713,7 @@ public fun ZarithInteger.Companion.decodeConsumingFromBytes(
     zarithIntegerBytesCoder: ZarithIntegerBytesCoder = TezosSdk.instance.dependencyRegistry.core().zarithIntegerBytesCoder,
 ): ZarithInteger = zarithIntegerBytesCoder.decodeConsuming(bytes)
 
-// -- ZarithNatural <-> ByteArray --
+// -- TezosNatural <-> ByteArray --
 
 public fun ZarithNatural.encodeToBytes(
     zarithNaturalBytesCoder: ZarithNaturalBytesCoder = TezosSdk.instance.dependencyRegistry.core().zarithNaturalBytesCoder,
@@ -725,3 +728,51 @@ public fun ZarithNatural.Companion.decodeConsumingFromBytes(
     bytes: MutableList<Byte>,
     zarithNaturalBytesCoder: ZarithNaturalBytesCoder = TezosSdk.instance.dependencyRegistry.core().zarithNaturalBytesCoder,
 ): ZarithNatural = zarithNaturalBytesCoder.decodeConsuming(bytes)
+
+// -- Tez <-> ByteArray --
+
+public fun Tez.encodeToBytes(
+    tezBytesCoder: TezBytesCoder = TezosSdk.instance.dependencyRegistry.core().tezBytesCoder,
+): ByteArray = tezBytesCoder.encode(this)
+
+public fun Tez.Companion.decodeFromBytes(
+    bytes: ByteArray,
+    tezBytesCoder: TezBytesCoder = TezosSdk.instance.dependencyRegistry.core().tezBytesCoder,
+): Tez = tezBytesCoder.decode(bytes)
+
+public fun Tez.Companion.decodeConsumingFromBytes(
+    bytes: MutableList<Byte>,
+    tezBytesCoder: TezBytesCoder = TezosSdk.instance.dependencyRegistry.core().tezBytesCoder,
+): Tez = tezBytesCoder.decodeConsuming(bytes)
+
+// -- Mutez <-> ByteArray --
+
+public fun Mutez.encodeToBytes(
+    mutezBytesCoder: MutezBytesCoder = TezosSdk.instance.dependencyRegistry.core().mutezBytesCoder,
+): ByteArray = mutezBytesCoder.encode(this)
+
+public fun Mutez.Companion.decodeFromBytes(
+    bytes: ByteArray,
+    mutezBytesCoder: MutezBytesCoder = TezosSdk.instance.dependencyRegistry.core().mutezBytesCoder,
+): Mutez = mutezBytesCoder.decode(bytes)
+
+public fun Mutez.Companion.decodeConsumingFromBytes(
+    bytes: MutableList<Byte>,
+    mutezBytesCoder: MutezBytesCoder = TezosSdk.instance.dependencyRegistry.core().mutezBytesCoder,
+): Mutez = mutezBytesCoder.decodeConsuming(bytes)
+
+// -- Nanotez <-> ByteArray --
+
+public fun Nanotez.encodeToBytes(
+    nanotezBytesCoder: NanotezBytesCoder = TezosSdk.instance.dependencyRegistry.core().nanotezBytesCoder,
+): ByteArray = nanotezBytesCoder.encode(this)
+
+public fun Nanotez.Companion.decodeFromBytes(
+    bytes: ByteArray,
+    nanotezBytesCoder: NanotezBytesCoder = TezosSdk.instance.dependencyRegistry.core().nanotezBytesCoder,
+): Nanotez = nanotezBytesCoder.decode(bytes)
+
+public fun Nanotez.Companion.decodeConsumingFromBytes(
+    bytes: MutableList<Byte>,
+    nanotezBytesCoder: NanotezBytesCoder = TezosSdk.instance.dependencyRegistry.core().nanotezBytesCoder,
+): Nanotez = nanotezBytesCoder.decodeConsuming(bytes)

@@ -2,11 +2,7 @@ package it.airgap.tezos.core
 
 import it.airgap.tezos.core.internal.converter.*
 import it.airgap.tezos.core.internal.di.core
-import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.toBigInt
-import it.airgap.tezos.core.internal.utils.toMutez
-import it.airgap.tezos.core.internal.utils.toNanotez
-import it.airgap.tezos.core.internal.utils.toTez
+import it.airgap.tezos.core.internal.type.Number
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.tez.Nanotez
@@ -125,42 +121,24 @@ public fun P256Signature.Companion.fromGenericSignature(
 
 // -- Tez -> Mutez --
 
-public fun Tez.toMutez(): Mutez {
-    val mutezValue = toBigInt() * 1_000_000
-    return mutezValue.toMutez()
-}
+public fun Tez.toMutez(): Mutez = Mutez(bigInt * 1_000_000)
 
 // -- Tez -> Nanotez --
 
-public fun Tez.toNanotez(): Nanotez {
-    val nanotezValue = toBigInt() * 1_000_000_000
-    return nanotezValue.toNanotez()
-}
+public fun Tez.toNanotez(): Nanotez = Nanotez(bigInt * 1_000_000_000)
 
 // -- Mutez -> Tez --
 
-public fun Mutez.toTez(): Tez {
-    val tezValue = toBigInt().div(1_000_000, BigInt.RoundingMode.Up)
-    return tezValue.toTez()
-}
+public fun Mutez.toTez(): Tez = Tez(bigInt.div(1_000_000, Number.RoundingMode.Up))
 
 // -- Mutez -> Nanotez --
 
-public fun Mutez.toNanotez(): Nanotez {
-    val nanotezValue = toBigInt() * 1_000
-    return nanotezValue.toNanotez()
-}
+public fun Mutez.toNanotez(): Nanotez = Nanotez(bigInt * 1_000)
 
 // -- Nanotez -> Tez --
 
-public fun Nanotez.toTez(): Tez {
-    val tezValue = toBigInt().div(1_000_000_000, BigInt.RoundingMode.Up)
-    return tezValue.toTez()
-}
+public fun Nanotez.toTez(): Tez = Tez(bigInt.div(1_000_000_000, Number.RoundingMode.Up))
 
 // -- Nanotez -> Mutez --
 
-public fun Nanotez.toMutez(): Mutez {
-    val mutezValue = toBigInt().div(1_000, BigInt.RoundingMode.Up)
-    return mutezValue.toMutez()
-}
+public fun Nanotez.toMutez(): Mutez = Mutez(bigInt.div(1_000, Number.RoundingMode.Up))

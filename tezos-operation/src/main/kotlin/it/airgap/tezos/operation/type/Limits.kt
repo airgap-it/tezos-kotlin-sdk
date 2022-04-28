@@ -56,7 +56,7 @@ public data class FeeLimits internal constructor(
 }
 
 public data class FeeOperationLimits(val gas: BigInt, val storage: BigInt) {
-    internal operator fun plus(other: FeeOperationLimits): FeeOperationLimits =
+    public operator fun plus(other: FeeOperationLimits): FeeOperationLimits =
         FeeOperationLimits(gas + other.gas, storage + other.storage)
 
     public companion object {

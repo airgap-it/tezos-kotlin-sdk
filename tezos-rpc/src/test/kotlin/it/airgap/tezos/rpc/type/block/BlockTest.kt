@@ -12,6 +12,7 @@ import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -188,11 +189,11 @@ class BlockTest {
                             contents = listOf(
                                 RpcOperationContent.Transaction(
                                     source = Ed25519PublicKeyHash("tz1P1jbxpCDGaan94zbjJqU5sqA9u98ntmPf"),
-                                    fee = "976",
+                                    fee = Mutez("976"),
                                     counter = "10300306",
                                     gasLimit = "6323",
                                     storageLimit = "20",
-                                    amount = "0",
+                                    amount = Mutez("0"),
                                     destination = ContractHash("KT1LFTPiBzNWfuvvN4CaAahQMBM86wG8pBaM"),
                                     parameters = RpcParameters(
                                         entrypoint = "transfer",

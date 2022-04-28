@@ -8,6 +8,11 @@ internal val rpcSerializersModule: SerializersModule = SerializersModule {
     contextual(Pair::class) { typeArgumentsSerializers -> PairSerializer(typeArgumentsSerializers[0], typeArgumentsSerializers[1]) }
 
     contextual(HexStringSerializer)
+
+    contextual(TezSerializer)
+    contextual(MutezSerializer)
+    contextual(NanotezSerializer)
+
     contextual(TimestampSerializer)
     contextual(TimestampRfc3339Serializer)
     contextual(TimestampMillisSerializer)

@@ -63,42 +63,42 @@ public sealed class RpcOperationMetadata {
     public data class Reveal(
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
         @SerialName("operation_result") public val operationResult: RpcOperationResult.Reveal,
-        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult>? = null,
+        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult.Reveal>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Transaction(
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
         @SerialName("operation_result") public val operationResult: RpcOperationResult.Transaction,
-        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult>? = null,
+        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult.Transaction>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Origination(
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
         @SerialName("operation_result") public val operationResult: RpcOperationResult.Origination,
-        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult>? = null,
+        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult.Origination>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Delegation(
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
         @SerialName("operation_result") public val operationResult: RpcOperationResult.Delegation,
-        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult>? = null,
+        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult.Delegation>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class SetDepositsLimit(
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
         @SerialName("operation_result") public val operationResult: RpcOperationResult.SetDepositsLimit,
-        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult>? = null,
+        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult.SetDepositsLimit>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class RegisterGlobalConstant(
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
         @SerialName("operation_result") public val operationResult: RpcOperationResult.RegisterGlobalConstant,
-        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult>? = null,
+        @SerialName("internal_operation_results") public val internalOperationResults: List<RpcInternalOperationResult.RegisterGlobalConstant>? = null,
     ) : RpcOperationMetadata()
 }
 

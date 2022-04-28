@@ -9,6 +9,7 @@ import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.decodeFromBytes
 import it.airgap.tezos.michelson.encodeToBytes
@@ -32,6 +33,7 @@ public class OperationContentBytesCoder(
     private val implicitAddressBytesCoder: ImplicitAddressBytesCoder,
     private val signatureBytesCoder: SignatureBytesCoder,
     private val zarithNaturalBytesCoder: ZarithNaturalBytesCoder,
+    private val mutezBytesCoder: MutezBytesCoder,
     private val michelineBytesCoder: MichelineBytesCoder,
     private val timestampBigIntCoder: TimestampBigIntCoder,
     private val tagToOperationContentKindConverter: TagToOperationContentKindConverter,
@@ -163,7 +165,7 @@ public class OperationContentBytesCoder(
     }
 
     private fun encodeTransaction(content: OperationContent.Transaction): ByteArray = with(content) {
-        val amountBytes = amount.encodeToBytes(zarithNaturalBytesCoder)
+        val amountBytes = amount.encodeToBytes(mutezBytesCoder)
         val destinationBytes = destination.encodeToBytes(addressBytesCoder)
 
         val parametersBytes = parameters?.let { encodeParameters(it) } ?: byteArrayOf()
@@ -173,7 +175,7 @@ public class OperationContentBytesCoder(
     }
 
     private fun encodeOrigination(content: OperationContent.Origination): ByteArray = with(content) {
-        val balanceBytes = balance.encodeToBytes(zarithNaturalBytesCoder)
+        val balanceBytes = balance.encodeToBytes(mutezBytesCoder)
 
         val delegateBytes = delegate?.encodeToBytes(implicitAddressBytesCoder) ?: byteArrayOf()
         val delegatePresence = encodeBooleanToBytes(delegateBytes.isNotEmpty())
@@ -216,7 +218,7 @@ public class OperationContentBytesCoder(
 
     private fun encodeManagerOperation(content: OperationContent.Manager): ByteArray = with(content) {
         val sourceBytes = source.encodeToBytes(implicitAddressBytesCoder)
-        val feeBytes = fee.encodeToBytes(zarithNaturalBytesCoder)
+        val feeBytes = fee.encodeToBytes(mutezBytesCoder)
         val counterBytes = counter.encodeToBytes(zarithNaturalBytesCoder)
         val gasLimitBytes = gasLimit.encodeToBytes(zarithNaturalBytesCoder)
         val storageLimitBytes = storageLimit.encodeToBytes(zarithNaturalBytesCoder)
@@ -451,7 +453,7 @@ public class OperationContentBytesCoder(
         requireConsumingKind(OperationContent.Transaction, bytes)
 
         return decodeManagerOperation(bytes) { source, fee, counter, gasLimit, storageLimit, bytes ->
-            val amount = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
+            val amount = Mutez.decodeConsumingFromBytes(bytes, mutezBytesCoder)
             val destination = Address.decodeConsumingFromBytes(bytes, addressBytesCoder)
 
             val parametersPresence = decodeBoolean(bytes)
@@ -474,7 +476,7 @@ public class OperationContentBytesCoder(
         requireConsumingKind(OperationContent.Origination, bytes)
 
         return decodeManagerOperation(bytes) { source, fee, counter, gasLimit, storageLimit, bytes ->
-            val balance = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
+            val balance = Mutez.decodeConsumingFromBytes(bytes, mutezBytesCoder)
 
             val delegatePresence = decodeBoolean(bytes)
             val delegate = if (delegatePresence) ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder) else null
@@ -561,10 +563,10 @@ public class OperationContentBytesCoder(
 
     private fun <T : OperationContent.Manager> decodeManagerOperation(
         bytes: MutableList<Byte>,
-        create: (source: ImplicitAddress, fee: ZarithNatural, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
+        create: (source: ImplicitAddress, fee: Mutez, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
     ): T {
         val source = ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder)
-        val fee = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
+        val fee = Mutez.decodeConsumingFromBytes(bytes, mutezBytesCoder)
         val counter = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
         val gasLimit = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
         val storageLimit = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)

@@ -12,6 +12,7 @@ import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
@@ -58,6 +59,7 @@ class OperationContentBytesCoderTest {
         val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
         val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
         val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
+        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
         val michelineBytesCoder = MichelineBytesCoder(
             StringToMichelsonPrimConverter(),
             TagToMichelsonPrimConverter(),
@@ -75,6 +77,7 @@ class OperationContentBytesCoderTest {
             implicitAddressBytesCoder,
             signatureBytesCoder,
             zarithNaturalBytesCoder,
+            mutezBytesCoder,
             michelineBytesCoder,
             timestampBigIntCoder,
             tagToOperationContentKindConverter,
@@ -274,7 +277,7 @@ class OperationContentBytesCoderTest {
             ) to "15000100000001000000016eba3d57f131a71eab0692e333e889cbafe523c675e588ace92bb5056cbcb889".asHexString().toByteArray(),
             OperationContent.Reveal(
                 Ed25519PublicKeyHash("tz1SZ2CmbQB7MMXgcMSmyyVXpya1rkb9UGUE"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
@@ -282,103 +285,103 @@ class OperationContentBytesCoderTest {
             ) to "6b004bd66485632a18d61068fc940772dec8add5ff93fba3089a01fbb801e88a02007a79d89acb296dd9ec2be8fba817702dc41adf19e28bb250a337f840eb263c69".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c800".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Default, MichelineSequence()),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c8ff00000000050200000000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Root, MichelineSequence()),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c8ff01000000050200000000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Do, MichelineSequence()),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c8ff02000000050200000000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.SetDelegate, MichelineSequence()),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c8ff03000000050200000000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.RemoveDelegate, MichelineSequence()),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c8ff04000000050200000000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Named("named"), MichelineSequence()),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c8ffff056e616d6564000000050200000000".asHexString().toByteArray(),
             OperationContent.Origination(
                 Ed25519PublicKeyHash("tz1LdF7qHCJg8Efa6Cx4LZrRPkvbh61H8tZq"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 null,
                 Script(MichelineSequence(), MichelineSequence())
             ) to "6d000ad2152600ac6bb16b5512e43a337dd562dc2cccfba3089a01fbb801e88a02ebca2e00000000050200000000000000050200000000".asHexString().toByteArray(),
             OperationContent.Origination(
                 Ed25519PublicKeyHash("tz1LdF7qHCJg8Efa6Cx4LZrRPkvbh61H8tZq"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
-                ZarithNatural("763243"),
+                Mutez("763243"),
                 Ed25519PublicKeyHash("tz1RY8er4ybXszZBbhtQDrYhA5AYY3VQXiKn"),
                 Script(MichelineSequence(), MichelineSequence())
             ) to "6d000ad2152600ac6bb16b5512e43a337dd562dc2cccfba3089a01fbb801e88a02ebca2eff0040b33c1a35d72f3c85747f605b1902d36fc8c9a3000000050200000000000000050200000000".asHexString().toByteArray(),
             OperationContent.Delegation(
                 Ed25519PublicKeyHash("tz1QVAraV1JDRsPikcqJVE4VccvW7vDWCJHy"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
             ) to "6e00352bb30ffdb72d101083a4fc5cd156f007705f5dfba3089a01fbb801e88a0200".asHexString().toByteArray(),
             OperationContent.Delegation(
                 Ed25519PublicKeyHash("tz1QVAraV1JDRsPikcqJVE4VccvW7vDWCJHy"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
@@ -386,7 +389,7 @@ class OperationContentBytesCoderTest {
             ) to "6e00352bb30ffdb72d101083a4fc5cd156f007705f5dfba3089a01fbb801e88a02ff00c356e7cb9943f6ef4168bea7915c7f88152e6c37".asHexString().toByteArray(),
             OperationContent.RegisterGlobalConstant(
                 Ed25519PublicKeyHash("tz1brHnNaHcpxqHDhqwmAXDq1i4F2A4Xaepz"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
@@ -394,14 +397,14 @@ class OperationContentBytesCoderTest {
             ) to "6f00b1d399df432bbbdbd45cb6b454699ea96d77dabffba3089a01fbb801e88a02000000050200000000".asHexString().toByteArray(),
             OperationContent.SetDepositsLimit(
                 Ed25519PublicKeyHash("tz1gxabEuUaCKk15qUKnhASJJoXhm9A7DVLM"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),
             ) to "7000e9dcc1a4a82c49aeec327b15e9ed457dc22a1ebcfba3089a01fbb801e88a0200".asHexString().toByteArray(),
             OperationContent.SetDepositsLimit(
                 Ed25519PublicKeyHash("tz1gxabEuUaCKk15qUKnhASJJoXhm9A7DVLM"),
-                ZarithNatural("135675"),
+                Mutez("135675"),
                 ZarithNatural("154"),
                 ZarithNatural("23675"),
                 ZarithNatural("34152"),

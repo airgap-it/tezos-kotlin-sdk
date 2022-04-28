@@ -56,6 +56,7 @@ class OperationBytesCoderTest {
         val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
         val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
         val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
+        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
         val michelineBytesCoder = MichelineBytesCoder(
             StringToMichelsonPrimConverter(),
             TagToMichelsonPrimConverter(),
@@ -73,6 +74,7 @@ class OperationBytesCoderTest {
             implicitAddressBytesCoder,
             signatureBytesCoder,
             zarithNaturalBytesCoder,
+            mutezBytesCoder,
             michelineBytesCoder,
             timestampBigIntCoder,
             tagToOperationContentKindConverter,

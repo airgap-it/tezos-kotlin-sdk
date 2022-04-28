@@ -3,6 +3,7 @@ package it.airgap.tezos.operation
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
@@ -155,7 +156,7 @@ public sealed interface OperationContent {
 
     public sealed interface Manager : OperationContent {
         public val source: ImplicitAddress
-        public val fee: ZarithNatural
+        public val fee: Mutez
         public val counter: ZarithNatural
         public val gasLimit: ZarithNatural
         public val storageLimit: ZarithNatural
@@ -163,7 +164,7 @@ public sealed interface OperationContent {
 
     public data class Reveal(
         override val source: ImplicitAddress,
-        override val fee: ZarithNatural,
+        override val fee: Mutez,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
@@ -176,11 +177,11 @@ public sealed interface OperationContent {
 
     public data class Transaction(
         override val source: ImplicitAddress,
-        override val fee: ZarithNatural,
+        override val fee: Mutez,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
-        public val amount: ZarithNatural,
+        public val amount: Mutez,
         public val destination: Address,
         public val parameters: Parameters? = null,
     ) : Manager {
@@ -191,11 +192,11 @@ public sealed interface OperationContent {
 
     public data class Origination(
         override val source: ImplicitAddress,
-        override val fee: ZarithNatural,
+        override val fee: Mutez,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
-        public val balance: ZarithNatural,
+        public val balance: Mutez,
         public val delegate: ImplicitAddress? = null,
         public val script: Script,
     ) : Manager {
@@ -206,7 +207,7 @@ public sealed interface OperationContent {
 
     public data class Delegation(
         override val source: ImplicitAddress,
-        override val fee: ZarithNatural,
+        override val fee: Mutez,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
@@ -219,7 +220,7 @@ public sealed interface OperationContent {
 
     public data class RegisterGlobalConstant(
         override val source: ImplicitAddress,
-        override val fee: ZarithNatural,
+        override val fee: Mutez,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
@@ -232,7 +233,7 @@ public sealed interface OperationContent {
 
     public data class SetDepositsLimit(
         override val source: ImplicitAddress,
-        override val fee: ZarithNatural,
+        override val fee: Mutez,
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,

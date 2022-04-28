@@ -1,6 +1,7 @@
 package it.airgap.tezos.operation
 
 import it.airgap.tezos.core.internal.type.BigInt
+import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.core.internal.utils.toZarithNatural
 import it.airgap.tezos.operation.type.Fee
 import it.airgap.tezos.operation.type.FeeLimits
@@ -39,10 +40,10 @@ private fun Operation.maxLimitsPerOperation(limits: FeeLimits): FeeOperationLimi
 public val OperationContent.fee: Fee
     get() = when (this) {
         is OperationContent.Manager -> Fee(
-            BigInt.valueOf(fee.int),
+            fee,
             FeeOperationLimits(
-                BigInt.valueOf(gasLimit.int),
-                BigInt.valueOf(storageLimit.int),
+                gasLimit.toBigInt(),
+                storageLimit.toBigInt(),
             ),
         )
         else -> Fee.zero
@@ -66,32 +67,32 @@ private fun OperationContent.applyLimits(limits: FeeOperationLimits): OperationC
 private fun OperationContent.Manager.applyFee(fee: Fee): OperationContent.Manager =
     when (this) {
         is OperationContent.Reveal -> copy(
-            fee = fee.total.toZarithNatural(),
+            fee = fee.value,
             gasLimit = fee.limits.gas.toZarithNatural(),
             storageLimit = fee.limits.storage.toZarithNatural()
         )
         is OperationContent.Transaction -> copy(
-            fee = fee.total.toZarithNatural(),
+            fee = fee.value,
             gasLimit = fee.limits.gas.toZarithNatural(),
             storageLimit = fee.limits.storage.toZarithNatural(),
         )
         is OperationContent.Origination -> copy(
-            fee = fee.total.toZarithNatural(),
+            fee = fee.value,
             gasLimit = fee.limits.gas.toZarithNatural(),
             storageLimit = fee.limits.storage.toZarithNatural(),
         )
         is OperationContent.Delegation -> copy(
-            fee = fee.total.toZarithNatural(),
+            fee = fee.value,
             gasLimit = fee.limits.gas.toZarithNatural(),
             storageLimit = fee.limits.storage.toZarithNatural(),
         )
         is OperationContent.RegisterGlobalConstant -> copy(
-            fee = fee.total.toZarithNatural(),
+            fee = fee.value,
             gasLimit = fee.limits.gas.toZarithNatural(),
             storageLimit = fee.limits.storage.toZarithNatural(),
         )
         is OperationContent.SetDepositsLimit -> copy(
-            fee = fee.total.toZarithNatural(),
+            fee = fee.value,
             gasLimit = fee.limits.gas.toZarithNatural(),
             storageLimit = fee.limits.storage.toZarithNatural(),
         )
