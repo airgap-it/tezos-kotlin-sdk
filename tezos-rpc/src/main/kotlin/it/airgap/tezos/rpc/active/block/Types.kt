@@ -8,6 +8,7 @@ import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
 import it.airgap.tezos.rpc.type.constants.RpcConstants
 import it.airgap.tezos.rpc.type.contract.RpcScript
+import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.contract.RpcUnreachableEntrypoint
 import it.airgap.tezos.rpc.type.operation.*
 import it.airgap.tezos.rpc.type.sapling.RpcSaplingStateDiff
@@ -92,6 +93,15 @@ public value class GetContractManagerKeyResponse(public val manager: @Contextual
 @Serializable
 @JvmInline
 public value class GetContractScriptResponse(public val script: RpcScript? = null)
+
+// -- ../<block_id>/context/contracts/<contract_id>/script/normalized --
+
+@Serializable
+public data class GetContractNormalizedScriptRequest(@SerialName("unparsing_mode") public val unparsingMode: RpcScriptParsing)
+
+@Serializable
+@JvmInline
+public value class GetContractNormalizedScriptResponse(public val script: RpcScript? = null)
 
 // -- ../<block_id>/context/contracts/<contract_id>/single_sapling_get_diff --
 
