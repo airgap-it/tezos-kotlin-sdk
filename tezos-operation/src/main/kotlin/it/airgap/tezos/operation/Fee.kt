@@ -4,18 +4,20 @@ import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.core.internal.utils.toZarithNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.operation.type.Fee
-import it.airgap.tezos.operation.type.FeeLimits
-import it.airgap.tezos.operation.type.FeeOperationLimits
+import it.airgap.tezos.operation.type.Limits
+import it.airgap.tezos.operation.type.OperationLimits
 
 // -- Operation --
 
-public val Operation.fee: Fee
-    get() = contents.fold(Fee.zero) { acc, content -> acc + content.fee }
+public val Operation.fee: Mutez
+    get() = contents.fold(Mutez(BigInt.zero)) { acc, content -> acc + content.fee }
 
-public fun Operation.applyLimits(limits: FeeLimits): Operation {
-    val maxLimitsPerOperation = maxLimitsPerOperation(limits)
-    val updatedContents = contents.map { it.applyLimits(maxLimitsPerOperation) }
+public val Operation.limits: OperationLimits
+    get() = contents.fold(OperationLimits.zero) { acc, content -> acc + content.limits }
+
+public fun Operation.applyLimits(limits: Limits): Operation {
+    val maxLimits = maxLimits(limits)
+    val updatedContents = contents.map { it.apply(limits = maxLimits) }
 
     return when (this) {
         is Operation.Unsigned -> copy(contents = updatedContents)
@@ -23,12 +25,12 @@ public fun Operation.applyLimits(limits: FeeLimits): Operation {
     }
 }
 
-private fun Operation.maxLimitsPerOperation(limits: FeeLimits): FeeOperationLimits {
-    val availableGasLimitPerBlock = BigInt.max(limits.perBlock.gas - fee.limits.gas, BigInt.zero)
+private fun Operation.maxLimits(limits: Limits): OperationLimits {
+    val availableGasLimitPerBlock = BigInt.max(limits.perBlock.gas - this.limits.gas, BigInt.zero)
     val requiresEstimation = contents.filterNot { it.hasFee }.size
     val maxGasLimitPerOperation = if (requiresEstimation > 0) availableGasLimitPerBlock / BigInt.valueOf(requiresEstimation) else BigInt.zero
 
-    return FeeOperationLimits(
+    return OperationLimits(
         BigInt.min(limits.perOperation.gas, maxGasLimitPerOperation),
         limits.perOperation.storage,
     )
@@ -36,64 +38,56 @@ private fun Operation.maxLimitsPerOperation(limits: FeeLimits): FeeOperationLimi
 
 // -- OperationContent --
 
-public val OperationContent.fee: Fee
+public val OperationContent.fee: Mutez
     get() = when (this) {
-        is OperationContent.Manager -> Fee(
-            fee,
-            FeeOperationLimits(
-                gasLimit.toBigInt(),
-                storageLimit.toBigInt(),
-            ),
-        )
-        else -> Fee.zero
+        is OperationContent.Manager -> fee
+        else -> Mutez(BigInt.zero)
     }
 
 public val OperationContent.hasFee: Boolean
-    get() = fee.value != Mutez(BigInt.zero)
+    get() = fee != Mutez(BigInt.zero)
 
-public fun OperationContent.applyFee(fee: Fee): OperationContent =
-    when (this) {
-        is OperationContent.Manager -> applyFee(fee)
-        else -> this
+public val OperationContent.limits: OperationLimits
+    get() = when (this) {
+        is OperationContent.Manager -> OperationLimits(
+            gasLimit.toBigInt(),
+            storageLimit.toBigInt(),
+        )
+        else -> OperationLimits.zero
     }
 
-private fun OperationContent.applyLimits(limits: FeeOperationLimits): OperationContent =
-    when (this) {
-        is OperationContent.Manager -> applyFee(Fee.zeroWithLimits(limits))
-        else -> this
-    }
-
-private fun OperationContent.Manager.applyFee(fee: Fee): OperationContent.Manager =
+public fun OperationContent.apply(fee: Mutez = Mutez(BigInt.zero), limits: OperationLimits = OperationLimits.zero): OperationContent =
     when (this) {
         is OperationContent.Reveal -> copy(
-            fee = fee.value,
-            gasLimit = fee.limits.gas.toZarithNatural(),
-            storageLimit = fee.limits.storage.toZarithNatural()
+            fee = fee,
+            gasLimit = limits.gas.toZarithNatural(),
+            storageLimit = limits.storage.toZarithNatural()
         )
         is OperationContent.Transaction -> copy(
-            fee = fee.value,
-            gasLimit = fee.limits.gas.toZarithNatural(),
-            storageLimit = fee.limits.storage.toZarithNatural(),
+            fee = fee,
+            gasLimit = limits.gas.toZarithNatural(),
+            storageLimit = limits.storage.toZarithNatural(),
         )
         is OperationContent.Origination -> copy(
-            fee = fee.value,
-            gasLimit = fee.limits.gas.toZarithNatural(),
-            storageLimit = fee.limits.storage.toZarithNatural(),
+            fee = fee,
+            gasLimit = limits.gas.toZarithNatural(),
+            storageLimit = limits.storage.toZarithNatural(),
         )
         is OperationContent.Delegation -> copy(
-            fee = fee.value,
-            gasLimit = fee.limits.gas.toZarithNatural(),
-            storageLimit = fee.limits.storage.toZarithNatural(),
+            fee = fee,
+            gasLimit = limits.gas.toZarithNatural(),
+            storageLimit = limits.storage.toZarithNatural(),
         )
         is OperationContent.RegisterGlobalConstant -> copy(
-            fee = fee.value,
-            gasLimit = fee.limits.gas.toZarithNatural(),
-            storageLimit = fee.limits.storage.toZarithNatural(),
+            fee = fee,
+            gasLimit = limits.gas.toZarithNatural(),
+            storageLimit = limits.storage.toZarithNatural(),
         )
         is OperationContent.SetDepositsLimit -> copy(
-            fee = fee.value,
-            gasLimit = fee.limits.gas.toZarithNatural(),
-            storageLimit = fee.limits.storage.toZarithNatural(),
+            fee = fee,
+            gasLimit = limits.gas.toZarithNatural(),
+            storageLimit = limits.storage.toZarithNatural(),
         )
+        else -> this
     }
 

@@ -24,8 +24,8 @@ import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.fee
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
-import it.airgap.tezos.operation.type.Fee
-import it.airgap.tezos.operation.type.FeeOperationLimits
+import it.airgap.tezos.operation.limits
+import it.airgap.tezos.operation.type.OperationLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.active.block.RunOperationResponse
 import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
@@ -172,17 +172,15 @@ class TezosRpcClientTest {
             )
         )
 
-        val updatedOperation = runBlocking { tezosRpcClient.fee(chainId, operation) }
+        val updatedOperation = runBlocking { tezosRpcClient.minFee(chainId, operation) }
 
+        assertEquals(Mutez(507U), updatedOperation.fee)
         assertEquals(
-            Fee(
-              value = Mutez(507U),
-              limits = FeeOperationLimits(
-                  BigInt.valueOf(1521),
-                  BigInt.valueOf(100),
-              ),
+            OperationLimits(
+                gas = BigInt.valueOf(1521),
+                storage = BigInt.valueOf(100),
             ),
-            updatedOperation.fee,
+            updatedOperation.limits,
         )
     }
 }

@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc
 
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
-import it.airgap.tezos.operation.type.FeeLimits
+import it.airgap.tezos.operation.type.Limits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.utils.Constants
@@ -22,17 +22,17 @@ public interface TezosRpc : ShellSimplifiedRpc, ActiveSimplifiedRpc {
 
     // -- fee --
 
-    public suspend fun fee(
+    public suspend fun minFee(
         chainId: String = Constants.Chain.MAIN,
         operation: Operation,
-        limits: FeeLimits = FeeLimits(),
+        limits: Limits = Limits(),
         headers: List<HttpHeader> = emptyList(),
     ): Operation
 
-    public suspend fun fee(
+    public suspend fun minFee(
         chainId: ChainId,
         operation: Operation,
-        limits: FeeLimits = FeeLimits(),
+        limits: Limits = Limits(),
         headers: List<HttpHeader> = emptyList(),
-    ): Operation = fee(chainId.base58, operation, limits, headers)
+    ): Operation = minFee(chainId.base58, operation, limits, headers)
 }
