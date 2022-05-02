@@ -2,18 +2,28 @@ package it.airgap.tezos.rpc
 
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.internal.base58.Base58
+import it.airgap.tezos.core.internal.base58.Base58Check
+import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
+import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.fee
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
+import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 import it.airgap.tezos.operation.type.Fee
 import it.airgap.tezos.operation.type.FeeOperationLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
@@ -32,6 +42,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.security.MessageDigest
 import kotlin.test.assertEquals
 
 class TezosRpcClientTest {
@@ -58,13 +69,50 @@ class TezosRpcClientTest {
     private lateinit var network: Network
 
     @MockK
-    private lateinit var operationContentBytesCoder: OperationContentBytesCoder
+    private lateinit var crypto: Crypto
 
     private lateinit var tezosRpcClient: TezosRpcClient
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
+
+        every { crypto.hashSha256(any<ByteArray>()) } answers {
+            val messageDigest = MessageDigest.getInstance("SHA-256")
+            messageDigest.digest(firstArg())
+        }
+
+        val base58Check = Base58Check(Base58(), crypto)
+        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
+        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
+        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
+        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
+        val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
+        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
+        val michelineBytesCoder = MichelineBytesCoder(
+            StringToMichelsonPrimConverter(),
+            TagToMichelsonPrimConverter(),
+            MichelineToCompactStringConverter(),
+            ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
+        )
+
+        val timestampBigIntCoder = TimestampBigIntCoder()
+        val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
+
+        val operationContentBytesCoder = OperationContentBytesCoder(
+            encodedBytesCoder,
+            addressBytesCoder,
+            publicKeyBytesCoder,
+            implicitAddressBytesCoder,
+            signatureBytesCoder,
+            zarithNaturalBytesCoder,
+            mutezBytesCoder,
+            michelineBytesCoder,
+            timestampBigIntCoder,
+            tagToOperationContentKindConverter,
+        )
+
         tezosRpcClient = TezosRpcClient(shellRpc, activeRpc, chains, config, injection, monitor, network, operationContentBytesCoder)
     }
 
@@ -82,9 +130,9 @@ class TezosRpcClientTest {
             OperationContent.Transaction(
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                 fee = Mutez(0U),
-                counter = ZarithNatural(0U),
-                gasLimit = ZarithNatural(1040000U),
-                storageLimit = ZarithNatural(60000U),
+                counter = ZarithNatural(8680641U),
+                gasLimit = ZarithNatural(1030000U),
+                storageLimit = ZarithNatural(50000U),
                 amount = Mutez(1000U),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),

@@ -47,10 +47,10 @@ public data class FeeLimits internal constructor(
     ) : this(
         FeeOperationLimits(
             BigInt.valueOf(gasPerOperation),
-            BigInt.valueOf(gasPerBlock),
+            BigInt.valueOf(storagePerOperation),
         ),
         FeeBlockLimits(
-            BigInt.valueOf(storagePerOperation),
+            BigInt.valueOf(gasPerBlock),
         ),
     )
 }

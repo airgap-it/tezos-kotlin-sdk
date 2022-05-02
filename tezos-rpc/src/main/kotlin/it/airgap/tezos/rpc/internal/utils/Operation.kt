@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.internal.utils
 
 import it.airgap.tezos.core.internal.type.BigInt
+import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.core.type.encoded.SignatureEncoded
 import it.airgap.tezos.operation.*
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
@@ -8,7 +9,10 @@ import it.airgap.tezos.operation.type.Fee
 import it.airgap.tezos.operation.type.FeeOperationLimits
 import it.airgap.tezos.rpc.asOperationContent
 import it.airgap.tezos.rpc.type.RpcError
-import it.airgap.tezos.rpc.type.operation.*
+import it.airgap.tezos.rpc.type.operation.RpcOperationContent
+import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata
+import it.airgap.tezos.rpc.type.operation.RpcOperationResult
+import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
 private const val GAS_SAFETY_MARGIN = 100U
 private const val STORAGE_SAFETY_MARGIN = 100U
@@ -20,7 +24,7 @@ internal fun Operation.withFeeFrom(
     val groupedContents = rpcContents.groupBy { it.asOperationContent().hashCode() }
     val contentsCursors = mutableMapOf<Int, Int>()
     val updatedContents = contents.map {
-        val key = hashCode()
+        val key = it.hashCode()
         val cursor = contentsCursors.next(key)
         val rpcContent = groupedContents[key]?.getOrNull(cursor) ?: return@map it
 
@@ -35,7 +39,7 @@ internal fun Operation.withFeeFrom(
 
 internal fun OperationContent.withFeeFrom(rpcContent: RpcOperationContent, operationContentBytesCoder: OperationContentBytesCoder): OperationContent =
     when {
-        hasFee && this is OperationContent.Manager -> withFeeFrom(rpcContent, operationContentBytesCoder)
+        !hasFee && this is OperationContent.Manager -> withFeeFrom(rpcContent, operationContentBytesCoder)
         else -> this
     }
 
@@ -101,56 +105,87 @@ internal val RpcOperationMetadata.Transaction.limits: FeeOperationLimits
 
 internal val RpcOperationResult.Delegation.limits: FeeOperationLimits
     get() = when (this) {
-        is RpcOperationResult.Delegation.Applied -> FeeOperationLimits(
-            gas = (consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero) + GAS_SAFETY_MARGIN.toInt(),
-            storage = BigInt.zero + STORAGE_SAFETY_MARGIN.toInt(),
-        )
+        is RpcOperationResult.Delegation.Applied -> {
+            val consumedGas = consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero
+
+            FeeOperationLimits(
+                gas = consumedGas + GAS_SAFETY_MARGIN.toInt(),
+                storage = BigInt.zero + STORAGE_SAFETY_MARGIN.toInt(),
+            )
+        }
         else -> failWithRpcError(errors)
     }
 
 internal val RpcOperationResult.Origination.limits: FeeOperationLimits
     get() = when (this) {
-        is RpcOperationResult.Origination.Applied -> FeeOperationLimits(
-            gas = (consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero) + GAS_SAFETY_MARGIN.toInt(),
-            storage = (paidStorageSizeDiff?.let { BigInt.valueOf(it) } ?: BigInt.zero) + STORAGE_SAFETY_MARGIN.toInt(),
-        )
+        is RpcOperationResult.Origination.Applied -> {
+            val consumedGas = consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero
+            val paidStorageSizeDiff = paidStorageSizeDiff?.let { BigInt.valueOf(it) } ?: BigInt.zero
+            val originatedContractsFee = originatedContracts.orEmpty().size.toBigInt() * 257
+            val burnFee = originatedContractsFee
+
+            FeeOperationLimits(
+                gas = consumedGas + GAS_SAFETY_MARGIN.toInt(),
+                storage = paidStorageSizeDiff + burnFee + STORAGE_SAFETY_MARGIN.toInt(),
+            )
+        }
         else -> failWithRpcError(errors)
     }
 
 internal val RpcOperationResult.RegisterGlobalConstant.limits: FeeOperationLimits
     get() = when (this) {
-        is RpcOperationResult.RegisterGlobalConstant.Applied -> FeeOperationLimits(
-            gas = BigInt.valueOf(consumedGas) + GAS_SAFETY_MARGIN.toInt(),
-            storage = BigInt.zero,
-        )
+        is RpcOperationResult.RegisterGlobalConstant.Applied -> {
+            val consumedGas = BigInt.valueOf(consumedGas)
+
+            FeeOperationLimits(
+                gas = consumedGas + GAS_SAFETY_MARGIN.toInt(),
+                storage = BigInt.zero + STORAGE_SAFETY_MARGIN.toInt(),
+            )
+        }
         else -> failWithRpcError(errors)
     }
 
 internal val RpcOperationResult.Reveal.limits: FeeOperationLimits
     get() = when (this) {
-        is RpcOperationResult.Reveal.Applied -> FeeOperationLimits(
-            gas = (consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero) + GAS_SAFETY_MARGIN.toInt(),
-            storage = BigInt.zero,
-        )
+        is RpcOperationResult.Reveal.Applied -> {
+            val consumedGas = consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero
+
+            FeeOperationLimits(
+                gas = consumedGas + GAS_SAFETY_MARGIN.toInt(),
+                storage = BigInt.zero + STORAGE_SAFETY_MARGIN.toInt(),
+            )
+        }
         else -> failWithRpcError(errors)
     }
 
 internal val RpcOperationResult.SetDepositsLimit.limits: FeeOperationLimits
     get() = when (this) {
-        is RpcOperationResult.SetDepositsLimit.Applied -> FeeOperationLimits(
-            gas = (consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero) + GAS_SAFETY_MARGIN.toInt(),
-            storage = BigInt.zero,
-        )
+        is RpcOperationResult.SetDepositsLimit.Applied -> {
+            val consumedGas = consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero
+
+            FeeOperationLimits(
+                gas = consumedGas + GAS_SAFETY_MARGIN.toInt(),
+                storage = BigInt.zero + STORAGE_SAFETY_MARGIN.toInt(),
+            )
+        }
         else -> failWithRpcError(errors)
     }
 
 
 internal val RpcOperationResult.Transaction.limits: FeeOperationLimits
     get() = when (this) {
-        is RpcOperationResult.Transaction.Applied -> FeeOperationLimits(
-            gas = (consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero) + GAS_SAFETY_MARGIN.toInt(),
-            storage = (paidStorageSizeDiff?.let { BigInt.valueOf(it) } ?: BigInt.zero) + STORAGE_SAFETY_MARGIN.toInt(),
-        )
+        is RpcOperationResult.Transaction.Applied -> {
+            val consumedGas = consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero
+            val paidStorageSizeDiff = paidStorageSizeDiff?.let { BigInt.valueOf(it) } ?: BigInt.zero
+            val originatedContractsFee = originatedContracts.orEmpty().size.toBigInt() * 257
+            val allocatedDestinationContractFee = if (allocatedDestinationContract == true) 257 else 0
+            val burnFee = originatedContractsFee + allocatedDestinationContractFee
+
+            FeeOperationLimits(
+                gas = consumedGas + GAS_SAFETY_MARGIN.toInt(),
+                storage = paidStorageSizeDiff + burnFee + STORAGE_SAFETY_MARGIN.toInt(),
+            )
+        }
         else -> failWithRpcError(errors)
     }
 

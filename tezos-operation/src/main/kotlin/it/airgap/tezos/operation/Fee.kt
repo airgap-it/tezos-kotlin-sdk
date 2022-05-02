@@ -3,6 +3,7 @@ package it.airgap.tezos.operation
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.core.internal.utils.toZarithNatural
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.operation.type.Fee
 import it.airgap.tezos.operation.type.FeeLimits
 import it.airgap.tezos.operation.type.FeeOperationLimits
@@ -23,10 +24,8 @@ public fun Operation.applyLimits(limits: FeeLimits): Operation {
 }
 
 private fun Operation.maxLimitsPerOperation(limits: FeeLimits): FeeOperationLimits {
-    val totalFee = fee
-
-    val availableGasLimitPerBlock = BigInt.max(limits.perBlock.gas - totalFee.limits.gas, BigInt.zero)
-    val requiresEstimation = contents.size - totalFee.aggregatedFrom
+    val availableGasLimitPerBlock = BigInt.max(limits.perBlock.gas - fee.limits.gas, BigInt.zero)
+    val requiresEstimation = contents.filterNot { it.hasFee }.size
     val maxGasLimitPerOperation = if (requiresEstimation > 0) availableGasLimitPerBlock / BigInt.valueOf(requiresEstimation) else BigInt.zero
 
     return FeeOperationLimits(
@@ -50,7 +49,7 @@ public val OperationContent.fee: Fee
     }
 
 public val OperationContent.hasFee: Boolean
-    get() = fee != Fee.zero
+    get() = fee.value != Mutez(BigInt.zero)
 
 public fun OperationContent.applyFee(fee: Fee): OperationContent =
     when (this) {
