@@ -18,18 +18,45 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 @OptIn(ExperimentalSerializationApi::class)
 public sealed class RpcOperationResult {
 
+    @Transient
+    public open val storage: MichelineNode? = null
+
+    @Transient
+    public open val bigMapDiff: List<RpcBigMapDiff>? = null
+
+    @Transient
+    public open val balanceUpdates: List<RpcBalanceUpdate>? = null
+
+    @Transient
+    public open val originatedContracts: List<Address>? = null
+
+    @Transient
+    public open val consumedGas: String? = null
+
+    @Transient
+    public open val consumedMilligas: String? = null
+
+    @Transient
+    public open val storageSize: String? = null
+
+    @Transient
+    public open val paidStorageSizeDiff: String? = null
+
+    @Transient
+    public open val allocatedDestinationContract: Boolean? = null
+
+    @Transient
+    public open val lazyStorageDiff: List<RpcLazyStorageDiff>? = null
+
+    @Transient
+    public open val globalAddress: @Contextual ScriptExprHash? = null
+
+    @Transient
+    public open val errors: List<RpcError>? = null
+
     @Serializable
     @JsonClassDiscriminator(Reveal.CLASS_DISCRIMINATOR)
     public sealed class Reveal : RpcOperationResult() {
-
-        @Transient
-        public open val consumedGas: String? = null
-
-        @Transient
-        public open val consumedMilligas: String? = null
-
-        @Transient
-        public open val errors: List<RpcError>? = null
 
         @Serializable
         @SerialName(Applied.KIND)
@@ -76,38 +103,6 @@ public sealed class RpcOperationResult {
     @Serializable
     @JsonClassDiscriminator(Transaction.CLASS_DISCRIMINATOR)
     public sealed class Transaction : RpcOperationResult() {
-        @Transient
-        public open val storage: MichelineNode? = null
-
-        @Transient
-        public open val bigMapDiff: List<RpcBigMapDiff>? = null
-
-        @Transient
-        public open val balanceUpdates: List<RpcBalanceUpdate>? = null
-
-        @Transient
-        public open val originatedContracts: List<Address>? = null
-
-        @Transient
-        public open val consumedGas: String? = null
-
-        @Transient
-        public open val consumedMilligas: String? = null
-
-        @Transient
-        public open val storageSize: String? = null
-
-        @Transient
-        public open val paidStorageSizeDiff: String? = null
-
-        @Transient
-        public open val allocatedDestinationContract: Boolean? = null
-
-        @Transient
-        public open val lazyStorageDiff: List<RpcLazyStorageDiff>? = null
-
-        @Transient
-        public open val errors: List<RpcError>? = null
 
         @Serializable
         @SerialName(Applied.KIND)
@@ -171,33 +166,6 @@ public sealed class RpcOperationResult {
     @JsonClassDiscriminator(Origination.CLASS_DISCRIMINATOR)
     public sealed class Origination : RpcOperationResult() {
 
-        @Transient
-        public open val bigMapDiff: List<RpcBigMapDiff>? = null
-
-        @Transient
-        public open val balanceUpdates: List<RpcBalanceUpdate>? = null
-
-        @Transient
-        public open val originatedContracts: List<Address>? = null
-
-        @Transient
-        public open val consumedGas: String? = null
-
-        @Transient
-        public open val consumedMilligas: String? = null
-
-        @Transient
-        public open val storageSize: String? = null
-
-        @Transient
-        public open val paidStorageSizeDiff: String? = null
-
-        @Transient
-        public open val lazyStorageDiff: List<RpcLazyStorageDiff>? = null
-
-        @Transient
-        public open val errors: List<RpcError>? = null
-
         @Serializable
         @SerialName(Applied.KIND)
         public data class Applied(
@@ -256,15 +224,6 @@ public sealed class RpcOperationResult {
     @JsonClassDiscriminator(Delegation.CLASS_DISCRIMINATOR)
     public sealed class Delegation : RpcOperationResult() {
 
-        @Transient
-        public open val consumedGas: String? = null
-
-        @Transient
-        public open val consumedMilligas: String? = null
-
-        @Transient
-        public open val errors: List<RpcError>? = null
-
         @Serializable
         @SerialName(Applied.KIND)
         public data class Applied(
@@ -311,15 +270,6 @@ public sealed class RpcOperationResult {
     @JsonClassDiscriminator(SetDepositsLimit.CLASS_DISCRIMINATOR)
     public sealed class SetDepositsLimit : RpcOperationResult() {
 
-        @Transient
-        public open val consumedGas: String? = null
-
-        @Transient
-        public open val consumedMilligas: String? = null
-
-        @Transient
-        public open val errors: List<RpcError>? = null
-
         @Serializable
         @SerialName(Applied.KIND)
         public data class Applied(
@@ -365,21 +315,6 @@ public sealed class RpcOperationResult {
     @Serializable
     @JsonClassDiscriminator(RegisterGlobalConstant.CLASS_DISCRIMINATOR)
     public sealed class RegisterGlobalConstant : RpcOperationResult() {
-
-        @Transient
-        public open val balanceUpdates: List<RpcBalanceUpdate>? = null
-
-        @Transient
-        public open val consumedGas: String? = null
-
-        @Transient
-        public open val storageSize: String? = null
-
-        @Transient
-        public open val globalAddress: @Contextual ScriptExprHash? = null
-
-        @Transient
-        public open val errors: List<RpcError>? = null
 
         @Serializable
         @SerialName(Applied.KIND)
@@ -435,13 +370,45 @@ public sealed class RpcOperationResult {
 @JsonClassDiscriminator(RpcInternalOperationResult.CLASS_DISCRIMINATOR)
 public sealed class RpcInternalOperationResult {
 
+    public abstract val source: Address
+    public abstract val nonce: UShort
+    public abstract val result: RpcOperationResult
+
+    @Transient
+    public open val publicKey: PublicKeyEncoded? = null
+
+    @Transient
+    public open val amount: String? = null
+
+    @Transient
+    public open val destination: Address? = null
+
+    @Transient
+    public open val parameters: RpcParameters? = null
+
+    @Transient
+    public open val balance: String? = null
+
+    @Transient
+    public open val delegate: ImplicitAddress? = null
+
+    @Transient
+    public open val script: RpcScript? = null
+
+    @Transient
+    public open val value: MichelineNode? = null
+
+    @Transient
+    public open val limit: String? = null
+
+
     @Serializable
     @SerialName(Reveal.KIND)
     public data class Reveal(
-        public val source: @Contextual Address,
-        public val nonce: UShort,
-        @SerialName("public_key") public val publicKey: @Contextual PublicKeyEncoded,
-        public val result: RpcOperationResult.Reveal,
+        override val source: @Contextual Address,
+        override val nonce: UShort,
+        @SerialName("public_key") override val publicKey: @Contextual PublicKeyEncoded,
+        override val result: RpcOperationResult.Reveal,
     ) : RpcInternalOperationResult() {
         public companion object {
             internal const val KIND = "reveal"
@@ -451,12 +418,12 @@ public sealed class RpcInternalOperationResult {
     @Serializable
     @SerialName(Transaction.KIND)
     public data class Transaction(
-        public val source: @Contextual Address,
-        public val nonce: UShort,
-        public val amount: String,
-        public val destination: @Contextual Address,
-        public val parameters: RpcParameters? = null,
-        public val result: RpcOperationResult.Transaction,
+        override val source: @Contextual Address,
+        override val nonce: UShort,
+        override val amount: String,
+        override val destination: @Contextual Address,
+        override val parameters: RpcParameters? = null,
+        override val result: RpcOperationResult.Transaction,
     ) : RpcInternalOperationResult() {
         public companion object {
             internal const val KIND = "transaction"
@@ -466,12 +433,12 @@ public sealed class RpcInternalOperationResult {
     @Serializable
     @SerialName(Origination.KIND)
     public data class Origination(
-        public val source: @Contextual Address,
-        public val nonce: UShort,
-        public val balance: String,
-        public val delegate: @Contextual ImplicitAddress? = null,
-        public val script: RpcScript,
-        public val result: RpcOperationResult.Origination,
+        override val source: @Contextual Address,
+        override val nonce: UShort,
+        override val balance: String,
+        override val delegate: @Contextual ImplicitAddress? = null,
+        override val script: RpcScript,
+        override val result: RpcOperationResult.Origination,
     ) : RpcInternalOperationResult() {
         public companion object {
             internal const val KIND = "origination"
@@ -481,11 +448,11 @@ public sealed class RpcInternalOperationResult {
     @Serializable
     @SerialName(Delegation.KIND)
     public data class Delegation(
-        public val source: @Contextual Address,
-        public val nonce: UShort,
-        public val balance: String,
-        public val delegate: @Contextual ImplicitAddress? = null,
-        public val result: RpcOperationResult.Delegation,
+        override val source: @Contextual Address,
+        override val nonce: UShort,
+        override val balance: String,
+        override val delegate: @Contextual ImplicitAddress? = null,
+        override val result: RpcOperationResult.Delegation,
     ) : RpcInternalOperationResult() {
         public companion object {
             internal const val KIND = "delegation"
@@ -495,10 +462,10 @@ public sealed class RpcInternalOperationResult {
     @Serializable
     @SerialName(RegisterGlobalConstant.KIND)
     public data class RegisterGlobalConstant(
-        public val source: @Contextual Address,
-        public val nonce: UShort,
-        public val value: MichelineNode,
-        public val result: RpcOperationResult.RegisterGlobalConstant,
+        override val source: @Contextual Address,
+        override val nonce: UShort,
+        override val value: MichelineNode,
+        override val result: RpcOperationResult.RegisterGlobalConstant,
     ) : RpcInternalOperationResult() {
         public companion object {
             internal const val KIND = "register_global_constant"
@@ -508,10 +475,10 @@ public sealed class RpcInternalOperationResult {
     @Serializable
     @SerialName(SetDepositsLimit.KIND)
     public data class SetDepositsLimit(
-        public val source: @Contextual Address,
-        public val nonce: UShort,
-        public val limit: String? = null,
-        public val result: RpcOperationResult.SetDepositsLimit,
+        override val source: @Contextual Address,
+        override val nonce: UShort,
+        override val limit: String? = null,
+        override val result: RpcOperationResult.SetDepositsLimit,
     ) : RpcInternalOperationResult() {
         public companion object {
             internal const val KIND = "set_deposits_limit"

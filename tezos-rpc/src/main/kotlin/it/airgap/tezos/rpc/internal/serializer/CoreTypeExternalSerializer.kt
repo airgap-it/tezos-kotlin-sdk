@@ -3,10 +3,16 @@
 package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.core.fromString
+import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
+import it.airgap.tezos.core.type.tez.Nanotez
+import it.airgap.tezos.core.type.tez.Tez
+import it.airgap.tezos.rpc.internal.utils.KBigIntSerializer
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
+import it.airgap.tezos.rpc.internal.utils.KStringSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -22,14 +28,26 @@ import kotlin.reflect.KClass
 
 // -- HexString --
 
-internal object HexStringSerializer : KSerializer<HexString> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(HexString::class.toString(), PrimitiveKind.STRING)
+internal object HexStringSerializer : KStringSerializer<HexString>(HexString::class) {
+    override fun valueFromString(string: String): HexString = HexString(string)
+    override fun valueToString(value: HexString): String = value.asString()
+}
 
-    override fun deserialize(decoder: Decoder): HexString = HexString(decoder.decodeString())
+// -- Tez --
 
-    override fun serialize(encoder: Encoder, value: HexString) {
-        encoder.encodeString(value.asString())
-    }
+internal object TezSerializer : KBigIntSerializer<Tez>(Tez::class) {
+    override fun valueFromBigInt(string: BigInt): Tez = Tez(string)
+    override fun valueToBigInt(value: Tez): BigInt = value.bigInt
+}
+
+internal object MutezSerializer : KBigIntSerializer<Mutez>(Mutez::class) {
+    override fun valueFromBigInt(string: BigInt): Mutez = Mutez(string)
+    override fun valueToBigInt(value: Mutez): BigInt = value.bigInt
+}
+
+internal object NanotezSerializer : KBigIntSerializer<Nanotez>(Nanotez::class) {
+    override fun valueFromBigInt(string: BigInt): Nanotez = Nanotez(string)
+    override fun valueToBigInt(value: Nanotez): BigInt = value.bigInt
 }
 
 // -- Timestamp --

@@ -74,8 +74,8 @@ public interface ActiveSimplifiedRpc {
     // -- ../<block_id>/context/contracts --
 
     public suspend fun getContractDetails(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractDetailsResponse
@@ -93,8 +93,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractDetailsResponse = getContractDetails(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getBalance(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractBalanceResponse
@@ -112,8 +112,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractBalanceResponse = getBalance(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getCounter(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractCounterResponse
@@ -131,8 +131,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractCounterResponse = getCounter(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getDelegate(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractDelegateResponse
@@ -150,8 +150,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractDelegateResponse = getDelegate(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getEntrypoints(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractEntrypointsResponse
@@ -169,8 +169,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractEntrypointsResponse = getEntrypoints(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getEntrypoint(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         entrypoint: String,
         headers: List<HttpHeader> = emptyList(),
@@ -191,8 +191,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractEntrypointResponse = getEntrypoint(chainId, blockId.base58, contractId, entrypoint)
 
     public suspend fun getManagerKey(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractManagerKeyResponse
@@ -210,8 +210,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractManagerKeyResponse = getManagerKey(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getScript(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractScriptResponse
@@ -229,8 +229,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractScriptResponse = getScript(chainId, blockId.base58, contractId, headers)
 
     public suspend fun getSaplingStateDiff(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
@@ -254,8 +254,8 @@ public interface ActiveSimplifiedRpc {
     ): GetContractSaplingStateDiffResponse = getSaplingStateDiff(chainId, blockId.base58, contractId, commitmentOffset, nullifierOffset, headers)
 
     public suspend fun getStorage(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
     ): GetContractStorageResponse
@@ -275,8 +275,8 @@ public interface ActiveSimplifiedRpc {
     // -- ../<block_id>/context/delegates --
 
     public suspend fun getDelegateDetails(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDetailsResponse
@@ -294,8 +294,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateDetailsResponse = getDelegateDetails(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getCurrentFrozenDeposits(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateCurrentFrozenDepositsResponse
@@ -313,8 +313,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateCurrentFrozenDepositsResponse = getCurrentFrozenDeposits(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun isDeactivated(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDeactivatedStatusResponse
@@ -332,8 +332,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateDeactivatedStatusResponse = isDeactivated(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getDelegatedBalance(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedBalanceResponse
@@ -351,8 +351,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateDelegatedBalanceResponse = getDelegatedBalance(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getDelegatedContracts(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedContractsResponse
@@ -370,8 +370,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateDelegatedContractsResponse = getDelegatedContracts(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getFrozenDeposits(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsResponse
@@ -389,8 +389,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateFrozenDepositsResponse = getFrozenDeposits(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getFrozenDepositsLimit(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsLimitResponse
@@ -408,8 +408,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateFrozenDepositsLimitResponse = getFrozenDepositsLimit(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getFullBalance(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFullBalanceResponse
@@ -427,8 +427,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateFullBalanceResponse = getFullBalance(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getGracePeriod(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateGracePeriodResponse
@@ -446,8 +446,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateGracePeriodResponse = getGracePeriod(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getParticipation(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateParticipationResponse
@@ -465,8 +465,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateParticipationResponse = getParticipation(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getStakingBalance(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateStakingBalanceResponse
@@ -484,8 +484,8 @@ public interface ActiveSimplifiedRpc {
     ): GetDelegateStakingBalanceResponse = getStakingBalance(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getVotingPower(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHashEncoded,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateVotingPowerResponse
@@ -505,8 +505,8 @@ public interface ActiveSimplifiedRpc {
     // -- ../<block_id>/context/sapling --
 
     public suspend fun getSaplingStateDiff(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         stateId: String,
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
@@ -532,8 +532,8 @@ public interface ActiveSimplifiedRpc {
     // -- ../<block_id>/header --
 
     public suspend fun getBlockHeader(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         headers: List<HttpHeader> = emptyList(),
     ): GetBlockHeaderResponse
     public suspend fun getBlockHeader(
@@ -550,8 +550,8 @@ public interface ActiveSimplifiedRpc {
     // -- ../<block_id>/helpers --
 
     public suspend fun preapplyOperations(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         operations: List<RpcApplicableOperation>,
         headers: List<HttpHeader> = emptyList(),
     ): PreapplyOperationsResponse
@@ -569,8 +569,8 @@ public interface ActiveSimplifiedRpc {
     ): PreapplyOperationsResponse = preapplyOperations(chainId, blockId.base58, operations, headers)
 
     public suspend fun runOperation(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         operation: RpcRunnableOperation,
         headers: List<HttpHeader> = emptyList(),
     ): RunOperationResponse
@@ -590,8 +590,8 @@ public interface ActiveSimplifiedRpc {
     // -- ../<block_id>/operations --
 
     public suspend fun getOperations(
-        chainId: String,
-        blockId: String,
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
         headers: List<HttpHeader> = emptyList(),
     ): GetBlockOperationsResponse
     public suspend fun getOperations(

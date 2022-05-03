@@ -20,6 +20,10 @@ public interface ScopedDependencyRegistry : DependencyRegistry {
     public val zarithNaturalBytesCoder: ZarithNaturalBytesCoder
     public val zarithIntegerBytesCoder: ZarithIntegerBytesCoder
 
+    public val tezBytesCoder: TezBytesCoder
+    public val mutezBytesCoder: MutezBytesCoder
+    public val nanotezBytesCoder: NanotezBytesCoder
+
     public val timestampBigIntCoder: TimestampBigIntCoder
 
     // -- converter --

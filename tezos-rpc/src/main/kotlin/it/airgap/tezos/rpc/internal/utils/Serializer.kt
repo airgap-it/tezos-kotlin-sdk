@@ -1,5 +1,6 @@
 package it.airgap.tezos.rpc.internal.utils
 
+import it.airgap.tezos.core.internal.type.BigInt
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
@@ -65,6 +66,25 @@ internal abstract class KStringSerializer<T : Any>(targetClass: KClass<T>) : KSe
     override fun serialize(encoder: Encoder, value: T) {
         val string = valueToString(value)
         encoder.encodeString(string)
+    }
+}
+
+// -- BigInt --
+
+internal abstract class KBigIntSerializer<T : Any>(targetClass: KClass<T>) : KSerializer<T> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(targetClass.toString(), PrimitiveKind.STRING)
+
+    protected abstract fun valueFromBigInt(string: BigInt): T
+    protected abstract fun valueToBigInt(value: T): BigInt
+
+    override fun deserialize(decoder: Decoder): T {
+        val string = decoder.decodeString()
+        return valueFromBigInt(BigInt.valueOf(string, radix = 10))
+    }
+
+    override fun serialize(encoder: Encoder, value: T) {
+        val bigInt = valueToBigInt(value)
+        encoder.encodeString(bigInt.toString(radix = 10))
     }
 }
 

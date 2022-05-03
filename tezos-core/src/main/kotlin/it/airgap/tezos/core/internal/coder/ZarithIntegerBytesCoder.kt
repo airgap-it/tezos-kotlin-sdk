@@ -3,10 +3,7 @@ package it.airgap.tezos.core.internal.coder
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.*
-import it.airgap.tezos.core.internal.utils.toBigInt
-import it.airgap.tezos.core.internal.utils.toZarithNatural
 import it.airgap.tezos.core.type.zarith.ZarithInteger
-import it.airgap.tezos.core.type.zarith.ZarithNatural
 
 @InternalTezosSdkApi
 public class ZarithIntegerBytesCoder(private val zarithNaturalBytesCoder: ZarithNaturalBytesCoder) : ConsumingBytesCoder<ZarithInteger> {
@@ -17,11 +14,13 @@ public class ZarithIntegerBytesCoder(private val zarithNaturalBytesCoder: Zarith
         val byte = abs and 0b0011_1111
         val nextValue = abs shr 6
 
-        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b0000_0000 else 0b1000_0000
+        val sequenceMask = if (nextValue == BigInt.zero) 0b0000_0000 else 0b1000_0000
         val signMask = if (int < BigInt.valueOf(0)) 0b0100_0000 else 0b0000_0000
         val encodedByte = byte or sequenceMask or signMask
 
-        return byteArrayOf(encodedByte.toByte()) + zarithNaturalBytesCoder.encode(nextValue.toZarithNatural())
+        val nextValueEncoded = if (nextValue > BigInt.zero) zarithNaturalBytesCoder.encode(nextValue.toZarithNatural()) else byteArrayOf()
+
+        return byteArrayOf(encodedByte.toByte()) + nextValueEncoded
     }
 
     override fun decode(value: ByteArray): ZarithInteger = decodeConsuming(value.toMutableList())

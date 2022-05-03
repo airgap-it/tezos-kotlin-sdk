@@ -25,6 +25,7 @@ internal class OperationScopedDependencyRegistry(dependencyRegistry: DependencyR
             core().implicitAddressBytesCoder,
             core().signatureBytesCoder,
             core().zarithNaturalBytesCoder,
+            core().mutezBytesCoder,
             michelson().michelineBytesCoder,
             core().timestampBigIntCoder,
             tagToOperationContentKindConverter,

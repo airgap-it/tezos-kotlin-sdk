@@ -10,8 +10,8 @@ public interface ShellBlockHeader {
     public val predecessor: BlockHash
     public val timestamp: Timestamp
     public val validationPass: UByte
-    public val operationsHash: OperationHash
-    public val fitness: List<Fitness>
+    public val operationsHash: OperationListListHash
+    public val fitness: List<HexString>
     public val context: ContextHash
 }
 
@@ -24,14 +24,14 @@ public interface ProtocolBlockHeader {
     public val signature: SignatureEncoded
 }
 
-public data class FullBlockHeader(
+public data class BlockHeader(
     override val level: Int,
     override val proto: UByte,
     override val predecessor: BlockHash,
     override val timestamp: Timestamp,
     override val validationPass: UByte,
-    override val operationsHash: OperationHash,
-    override val fitness: List<Fitness>,
+    override val operationsHash: OperationListListHash,
+    override val fitness: List<HexString>,
     override val context: ContextHash,
     override val payloadHash: BlockPayloadHash,
     override val payloadRound: Int,
