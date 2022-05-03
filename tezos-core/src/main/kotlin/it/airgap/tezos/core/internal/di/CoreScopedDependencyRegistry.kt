@@ -16,8 +16,13 @@ internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegist
     override val publicKeyBytesCoder: PublicKeyBytesCoder by lazy { PublicKeyBytesCoder(encodedBytesCoder) }
     override val signatureBytesCoder: SignatureBytesCoder by lazy { SignatureBytesCoder(encodedBytesCoder) }
 
-    override val zarithNaturalBytesCoder: ZarithNaturalBytesCoder = ZarithNaturalBytesCoder()
+    override val zarithNaturalBytesCoder: ZarithNaturalBytesCoder =
+        ZarithNaturalBytesCoder()
     override val zarithIntegerBytesCoder: ZarithIntegerBytesCoder by lazy { ZarithIntegerBytesCoder(zarithNaturalBytesCoder) }
+
+    override val tezBytesCoder: TezBytesCoder by lazy { TezBytesCoder(zarithNaturalBytesCoder) }
+    override val mutezBytesCoder: MutezBytesCoder by lazy { MutezBytesCoder(zarithNaturalBytesCoder) }
+    override val nanotezBytesCoder: NanotezBytesCoder by lazy { NanotezBytesCoder(zarithNaturalBytesCoder) }
 
     override val timestampBigIntCoder: TimestampBigIntCoder = TimestampBigIntCoder()
 

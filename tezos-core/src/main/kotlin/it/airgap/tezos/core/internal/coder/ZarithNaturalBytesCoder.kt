@@ -10,7 +10,12 @@ import it.airgap.tezos.core.type.zarith.ZarithNatural
 
 @InternalTezosSdkApi
 public class ZarithNaturalBytesCoder : ConsumingBytesCoder<ZarithNatural> {
-    override fun encode(value: ZarithNatural): ByteArray = encode(value.toBigInt(), byteArrayOf())
+    override fun encode(value: ZarithNatural): ByteArray =
+        when (value.toBigInt()) {
+            BigInt.zero -> byteArrayOf(0)
+            else -> encode(value.toBigInt(), byteArrayOf())
+        }
+
     override fun decode(value: ByteArray): ZarithNatural = decodeConsuming(value.toMutableList())
     override fun decodeConsuming(value: MutableList<Byte>): ZarithNatural {
         if (value.isEmpty()) failWithInvalidNaturalNumberBytes(value)
@@ -20,7 +25,7 @@ public class ZarithNaturalBytesCoder : ConsumingBytesCoder<ZarithNatural> {
     }
 
     private tailrec fun encode(value: BigInt, encoded: ByteArray): ByteArray {
-        if (value == BigInt.valueOf(0)) return encoded
+        if (value == BigInt.zero) return encoded
 
         val byte = value and 0b0111_1111
         val nextValue = value shr 7

@@ -2,7 +2,11 @@ package it.airgap.tezos.core
 
 import it.airgap.tezos.core.internal.converter.*
 import it.airgap.tezos.core.internal.di.core
+import it.airgap.tezos.core.internal.type.Number
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
+import it.airgap.tezos.core.type.tez.Nanotez
+import it.airgap.tezos.core.type.tez.Tez
 
 // -- Address <- Address --
 
@@ -114,3 +118,27 @@ public fun P256Signature.Companion.fromGenericSignature(
     genericSignature: GenericSignature,
     genericSignatureToP256SignatureConverter: GenericSignatureToP256SignatureConverter = TezosSdk.instance.dependencyRegistry.core().genericSignatureToP256SignatureConverter,
 ): P256Signature = genericSignatureToP256SignatureConverter.convert(genericSignature)
+
+// -- Tez -> Mutez --
+
+public fun Tez.toMutez(): Mutez = Mutez(bigInt * 1_000_000)
+
+// -- Tez -> Nanotez --
+
+public fun Tez.toNanotez(): Nanotez = Nanotez(bigInt * 1_000_000_000)
+
+// -- Mutez -> Tez --
+
+public fun Mutez.toTez(): Tez = Tez(bigInt.div(1_000_000, Number.RoundingMode.Up))
+
+// -- Mutez -> Nanotez --
+
+public fun Mutez.toNanotez(): Nanotez = Nanotez(bigInt * 1_000)
+
+// -- Nanotez -> Tez --
+
+public fun Nanotez.toTez(): Tez = Tez(bigInt.div(1_000_000_000, Number.RoundingMode.Up))
+
+// -- Nanotez -> Mutez --
+
+public fun Nanotez.toMutez(): Mutez = Mutez(bigInt.div(1_000, Number.RoundingMode.Up))

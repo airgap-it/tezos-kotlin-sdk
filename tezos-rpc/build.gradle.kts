@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation(project(":tezos-core"))
     implementation(project(":tezos-michelson"))
+    implementation(project(":tezos-operation"))
 
     // Kotlin
 

@@ -1,6 +1,11 @@
 package it.airgap.tezos.rpc
 
+import it.airgap.tezos.core.type.encoded.ChainId
+import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.type.Limits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
+import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.internal.utils.Constants
 import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
 import it.airgap.tezos.rpc.shell.chains.Chains
 import it.airgap.tezos.rpc.shell.config.Config
@@ -14,4 +19,20 @@ public interface TezosRpc : ShellSimplifiedRpc, ActiveSimplifiedRpc {
     public val injection: Injection
     public val monitor: Monitor
     public val network: Network
+
+    // -- fee --
+
+    public suspend fun minFee(
+        chainId: String = Constants.Chain.MAIN,
+        operation: Operation,
+        limits: Limits = Limits(),
+        headers: List<HttpHeader> = emptyList(),
+    ): Operation
+
+    public suspend fun minFee(
+        chainId: ChainId,
+        operation: Operation,
+        limits: Limits = Limits(),
+        headers: List<HttpHeader> = emptyList(),
+    ): Operation = minFee(chainId.base58, operation, limits, headers)
 }

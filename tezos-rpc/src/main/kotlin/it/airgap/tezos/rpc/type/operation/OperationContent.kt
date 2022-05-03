@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.type.operation
 
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.contract.RpcParameters
@@ -143,7 +144,7 @@ public sealed class RpcOperationContent {
     @SerialName(Reveal.KIND)
     public data class Reveal(
         public val source: @Contextual ImplicitAddress,
-        public val fee: String,
+        public val fee: @Contextual Mutez,
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
@@ -159,11 +160,11 @@ public sealed class RpcOperationContent {
     @SerialName(Transaction.KIND)
     public data class Transaction(
         public val source: @Contextual ImplicitAddress,
-        public val fee: String,
+        public val fee: @Contextual Mutez,
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
-        public val amount: String,
+        public val amount: @Contextual Mutez,
         public val destination: @Contextual Address,
         public val parameters: RpcParameters? = null,
         public val metadata: RpcOperationMetadata.Transaction? = null,
@@ -177,11 +178,11 @@ public sealed class RpcOperationContent {
     @SerialName(Origination.KIND)
     public data class Origination(
         public val source: @Contextual ImplicitAddress,
-        public val fee: String,
+        public val fee: @Contextual Mutez,
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
-        public val balance: String,
+        public val balance: @Contextual Mutez,
         public val delegate: @Contextual ImplicitAddress? = null,
         public val script: RpcScript,
         public val metadata: RpcOperationMetadata.Origination? = null,
@@ -195,7 +196,7 @@ public sealed class RpcOperationContent {
     @SerialName(Delegation.KIND)
     public data class Delegation(
         public val source: @Contextual ImplicitAddress,
-        public val fee: String,
+        public val fee: @Contextual Mutez,
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
@@ -211,7 +212,7 @@ public sealed class RpcOperationContent {
     @SerialName(SetDepositsLimit.KIND)
     public data class SetDepositsLimit(
         public val source: @Contextual ImplicitAddress,
-        public val fee: String,
+        public val fee: @Contextual Mutez,
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
@@ -237,7 +238,7 @@ public sealed class RpcOperationContent {
     @SerialName(RegisterGlobalConstant.KIND)
     public data class RegisterGlobalConstant(
         public val source: @Contextual ImplicitAddress,
-        public val fee: String,
+        public val fee: @Contextual Mutez,
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
