@@ -158,6 +158,15 @@ private class BlockContextContractsContractStorageClient(parentUrl: String, priv
     private val baseUrl: String = /* ../<block_id>/context/contracts/<contract_id>/storage */ "$parentUrl/storage"
 
     override suspend fun get(headers: List<HttpHeader>): GetContractStorageResponse = httpClient.get(baseUrl, "/", headers)
+
+    override val normalized: Block.Context.Contracts.Contract.Storage.Normalized by lazy { BlockContextContractsContractStorageNormalizedClient(baseUrl, httpClient) }
+}
+
+private class BlockContextContractsContractStorageNormalizedClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Contracts.Contract.Storage.Normalized {
+    private val baseUrl: String = /* ../<block_id>/context/contracts/<contract_id>/storage/normalized */ "$parentUrl/normalized"
+
+    override suspend fun post(unparsingMode: RpcScriptParsing, headers: List<HttpHeader>): GetContractNormalizedStorageResponse =
+        httpClient.post(baseUrl, "/", headers, request = GetContractNormalizedStorageRequest(unparsingMode))
 }
 
 private class BlockContextDelegatesClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Delegates {

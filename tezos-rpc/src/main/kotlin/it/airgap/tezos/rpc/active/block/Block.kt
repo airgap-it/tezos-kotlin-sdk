@@ -100,6 +100,12 @@ public interface Block {
 
                 public interface Storage {
                     public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractStorageResponse
+
+                    public val normalized: Normalized
+
+                    public interface Normalized {
+                        public suspend fun post(unparsingMode: RpcScriptParsing, headers: List<HttpHeader> = emptyList()): GetContractNormalizedStorageResponse
+                    }
                 }
             }
         }

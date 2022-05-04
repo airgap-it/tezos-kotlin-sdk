@@ -113,7 +113,16 @@ public value class GetContractSaplingStateDiffResponse(public val stateDiff: Rpc
 
 @Serializable
 @JvmInline
-public value class GetContractStorageResponse(public val storage: MichelineNode)
+public value class GetContractStorageResponse(public val storage: MichelineNode? = null)
+
+// -- ../<block_id>/context/contracts/<contract_id>/storage/normalized --
+
+@Serializable
+public data class GetContractNormalizedStorageRequest(@SerialName("unparsing_mode") public val unparsingMode: RpcScriptParsing)
+
+@Serializable
+@JvmInline
+public value class GetContractNormalizedStorageResponse(public val storage: MichelineNode? = null)
 
 // -- ../<block_id>/context/delegates/<pkh> --
 

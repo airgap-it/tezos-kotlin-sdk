@@ -345,6 +345,23 @@ class BlockClientTest {
     }
 
     @Test
+    fun `should call POST on '_ - $block_id - context - contracts - $contract_id - storage - normalized'`() {
+        val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
+
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = contextContractsContractStorageNormalizedPostRequestConfiguration
+        coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
+
+        headers.forEach { headers ->
+            val response = runBlocking { blockClient.context.contracts(contractId).storage.normalized.post(expectedRequest.unparsingMode, headers = headers) }
+
+            assertEquals(expectedResponse, response)
+
+            coVerify { httpClient.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, request = expectedRequest) }
+            coVerify { httpClientProvider.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
+        }
+    }
+
+    @Test
     fun `should call GET on '_ - $block_id - context - delegates - $pkh'`() {
         val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
@@ -1161,6 +1178,22 @@ class BlockClientTest {
     private val contextContractsContractStorageGetRequestConfiguration: RequestConfiguration<Unit, GetContractStorageResponse> =
         RequestConfiguration(
             response = GetContractStorageResponse(MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")),
+            jsonResponse = """
+                {
+                    "int": "2000000000000000000000000000000000000000000000000000000"
+                }
+            """.trimIndent(),
+        )
+
+    private val contextContractsContractStorageNormalizedPostRequestConfiguration: RequestConfiguration<GetContractNormalizedStorageRequest, GetContractNormalizedStorageResponse> =
+        RequestConfiguration(
+            request = GetContractNormalizedStorageRequest(unparsingMode = RpcScriptParsing.Readable),
+            response = GetContractNormalizedStorageResponse(MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")),
+            jsonRequest = """
+                {
+                    "unparsing_mode": "Readable"
+                }
+            """.trimIndent(),
             jsonResponse = """
                 {
                     "int": "2000000000000000000000000000000000000000000000000000000"
