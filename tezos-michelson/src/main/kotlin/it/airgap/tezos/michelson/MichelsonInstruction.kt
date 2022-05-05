@@ -19,12 +19,17 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Dup(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
+    public data class Dup(public val n: MichelsonData.NaturalNumberConstant? = null, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
 
-        public constructor(n: UByte) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UShort) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public constructor(n: UByte, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UShort, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UInt, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: ULong, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
 
         public companion object : Prim {
             override val name: String = "DUP"
@@ -63,28 +68,56 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Push(public val type: MichelsonType, public val value: MichelsonData) : MichelsonInstruction {
+    public data class Push(public val type: MichelsonType, public val value: MichelsonData, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "PUSH"
             override val tag: ByteArray = byteArrayOf(67)
         }
     }
 
-    public object Some : MichelsonInstruction, Prim {
-        override val name: String = "SOME"
-        override val tag: ByteArray = byteArrayOf(70)
+    public data class Some(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SOME"
+            override val tag: ByteArray = byteArrayOf(70)
+        }
     }
 
-    public data class None(public val type: MichelsonType) : MichelsonInstruction {
+    public data class None(public val type: MichelsonType, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "NONE"
             override val tag: ByteArray = byteArrayOf(62)
         }
     }
 
-    public object Unit : MichelsonInstruction, Prim {
-        override val name: String = "UNIT"
-        override val tag: ByteArray = byteArrayOf(79)
+    public data class Unit(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "UNIT"
+            override val tag: ByteArray = byteArrayOf(79)
+        }
     }
 
     public object Never : MichelsonInstruction, Prim {
@@ -102,12 +135,17 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Pair(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
+    public data class Pair(public val n: MichelsonData.NaturalNumberConstant? = null, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
 
-        public constructor(n: UByte) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UShort) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
+        public constructor(n: UByte, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UShort, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UInt, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: ULong, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
 
         public companion object : Prim {
             override val name: String = "PAIR"
@@ -115,21 +153,42 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public object Car : MichelsonInstruction, Prim {
-        override val name: String = "CAR"
-        override val tag: ByteArray = byteArrayOf(22)
+    public data class Car(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CAR"
+            override val tag: ByteArray = byteArrayOf(22)
+        }
     }
-    public object Cdr : MichelsonInstruction, Prim {
-        override val name: String = "CDR"
-        override val tag: ByteArray = byteArrayOf(23)
+    public data class Cdr(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CDR"
+            override val tag: ByteArray = byteArrayOf(23)
+        }
     }
 
-    public data class Unpair(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
+    public data class Unpair(public val n: MichelsonData.NaturalNumberConstant? = null, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
 
-        public constructor(n: UByte) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UShort) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(firstVariableName, secondVariableName) }
+
+        public data class Metadata(public val firstVariableName: Michelson.Annotation.Variable? = null, public val secondVariableName: Michelson.Annotation.Variable? = null)
+
+        public constructor(n: UByte, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UShort, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UInt, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: ULong, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
 
         public companion object : Prim {
             override val name: String = "UNPAIR"
@@ -137,14 +196,26 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Left(public val type: MichelsonType) : MichelsonInstruction {
+    public data class Left(public val type: MichelsonType, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "LEFT"
             override val tag: ByteArray = byteArrayOf(51)
         }
     }
 
-    public data class Right(public val type: MichelsonType) : MichelsonInstruction {
+    public data class Right(public val type: MichelsonType, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "RIGHT"
             override val tag: ByteArray = byteArrayOf(68)
@@ -161,16 +232,30 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Nil(public val type: MichelsonType) : MichelsonInstruction {
+    public data class Nil(public val type: MichelsonType, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "NIL"
             override val tag: ByteArray = byteArrayOf(61)
         }
     }
 
-    public object Cons : MichelsonInstruction, Prim {
-        override val name: String = "CONS"
-        override val tag: ByteArray = byteArrayOf(27)
+    public data class Cons(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CONS"
+            override val tag: ByteArray = byteArrayOf(27)
+        }
     }
 
     public data class IfCons(
@@ -183,12 +268,26 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public object Size : MichelsonInstruction, Prim {
-        override val name: String = "SIZE"
-        override val tag: ByteArray = byteArrayOf(69)
+    public data class Size(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SIZE"
+            override val tag: ByteArray = byteArrayOf(69)
+        }
     }
 
-    public data class EmptySet(public val type: MichelsonComparableType) : MichelsonInstruction {
+    public data class EmptySet(public val type: MichelsonComparableType, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "EMPTY_SET"
             override val tag: ByteArray = byteArrayOf(36)
@@ -198,7 +297,14 @@ public sealed interface MichelsonInstruction : MichelsonData {
     public data class EmptyMap(
         public val keyType: MichelsonComparableType,
         public val valueType: MichelsonType,
+        public val metadata: Metadata = Metadata(),
     ) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "EMPTY_MAP"
             override val tag: ByteArray = byteArrayOf(35)
@@ -208,14 +314,27 @@ public sealed interface MichelsonInstruction : MichelsonData {
     public data class EmptyBigMap(
         public val keyType: MichelsonComparableType,
         public val valueType: MichelsonType,
+        public val metadata: Metadata = Metadata(),
     ) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(typeName, variableName) }
+
+        public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "EMPTY_BIG_MAP"
             override val tag: ByteArray = byteArrayOf(114)
         }
     }
 
-    public data class Map(public val expression: Sequence) : MichelsonInstruction {
+    public data class Map(public val expression: Sequence, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "MAP"
             override val tag: ByteArray = byteArrayOf(56)
@@ -229,17 +348,30 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public object Mem : MichelsonInstruction, Prim {
-        override val name: String = "MEM"
-        override val tag: ByteArray = byteArrayOf(57)
+    public data class Mem(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "MEM"
+            override val tag: ByteArray = byteArrayOf(57)
+        }
     }
 
-    public data class Get(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
+    public data class Get(public val n: MichelsonData.NaturalNumberConstant? = null, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
 
-        public constructor(n: UByte) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UShort) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public constructor(n: UByte, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UShort, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UInt, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: ULong, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
 
         public companion object : Prim {
             override val name: String = "GET"
@@ -247,12 +379,17 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public data class Update(public val n: MichelsonData.NaturalNumberConstant? = null) : MichelsonInstruction {
+    public data class Update(public val n: MichelsonData.NaturalNumberConstant? = null, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
 
-        public constructor(n: UByte) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UShort) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: UInt) : this(MichelsonData.NaturalNumberConstant(n))
-        public constructor(n: ULong) : this(MichelsonData.NaturalNumberConstant(n))
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public constructor(n: UByte, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UShort, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: UInt, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
+        public constructor(n: ULong, metadata: Metadata = Metadata()) : this(MichelsonData.NaturalNumberConstant(n), metadata)
 
         public companion object : Prim {
             override val name: String = "UPDATE"
@@ -292,16 +429,31 @@ public sealed interface MichelsonInstruction : MichelsonData {
         public val parameterType: MichelsonType,
         public val returnType: MichelsonType,
         public val body: Sequence,
+        public val metadata: Metadata = Metadata()
     ) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "LAMBDA"
             override val tag: ByteArray = byteArrayOf(49)
         }
     }
 
-    public object Exec : MichelsonInstruction, Prim {
-        override val name: String = "EXEC"
-        override val tag: ByteArray = byteArrayOf(38)
+    public data class Exec(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "EXEC"
+            override val tag: ByteArray = byteArrayOf(38)
+        }
     }
 
     public object Apply : MichelsonInstruction, Prim {
@@ -330,19 +482,43 @@ public sealed interface MichelsonInstruction : MichelsonData {
         override val tag: ByteArray = byteArrayOf(39)
     }
 
-    public object Cast : MichelsonInstruction, Prim {
-        override val name: String = "CAST"
-        override val tag: ByteArray = byteArrayOf(87)
+    public data class Cast(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CAST"
+            override val tag: ByteArray = byteArrayOf(87)
+        }
     }
 
-    public object Rename : MichelsonInstruction, Prim {
-        override val name: String = "RENAME"
-        override val tag: ByteArray = byteArrayOf(88)
+    public data class Rename(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "RENAME"
+            override val tag: ByteArray = byteArrayOf(88)
+        }
     }
 
-    public object Concat : MichelsonInstruction, Prim {
-        override val name: String = "CONCAT"
-        override val tag: ByteArray = byteArrayOf(26)
+    public data class Concat(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CONCAT"
+            override val tag: ByteArray = byteArrayOf(26)
+        }
     }
 
     public object Slice : MichelsonInstruction, Prim {
@@ -362,122 +538,312 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public object Add : MichelsonInstruction, Prim {
-        override val name: String = "ADD"
-        override val tag: ByteArray = byteArrayOf(18)
+    public data class Add(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "ADD"
+            override val tag: ByteArray = byteArrayOf(18)
+        }
     }
 
-    public object Sub : MichelsonInstruction, Prim {
-        override val name: String = "SUB"
-        override val tag: ByteArray = byteArrayOf(75)
+    public data class Sub(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SUB"
+            override val tag: ByteArray = byteArrayOf(75)
+        }
     }
 
-    public object Mul : MichelsonInstruction, Prim {
-        override val name: String = "MUL"
-        override val tag: ByteArray = byteArrayOf(58)
+    public data class Mul(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "MUL"
+            override val tag: ByteArray = byteArrayOf(58)
+        }
     }
 
-    public object Ediv : MichelsonInstruction, Prim {
-        override val name: String = "EDIV"
-        override val tag: ByteArray = byteArrayOf(34)
+    public data class Ediv(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "EDIV"
+            override val tag: ByteArray = byteArrayOf(34)
+        }
     }
 
-    public object Abs : MichelsonInstruction, Prim {
-        override val name: String = "ABS"
-        override val tag: ByteArray = byteArrayOf(17)
+    public data class Abs(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "ABS"
+            override val tag: ByteArray = byteArrayOf(17)
+        }
     }
 
-    public object Isnat : MichelsonInstruction, Prim {
-        override val name: String = "ISNAT"
-        override val tag: ByteArray = byteArrayOf(86)
+    public data class Isnat(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "ISNAT"
+            override val tag: ByteArray = byteArrayOf(86)
+        }
     }
 
-    public object Int : MichelsonInstruction, Prim {
-        override val name: String = "INT"
-        override val tag: ByteArray = byteArrayOf(48)
+    public data class Int(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "INT"
+            override val tag: ByteArray = byteArrayOf(48)
+        }
     }
 
-    public object Neg : MichelsonInstruction, Prim {
-        override val name: String = "NEG"
-        override val tag: ByteArray = byteArrayOf(59)
+    public data class Neg(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "NEG"
+            override val tag: ByteArray = byteArrayOf(59)
+        }
     }
 
-    public object Lsl : MichelsonInstruction, Prim {
-        override val name: String = "LSL"
-        override val tag: ByteArray = byteArrayOf(53)
+    public data class Lsl(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "LSL"
+            override val tag: ByteArray = byteArrayOf(53)
+        }
     }
 
-    public object Lsr : MichelsonInstruction, Prim {
-        override val name: String = "LSR"
-        override val tag: ByteArray = byteArrayOf(54)
+    public data class Lsr(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "LSR"
+            override val tag: ByteArray = byteArrayOf(54)
+        }
     }
 
-    public object Or : MichelsonInstruction, Prim {
-        override val name: String = "OR"
-        override val tag: ByteArray = byteArrayOf(65)
+    public data class Or(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "OR"
+            override val tag: ByteArray = byteArrayOf(65)
+        }
     }
 
-    public object And : MichelsonInstruction, Prim {
-        override val name: String = "AND"
-        override val tag: ByteArray = byteArrayOf(20)
+    public data class And(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "AND"
+            override val tag: ByteArray = byteArrayOf(20)
+        }
     }
 
-    public object Xor : MichelsonInstruction, Prim {
-        override val name: String = "XOR"
-        override val tag: ByteArray = byteArrayOf(81)
+    public data class Xor(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "XOR"
+            override val tag: ByteArray = byteArrayOf(81)
+        }
     }
 
-    public object Not : MichelsonInstruction, Prim {
-        override val name: String = "NOT"
-        override val tag: ByteArray = byteArrayOf(63)
+    public data class Not(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "NOT"
+            override val tag: ByteArray = byteArrayOf(63)
+        }
     }
 
-    public object Compare : MichelsonInstruction, Prim {
-        override val name: String = "COMPARE"
-        override val tag: ByteArray = byteArrayOf(25)
+    public data class Compare(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "COMPARE"
+            override val tag: ByteArray = byteArrayOf(25)
+        }
     }
 
-    public object Eq : MichelsonInstruction, Prim {
-        override val name: String = "EQ"
-        override val tag: ByteArray = byteArrayOf(37)
+    public data class Eq(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "EQ"
+            override val tag: ByteArray = byteArrayOf(37)
+        }
     }
 
-    public object Neq : MichelsonInstruction, Prim {
-        override val name: String = "NEQ"
-        override val tag: ByteArray = byteArrayOf(60)
+    public data class Neq(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "NEQ"
+            override val tag: ByteArray = byteArrayOf(60)
+        }
     }
 
-    public object Lt : MichelsonInstruction, Prim {
-        override val name: String = "LT"
-        override val tag: ByteArray = byteArrayOf(55)
+    public data class Lt(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "LT"
+            override val tag: ByteArray = byteArrayOf(55)
+        }
     }
 
-    public object Gt : MichelsonInstruction, Prim {
-        override val name: String = "GT"
-        override val tag: ByteArray = byteArrayOf(42)
+    public data class Gt(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "GT"
+            override val tag: ByteArray = byteArrayOf(42)
+        }
     }
 
-    public object Le : MichelsonInstruction, Prim {
-        override val name: String = "LE"
-        override val tag: ByteArray = byteArrayOf(50)
+    public data class Le(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "LE"
+            override val tag: ByteArray = byteArrayOf(50)
+        }
     }
 
-    public object Ge : MichelsonInstruction, Prim {
-        override val name: String = "GE"
-        override val tag: ByteArray = byteArrayOf(40)
+    public data class Ge(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "GE"
+            override val tag: ByteArray = byteArrayOf(40)
+        }
     }
 
-    public object Self : MichelsonInstruction, Prim {
-        override val name: String = "SELF"
-        override val tag: ByteArray = byteArrayOf(73)
+    public data class Self(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SELF"
+            override val tag: ByteArray = byteArrayOf(73)
+        }
     }
 
-    public object SelfAddress : MichelsonInstruction, Prim {
-        override val name: String = "SELF_ADDRESS"
-        override val tag: ByteArray = byteArrayOf(119)
+    public data class SelfAddress(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SELF_ADDRESS"
+            override val tag: ByteArray = byteArrayOf(119)
+        }
     }
 
-    public data class Contract(public val type: MichelsonType) : MichelsonInstruction {
+    public data class Contract(public val type: MichelsonType, public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
         public companion object : Prim {
             override val name: String = "CONTRACT"
             override val tag: ByteArray = byteArrayOf(85)
@@ -489,26 +855,53 @@ public sealed interface MichelsonInstruction : MichelsonData {
         override val tag: ByteArray = byteArrayOf(77)
     }
 
-    public object SetDelegate : MichelsonInstruction, Prim {
-        override val name: String = "SET_DELEGATE"
-        override val tag: ByteArray = byteArrayOf(78)
+    public data class SetDelegate(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SET_DELEGATE"
+            override val tag: ByteArray = byteArrayOf(78)
+        }
     }
 
     public data class CreateContract(
         public val parameterType: MichelsonType,
         public val storageType: MichelsonType,
         public val code: Sequence,
-    ) :
-        MichelsonInstruction {
+        public val metadata: Metadata = Metadata()
+    ) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(firstVariableName, secondVariableName) }
+
+        public data class Metadata internal constructor(
+            public val firstVariableName: Michelson.Annotation.Variable? = null,
+            public val secondVariableName: Michelson.Annotation.Variable? = null,
+        ) {
+            public constructor() : this(null, null)
+        }
+
         public companion object : Prim {
             override val name: String = "CREATE_CONTRACT"
             override val tag: ByteArray = byteArrayOf(29)
         }
     }
 
-    public object ImplicitAccount : MichelsonInstruction, Prim {
-        override val name: String = "IMPLICIT_ACCOUNT"
-        override val tag: ByteArray = byteArrayOf(30)
+    public data class ImplicitAccount(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "IMPLICIT_ACCOUNT"
+            override val tag: ByteArray = byteArrayOf(30)
+        }
     }
 
     public object VotingPower : MichelsonInstruction, Prim {
@@ -516,79 +909,199 @@ public sealed interface MichelsonInstruction : MichelsonData {
         override val tag: ByteArray = byteArrayOf(123)
     }
 
-    public object Now : MichelsonInstruction, Prim {
-        override val name: String = "NOW"
-        override val tag: ByteArray = byteArrayOf(64)
+    public data class Now(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "NOW"
+            override val tag: ByteArray = byteArrayOf(64)
+        }
     }
 
-    public object Level : MichelsonInstruction, Prim {
-        override val name: String = "LEVEL"
-        override val tag: ByteArray = byteArrayOf(118)
+    public data class Level(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "LEVEL"
+            override val tag: ByteArray = byteArrayOf(118)
+        }
     }
 
-    public object Amount : MichelsonInstruction, Prim {
-        override val name: String = "AMOUNT"
-        override val tag: ByteArray = byteArrayOf(19)
+    public data class Amount(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "AMOUNT"
+            override val tag: ByteArray = byteArrayOf(19)
+        }
     }
 
-    public object Balance : MichelsonInstruction, Prim {
-        override val name: String = "BALANCE"
-        override val tag: ByteArray = byteArrayOf(21)
+    public data class Balance(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "BALANCE"
+            override val tag: ByteArray = byteArrayOf(21)
+        }
     }
 
-    public object CheckSignature : MichelsonInstruction, Prim {
-        override val name: String = "CHECK_SIGNATURE"
-        override val tag: ByteArray = byteArrayOf(24)
+    public data class CheckSignature(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CHECK_SIGNATURE"
+            override val tag: ByteArray = byteArrayOf(24)
+        }
     }
 
-    public object Blake2B : MichelsonInstruction, Prim {
-        override val name: String = "BLAKE2B"
-        override val tag: ByteArray = byteArrayOf(14)
+    public data class Blake2B(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "BLAKE2B"
+            override val tag: ByteArray = byteArrayOf(14)
+        }
     }
 
-    public object Keccak : MichelsonInstruction, Prim {
-        override val name: String = "KECCAK"
-        override val tag: ByteArray = byteArrayOf(125)
+    public data class Keccak(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "KECCAK"
+            override val tag: ByteArray = byteArrayOf(125)
+        }
     }
 
-    public object Sha3 : MichelsonInstruction, Prim {
-        override val name: String = "SHA3"
-        override val tag: ByteArray = byteArrayOf(126)
+    public data class Sha3(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SHA3"
+            override val tag: ByteArray = byteArrayOf(126)
+        }
     }
 
-    public object Sha256 : MichelsonInstruction, Prim {
-        override val name: String = "SHA256"
-        override val tag: ByteArray = byteArrayOf(15)
+    public data class Sha256(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SHA256"
+            override val tag: ByteArray = byteArrayOf(15)
+        }
     }
 
-    public object Sha512 : MichelsonInstruction, Prim {
-        override val name: String = "SHA512"
-        override val tag: ByteArray = byteArrayOf(16)
+    public data class Sha512(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SHA512"
+            override val tag: ByteArray = byteArrayOf(16)
+        }
     }
 
-    public object HashKey : MichelsonInstruction, Prim {
-        override val name: String = "HASH_KEY"
-        override val tag: ByteArray = byteArrayOf(43)
+    public data class HashKey(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "HASH_KEY"
+            override val tag: ByteArray = byteArrayOf(43)
+        }
     }
 
-    public object Source : MichelsonInstruction, Prim {
-        override val name: String = "SOURCE"
-        override val tag: ByteArray = byteArrayOf(71)
+    public data class Source(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SOURCE"
+            override val tag: ByteArray = byteArrayOf(71)
+        }
     }
 
-    public object Sender : MichelsonInstruction, Prim {
-        override val name: String = "SENDER"
-        override val tag: ByteArray = byteArrayOf(72)
+    public data class Sender(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "SENDER"
+            override val tag: ByteArray = byteArrayOf(72)
+        }
     }
 
-    public object Address : MichelsonInstruction, Prim {
-        override val name: String = "ADDRESS"
-        override val tag: ByteArray = byteArrayOf(84)
+    public data class Address(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "ADDRESS"
+            override val tag: ByteArray = byteArrayOf(84)
+        }
     }
 
-    public object ChainId : MichelsonInstruction, Prim {
-        override val name: String = "CHAIN_ID"
-        override val tag: ByteArray = byteArrayOf(117)
+    public data class ChainId(public val metadata: Metadata = Metadata()) : MichelsonInstruction {
+
+        override val annotations: List<Michelson.Annotation>
+            get() = with(metadata) { listOfNotNull(variableName) }
+
+        public data class Metadata(public val variableName: Michelson.Annotation.Variable? = null)
+
+        public companion object : Prim {
+            override val name: String = "CHAIN_ID"
+            override val tag: ByteArray = byteArrayOf(117)
+        }
     }
 
     public object TotalVotingPower : MichelsonInstruction, Prim {

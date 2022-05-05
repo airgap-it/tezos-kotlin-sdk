@@ -24,6 +24,7 @@ import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
 import it.airgap.tezos.rpc.type.constants.RpcConstants
 import it.airgap.tezos.rpc.type.contract.RpcScript
+import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.*
 import it.airgap.tezos.rpc.type.primitive.RpcRatio
 import it.airgap.tezos.rpc.type.sapling.RpcSaplingCiphertext
@@ -278,6 +279,23 @@ class BlockClientTest {
     }
 
     @Test
+    fun `should call POST on '_ - $block_id - context - contracts - $contract_id - script - normalized'`() {
+        val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
+
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = contextContractsContractScriptNormalizedPostRequestConfiguration
+        coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
+
+        headers.forEach { headers ->
+            val response = runBlocking { blockClient.context.contracts(contractId).script.normalized.post(expectedRequest.unparsingMode, headers = headers) }
+
+            assertEquals(expectedResponse, response)
+
+            coVerify { httpClient.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/script/normalized", "/", headers = headers, request = expectedRequest) }
+            coVerify { httpClientProvider.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/script/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
+        }
+    }
+
+    @Test
     fun `should call GET on '_ - $block_id - context - contracts - $contract_id - single_sapling_get_diff'`() {
         data class Parameters(val commitmentOffset: ULong? = null, val nullifierOffset: ULong? = null)
 
@@ -323,6 +341,23 @@ class BlockClientTest {
 
             coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage", "/", headers = headers) }
             coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage", "/", headers = headers, parameters = emptyList()) }
+        }
+    }
+
+    @Test
+    fun `should call POST on '_ - $block_id - context - contracts - $contract_id - storage - normalized'`() {
+        val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
+
+        val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = contextContractsContractStorageNormalizedPostRequestConfiguration
+        coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
+
+        headers.forEach { headers ->
+            val response = runBlocking { blockClient.context.contracts(contractId).storage.normalized.post(expectedRequest.unparsingMode, headers = headers) }
+
+            assertEquals(expectedResponse, response)
+
+            coVerify { httpClient.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, request = expectedRequest) }
+            coVerify { httpClientProvider.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
@@ -1004,6 +1039,96 @@ class BlockClientTest {
             """.trimIndent(),
         )
 
+    private val contextContractsContractScriptNormalizedPostRequestConfiguration: RequestConfiguration<GetContractNormalizedScriptRequest, GetContractNormalizedScriptResponse> =
+        RequestConfiguration(
+            request = GetContractNormalizedScriptRequest(unparsingMode = RpcScriptParsing.Readable),
+            response = GetContractNormalizedScriptResponse(
+                RpcScript(
+                    code = MichelineSequence(
+                        MichelinePrimitiveApplication(
+                            prim = MichelsonType.Parameter,
+                            args = listOf(
+                                MichelinePrimitiveApplication(prim = MichelsonComparableType.Nat),
+                            )
+                        ),
+                        MichelinePrimitiveApplication(
+                            prim = MichelsonType.Storage,
+                            args = listOf(
+                                MichelinePrimitiveApplication(prim = MichelsonComparableType.Nat),
+                            )
+                        ),
+                        MichelinePrimitiveApplication(
+                            prim = MichelsonType.Code,
+                            args = listOf(
+                                MichelineSequence(
+                                    MichelinePrimitiveApplication(prim = MichelsonInstruction.Car),
+                                    MichelinePrimitiveApplication(
+                                        prim = MichelsonInstruction.Nil,
+                                        args = listOf(
+                                            MichelinePrimitiveApplication(prim = MichelsonType.Operation),
+                                        )
+                                    ),
+                                    MichelinePrimitiveApplication(prim = MichelsonInstruction.Pair),
+                                ),
+                            )
+                        )
+                    ),
+                    storage = MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")
+                )
+            ),
+            jsonRequest = """
+                {
+                    "unparsing_mode": "Readable"
+                }
+            """.trimIndent(),
+            jsonResponse = """
+                {
+                    "code": [
+                        {
+                            "prim": "parameter",
+                            "args": [
+                                {
+                                    "prim": "nat"
+                                }
+                            ]
+                        },
+                        {
+                            "prim": "storage",
+                            "args": [
+                                {
+                                    "prim": "nat"
+                                }
+                            ]
+                        },
+                        {
+                            "prim": "code",
+                            "args": [
+                                [
+                                    {
+                                        "prim": "CAR"
+                                    },
+                                    {
+                                        "prim": "NIL",
+                                        "args": [
+                                            {
+                                                "prim": "operation"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "prim": "PAIR"
+                                    }
+                                ]
+                            ]
+                        }
+                    ],
+                    "storage": {
+                        "int": "2000000000000000000000000000000000000000000000000000000"
+                    }
+                }
+            """.trimIndent(),
+        )
+
     private val contextContractsContractSaplingStateDiffGetRequestConfiguration: RequestConfiguration<Unit, GetContractSaplingStateDiffResponse> =
         RequestConfiguration(
             response = GetContractSaplingStateDiffResponse(
@@ -1053,6 +1178,22 @@ class BlockClientTest {
     private val contextContractsContractStorageGetRequestConfiguration: RequestConfiguration<Unit, GetContractStorageResponse> =
         RequestConfiguration(
             response = GetContractStorageResponse(MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")),
+            jsonResponse = """
+                {
+                    "int": "2000000000000000000000000000000000000000000000000000000"
+                }
+            """.trimIndent(),
+        )
+
+    private val contextContractsContractStorageNormalizedPostRequestConfiguration: RequestConfiguration<GetContractNormalizedStorageRequest, GetContractNormalizedStorageResponse> =
+        RequestConfiguration(
+            request = GetContractNormalizedStorageRequest(unparsingMode = RpcScriptParsing.Readable),
+            response = GetContractNormalizedStorageResponse(MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")),
+            jsonRequest = """
+                {
+                    "unparsing_mode": "Readable"
+                }
+            """.trimIndent(),
             jsonResponse = """
                 {
                     "int": "2000000000000000000000000000000000000000000000000000000"
