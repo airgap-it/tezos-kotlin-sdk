@@ -1,10 +1,10 @@
-package it.airgap.tezos.contract
+package it.airgap.tezos.contract.storage
 
-import io.mockk.MockKAnnotations
-import io.mockk.coEvery
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.unmockkAll
+import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
+import it.airgap.tezos.contract.internal.storage.MetaContractStorage
+import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.coder.*
@@ -32,10 +32,8 @@ import kotlin.test.assertEquals
 
 class ContractStorageTest {
 
-    private lateinit var encodedBytesCoder: EncodedBytesCoder
-    private lateinit var michelinePacker: MichelinePacker
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
-    private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
+    private lateinit var michelineToStorageEntryConverter: MichelineToStorageEntryConverter
 
     @MockK
     private lateinit var crypto: Crypto
@@ -61,8 +59,7 @@ class ContractStorageTest {
         val michelineToNormalizedConverter = MichelineToNormalizedConverter()
         val michelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter(michelineToNormalizedConverter)
         val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
-        michelsonToMichelineConverter = MichelsonToMichelineConverter()
-        michelineToCompactStringConverter = MichelineToCompactStringConverter()
+        val michelineToCompactStringConverter = MichelineToCompactStringConverter()
 
         val encodedBytesCoder = EncodedBytesCoder(base58Check)
         val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
@@ -79,7 +76,7 @@ class ContractStorageTest {
 
         val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
 
-        michelinePacker = MichelinePacker(
+        val michelinePacker = MichelinePacker(
             michelineBytesCoder,
             stringToMichelsonPrimConverter,
             michelinePrimitiveApplicationToNormalizedConverter,
@@ -95,6 +92,15 @@ class ContractStorageTest {
             stringToPublicKeyConverter,
             stringToSignatureConverter,
         )
+
+        michelsonToMichelineConverter = MichelsonToMichelineConverter()
+        michelineToStorageEntryConverter = MichelineToStorageEntryConverter(
+            blockRpc,
+            encodedBytesCoder,
+            michelinePacker,
+            michelineToCompactStringConverter,
+            stringToMichelsonPrimConverter,
+        )
     }
 
     @After
@@ -104,11 +110,13 @@ class ContractStorageTest {
 
     @Test
     fun `should create Map from storage values`() {
+        every { blockRpc.context.bigMaps } returns mockk()
+
         storageWithMap.forEach { (type, value, expected) ->
             coEvery { contractRpc.storage.normalized.post(any(), any()) } returns GetContractNormalizedStorageResponse(value)
 
             val contractStorage = ContractStorage(
-                Cached { MetaContractStorage(type, blockRpc, encodedBytesCoder, michelinePacker, michelineToCompactStringConverter) },
+                Cached { MetaContractStorage(type, michelineToStorageEntryConverter) },
                 contractRpc,
             )
 
@@ -186,52 +194,47 @@ class ContractStorageTest {
 
                 val entry = ContractStorageEntry.Object(
                     value,
-                    type,
-                    setOf(),
+                    MetaContractStorageEntry.Basic(type),
                     listOf(
                         ContractStorageEntry.BigMap(
                             "51296",
-                            type.args[0],
-                            setOf("%ledger"),
+                            value.args[0],
+                            MetaContractStorageEntry.BigMap(
+                                type.args[0],
+                                mockk(),
+                                mockk(),
+                                mockk(),
+                                mockk(),
+                            ),
+                            mockk(),
+                        ),
+                        ContractStorageEntry.BigMap(
+                            "51297",
+                            value.args[1].args[0],
+                            MetaContractStorageEntry.BigMap(
+                                type.args[1].args[0],
+                                mockk(),
+                                mockk(),
+                                mockk(),
+                                mockk(),
+                            ),
+                            mockk(),
                         ),
                         ContractStorageEntry.Object(
-                            value.args[1],
-                            type.args[1],
-                            setOf(),
+                            value.args[1].args[1],
+                            MetaContractStorageEntry.Basic(type.args[1].args[1]),
                             listOf(
-                                ContractStorageEntry.BigMap(
-                                    "51297",
-                                    type.args[1].args[0],
-                                    setOf("%approvals"),
+                                ContractStorageEntry.Value(
+                                    value.args[1].args[1].args[0],
+                                    MetaContractStorageEntry.Basic(type.args[1].args[1].args[0]),
                                 ),
-                                ContractStorageEntry.Object(
-                                    value.args[1].args[1],
-                                    type.args[1].args[1],
-                                    setOf("%fields"),
-                                    listOf(
-                                        ContractStorageEntry.Value(
-                                            value.args[1].args[1].args[0],
-                                            type.args[1].args[1].args[0],
-                                            setOf("%admin")
-                                        ),
-                                        ContractStorageEntry.Object(
-                                            value.args[1].args[1].args[1],
-                                            type.args[1].args[1].args[1],
-                                            setOf(),
-                                            listOf(
-                                                ContractStorageEntry.Value(
-                                                    value.args[1].args[1].args[1].args[0],
-                                                    type.args[1].args[1].args[1].args[0],
-                                                    setOf("%paused"),
-                                                ),
-                                                ContractStorageEntry.Value(
-                                                    value.args[1].args[1].args[1].args[1],
-                                                    type.args[1].args[1].args[1].args[1],
-                                                    setOf("%totalSupply"),
-                                                ),
-                                            ),
-                                        ),
-                                    ),
+                                ContractStorageEntry.Value(
+                                    value.args[1].args[1].args[1].args[0],
+                                     MetaContractStorageEntry.Basic(type.args[1].args[1].args[1].args[0]),
+                                ),
+                                ContractStorageEntry.Value(
+                                    value.args[1].args[1].args[1].args[1],
+                                     MetaContractStorageEntry.Basic(type.args[1].args[1].args[1].args[1]),
                                 ),
                             ),
                         ),

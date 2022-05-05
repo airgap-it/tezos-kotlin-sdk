@@ -1,4 +1,4 @@
-package it.airgap.tezos.contract
+package it.airgap.tezos.contract.entrypoint
 
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.micheline.MichelineNode
