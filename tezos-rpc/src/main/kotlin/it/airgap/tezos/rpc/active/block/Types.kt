@@ -32,7 +32,7 @@ public value class GetBigMapResponse(public val values: List<MichelineNode>)
 
 @Serializable
 @JvmInline
-public value class GetBigMapValueResponse(public val value: MichelineNode)
+public value class GetBigMapValueResponse(public val value: MichelineNode? = null)
 
 // -- ../<block_id>/context/constants --
 

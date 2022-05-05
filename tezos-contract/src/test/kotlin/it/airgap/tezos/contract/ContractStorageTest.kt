@@ -2,10 +2,20 @@ package it.airgap.tezos.contract
 
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
+import it.airgap.tezos.core.internal.base58.Base58
+import it.airgap.tezos.core.internal.base58.Base58Check
+import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.converter.StringToAddressConverter
+import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
+import it.airgap.tezos.core.internal.converter.StringToPublicKeyConverter
+import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
+import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.internal.converter.*
+import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
@@ -17,22 +27,74 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.security.MessageDigest
 import kotlin.test.assertEquals
 
 class ContractStorageTest {
 
+    private lateinit var encodedBytesCoder: EncodedBytesCoder
+    private lateinit var michelinePacker: MichelinePacker
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
     private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
 
     @MockK
-    private lateinit var rpc: Block.Context.Contracts.Contract
+    private lateinit var crypto: Crypto
+
+    @MockK
+    private lateinit var blockRpc: Block
+
+    @MockK
+    private lateinit var contractRpc: Block.Context.Contracts.Contract
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
+        every { crypto.hashSha256(any<ByteArray>()) } answers {
+            val messageDigest = MessageDigest.getInstance("SHA-256")
+            messageDigest.digest(firstArg())
+        }
+
+        val base58Check = Base58Check(Base58(), crypto)
+
+        val stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
+        val michelineToNormalizedConverter = MichelineToNormalizedConverter()
+        val michelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter(michelineToNormalizedConverter)
+        val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
         michelineToCompactStringConverter = MichelineToCompactStringConverter()
+
+        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
+        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
+        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
+        val timestampBigIntCoder = TimestampBigIntCoder()
+        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
+        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalBytesCoder())
+
+        val stringToAddressConverter = StringToAddressConverter()
+        val stringToImplicitAddressConverter = StringToImplicitAddressConverter()
+        val stringToPublicKeyConverter = StringToPublicKeyConverter()
+        val stringToSignatureConverter = StringToSignatureConverter()
+
+        val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
+
+        michelinePacker = MichelinePacker(
+            michelineBytesCoder,
+            stringToMichelsonPrimConverter,
+            michelinePrimitiveApplicationToNormalizedConverter,
+            michelineToCompactStringConverter,
+            encodedBytesCoder,
+            addressBytesCoder,
+            publicKeyBytesCoder,
+            implicitAddressBytesCoder,
+            signatureBytesCoder,
+            timestampBigIntCoder,
+            stringToAddressConverter,
+            stringToImplicitAddressConverter,
+            stringToPublicKeyConverter,
+            stringToSignatureConverter,
+        )
     }
 
     @After
@@ -43,11 +105,11 @@ class ContractStorageTest {
     @Test
     fun `should create Map from storage values`() {
         storageWithMap.forEach { (type, value, expected) ->
-            coEvery { rpc.storage.normalized.post(any(), any()) } returns GetContractNormalizedStorageResponse(value)
+            coEvery { contractRpc.storage.normalized.post(any(), any()) } returns GetContractNormalizedStorageResponse(value)
 
             val contractStorage = ContractStorage(
-                Cached { MetaContractStorage(type, michelineToCompactStringConverter) },
-                rpc,
+                Cached { MetaContractStorage(type, blockRpc, encodedBytesCoder, michelinePacker, michelineToCompactStringConverter) },
+                contractRpc,
             )
 
             val actual = runBlocking { contractStorage.get() }
