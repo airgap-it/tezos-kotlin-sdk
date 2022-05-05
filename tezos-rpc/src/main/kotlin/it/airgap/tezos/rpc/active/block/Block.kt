@@ -4,6 +4,7 @@ import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
@@ -85,6 +86,12 @@ public interface Block {
 
                 public interface Script {
                     public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractScriptResponse
+
+                    public val normalized: Normalized
+
+                    public interface Normalized {
+                        public suspend fun post(unparsingMode: RpcScriptParsing, headers: List<HttpHeader> = emptyList()): GetContractNormalizedScriptResponse
+                    }
                 }
 
                 public interface SingleSaplingGetDiff {
@@ -93,6 +100,12 @@ public interface Block {
 
                 public interface Storage {
                     public suspend fun get(headers: List<HttpHeader> = emptyList()): GetContractStorageResponse
+
+                    public val normalized: Normalized
+
+                    public interface Normalized {
+                        public suspend fun post(unparsingMode: RpcScriptParsing, headers: List<HttpHeader> = emptyList()): GetContractNormalizedStorageResponse
+                    }
                 }
             }
         }

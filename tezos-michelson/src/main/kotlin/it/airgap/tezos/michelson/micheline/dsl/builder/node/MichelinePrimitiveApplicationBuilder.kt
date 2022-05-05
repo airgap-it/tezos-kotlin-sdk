@@ -41,6 +41,10 @@ public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Pr
     public infix fun annots(values: List<String>) {
         annots = values.map { MichelinePrimitiveApplication.Annotation(it) }
     }
+
+    public infix fun annots(value: String) {
+        annots = listOf(MichelinePrimitiveApplication.Annotation(value))
+    }
 }
 
 public class MichelinePrimitiveApplicationOptionalIntegerArgBuilder<in T : Michelson.Prim> internal constructor(
