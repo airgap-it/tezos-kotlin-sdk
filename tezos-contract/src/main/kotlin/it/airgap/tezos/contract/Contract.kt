@@ -14,6 +14,7 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.normalized
+import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.active.block.GetContractEntrypointsResponse
 import it.airgap.tezos.rpc.active.block.GetContractNormalizedScriptResponse
@@ -36,7 +37,7 @@ public class Contract internal constructor(
     private val metaEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> contractRpc.entrypoints.get(headers).toMetaContractEntrypoint(headers) }
 
     public val storage: ContractStorage by lazy { ContractStorage(metaStorageCached, contractRpc) }
-    public fun entrypoint(name: String = ContractEntrypoint.DEFAULT): ContractEntrypoint = ContractEntrypoint(name, metaEntrypointsCached.map { it[name] })
+    public fun entrypoint(name: String = Entrypoint.Default.value): ContractEntrypoint = ContractEntrypoint(name, address, rpc, metaEntrypointsCached.map { it[name] })
 
     public suspend fun code(headers: List<HttpHeader> = emptyList()): ContractCode = codeCached.get(headers)
 
@@ -60,11 +61,11 @@ public class Contract internal constructor(
     }
 
     private suspend fun GetContractEntrypointsResponse.toMetaContractEntrypoint(headers: List<HttpHeader>): Map<String, MetaContractEntrypoint> {
-        val defaultEntrypoint = entrypoints[ContractEntrypoint.DEFAULT] ?: run {
+        val defaultEntrypoint = entrypoints[Entrypoint.Default.value] ?: run {
             val parameter = codeCached.get(headers).parameter.normalized(michelineToNormalizedConverter)
             if (parameter is MichelinePrimitiveApplication && parameter.args.size == 1) parameter.args.first() else failWithUnknownCodeType()
         }
-        val entrypoints = entrypoints + Pair(ContractEntrypoint.DEFAULT, defaultEntrypoint)
+        val entrypoints = entrypoints + Pair(Entrypoint.Default.value, defaultEntrypoint)
 
         return entrypoints.mapValues { MetaContractEntrypoint(it.value) }
     }

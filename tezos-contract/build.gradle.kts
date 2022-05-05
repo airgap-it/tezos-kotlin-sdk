@@ -7,6 +7,7 @@ dependencies {
     // Kotlin
 
     implementation(kotlin("stdlib"))
+    implementation(Dependencies.kotlinxCoroutines)
 
     // Test
     testImplementation(Dependencies.kotlinTest)
