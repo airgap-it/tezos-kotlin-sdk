@@ -15,6 +15,7 @@ import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.normalized
 import it.airgap.tezos.operation.contract.Entrypoint
+import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.active.block.GetContractEntrypointsResponse
 import it.airgap.tezos.rpc.active.block.GetContractNormalizedScriptResponse
@@ -25,19 +26,22 @@ import kotlin.reflect.KClass
 
 public class Contract internal constructor(
     public val address: ContractHash,
-    private val rpc: Block,
+    private val rpc: TezosRpc,
     private val michelineToNormalizedConverter: MichelineToNormalizedConverter,
     private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
 ) {
-    private val contractRpc: Block.Context.Contracts.Contract
-        get() = rpc.context.contracts(address)
+    private val TezosRpc.block: Block
+        get() = chains.main.blocks.head
 
-    private val codeCached: Cached<ContractCode> = Cached { headers -> contractRpc.script.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).toContractCode() }
+    private val TezosRpc.contract: Block.Context.Contracts.Contract
+        get() = block.context.contracts(address)
+
+    private val codeCached: Cached<ContractCode> = Cached { headers -> rpc.contract.script.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).toContractCode() }
     private val metaStorageCached: Cached<MetaContractStorage> = Cached { headers -> codeCached.get(headers).toMetaContractStorage() }
-    private val metaEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> contractRpc.entrypoints.get(headers).toMetaContractEntrypoint(headers) }
+    private val metaEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> rpc.contract.entrypoints.get(headers).toMetaContractEntrypoint(headers) }
 
-    public val storage: ContractStorage by lazy { ContractStorage(metaStorageCached, contractRpc) }
-    public fun entrypoint(name: String = Entrypoint.Default.value): ContractEntrypoint = ContractEntrypoint(name, address, rpc, metaEntrypointsCached.map { it[name] })
+    public val storage: ContractStorage by lazy { ContractStorage(metaStorageCached, rpc.contract) }
+    public fun entrypoint(name: String = Entrypoint.Default.value): ContractEntrypoint = ContractEntrypoint(name, address, rpc.block, rpc, metaEntrypointsCached.map { it[name] })
 
     public suspend fun code(headers: List<HttpHeader> = emptyList()): ContractCode = codeCached.get(headers)
 

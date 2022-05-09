@@ -9,6 +9,7 @@ import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
+import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.Cached
@@ -18,19 +19,21 @@ import it.airgap.tezos.rpc.internal.cache.Cached
 public class ContractEntrypoint internal constructor(
     public val name: String,
     private val contractAddress: ContractHash,
-    private val rpc: Block,
+    private val block: Block,
+    private val rpc: TezosRpc, // TODO: extract fee calculation logic to a separate class and use it here instead
     private val metaCached: Cached<MetaContractEntrypoint?>,
 ) {
+
     public suspend fun call(
         args: MichelineNode,
         source: ImplicitAddress,
         fee: Mutez? = null,
         headers: List<HttpHeader> = emptyList(),
     ): Operation.Unsigned {
-        val branch = rpc.header.get(headers).header.hash
-        val counter = rpc.context.contracts(source).counter.get(headers).counter
+        val branch = block.header.get(headers).header.hash
+        val counter = block.context.contracts(source).counter.get(headers).counter
 
-        return Operation.Unsigned(
+        val operation = Operation.Unsigned(
             branch,
             listOf(
                 OperationContent.Transaction(
@@ -48,11 +51,24 @@ public class ContractEntrypoint internal constructor(
                 ),
             ),
         )
+
+        return rpc.minFee(operation = operation, headers = headers).asUnsigned()
     }
 
-    public suspend fun call(args: List<Pair<String, MichelineNode>>, headers: List<HttpHeader> = emptyList()): Operation.Unsigned {
+    public suspend fun call(
+        args: List<Pair<String, MichelineNode>>,
+        source: ImplicitAddress,
+        fee: Mutez? = null,
+        headers: List<HttpHeader> = emptyList(),
+    ): Operation.Unsigned {
         TODO()
     }
+
+    private fun Operation.asUnsigned(): Operation.Unsigned =
+        when (this) {
+            is Operation.Unsigned -> this
+            is Operation.Signed -> Operation.Unsigned(branch, contents)
+        }
 }
 
 // -- MetaContractEntrypoint --
