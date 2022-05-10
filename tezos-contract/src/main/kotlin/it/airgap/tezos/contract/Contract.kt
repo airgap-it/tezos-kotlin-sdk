@@ -1,8 +1,9 @@
 package it.airgap.tezos.contract
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
-import it.airgap.tezos.contract.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
+import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.storage.ContractStorage
 import it.airgap.tezos.contract.type.ContractCode
@@ -29,6 +30,7 @@ public class Contract internal constructor(
     private val rpc: TezosRpc,
     private val michelineToNormalizedConverter: MichelineToNormalizedConverter,
     private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
+    private val entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter,
 ) {
     private val TezosRpc.block: Block
         get() = chains.main.blocks.head
@@ -71,7 +73,7 @@ public class Contract internal constructor(
         }
         val entrypoints = entrypoints + Pair(Entrypoint.Default.value, defaultEntrypoint)
 
-        return entrypoints.mapValues { MetaContractEntrypoint(it.value) }
+        return entrypoints.mapValues { MetaContractEntrypoint(it.value, entrypointArgumentToMichelineConverter) }
     }
 
     // TODO: better error handling

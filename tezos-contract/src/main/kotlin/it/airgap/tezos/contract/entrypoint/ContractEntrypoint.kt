@@ -1,5 +1,7 @@
 package it.airgap.tezos.contract.entrypoint
 
+import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.tez.Mutez
@@ -56,12 +58,15 @@ public class ContractEntrypoint internal constructor(
     }
 
     public suspend fun call(
-        args: List<Pair<String, MichelineNode>>,
+        args: ContractEntrypointArgument,
         source: ImplicitAddress,
         fee: Mutez? = null,
         headers: List<HttpHeader> = emptyList(),
     ): Operation.Unsigned {
-        TODO()
+        val meta = metaCached.get(headers) ?: failWithUnknownEntrypoint()
+        val value = meta.valueFrom(args)
+
+        return call(value, source, fee, headers)
     }
 
     private fun Operation.asUnsigned(): Operation.Unsigned =
@@ -69,8 +74,24 @@ public class ContractEntrypoint internal constructor(
             is Operation.Unsigned -> this
             is Operation.Signed -> Operation.Unsigned(branch, contents)
         }
+
+    private fun failWithUnknownEntrypoint(): Nothing =
+        failWithIllegalArgument("Entrypoint $name could not be found.")
 }
 
-// -- MetaContractEntrypoint --
+// -- ContractEntrypointArgument --
 
-internal class MetaContractEntrypoint(type: MichelineNode)
+public sealed interface ContractEntrypointArgument {
+    public val name: String?
+
+    public class Value(public val value: MichelineNode? = null, override val name: String? = null) : ContractEntrypointArgument
+    public class Object(internal val elements: MutableList<ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
+        public constructor(vararg elements: ContractEntrypointArgument, name: String? = null) : this(elements.toMutableList(), name)
+    }
+    public class Sequence internal constructor(internal val elements: List<ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
+        public constructor(vararg elements: ContractEntrypointArgument, name: String? = null) : this(elements.toList(), name)
+    }
+    public class Map internal constructor(internal val map: kotlin.collections.Map<ContractEntrypointArgument, ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
+        public constructor(vararg elements: Pair<ContractEntrypointArgument, ContractEntrypointArgument>, name: String? = null) : this(elements.toMap().toMutableMap(), name)
+    }
+}
