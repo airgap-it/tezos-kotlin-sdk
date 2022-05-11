@@ -137,7 +137,47 @@ internal class EntrypointArgumentToMichelineConverter(
                 MichelinePrimitiveApplication(MichelsonData.Some, args = listOf(it), )
             } ?: MichelinePrimitiveApplication(MichelsonData.None)
             is ContractEntrypointArgument.Object -> {
-                TODO()
+                val metaArgs = meta.elements.filter { it.trace.next == null }
+
+                when (metaArgs.size) {
+                    1 -> {
+                        val argMeta = metaArgs[0]
+                        val arg = argMeta.names.firstNotNullOfOrNull { name -> value.elements.consume { it.name == name } } ?: value.elements.consumeAt(0)
+
+                        arg?.let {
+                            MichelinePrimitiveApplication(
+                                MichelsonData.Some,
+                                args = listOf(
+                                    createMicheline(it, argMeta),
+                                ),
+                            )
+                        } ?: MichelinePrimitiveApplication(MichelsonData.None)
+                    }
+                    else -> {
+                        val names = value.elements.mapNotNull { it.name }
+                        val requiredMeta = meta.elements.filter { m -> names.any { m.names.contains(it) } }
+
+                        if (requiredMeta.zipWithNext().any { !it.first.trace.hasSameDirection(it.second.trace) }) failWithValueMetaMismatch(value, meta)
+                        if (meta.type !is MichelinePrimitiveApplication) failWithValueMetaMismatch(value, meta)
+
+                        val direction = (requiredMeta.firstOrNull()?.trace as? MichelineTrace.Node)?.direction
+
+                        direction?.let {
+                            val reducedMeta = MetaContractEntrypointArgument.Object(
+                                meta.type.args[it.index],
+                                meta.trace.next ?: MichelineTrace.Root(),
+                                requiredMeta.mapNotNull { it.relativeToNext() },
+                            )
+
+                            MichelinePrimitiveApplication(
+                                MichelsonData.Some,
+                                args = listOf(
+                                    createMicheline(value, reducedMeta),
+                                ),
+                            )
+                        } ?: MichelinePrimitiveApplication(MichelsonData.None)
+                    }
+                }
             }
             is ContractEntrypointArgument.Sequence, is ContractEntrypointArgument.Map -> failWithValueMetaMismatch(value, meta)
         }
