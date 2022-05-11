@@ -134,21 +134,23 @@ internal class EntrypointArgumentToMichelineConverter(
             is ContractEntrypointArgument.Value -> {
                 value.primOrNull(MichelsonData.Left, MichelsonData.Right) ?: run {
                     val namedMeta = value.findNextMeta(meta) ?: failWithValueMetaMismatch(value, meta)
-                    createMicheline(value, namedMeta)
+                    createDirectedMicheline(value, namedMeta)
                 }
             }
             is ContractEntrypointArgument.Object -> {
                 val reducedMeta = meta.extract(value) ?: failWithValueMetaMismatch(value, meta)
-
-                MichelinePrimitiveApplication(
-                    reducedMeta.trace.directedPrim() ?: failWithInvalidType(reducedMeta),
-                    args = listOf(
-                        createMicheline(value, reducedMeta),
-                    ),
-                )
+                createDirectedMicheline(value, reducedMeta)
             }
             is ContractEntrypointArgument.Sequence, is ContractEntrypointArgument.Map -> failWithValueMetaMismatch(value, meta)
         }
+
+    private fun createDirectedMicheline(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument): MichelineNode =
+        MichelinePrimitiveApplication(
+            meta.trace.directedPrim() ?: failWithInvalidType(meta),
+            args = listOf(
+                createMicheline(value, meta),
+            ),
+        )
 
     private fun createArgMicheline(value: ContractEntrypointArgument.Object, meta: MetaContractEntrypointArgument): MichelineNode? {
         val arg = value.extract(meta) ?: return null
