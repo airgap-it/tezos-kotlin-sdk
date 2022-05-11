@@ -36,6 +36,9 @@ public fun <T> MutableList<T>.consumeAt(indices: IntRange): MutableList<T> = mut
 }
 
 @InternalTezosSdkApi
+public fun <T> MutableList<T>.consume(predicate: (T) -> Boolean): T? = firstOrNull(predicate).also { remove(it) }
+
+@InternalTezosSdkApi
 public fun <T> List<T>.tail(): List<T> {
     val n = if (isNotEmpty()) size - 1 else 0
     return takeLast(n)

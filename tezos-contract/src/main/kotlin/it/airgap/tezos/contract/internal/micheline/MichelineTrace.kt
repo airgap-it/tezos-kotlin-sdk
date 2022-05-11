@@ -13,8 +13,8 @@ internal sealed interface MichelineTrace {
 
         override fun plus(other: MichelineTrace): MichelineTrace = Node(direction, next?.plus(other) ?: other)
 
-        enum class Direction {
-            Left, Right;
+        enum class Direction(val index: Int) {
+            Left(0), Right(1);
 
             companion object {
                 fun fromIndex(index: Int): Direction {

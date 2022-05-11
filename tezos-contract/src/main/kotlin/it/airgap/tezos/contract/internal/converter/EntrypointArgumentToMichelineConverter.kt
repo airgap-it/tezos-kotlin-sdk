@@ -33,7 +33,11 @@ internal class EntrypointArgumentToMichelineConverter(
     private fun createValueMicheline(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument.Value): MichelineNode =
         when (value) {
             is ContractEntrypointArgument.Value -> value.value ?: failWithValueMetaMismatch(value, meta)
-            is ContractEntrypointArgument.Object, is ContractEntrypointArgument.Sequence, is ContractEntrypointArgument.Map -> failWithValueMetaMismatch(value, meta)
+            is ContractEntrypointArgument.Object -> {
+                val value = value.elements.consume { meta.names.contains(it.name) } ?: failWithValueMetaMismatch(value, meta)
+                createMicheline(value, meta)
+            }
+            is ContractEntrypointArgument.Sequence, is ContractEntrypointArgument.Map -> failWithValueMetaMismatch(value, meta)
         }
 
 
@@ -48,7 +52,7 @@ internal class EntrypointArgumentToMichelineConverter(
     private fun createSequenceMicheline(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument.Sequence): MichelineNode = TODO()
     private fun createMapMicheline(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument.Map): MichelineNode = TODO()
 
-    internal fun createPairMicheline(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument.Object): MichelineNode =
+    private fun createPairMicheline(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument.Object): MichelineNode =
         when (value) {
             is ContractEntrypointArgument.Value -> if (value.value?.isPrim(MichelsonData.Pair) == true) value.value else failWithValueMetaMismatch(value, meta)
             is ContractEntrypointArgument.Object -> {
@@ -142,12 +146,50 @@ internal class EntrypointArgumentToMichelineConverter(
         when (value) {
             is ContractEntrypointArgument.Value -> if (value.value?.isPrim(MichelsonData.Pair) == true) value.value else failWithValueMetaMismatch(value, meta)
             is ContractEntrypointArgument.Object -> {
-                TODO()
+                val metaArgs = meta.elements.filter { it.trace.next == null }
+
+                when (metaArgs.size) {
+                    1 -> {
+                        val argMeta = metaArgs[0]
+                        val arg = argMeta.names.firstNotNullOfOrNull { name -> value.elements.consume { it.name == name } }
+                            ?: value.elements.consumeAt(0)
+                            ?: failWithValueMetaMismatch(value, meta)
+
+                        MichelinePrimitiveApplication(
+                            if (argMeta.trace.isLeft) MichelsonData.Left else MichelsonData.Right,
+                            args = listOf(
+                                createMicheline(arg, argMeta),
+                            ),
+                        )
+                    }
+                    else -> {
+                        val names = value.elements.mapNotNull { it.name }
+                        val requiredMeta = meta.elements.filter { m -> names.any { m.names.contains(it) } }
+
+                        if (requiredMeta.zipWithNext().any { !it.first.trace.hasSameDirection(it.second.trace) }) failWithValueMetaMismatch(value, meta)
+                        if (meta.type !is MichelinePrimitiveApplication) failWithValueMetaMismatch(value, meta)
+
+                        val direction = (requiredMeta.first().trace as? MichelineTrace.Node)?.direction ?: failWithValueMetaMismatch(value, meta)
+
+                        val reducedMeta = MetaContractEntrypointArgument.Object(
+                            meta.type.args[direction.index],
+                            meta.trace.next ?: MichelineTrace.Root(),
+                            requiredMeta.mapNotNull { it.relativeToNext() },
+                        )
+
+                        MichelinePrimitiveApplication(
+                            if (direction == MichelineTrace.Node.Direction.Left) MichelsonData.Left else MichelsonData.Right,
+                            args = listOf(
+                                createMicheline(value, reducedMeta),
+                            ),
+                        )
+                    }
+                }
             }
             is ContractEntrypointArgument.Sequence, is ContractEntrypointArgument.Map -> failWithValueMetaMismatch(value, meta)
         }
 
-    internal fun createMetaEntrypointArgument(type: MichelineNode, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument =
+    private fun createMetaEntrypointArgument(type: MichelineNode, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument =
         when (type) {
             is MichelinePrimitiveApplication -> createMetaEntrypointArgument(type, trace)
             else -> failWithInvalidType(type)
@@ -221,6 +263,13 @@ internal class EntrypointArgumentToMichelineConverter(
 
         return Pair(first, second)
     }
+
+    private fun MichelineTrace.hasSameDirection(other: MichelineTrace): Boolean =
+        when {
+            this is MichelineTrace.Root && other is MichelineTrace.Root -> true
+            this is MichelineTrace.Node && other is MichelineTrace.Node -> direction == other.direction
+            else -> false
+        }
 
     private val MichelineTrace.isLeft: Boolean
         get() = when (this) {
