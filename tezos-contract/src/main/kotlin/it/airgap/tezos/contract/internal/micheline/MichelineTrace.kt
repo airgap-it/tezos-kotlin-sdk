@@ -4,6 +4,8 @@ internal sealed interface MichelineTrace {
     val next: MichelineTrace?
     operator fun plus(other: MichelineTrace): MichelineTrace
 
+    fun hasNext(): Boolean = next != null
+
     class Root(override val next: MichelineTrace? = null) : MichelineTrace {
         override fun plus(other: MichelineTrace): MichelineTrace = Root(next?.plus(other) ?: other)
     }

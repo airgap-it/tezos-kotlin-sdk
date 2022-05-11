@@ -84,14 +84,29 @@ public class ContractEntrypoint internal constructor(
 public sealed interface ContractEntrypointArgument {
     public val name: String?
 
-    public class Value(public val value: MichelineNode? = null, override val name: String? = null) : ContractEntrypointArgument
+    public class Value(public val value: MichelineNode? = null, override val name: String? = null) : ContractEntrypointArgument {
+        public companion object {}
+    }
+
     public class Object(internal val elements: MutableList<ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
         public constructor(vararg elements: ContractEntrypointArgument, name: String? = null) : this(elements.toMutableList(), name)
+
+        internal val fields: Set<String> = elements.mapNotNull { it.name }.toSet()
+
+        public companion object {}
     }
+
     public class Sequence internal constructor(internal val elements: List<ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
         public constructor(vararg elements: ContractEntrypointArgument, name: String? = null) : this(elements.toList(), name)
+
+        public companion object {}
     }
+
     public class Map internal constructor(internal val map: kotlin.collections.Map<ContractEntrypointArgument, ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
         public constructor(vararg elements: Pair<ContractEntrypointArgument, ContractEntrypointArgument>, name: String? = null) : this(elements.toMap().toMutableMap(), name)
+
+        public companion object {}
     }
+
+    public companion object {}
 }
