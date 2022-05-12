@@ -1,8 +1,8 @@
 package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHashEncoded
-import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
+import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
 import it.airgap.tezos.rpc.type.operation.RpcBalanceUpdate
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -37,7 +37,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     open val contract: Address? = null
 
     @Transient
-    open val delegate: PublicKeyHashEncoded? = null
+    open val delegate: PublicKeyHash? = null
 
     @Transient
     open val cycle: Int? = null
@@ -49,7 +49,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     open val revelation: Boolean? = null
 
     @Transient
-    open val committer: BlindedPublicKeyHashEncoded? = null
+    open val committer: BlindedPublicKeyHash? = null
 
     abstract fun toTarget(): RpcBalanceUpdate
 
@@ -72,7 +72,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Freezer.KIND)
     data class Freezer(
         val category: Category,
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         override val cycle: Int,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
@@ -164,7 +164,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Burned.KIND)
     data class Burned(
         val category: Category,
-        override val delegate: @Contextual PublicKeyHashEncoded? = null,
+        override val delegate: @Contextual PublicKeyHash? = null,
         override val participation: Boolean? = null,
         override val revelation: Boolean? = null,
         @Serializable(with = LongSerializer::class) override val change: Long,
@@ -201,7 +201,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Commitment.KIND)
     data class Commitment(
         val category: Category,
-        override val committer: BlindedPublicKeyHashEncoded,
+        override val committer: BlindedPublicKeyHash,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {

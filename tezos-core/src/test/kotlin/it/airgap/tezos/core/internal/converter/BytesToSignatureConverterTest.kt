@@ -54,8 +54,8 @@ class BytesToSignatureConverterTest {
     fun `should convert bytes to SignatureEncoded`() {
         signaturesWithBytes.forEach {
             assertEquals(it.first, bytesToSignatureConverter.convert(it.second).encoded)
-            assertEquals(it.first, SignatureEncoded.fromBytes(it.second))
-            assertEquals(it.first, SignatureEncoded.fromBytes(it.second, bytesToSignatureConverter))
+            assertEquals(it.first, Signature.fromBytes(it.second))
+            assertEquals(it.first, Signature.fromBytes(it.second, bytesToSignatureConverter))
         }
     }
 
@@ -63,12 +63,12 @@ class BytesToSignatureConverterTest {
     fun `should fail to convert invalid bytes to SignatureEncoded`() {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToSignatureConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { SignatureEncoded.fromBytes(it) }
-            assertFailsWith<IllegalArgumentException> { SignatureEncoded.fromBytes(it, bytesToSignatureConverter) }
+            assertFailsWith<IllegalArgumentException> { Signature.fromBytes(it) }
+            assertFailsWith<IllegalArgumentException> { Signature.fromBytes(it, bytesToSignatureConverter) }
         }
     }
 
-    private val signaturesWithBytes: List<Pair<SignatureEncoded, ByteArray>>
+    private val signaturesWithBytes: List<Pair<Signature, ByteArray>>
         get() = listOf(
             Ed25519Signature("edsigu69u68mAZ4KhBDPWshZVCDhSgrzkc5Mgihxakzh7FceNgwdQqQYQM3pjN3b4gjrLVo5Dxre41mzCDt8JFtFytWLLnMmHfz") to "09f5cd8612f73faf982337ad4eb8cfd182e53751e7085ddb319842b6bffd1667ff5b00a9c80c243b16d47e94a5eb4941744f48d5bcf2d7cdb1269e545b0477955cd4021349".asHexString().toByteArray(),
             Secp256K1Signature("spsig1UdNgjqzaZxkbNyqVo3wm4Stoc4RXf6nybVGzANnKNHxTYBY8XGB2pgiVp5BYaYkLkmyaxMCq5xCsqCMDaFQWCeFBG2NNM") to "0d7365133fae67effa0c4429d50280b536259ddf1502b64cfde023d202947c16f7c6fbdd50e68e089be729f04fa51c8df1182adc9be9b2d1829013dd04d3b8971b51a99567".asHexString().toByteArray(),

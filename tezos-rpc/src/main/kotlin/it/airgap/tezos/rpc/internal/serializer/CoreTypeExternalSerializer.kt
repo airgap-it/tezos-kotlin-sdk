@@ -102,10 +102,10 @@ internal object TimestampMillisSerializer : KSerializer<Timestamp.Millis> {
 
 internal object AddressSerializer : BaseEncodedSerializer<Address>(Address.Companion::fromString, Address::class)
 internal object ImplicitAddressSerializer : BaseEncodedSerializer<ImplicitAddress>(ImplicitAddress.Companion::fromString, ImplicitAddress::class)
-internal object PublicKeyEncodedSerializer : BaseEncodedSerializer<PublicKeyEncoded>(PublicKeyEncoded.Companion::fromString, PublicKeyEncoded::class)
-internal object PublicKeyHashEncodedSerializer : BaseEncodedSerializer<PublicKeyHashEncoded>(PublicKeyHashEncoded.Companion::fromString, PublicKeyHashEncoded::class)
-internal object BlindedPublicKeyHashEncodedSerializer : BaseEncodedSerializer<BlindedPublicKeyHashEncoded>(BlindedPublicKeyHashEncoded.Companion::fromString, BlindedPublicKeyHashEncoded::class)
-internal object SignatureEncodedSerializer : BaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)
+internal object PublicKeyEncodedSerializer : BaseEncodedSerializer<PublicKey>(PublicKey.Companion::fromString, PublicKey::class)
+internal object PublicKeyHashEncodedSerializer : BaseEncodedSerializer<PublicKeyHash>(PublicKeyHash.Companion::fromString, PublicKeyHash::class)
+internal object BlindedPublicKeyHashEncodedSerializer : BaseEncodedSerializer<BlindedPublicKeyHash>(BlindedPublicKeyHash.Companion::fromString, BlindedPublicKeyHash::class)
+internal object SignatureEncodedSerializer : BaseEncodedSerializer<Signature>(Signature.Companion::fromString, Signature::class)
 
 internal object BlockHashSerializer : EncodedSerializer<BlockHash>(BlockHash, BlockHash::class)
 internal object BlockPayloadHashSerializer : EncodedSerializer<BlockPayloadHash>(BlockPayloadHash, BlockPayloadHash::class)

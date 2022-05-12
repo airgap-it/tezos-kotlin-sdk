@@ -436,7 +436,7 @@ public class OperationContentBytesCoder(
         requireConsumingKind(OperationContent.Reveal, bytes)
 
         return decodeManagerOperation(bytes) { source, fee, counter, gasLimit, storageLimit, bytes ->
-            val publicKey = PublicKeyEncoded.decodeConsumingFromBytes(bytes, publicKeyBytesCoder)
+            val publicKey = PublicKey.decodeConsumingFromBytes(bytes, publicKeyBytesCoder)
 
             OperationContent.Reveal(
                 source,

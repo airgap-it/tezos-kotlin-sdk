@@ -168,7 +168,7 @@ public sealed interface OperationContent {
         override val counter: ZarithNatural,
         override val gasLimit: ZarithNatural,
         override val storageLimit: ZarithNatural,
-        public val publicKey: PublicKeyEncoded,
+        public val publicKey: PublicKey,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 107U

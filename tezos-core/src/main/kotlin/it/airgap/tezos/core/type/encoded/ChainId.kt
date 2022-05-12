@@ -5,23 +5,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 /* Net(15) */
 
 @JvmInline
-public value class ChainId(override val base58: String) : Encoded, MetaEncoded<ChainId> {
+public value class ChainId(override val base58: String) : Encoded, MetaEncoded<ChainId, ChainId> {
 
     init {
         require(isValid(base58)) { "Invalid chain ID." }
     }
 
-    override val kind: MetaEncoded.Kind<ChainId>
+    override val kind: MetaEncoded.Kind<ChainId, ChainId>
         get() = Companion
 
     @InternalTezosSdkApi
-    override val meta: MetaEncoded<*>
+    override val meta: MetaEncoded<*, *>
         get() = this
 
-    override val encoded: Encoded
+    override val encoded: ChainId
         get() = this
 
-    public companion object : MetaEncoded.Kind<ChainId> {
+    public companion object : MetaEncoded.Kind<ChainId, ChainId> {
         override val base58Prefix: String = "Net"
         override val base58Bytes: ByteArray = byteArrayOf(87, 82, 0)
         override val base58Length: Int = 15

@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* edsig(99) */
 
 @JvmInline
-public value class Ed25519Signature(override val base58: String) : SignatureEncoded, MetaSignatureEncoded<Ed25519Signature> {
+public value class Ed25519Signature(override val base58: String) : Signature, MetaSignature<Ed25519Signature, Ed25519Signature> {
 
     init {
         require(isValid(base58)) { "Invalid Ed25519 signature." }
     }
 
-    override val kind: MetaSignatureEncoded.Kind<Ed25519Signature>
+    override val kind: MetaSignature.Kind<Ed25519Signature, Ed25519Signature>
         get() = Companion
 
-    override val meta: MetaSignatureEncoded<*>
+    override val meta: MetaSignature<*, *>
         get() = this
 
-    override val encoded: SignatureEncoded
+    override val encoded: Ed25519Signature
         get() = this
 
-    public companion object : MetaSignatureEncoded.Kind<Ed25519Signature> {
+    public companion object : MetaSignature.Kind<Ed25519Signature, Ed25519Signature> {
         override val base58Prefix: String = "edsig"
         override val base58Bytes: ByteArray = byteArrayOf(9, (245).toByte(), (205).toByte(), (134).toByte(), 18)
         override val base58Length: Int = 99

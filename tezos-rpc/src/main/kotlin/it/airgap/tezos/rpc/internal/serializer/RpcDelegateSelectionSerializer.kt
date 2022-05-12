@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.KListListSerializer
 import it.airgap.tezos.rpc.internal.utils.KStringSerializer
@@ -46,7 +46,7 @@ internal object RpcRandomDelegateSelectionSerializer : KStringSerializer<RpcDele
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-internal object RpcRoundRobinOverDelegateSelectionSerializer : KListListSerializer<RpcDelegateSelection.RoundRobinOver, PublicKeyEncoded>(ContextualSerializer(PublicKeyEncoded::class)) {
-    override fun valueFromListList(list: List<List<PublicKeyEncoded>>): RpcDelegateSelection.RoundRobinOver = RpcDelegateSelection.RoundRobinOver(list)
-    override fun valueToListList(value: RpcDelegateSelection.RoundRobinOver): List<List<PublicKeyEncoded>> = value.publicKeys
+internal object RpcRoundRobinOverDelegateSelectionSerializer : KListListSerializer<RpcDelegateSelection.RoundRobinOver, PublicKey>(ContextualSerializer(PublicKey::class)) {
+    override fun valueFromListList(list: List<List<PublicKey>>): RpcDelegateSelection.RoundRobinOver = RpcDelegateSelection.RoundRobinOver(list)
+    override fun valueToListList(value: RpcDelegateSelection.RoundRobinOver): List<List<PublicKey>> = value.publicKeys
 }

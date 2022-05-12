@@ -13,7 +13,7 @@ import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKey
 import org.junit.After
 import org.junit.Before
@@ -63,8 +63,8 @@ class PublicKeyBytesCoderTest {
         keysWithBytes.forEach {
             assertEquals(it.first, publicKeyBytesCoder.decode(it.second).encoded)
             assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()).encoded)
-            assertEquals(it.first, PublicKeyEncoded.decodeFromBytes(it.second, publicKeyBytesCoder))
-            assertEquals(it.first, PublicKeyEncoded.decodeConsumingFromBytes(it.second.toMutableList(), publicKeyBytesCoder))
+            assertEquals(it.first, PublicKey.decodeFromBytes(it.second, publicKeyBytesCoder))
+            assertEquals(it.first, PublicKey.decodeConsumingFromBytes(it.second.toMutableList(), publicKeyBytesCoder))
         }
     }
 
@@ -79,16 +79,16 @@ class PublicKeyBytesCoderTest {
             ),
         ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> { publicKeyBytesCoder.decode(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyEncoded.decodeFromBytes(it, publicKeyBytesCoder) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.decodeFromBytes(it, publicKeyBytesCoder) }
         }
 
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { publicKeyBytesCoder.decodeConsuming(it.toMutableList()) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyEncoded.decodeConsumingFromBytes(it.toMutableList(), publicKeyBytesCoder) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.decodeConsumingFromBytes(it.toMutableList(), publicKeyBytesCoder) }
         }
     }
 
-    private val keysWithBytes: List<Pair<PublicKeyEncoded, ByteArray>>
+    private val keysWithBytes: List<Pair<PublicKey, ByteArray>>
         get() = listOf(
             Ed25519PublicKey("edpkuHhTYggbo1d3vRJTtoKy9hFnZGc8Vpr6qEzbZMXWV69odaM3a4") to "0055172873cf63b37a6e5b4ef3058fe13bd1885419325730cadc59fa1a0bdf7273".asHexString().toByteArray(),
             Ed25519PublicKey("edpkuD7yUDwnwVyThg8s3THVTem2cvFSub7iJjf4zXMqxoHPcBE1dD") to "004ab2761a1c7560400d0e3c9d26dc14e6368cd33854959e5524855ade324244be".asHexString().toByteArray(),

@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* spesk(88) */
 
 @JvmInline
-public value class Secp256K1EncryptedSecretKey(override val base58: String) : EncryptedSecretKeyEncoded, MetaEncryptedSecretKeyEncoded<Secp256K1EncryptedSecretKey> {
+public value class Secp256K1EncryptedSecretKey(override val base58: String) : EncryptedSecretKey, MetaEncryptedSecretKey<Secp256K1EncryptedSecretKey, Secp256K1EncryptedSecretKey> {
 
     init {
         require(isValid(base58)) { "Invalid secp256k1 encrypted secret key." }
     }
 
-    override val kind: MetaEncryptedSecretKeyEncoded.Kind<Secp256K1EncryptedSecretKey>
+    override val kind: MetaEncryptedSecretKey.Kind<Secp256K1EncryptedSecretKey, Secp256K1EncryptedSecretKey>
         get() = Companion
 
-    override val meta: MetaEncryptedSecretKeyEncoded<*>
+    override val meta: MetaEncryptedSecretKey<*, *>
         get() = this
 
-    override val encoded: EncryptedSecretKeyEncoded
+    override val encoded: Secp256K1EncryptedSecretKey
         get() = this
 
-    public companion object : MetaEncryptedSecretKeyEncoded.Kind<Secp256K1EncryptedSecretKey> {
+    public companion object : MetaEncryptedSecretKey.Kind<Secp256K1EncryptedSecretKey, Secp256K1EncryptedSecretKey> {
         override val base58Prefix: String = "spesk"
         override val base58Bytes: ByteArray = byteArrayOf(9, (237).toByte(), (241).toByte(), (174).toByte(), (150).toByte())
         override val base58Length: Int = 88

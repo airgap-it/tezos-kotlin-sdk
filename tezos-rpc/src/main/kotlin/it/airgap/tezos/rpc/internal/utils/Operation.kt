@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import it.airgap.tezos.core.type.encoded.Signature
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.rpc.asOperationContent
@@ -20,9 +20,9 @@ internal fun Operation.updateWith(rpcContents: List<RpcOperationContent>, operat
     }
 }
 
-internal val Operation.signatureOrPlaceholder: SignatureEncoded
+internal val Operation.signatureOrPlaceholder: Signature
     get() = when (this) {
-        is Operation.Unsigned -> SignatureEncoded.placeholder
+        is Operation.Unsigned -> Signature.placeholder
         is Operation.Signed -> signature
     }
 

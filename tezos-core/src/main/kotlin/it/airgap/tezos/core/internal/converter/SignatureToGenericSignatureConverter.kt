@@ -1,18 +1,17 @@
 package it.airgap.tezos.core.internal.converter
 
-import it.airgap.tezos.core.decodeFromBytes
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
 import it.airgap.tezos.core.internal.coder.SignatureBytesCoder
 import it.airgap.tezos.core.type.encoded.GenericSignature
-import it.airgap.tezos.core.type.encoded.MetaSignatureEncoded
+import it.airgap.tezos.core.type.encoded.MetaSignature
+import it.airgap.tezos.core.type.encoded.Signature
 
-@InternalTezosSdkApi
-public class SignatureToGenericSignatureConverter(
+internal class SignatureToGenericSignatureConverter(
     private val signatureBytesCoder: SignatureBytesCoder,
     private val encodedBytesCoder: EncodedBytesCoder,
-) : Converter<MetaSignatureEncoded<*>, GenericSignature> {
-    override fun convert(value: MetaSignatureEncoded<*>): GenericSignature {
+) : Converter<Signature, GenericSignature> {
+    override fun convert(value: Signature): GenericSignature {
         if (value is GenericSignature) return value
 
         val bytes = signatureBytesCoder.encode(value)

@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.type.operation
 
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.rpc.type.RpcError
@@ -375,7 +375,7 @@ public sealed class RpcInternalOperationResult {
     public abstract val result: RpcOperationResult
 
     @Transient
-    public open val publicKey: PublicKeyEncoded? = null
+    public open val publicKey: PublicKey? = null
 
     @Transient
     public open val amount: String? = null
@@ -407,7 +407,7 @@ public sealed class RpcInternalOperationResult {
     public data class Reveal(
         override val source: @Contextual Address,
         override val nonce: UShort,
-        @SerialName("public_key") override val publicKey: @Contextual PublicKeyEncoded,
+        @SerialName("public_key") override val publicKey: @Contextual PublicKey,
         override val result: RpcOperationResult.Reveal,
     ) : RpcInternalOperationResult() {
         public companion object {

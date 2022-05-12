@@ -11,25 +11,25 @@ import it.airgap.tezos.operation.internal.signer.OperationSigner
 // -- Operation --
 
 public fun <T : Operation> T.sign(
-    key: SecretKeyEncoded,
+    key: SecretKey,
     operationSigner: OperationSigner = TezosSdk.instance.dependencyRegistry.operation().operationSigner,
 ): Operation.Signed = Operation.Signed(branch, contents, operationSigner.sign(this, key))
 
 public fun Operation.Signed.verify(
-    key: PublicKeyEncoded,
+    key: PublicKey,
     operationSigner: OperationSigner = TezosSdk.instance.dependencyRegistry.operation().operationSigner,
 ): Boolean = operationSigner.verify(this, signature, key)
 
 // -- SecretKeyEncoded --
 
-public fun SecretKeyEncoded.sign(
+public fun SecretKey.sign(
     operation: Operation,
     operationSigner: OperationSigner = TezosSdk.instance.dependencyRegistry.operation().operationSigner,
-): SignatureEncoded = operationSigner.sign(operation, this)
+): Signature = operationSigner.sign(operation, this)
 
 // -- PublicKeyEncoded --
 
-public fun <T : PublicKeyEncoded> T.verify(
+public fun <T : PublicKey> T.verify(
     operation: Operation.Signed,
     operationSigner: OperationSigner = TezosSdk.instance.dependencyRegistry.operation().operationSigner,
 ): Boolean = operationSigner.verify(operation, operation.signature, this)

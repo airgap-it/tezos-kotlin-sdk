@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* P(51) */
 
 @JvmInline
-public value class ProtocolHash(override val base58: String) : Encoded, MetaEncoded<ProtocolHash> {
+public value class ProtocolHash(override val base58: String) : Encoded, MetaEncoded<ProtocolHash, ProtocolHash> {
 
     init {
         require(isValid(base58)) { "Invalid protocol hash." }
     }
 
-    override val kind: MetaEncoded.Kind<ProtocolHash>
+    override val kind: MetaEncoded.Kind<ProtocolHash, ProtocolHash>
         get() = Companion
 
-    override val meta: MetaEncoded<*>
+    override val meta: MetaEncoded<*, *>
         get() = this
 
-    override val encoded: Encoded
+    override val encoded: ProtocolHash
         get() = this
 
-    public companion object : MetaEncoded.Kind<ProtocolHash> {
+    public companion object : MetaEncoded.Kind<ProtocolHash, ProtocolHash> {
         override val base58Prefix: String = "P"
         override val base58Bytes: ByteArray = byteArrayOf(2, (170).toByte())
         override val base58Length: Int = 51

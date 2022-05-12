@@ -13,7 +13,7 @@ import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.type.encoded.Ed25519Signature
 import it.airgap.tezos.core.type.encoded.GenericSignature
-import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import it.airgap.tezos.core.type.encoded.Signature
 import mockTezosSdk
 import org.junit.After
 import org.junit.Before
@@ -64,7 +64,7 @@ class GenericSignatureToEd25519SignatureConverterTest {
         }
     }
 
-    private val signaturesWithGenerics: List<Pair<SignatureEncoded, GenericSignature>>
+    private val signaturesWithGenerics: List<Pair<Signature, GenericSignature>>
         get() = listOf(
             Ed25519Signature("edsigtczTq2EC9VQNRRT53gzcs25DJFg1iZeTzQxY7jBtjradZb8qqZaqzAYSbVWvg1abvqFpQCV8TgqotDwckJiTJ9fJ2eYESb") to GenericSignature("sigTAzhy1HsZDLNETmuf9RuinhXRb5jvmscjCoPPBujWZgFmCFLffku7JXYtu8aYQFVHnCUghmd4t39RuR6ANV76bCCYTR9u"),
         )

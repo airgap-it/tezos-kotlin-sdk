@@ -9,22 +9,22 @@ import it.airgap.tezos.core.type.encoded.*
 import kotlin.math.min
 
 @InternalTezosSdkApi
-public class SignatureBytesCoder(encodedBytesCoder: EncodedBytesCoder) : EncodedGroupBytesCoder<MetaSignatureEncoded<*>>(encodedBytesCoder) {
-    override fun tag(encoded: MetaSignatureEncoded<*>): EncodedTag<MetaEncoded.Kind<MetaSignatureEncoded<*>>> = SignatureTag
-    override fun tag(bytes: ByteArray): EncodedTag<MetaEncoded.Kind<MetaSignatureEncoded<*>>>? = SignatureTag.recognize(bytes)
-    override fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<MetaEncoded.Kind<MetaSignatureEncoded<*>>>? = SignatureTag.recognize(bytes)?.also { bytes.consumeUntil(it.value.size) }
+public class SignatureBytesCoder(encodedBytesCoder: EncodedBytesCoder) : EncodedGroupBytesCoder<MetaSignature<*>>(encodedBytesCoder) {
+    override fun tag(encoded: MetaSignature<*>): EncodedTag<MetaEncoded.Kind<MetaSignature<*>>> = SignatureTag
+    override fun tag(bytes: ByteArray): EncodedTag<MetaEncoded.Kind<MetaSignature<*>>>? = SignatureTag.recognize(bytes)
+    override fun tagConsuming(bytes: MutableList<Byte>): EncodedTag<MetaEncoded.Kind<MetaSignature<*>>>? = SignatureTag.recognize(bytes)?.also { bytes.consumeUntil(it.value.size) }
 
-    override fun failWithInvalidValue(value: MetaSignatureEncoded<*>): Nothing = failWithUnknownSignature(value)
-    private fun failWithUnknownSignature(value: MetaSignatureEncoded<*>): Nothing = failWithIllegalArgument("Unknown Tezos signature `$value`.")
+    override fun failWithInvalidValue(value: MetaSignature<*>): Nothing = failWithUnknownSignature(value)
+    private fun failWithUnknownSignature(value: MetaSignature<*>): Nothing = failWithIllegalArgument("Unknown Tezos signature `$value`.")
 
     override fun failWithInvalidValue(value: ByteArray): Nothing = failWithInvalidSignatureBytes(value.joinToString(prefix = "[", postfix = "]"))
     override fun failWithInvalidValue(value: MutableList<Byte>): Nothing = failWithInvalidSignatureBytes(value.joinToString(prefix = "[", postfix = "]"))
     private fun failWithInvalidSignatureBytes(value: String): Nothing = failWithIllegalArgument("Bytes `$value` are not valid Tezos signature bytes.")
 }
 
-private object SignatureTag : EncodedTag<MetaSignatureEncoded.Kind<*>> {
+private object SignatureTag : EncodedTag<MetaSignature.Kind<*>> {
     override val value: ByteArray = byteArrayOf()
-    override val kind: MetaSignatureEncoded.Kind<*> = GenericSignature
+    override val kind: MetaSignature.Kind<*> = GenericSignature
 
     private fun isValid(bytes: ByteArray): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until bytes.size))
     private fun isValid(bytes: MutableList<Byte>): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until min(value.size + kind.bytesLength, bytes.size)))

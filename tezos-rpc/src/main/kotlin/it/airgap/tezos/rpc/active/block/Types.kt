@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.active.block
 
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
@@ -86,7 +86,7 @@ public value class GetContractEntrypointResponse(public val entrypoint: Michelin
 
 @Serializable
 @JvmInline
-public value class GetContractManagerKeyResponse(public val manager: @Contextual PublicKeyEncoded? = null)
+public value class GetContractManagerKeyResponse(public val manager: @Contextual PublicKey? = null)
 
 // -- ../<block_id>/context/contracts/<contract_id>/script --
 

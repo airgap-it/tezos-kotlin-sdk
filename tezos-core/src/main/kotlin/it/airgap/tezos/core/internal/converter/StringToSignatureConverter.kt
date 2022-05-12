@@ -1,12 +1,10 @@
 package it.airgap.tezos.core.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.*
 
-@InternalTezosSdkApi
-public class StringToSignatureConverter : StringToEncodedGroupedConverter<MetaSignatureEncoded<*>>() {
-    override val kinds: List<MetaEncoded.Kind<MetaSignatureEncoded<*>>>
+internal class StringToSignatureConverter : StringToEncodedGroupedConverter<Signature, MetaSignature<*, Signature>>() {
+    override val kinds: List<MetaEncoded.Kind<MetaSignature<*, Signature>, Signature>>
         get() = listOf(Ed25519Signature, Secp256K1Signature, P256Signature, GenericSignature)
 
     override fun failWithInvalidValue(value: String): Nothing = failWithInvalidPublicKey(value)

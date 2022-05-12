@@ -17,16 +17,16 @@ public class OperationSigner(
     private val operationEd25519Signer: OperationEd25519Signer,
     private val operationSecp256K1Signer: OperationSecp256K1Signer,
     private val operationP256Signer: OperationP256Signer,
-) : Signer<Operation, SecretKeyEncoded, PublicKeyEncoded, SignatureEncoded> {
+) : Signer<Operation, SecretKey, PublicKey, Signature> {
 
-    override fun sign(message: Operation, key: SecretKeyEncoded): SignatureEncoded =
+    override fun sign(message: Operation, key: SecretKey): Signature =
         when (key) {
             is Ed25519SecretKey -> operationEd25519Signer.sign(message, key)
             is Secp256K1SecretKey -> operationSecp256K1Signer.sign(message, key)
             is P256SecretKey -> operationP256Signer.sign(message, key)
         }
 
-    override fun verify(message: Operation, signature: SignatureEncoded, key: PublicKeyEncoded): Boolean =
+    override fun verify(message: Operation, signature: Signature, key: PublicKey): Boolean =
         when {
             signature is Ed25519Signature && key is Ed25519PublicKey -> operationEd25519Signer.verify(message, signature, key)
             signature is Secp256K1Signature && key is Secp256K1PublicKey -> operationSecp256K1Signer.verify(message, signature, key)

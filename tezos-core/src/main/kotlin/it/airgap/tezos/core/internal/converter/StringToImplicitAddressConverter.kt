@@ -1,12 +1,10 @@
 package it.airgap.tezos.core.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.*
 
-@InternalTezosSdkApi
-public class StringToImplicitAddressConverter : StringToEncodedGroupedConverter<MetaImplicitAddress<*>>() {
-    override val kinds: List<MetaEncoded.Kind<MetaImplicitAddress<*>>>
+internal class StringToImplicitAddressConverter : StringToEncodedGroupedConverter<ImplicitAddress, MetaImplicitAddress<*, ImplicitAddress>>() {
+    override val kinds: List<MetaEncoded.Kind<MetaImplicitAddress<*, ImplicitAddress>, ImplicitAddress>>
         get() = listOf(Ed25519PublicKeyHash, Secp256K1PublicKeyHash, P256PublicKeyHash)
 
     override fun failWithInvalidValue(value: String): Nothing = failWithInvalidImplicitAddress(value)

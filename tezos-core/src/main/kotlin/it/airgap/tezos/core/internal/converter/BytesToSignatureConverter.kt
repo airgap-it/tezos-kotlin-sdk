@@ -1,13 +1,11 @@
 package it.airgap.tezos.core.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.*
 
-@InternalTezosSdkApi
-public class BytesToSignatureConverter(base58Check: Base58Check) : BytesToEncodedGroupedConverter<MetaSignatureEncoded<*>>(base58Check) {
-    override val kinds: List<MetaEncoded.Kind<MetaSignatureEncoded<*>>>
+internal class BytesToSignatureConverter(base58Check: Base58Check) : BytesToEncodedGroupedConverter<Signature, MetaSignature<*, Signature>>(base58Check) {
+    override val kinds: List<MetaEncoded.Kind<MetaSignature<*, Signature>, Signature>>
         get() = listOf(GenericSignature, Ed25519Signature, Secp256K1Signature, P256Signature)
 
     override fun failWithInvalidValue(value: ByteArray): Nothing = failWithInvalidSignatureBytes(value)

@@ -3,6 +3,7 @@ package it.airgap.tezos.core.internal.di
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
 import it.airgap.tezos.core.internal.converter.*
+import it.airgap.tezos.core.type.encoded.*
 
 internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegistry) : ScopedDependencyRegistry, DependencyRegistry by dependencyRegistry {
 
@@ -16,8 +17,7 @@ internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegist
     override val publicKeyBytesCoder: PublicKeyBytesCoder by lazy { PublicKeyBytesCoder(encodedBytesCoder) }
     override val signatureBytesCoder: SignatureBytesCoder by lazy { SignatureBytesCoder(encodedBytesCoder) }
 
-    override val zarithNaturalBytesCoder: ZarithNaturalBytesCoder =
-        ZarithNaturalBytesCoder()
+    override val zarithNaturalBytesCoder: ZarithNaturalBytesCoder = ZarithNaturalBytesCoder()
     override val zarithIntegerBytesCoder: ZarithIntegerBytesCoder by lazy { ZarithIntegerBytesCoder(zarithNaturalBytesCoder) }
 
     override val tezBytesCoder: TezBytesCoder by lazy { TezBytesCoder(zarithNaturalBytesCoder) }
@@ -28,28 +28,28 @@ internal class CoreScopedDependencyRegistry(dependencyRegistry: DependencyRegist
 
     // -- converter --
 
-    override val bytesToAddressConverter: BytesToAddressConverter by lazy { BytesToAddressConverter(base58Check) }
-    override val stringToAddressConverter: StringToAddressConverter = StringToAddressConverter()
+    override val bytesToAddressConverter: Converter<ByteArray, Address> by lazy { BytesToAddressConverter(base58Check) }
+    override val stringToAddressConverter: Converter<String, Address> by lazy { StringToAddressConverter() }
 
-    override val bytesToImplicitAddressConverter: BytesToImplicitAddressConverter by lazy { BytesToImplicitAddressConverter(base58Check) }
-    override val stringToImplicitAddressConverter: StringToImplicitAddressConverter = StringToImplicitAddressConverter()
+    override val bytesToImplicitAddressConverter: Converter<ByteArray, ImplicitAddress> by lazy { BytesToImplicitAddressConverter(base58Check) }
+    override val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazy { StringToImplicitAddressConverter() }
 
-    override val bytesToPublicKeyConverter: BytesToPublicKeyConverter by lazy { BytesToPublicKeyConverter(base58Check) }
-    override val stringToPublicKeyConverter: StringToPublicKeyConverter = StringToPublicKeyConverter()
+    override val bytesToPublicKeyConverter: Converter<ByteArray, PublicKey> by lazy { BytesToPublicKeyConverter(base58Check) }
+    override val stringToPublicKeyConverter: Converter<String, PublicKey> = StringToPublicKeyConverter()
 
-    override val bytesToPublicKeyHashConverter: BytesToPublicKeyHashConverter by lazy { BytesToPublicKeyHashConverter(base58Check) }
-    override val stringToPublicKeyHashConverter: StringToPublicKeyHashConverter = StringToPublicKeyHashConverter()
+    override val bytesToPublicKeyHashConverter: Converter<ByteArray, PublicKeyHash> by lazy { BytesToPublicKeyHashConverter(base58Check) }
+    override val stringToPublicKeyHashConverter: Converter<String, PublicKeyHash> = StringToPublicKeyHashConverter()
 
-    override val bytesToBlindedPublicKeyHashConverter: BytesToBlindedPublicKeyHashConverter by lazy { BytesToBlindedPublicKeyHashConverter(base58Check) }
-    override val stringToBlindedPublicKeyHashConverter: StringToBlindedPublicKeyHashConverter = StringToBlindedPublicKeyHashConverter()
+    override val bytesToBlindedPublicKeyHashConverter: Converter<ByteArray, BlindedPublicKeyHash> by lazy { BytesToBlindedPublicKeyHashConverter(base58Check) }
+    override val stringToBlindedPublicKeyHashConverter: Converter<String, BlindedPublicKeyHash> = StringToBlindedPublicKeyHashConverter()
 
-    override val bytesToSignatureConverter: BytesToSignatureConverter by lazy { BytesToSignatureConverter(base58Check) }
-    override val stringToSignatureConverter: StringToSignatureConverter = StringToSignatureConverter()
+    override val bytesToSignatureConverter: Converter<ByteArray, Signature> by lazy { BytesToSignatureConverter(base58Check) }
+    override val stringToSignatureConverter: Converter<String, Signature> = StringToSignatureConverter()
 
-    override val signatureToGenericSignatureConverter: SignatureToGenericSignatureConverter by lazy { SignatureToGenericSignatureConverter(signatureBytesCoder, encodedBytesCoder) }
-    override val genericSignatureToEd25519SignatureConverter: GenericSignatureToEd25519SignatureConverter by lazy { GenericSignatureToEd25519SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
-    override val genericSignatureToSecp256K1SignatureConverter: GenericSignatureToSecp256K1SignatureConverter by lazy { GenericSignatureToSecp256K1SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
-    override val genericSignatureToP256SignatureConverter: GenericSignatureToP256SignatureConverter by lazy { GenericSignatureToP256SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
+    override val signatureToGenericSignatureConverter: Converter<Signature, GenericSignature> by lazy { SignatureToGenericSignatureConverter(signatureBytesCoder, encodedBytesCoder) }
+    override val genericSignatureToEd25519SignatureConverter: Converter<GenericSignature, Ed25519Signature> by lazy { GenericSignatureToEd25519SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
+    override val genericSignatureToSecp256K1SignatureConverter: Converter<GenericSignature, Secp256K1Signature> by lazy { GenericSignatureToSecp256K1SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
+    override val genericSignatureToP256SignatureConverter: Converter<GenericSignature, P256Signature> by lazy { GenericSignatureToP256SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
 }
 
 @InternalTezosSdkApi

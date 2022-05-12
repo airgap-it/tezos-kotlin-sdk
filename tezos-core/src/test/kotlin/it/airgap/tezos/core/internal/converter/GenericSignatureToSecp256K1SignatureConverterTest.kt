@@ -13,7 +13,7 @@ import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.Secp256K1Signature
-import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import it.airgap.tezos.core.type.encoded.Signature
 import mockTezosSdk
 import org.junit.After
 import org.junit.Before
@@ -64,7 +64,7 @@ class GenericSignatureToSecp256K1SignatureConverterTest {
         }
     }
 
-    private val signaturesWithGenerics: List<Pair<SignatureEncoded, GenericSignature>>
+    private val signaturesWithGenerics: List<Pair<Signature, GenericSignature>>
         get() = listOf(
             Secp256K1Signature("spsig1PptyKUAGumWN9qs9aW2MafGp8kXekDAzEPCpoJUUPjVzQwmKdNBti5CA3nMTVcUaM3dcS2JSQwUNGtbYvHbSeU5eTTK6Z") to GenericSignature("sigg1DeFruoZoMyyr7BRwshfytuJxxagaUWfFt419AfVonZMHx94HowabLTgDGQ6YcVdJUsUAg1GnkGzBV33c6XRvyAQ3tby"),
         )

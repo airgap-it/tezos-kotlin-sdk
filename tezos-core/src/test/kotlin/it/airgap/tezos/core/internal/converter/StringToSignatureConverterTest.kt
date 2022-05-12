@@ -40,8 +40,8 @@ class StringToSignatureConverterTest {
     fun `should convert string to SignatureEncoded`() {
         signaturesWithStrings.forEach {
             assertEquals(it.first, stringToSignatureConverter.convert(it.second).encoded)
-            assertEquals(it.first, SignatureEncoded.fromString(it.second))
-            assertEquals(it.first, SignatureEncoded.fromString(it.second, stringToSignatureConverter))
+            assertEquals(it.first, Signature.fromString(it.second))
+            assertEquals(it.first, Signature.fromString(it.second, stringToSignatureConverter))
         }
     }
 
@@ -49,12 +49,12 @@ class StringToSignatureConverterTest {
     fun `should fail to convert invalid string to SignatureEncoded`() {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToSignatureConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { SignatureEncoded.fromString(it) }
-            assertFailsWith<IllegalArgumentException> { SignatureEncoded.fromString(it, stringToSignatureConverter) }
+            assertFailsWith<IllegalArgumentException> { Signature.fromString(it) }
+            assertFailsWith<IllegalArgumentException> { Signature.fromString(it, stringToSignatureConverter) }
         }
     }
 
-    private val signaturesWithStrings: List<Pair<SignatureEncoded, String>>
+    private val signaturesWithStrings: List<Pair<Signature, String>>
         get() = listOf(
             Ed25519Signature("edsigu69u68mAZ4KhBDPWshZVCDhSgrzkc5Mgihxakzh7FceNgwdQqQYQM3pjN3b4gjrLVo5Dxre41mzCDt8JFtFytWLLnMmHfz") to "edsigu69u68mAZ4KhBDPWshZVCDhSgrzkc5Mgihxakzh7FceNgwdQqQYQM3pjN3b4gjrLVo5Dxre41mzCDt8JFtFytWLLnMmHfz",
             Secp256K1Signature("spsig1UdNgjqzaZxkbNyqVo3wm4Stoc4RXf6nybVGzANnKNHxTYBY8XGB2pgiVp5BYaYkLkmyaxMCq5xCsqCMDaFQWCeFBG2NNM") to "spsig1UdNgjqzaZxkbNyqVo3wm4Stoc4RXf6nybVGzANnKNHxTYBY8XGB2pgiVp5BYaYkLkmyaxMCq5xCsqCMDaFQWCeFBG2NNM",

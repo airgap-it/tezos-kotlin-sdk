@@ -8,7 +8,7 @@ import it.airgap.tezos.core.fromString
 import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKey
 import mockTezosSdk
 import org.junit.After
@@ -43,8 +43,8 @@ class StringToPublicKeyConverterTest {
     fun `should convert string to PublicKeyEncoded`() {
         publicKeysWithStrings.forEach {
             assertEquals(it.first, stringToPublicKeyConverter.convert(it.second).encoded)
-            assertEquals(it.first, PublicKeyEncoded.fromString(it.second))
-            assertEquals(it.first, PublicKeyEncoded.fromString(it.second, stringToPublicKeyConverter))
+            assertEquals(it.first, PublicKey.fromString(it.second))
+            assertEquals(it.first, PublicKey.fromString(it.second, stringToPublicKeyConverter))
         }
     }
 
@@ -52,12 +52,12 @@ class StringToPublicKeyConverterTest {
     fun `should fail to convert invalid string to PublicKeyEncoded`() {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToPublicKeyConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyEncoded.fromString(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyEncoded.fromString(it, stringToPublicKeyConverter) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it, stringToPublicKeyConverter) }
         }
     }
 
-    private val publicKeysWithStrings: List<Pair<PublicKeyEncoded, String>>
+    private val publicKeysWithStrings: List<Pair<PublicKey, String>>
         get() = listOf(
             Ed25519PublicKey("edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk") to "edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk",
             Secp256K1PublicKey("sppk9yNXbVZv1ByJq5ENkKszqiGXbvhVYymJM8DXPEqXTmKssW6nBP2") to "sppk9yNXbVZv1ByJq5ENkKszqiGXbvhVYymJM8DXPEqXTmKssW6nBP2",

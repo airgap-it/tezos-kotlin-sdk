@@ -12,7 +12,7 @@ import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKey
 import mockTezosSdk
 import org.junit.After
@@ -57,8 +57,8 @@ class BytesToPublicKeyConverterTest {
     fun `should convert bytes to PublicKeyEncoded`() {
         publicKeysWithBytes.forEach {
             assertEquals(it.first, bytesToPublicKeyConverter.convert(it.second).encoded)
-            assertEquals(it.first, PublicKeyEncoded.fromBytes(it.second))
-            assertEquals(it.first, PublicKeyEncoded.fromBytes(it.second, bytesToPublicKeyConverter))
+            assertEquals(it.first, PublicKey.fromBytes(it.second))
+            assertEquals(it.first, PublicKey.fromBytes(it.second, bytesToPublicKeyConverter))
         }
     }
 
@@ -66,12 +66,12 @@ class BytesToPublicKeyConverterTest {
     fun `should fail to convert invalid bytes to PublicKeyEncoded`() {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToPublicKeyConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyEncoded.fromBytes(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyEncoded.fromBytes(it, bytesToPublicKeyConverter) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.fromBytes(it) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.fromBytes(it, bytesToPublicKeyConverter) }
         }
     }
 
-    private val publicKeysWithBytes: List<Pair<PublicKeyEncoded, ByteArray>>
+    private val publicKeysWithBytes: List<Pair<PublicKey, ByteArray>>
         get() = listOf(
             Ed25519PublicKey("edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk") to "0d0f25d97ed5fe9bff28a71b682400b1f83348e9a4669e6fae70d840cf794d9e222243a7".asHexString().toByteArray(),
             Ed25519PublicKey("edpkuc5nnH2rhy3HpoPTeAfLLGTMKX7PvCaBgrudEBFBQNWWSpc1vk") to "7ed5fe9bff28a71b682400b1f83348e9a4669e6fae70d840cf794d9e222243a7".asHexString().toByteArray(),

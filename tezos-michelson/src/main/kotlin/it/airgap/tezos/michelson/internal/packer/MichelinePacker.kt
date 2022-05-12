@@ -196,10 +196,10 @@ public class MichelinePacker(
         prePackStringToBytes(value, schema) { ImplicitAddress.fromString(it, stringToImplicitAddressConverter).encodeToBytes(implicitAddressBytesCoder) }
 
     private fun prePackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { PublicKeyEncoded.fromString(it, stringToPublicKeyConverter).encodeToBytes(publicKeyBytesCoder) }
+        prePackStringToBytes(value, schema) { PublicKey.fromString(it, stringToPublicKeyConverter).encodeToBytes(publicKeyBytesCoder) }
 
     private fun prePackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { SignatureEncoded.fromString(it, stringToSignatureConverter).encodeToBytes(signatureBytesCoder) }
+        prePackStringToBytes(value, schema) { Signature.fromString(it, stringToSignatureConverter).encodeToBytes(signatureBytesCoder) }
 
     private fun prePackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
         prePackStringToInt(value, schema) { timestampBigIntCoder.encode(Timestamp.Rfc3339(it)) }
@@ -408,10 +408,10 @@ public class MichelinePacker(
         postUnpackBytesToString(value, schema) { ImplicitAddress.decodeFromBytes(it, implicitAddressBytesCoder).base58 }
 
     private fun postUnpackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema) { PublicKeyEncoded.decodeFromBytes(it, publicKeyBytesCoder).base58 }
+        postUnpackBytesToString(value, schema) { PublicKey.decodeFromBytes(it, publicKeyBytesCoder).base58 }
 
     private fun postUnpackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema) { SignatureEncoded.decodeFromBytes(it, signatureBytesCoder).base58 }
+        postUnpackBytesToString(value, schema) { Signature.decodeFromBytes(it, signatureBytesCoder).base58 }
 
     private fun postUnpackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
         postUnpackBigIntToString(value, schema) { timestampBigIntCoder.decode(it).toRfc3339().dateString }
