@@ -10,6 +10,7 @@ public class Cached<V>(private val fetch: suspend (List<HttpHeader>) -> V) {
     private var value: V? = null
 
     public suspend fun get(headers: List<HttpHeader> = emptyList()): V = value ?: fetch(headers).also { value = it }
+    public fun <R> map(transform: (V) -> R): Cached<R> = Cached { headers -> transform(value ?: fetch(headers)) }
 }
 
 // -- CachedMap --

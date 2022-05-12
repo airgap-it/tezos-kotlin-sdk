@@ -36,6 +36,12 @@ public fun <T> MutableList<T>.consumeAt(indices: IntRange): MutableList<T> = mut
 }
 
 @InternalTezosSdkApi
+public fun <T> MutableList<T>.consume(predicate: (T) -> Boolean): T? = firstOrNull(predicate).also { remove(it) }
+
+@InternalTezosSdkApi
+public fun <T> MutableList<T>.consumeAll(predicate: (T) -> Boolean): List<T> = filter(predicate).also { removeAll(it) }
+
+@InternalTezosSdkApi
 public fun <T> List<T>.tail(): List<T> {
     val n = if (isNotEmpty()) size - 1 else 0
     return takeLast(n)
@@ -54,3 +60,9 @@ public fun <T : Comparable<T>> List<T>.startsWith(elements: List<T>): Boolean =
 public fun List<Byte>.startsWith(bytes: ByteArray): Boolean =
     if (size < bytes.size) false
     else slice(bytes.indices).foldIndexed(true) { index, acc, byte -> acc && byte == bytes[index] }
+
+@InternalTezosSdkApi
+public fun <K, V> List<Map<K, V>>.flatten(): Map<K, V> = fold(emptyMap()) { acc, map -> acc + map }
+
+@InternalTezosSdkApi
+public fun <T> Set<T>.containsAny(other: Set<T>): Boolean = any { other.contains(it) }

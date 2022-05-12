@@ -2,7 +2,6 @@ package it.airgap.tezos.contract.internal.converter
 
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.ConfigurableConverter
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
@@ -29,7 +28,7 @@ internal class MichelineToStorageEntryConverter(
     override fun convert(value: MichelineNode, configuration: Configuration): ContractStorageEntry = with(configuration) {
         when (type) {
             is MichelinePrimitiveApplication -> createStorageEntry(type, value)
-            else -> failWithTypeValueMismatch(type, value)
+            else -> failWithInvalidType(type)
         }
     }
 
@@ -114,6 +113,5 @@ internal class MichelineToStorageEntryConverter(
     private fun failWithTypeValueMismatch(type: MichelineNode, value: MichelineNode): Nothing =
         failWithIllegalArgument("Micheline type ${type.toCompactExpression(michelineToCompactStringConverter)} and value ${value.toCompactExpression(michelineToCompactStringConverter)} mismatch.")
 
-    @InternalTezosSdkApi
     data class Configuration(val type: MichelineNode)
 }
