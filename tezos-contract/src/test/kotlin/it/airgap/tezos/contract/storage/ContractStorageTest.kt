@@ -112,7 +112,7 @@ class ContractStorageTest {
     fun `should create Map from storage values`() {
         every { blockRpc.context.bigMaps } returns mockk()
 
-        storageWithMap.forEach { (type, value, expected) ->
+        storageTestCases.forEach { (type, value, expected) ->
             coEvery { contractRpc.storage.normalized.post(any(), any()) } returns GetContractNormalizedStorageResponse(value)
 
             val contractStorage = ContractStorage(
@@ -126,7 +126,7 @@ class ContractStorageTest {
         }
     }
 
-    private val storageWithMap: List<StorageTestCase>
+    private val storageTestCases: List<StorageTestCase>
         get() = listOf(
             StorageTestCase {
                 val type = micheline(michelsonToMichelineConverter) {

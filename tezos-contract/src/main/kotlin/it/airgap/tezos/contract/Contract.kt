@@ -1,17 +1,22 @@
 package it.airgap.tezos.contract
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
-import it.airgap.tezos.contract.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
+import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.storage.ContractStorage
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.type.encoded.ContractHash
+import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.internal.converter.MichelineToNormalizedConverter
+import it.airgap.tezos.michelson.isPrim
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.normalized
+import it.airgap.tezos.operation.contract.Entrypoint
+import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.active.block.GetContractEntrypointsResponse
 import it.airgap.tezos.rpc.active.block.GetContractNormalizedScriptResponse
@@ -22,19 +27,24 @@ import kotlin.reflect.KClass
 
 public class Contract internal constructor(
     public val address: ContractHash,
-    private val rpc: Block,
+    private val rpc: TezosRpc,
     private val michelineToNormalizedConverter: MichelineToNormalizedConverter,
     private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
+    private val entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter,
 ) {
-    private val contractRpc: Block.Context.Contracts.Contract
-        get() = rpc.context.contracts(address)
+    private val TezosRpc.block: Block
+        get() = chains.main.blocks.head
 
-    private val codeCached: Cached<ContractCode> = Cached { headers -> contractRpc.script.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).toContractCode() }
+    private val TezosRpc.contract: Block.Context.Contracts.Contract
+        get() = block.context.contracts(address)
+
+    private val codeCached: Cached<ContractCode> = Cached { headers -> rpc.contract.script.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).toContractCode() }
     private val metaStorageCached: Cached<MetaContractStorage> = Cached { headers -> codeCached.get(headers).toMetaContractStorage() }
-    private val metaEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> contractRpc.entrypoints.get(headers).toMetaContractEntrypoint() }
+    private val metaEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> rpc.contract.entrypoints.get(headers).toMetaContractEntrypoint(headers) }
 
-    public val storage: ContractStorage by lazy { ContractStorage(metaStorageCached, contractRpc) }
-    public suspend fun entrypoint(name: String, headers: List<HttpHeader> = emptyList()): ContractEntrypoint = ContractEntrypoint(name, metaEntrypointsCached.get(headers)[name])
+    public val storage: ContractStorage by lazy { ContractStorage(metaStorageCached, rpc.contract) }
+    public fun entrypoint(name: String = Entrypoint.Default.value): ContractEntrypoint = ContractEntrypoint(name, address, rpc.block, rpc, metaEntrypointsCached.map { it[name] })
+
     public suspend fun code(headers: List<HttpHeader> = emptyList()): ContractCode = codeCached.get(headers)
 
     private fun GetContractNormalizedScriptResponse.toContractCode(): ContractCode {
@@ -42,9 +52,9 @@ public class Contract internal constructor(
         val contractCode = script.code as? MichelineSequence ?: failWithInvalidMichelineType(MichelineSequence::class, script.code::class)
         if (contractCode.nodes.size != 3) failWithUnknownCodeType()
 
-        val parameter = contractCode.nodes[0]
-        val storage = contractCode.nodes[1]
-        val code = contractCode.nodes[2]
+        val parameter = contractCode.nodes[0].takeIf { it.isPrim(MichelsonType.Parameter) } ?: failWithUnknownCodeType()
+        val storage = contractCode.nodes[1].takeIf { it.isPrim(MichelsonType.Storage) } ?: failWithUnknownCodeType()
+        val code = contractCode.nodes[2].takeIf { it.isPrim(MichelsonType.Code) } ?: failWithUnknownCodeType()
 
         return ContractCode(parameter, storage, code)
     }
@@ -56,8 +66,14 @@ public class Contract internal constructor(
         return MetaContractStorage(type, michelineToStorageEntryConverter)
     }
 
-    private fun GetContractEntrypointsResponse.toMetaContractEntrypoint(): Map<String, MetaContractEntrypoint> {
-        TODO()
+    private suspend fun GetContractEntrypointsResponse.toMetaContractEntrypoint(headers: List<HttpHeader>): Map<String, MetaContractEntrypoint> {
+        val defaultEntrypoint = entrypoints[Entrypoint.Default.value] ?: run {
+            val parameter = codeCached.get(headers).parameter.normalized(michelineToNormalizedConverter)
+            if (parameter is MichelinePrimitiveApplication && parameter.args.size == 1) parameter.args.first() else failWithUnknownCodeType()
+        }
+        val entrypoints = entrypoints + Pair(Entrypoint.Default.value, defaultEntrypoint)
+
+        return entrypoints.mapValues { MetaContractEntrypoint(it.value, entrypointArgumentToMichelineConverter) }
     }
 
     // TODO: better error handling
