@@ -1,9 +1,18 @@
 package it.airgap.tezos.core.internal.di
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.converter.*
+import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.converter.Converter
+import it.airgap.tezos.core.internal.type.BigInt
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.tez.Mutez
+import it.airgap.tezos.core.type.tez.Nanotez
+import it.airgap.tezos.core.type.tez.Tez
+import it.airgap.tezos.core.type.zarith.ZarithInteger
+import it.airgap.tezos.core.type.zarith.ZarithNatural
 
 @InternalTezosSdkApi
 public interface ScopedDependencyRegistry : DependencyRegistry {
@@ -12,20 +21,19 @@ public interface ScopedDependencyRegistry : DependencyRegistry {
 
     public val encodedBytesCoder: EncodedBytesCoder
 
-    public val addressBytesCoder: AddressBytesCoder
-    public val implicitAddressBytesCoder: ImplicitAddressBytesCoder
+    public val addressBytesCoder: ConsumingBytesCoder<Address>
+    public val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>
+    public val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>
+    public val signatureBytesCoder: ConsumingBytesCoder<Signature>
 
-    public val publicKeyBytesCoder: PublicKeyBytesCoder
-    public val signatureBytesCoder: SignatureBytesCoder
+    public val zarithNaturalBytesCoder: ConsumingBytesCoder<ZarithNatural>
+    public val zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>
 
-    public val zarithNaturalBytesCoder: ZarithNaturalBytesCoder
-    public val zarithIntegerBytesCoder: ZarithIntegerBytesCoder
+    public val tezBytesCoder: ConsumingBytesCoder<Tez>
+    public val mutezBytesCoder: ConsumingBytesCoder<Mutez>
+    public val nanotezBytesCoder: ConsumingBytesCoder<Nanotez>
 
-    public val tezBytesCoder: TezBytesCoder
-    public val mutezBytesCoder: MutezBytesCoder
-    public val nanotezBytesCoder: NanotezBytesCoder
-
-    public val timestampBigIntCoder: TimestampBigIntCoder
+    public val timestampBigIntCoder: Coder<Timestamp, BigInt>
 
     // -- converter --
 

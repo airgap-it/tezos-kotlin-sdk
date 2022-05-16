@@ -2,8 +2,7 @@ package it.airgap.tezos.core.coder.encoded
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.AddressBytesCoder
-import it.airgap.tezos.core.internal.coder.ImplicitAddressBytesCoder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -17,16 +16,16 @@ public fun Address.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Te
     Address.decodeFromBytes(bytes, tezos.dependencyRegistry.core().addressBytesCoder)
 
 @InternalTezosSdkApi
-public fun Address.encodeToBytes(addressBytesCoder: AddressBytesCoder): ByteArray =
-    addressBytesCoder.encode(meta)
+public fun Address.encodeToBytes(addressBytesCoder: ConsumingBytesCoder<Address>): ByteArray =
+    addressBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun Address.Companion.decodeFromBytes(bytes: ByteArray, addressBytesCoder: AddressBytesCoder): Address =
-    addressBytesCoder.decode(bytes).encoded
+public fun Address.Companion.decodeFromBytes(bytes: ByteArray, addressBytesCoder: ConsumingBytesCoder<Address>): Address =
+    addressBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun Address.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, addressBytesCoder: AddressBytesCoder): Address =
-    addressBytesCoder.decodeConsuming(bytes).encoded
+public fun Address.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, addressBytesCoder: ConsumingBytesCoder<Address>): Address =
+    addressBytesCoder.decodeConsuming(bytes)
 
 // -- ImplicitAddress <-> ByteArray --
 
@@ -37,13 +36,13 @@ public fun ImplicitAddress.Companion.decodeFromBytes(bytes: ByteArray, tezos: Te
     ImplicitAddress.decodeFromBytes(bytes, tezos.dependencyRegistry.core().implicitAddressBytesCoder)
 
 @InternalTezosSdkApi
-public fun ImplicitAddress.encodeToBytes(implicitAddressBytesCoder: ImplicitAddressBytesCoder): ByteArray =
-    implicitAddressBytesCoder.encode(meta)
+public fun ImplicitAddress.encodeToBytes(implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>): ByteArray =
+    implicitAddressBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun ImplicitAddress.Companion.decodeFromBytes(bytes: ByteArray, implicitAddressBytesCoder: ImplicitAddressBytesCoder): ImplicitAddress =
-    implicitAddressBytesCoder.decode(bytes).encoded
+public fun ImplicitAddress.Companion.decodeFromBytes(bytes: ByteArray, implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>): ImplicitAddress =
+    implicitAddressBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun ImplicitAddress.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, implicitAddressBytesCoder: ImplicitAddressBytesCoder): ImplicitAddress =
-    implicitAddressBytesCoder.decodeConsuming(bytes).encoded
+public fun ImplicitAddress.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>): ImplicitAddress =
+    implicitAddressBytesCoder.decodeConsuming(bytes)

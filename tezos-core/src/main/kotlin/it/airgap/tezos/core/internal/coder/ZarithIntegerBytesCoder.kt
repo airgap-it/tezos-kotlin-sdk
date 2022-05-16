@@ -1,12 +1,11 @@
 package it.airgap.tezos.core.internal.coder
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.zarith.ZarithInteger
+import it.airgap.tezos.core.type.zarith.ZarithNatural
 
-@InternalTezosSdkApi
-public class ZarithIntegerBytesCoder(private val zarithNaturalBytesCoder: ZarithNaturalBytesCoder) : ConsumingBytesCoder<ZarithInteger> {
+internal class ZarithIntegerBytesCoder(private val zarithNaturalBytesCoder: ConsumingBytesCoder<ZarithNatural>) : ConsumingBytesCoder<ZarithInteger> {
     override fun encode(value: ZarithInteger): ByteArray {
         val int = value.toBigInt()
         val abs = int.abs()

@@ -2,7 +2,7 @@ package it.airgap.tezos.core.coder.encoded
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.PublicKeyBytesCoder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.encoded.PublicKey
 
@@ -15,13 +15,13 @@ public fun PublicKey.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = 
     PublicKey.decodeFromBytes(bytes, tezos.dependencyRegistry.core().publicKeyBytesCoder)
 
 @InternalTezosSdkApi
-public fun PublicKey.encodeToBytes(publicKeyBytesCoder: PublicKeyBytesCoder): ByteArray =
-    publicKeyBytesCoder.encode(meta)
+public fun PublicKey.encodeToBytes(publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>): ByteArray =
+    publicKeyBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun PublicKey.Companion.decodeFromBytes(bytes: ByteArray, publicKeyBytesCoder: PublicKeyBytesCoder): PublicKey =
-    publicKeyBytesCoder.decode(bytes).encoded
+public fun PublicKey.Companion.decodeFromBytes(bytes: ByteArray, publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>): PublicKey =
+    publicKeyBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun PublicKey.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, publicKeyBytesCoder: PublicKeyBytesCoder): PublicKey =
-    publicKeyBytesCoder.decodeConsuming(bytes).encoded
+public fun PublicKey.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>): PublicKey =
+    publicKeyBytesCoder.decodeConsuming(bytes)

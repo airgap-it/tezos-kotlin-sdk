@@ -2,7 +2,7 @@ package it.airgap.tezos.core.coder.zarith
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.zarith.ZarithInteger
 
@@ -15,13 +15,13 @@ public fun ZarithInteger.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezo
     ZarithInteger.decodeFromBytes(bytes, tezos.dependencyRegistry.core().zarithIntegerBytesCoder)
 
 @InternalTezosSdkApi
-public fun ZarithInteger.encodeToBytes(zarithIntegerBytesCoder: ZarithIntegerBytesCoder): ByteArray =
+public fun ZarithInteger.encodeToBytes(zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>): ByteArray =
     zarithIntegerBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun ZarithInteger.Companion.decodeFromBytes(bytes: ByteArray, zarithIntegerBytesCoder: ZarithIntegerBytesCoder): ZarithInteger =
+public fun ZarithInteger.Companion.decodeFromBytes(bytes: ByteArray, zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>): ZarithInteger =
     zarithIntegerBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun ZarithInteger.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, zarithIntegerBytesCoder: ZarithIntegerBytesCoder): ZarithInteger =
+public fun ZarithInteger.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>): ZarithInteger =
     zarithIntegerBytesCoder.decodeConsuming(bytes)

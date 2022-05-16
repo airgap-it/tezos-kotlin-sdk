@@ -1,12 +1,10 @@
 package it.airgap.tezos.core.internal.coder
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.Timestamp
 
-@InternalTezosSdkApi
-public class TimestampBigIntCoder : Coder<Timestamp, BigInt> {
+internal class TimestampBigIntCoder : Coder<Timestamp, BigInt> {
     override fun encode(value: Timestamp): BigInt {
         val long = value.toMillis().long
         return BigInt.valueOf(long)

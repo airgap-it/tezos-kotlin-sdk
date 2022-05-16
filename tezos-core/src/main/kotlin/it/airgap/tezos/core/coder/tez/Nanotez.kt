@@ -2,7 +2,7 @@ package it.airgap.tezos.core.coder.tez
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.NanotezBytesCoder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.tez.Nanotez
 
@@ -15,13 +15,13 @@ public fun Nanotez.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Te
     Nanotez.decodeFromBytes(bytes, tezos.dependencyRegistry.core().nanotezBytesCoder)
 
 @InternalTezosSdkApi
-public fun Nanotez.encodeToBytes(nanotezBytesCoder: NanotezBytesCoder): ByteArray =
+public fun Nanotez.encodeToBytes(nanotezBytesCoder: ConsumingBytesCoder<Nanotez>): ByteArray =
     nanotezBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun Nanotez.Companion.decodeFromBytes(bytes: ByteArray, nanotezBytesCoder: NanotezBytesCoder): Nanotez =
+public fun Nanotez.Companion.decodeFromBytes(bytes: ByteArray, nanotezBytesCoder: ConsumingBytesCoder<Nanotez>): Nanotez =
     nanotezBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun Nanotez.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, nanotezBytesCoder: NanotezBytesCoder): Nanotez =
+public fun Nanotez.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, nanotezBytesCoder: ConsumingBytesCoder<Nanotez>): Nanotez =
     nanotezBytesCoder.decodeConsuming(bytes)

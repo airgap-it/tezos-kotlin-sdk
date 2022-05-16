@@ -2,7 +2,7 @@ package it.airgap.tezos.core.coder.tez
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.TezBytesCoder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.tez.Tez
 
@@ -15,13 +15,13 @@ public fun Tez.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.
     Tez.decodeFromBytes(bytes, tezos.dependencyRegistry.core().tezBytesCoder)
 
 @InternalTezosSdkApi
-public fun Tez.encodeToBytes(tezBytesCoder: TezBytesCoder): ByteArray =
+public fun Tez.encodeToBytes(tezBytesCoder: ConsumingBytesCoder<Tez>): ByteArray =
     tezBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun Tez.Companion.decodeFromBytes(bytes: ByteArray, tezBytesCoder: TezBytesCoder): Tez =
+public fun Tez.Companion.decodeFromBytes(bytes: ByteArray, tezBytesCoder: ConsumingBytesCoder<Tez>): Tez =
     tezBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun Tez.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, tezBytesCoder: TezBytesCoder): Tez =
+public fun Tez.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, tezBytesCoder: ConsumingBytesCoder<Tez>): Tez =
     tezBytesCoder.decodeConsuming(bytes)

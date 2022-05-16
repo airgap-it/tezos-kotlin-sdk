@@ -1,6 +1,5 @@
 package it.airgap.tezos.core.internal.coder
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.consumeAt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
@@ -8,8 +7,7 @@ import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.core.internal.utils.toZarithNatural
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 
-@InternalTezosSdkApi
-public class ZarithNaturalBytesCoder : ConsumingBytesCoder<ZarithNatural> {
+internal class ZarithNaturalBytesCoder : ConsumingBytesCoder<ZarithNatural> {
     override fun encode(value: ZarithNatural): ByteArray =
         when (value.toBigInt()) {
             BigInt.zero -> byteArrayOf(0)

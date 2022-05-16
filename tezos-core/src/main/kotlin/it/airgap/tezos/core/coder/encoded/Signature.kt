@@ -2,7 +2,7 @@ package it.airgap.tezos.core.coder.encoded
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.SignatureBytesCoder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.encoded.Signature
 
@@ -15,13 +15,13 @@ public fun Signature.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = 
     Signature.decodeFromBytes(bytes, tezos.dependencyRegistry.core().signatureBytesCoder)
 
 @InternalTezosSdkApi
-public fun Signature.encodeToBytes(signatureBytesCoder: SignatureBytesCoder): ByteArray =
-    signatureBytesCoder.encode(meta)
+public fun Signature.encodeToBytes(signatureBytesCoder: ConsumingBytesCoder<Signature>): ByteArray =
+    signatureBytesCoder.encode(this)
 
 @InternalTezosSdkApi
-public fun Signature.Companion.decodeFromBytes(bytes: ByteArray, signatureBytesCoder: SignatureBytesCoder): Signature =
-    signatureBytesCoder.decode(bytes).encoded
+public fun Signature.Companion.decodeFromBytes(bytes: ByteArray, signatureBytesCoder: ConsumingBytesCoder<Signature>): Signature =
+    signatureBytesCoder.decode(bytes)
 
 @InternalTezosSdkApi
-public fun Signature.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, signatureBytesCoder: SignatureBytesCoder): Signature =
-    signatureBytesCoder.decodeConsuming(bytes).encoded
+public fun Signature.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, signatureBytesCoder: ConsumingBytesCoder<Signature>): Signature =
+    signatureBytesCoder.decodeConsuming(bytes)
