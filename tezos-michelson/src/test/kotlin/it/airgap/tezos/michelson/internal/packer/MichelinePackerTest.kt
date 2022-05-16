@@ -20,7 +20,8 @@ import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.converter.*
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.michelson.internal.normalizer.MichelinePrimitiveApplicationToNormalizedConverter
+import it.airgap.tezos.michelson.internal.normalizer.MichelineToNormalizedConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication

@@ -1,16 +1,14 @@
 package it.airgap.tezos.core.internal.converter.encoded
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
 import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKey
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -19,8 +17,7 @@ import kotlin.test.assertFailsWith
 
 class StringToPublicKeyConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var stringToPublicKeyConverter: StringToPublicKeyConverter
 
@@ -28,9 +25,8 @@ class StringToPublicKeyConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
+        tezos = mockTezos()
         stringToPublicKeyConverter = StringToPublicKeyConverter()
-
-        every { dependencyRegistry.stringToPublicKeyConverter } returns stringToPublicKeyConverter
     }
 
     @After
@@ -42,7 +38,7 @@ class StringToPublicKeyConverterTest {
     fun `should convert string to PublicKeyEncoded`() {
         publicKeysWithStrings.forEach {
             assertEquals(it.first, stringToPublicKeyConverter.convert(it.second))
-            assertEquals(it.first, PublicKey.fromString(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, PublicKey.fromString(it.second, tezos))
             assertEquals(it.first, PublicKey.fromString(it.second, stringToPublicKeyConverter))
         }
     }
@@ -51,7 +47,7 @@ class StringToPublicKeyConverterTest {
     fun `should fail to convert invalid string to PublicKeyEncoded`() {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToPublicKeyConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it, TezosCore(dependencyRegistry)) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it, tezos) }
             assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it, stringToPublicKeyConverter) }
         }
     }

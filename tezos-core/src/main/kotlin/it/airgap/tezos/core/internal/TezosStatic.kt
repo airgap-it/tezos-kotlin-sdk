@@ -5,7 +5,7 @@ import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.delegate.default
 import java.util.*
 
-internal object TezosCoreStatic {
+internal object TezosStatic {
     var defaultTezos: Tezos by default { Tezos(defaultCryptoProvider) }
 
     val defaultCryptoProvider: CryptoProvider

@@ -1,14 +1,12 @@
 package it.airgap.tezos.michelson.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-@InternalTezosSdkApi
-public class MichelineToStringConverter : Converter<MichelineNode, String> {
+internal class MichelineToStringConverter : Converter<MichelineNode, String> {
     override fun convert(value: MichelineNode): String =
         when (value) {
             is MichelineLiteral -> literalToString(value)
@@ -45,8 +43,7 @@ public class MichelineToStringConverter : Converter<MichelineNode, String> {
     }
 }
 
-@InternalTezosSdkApi
-public class MichelineToCompactStringConverter : Converter<MichelineNode, String> {
+internal class MichelineToCompactStringConverter : Converter<MichelineNode, String> {
     override fun convert(value: MichelineNode): String =
         when (value) {
             is MichelineLiteral -> literalToCompatString(value)

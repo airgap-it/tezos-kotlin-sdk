@@ -1,13 +1,11 @@
 package it.airgap.tezos.core.internal.converter.encoded
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.type.encoded.*
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -16,8 +14,7 @@ import kotlin.test.assertFailsWith
 
 class StringToAddressConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var stringToAddressConverter: StringToAddressConverter
 
@@ -25,9 +22,8 @@ class StringToAddressConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
+        tezos = mockTezos()
         stringToAddressConverter = StringToAddressConverter()
-
-        every { dependencyRegistry.stringToAddressConverter } returns stringToAddressConverter
     }
 
     @After
@@ -39,7 +35,7 @@ class StringToAddressConverterTest {
     fun `should convert string to Address`() {
         addressesWithStrings.forEach {
             assertEquals(it.first, stringToAddressConverter.convert(it.second))
-            assertEquals(it.first, Address.fromString(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, Address.fromString(it.second, tezos))
             assertEquals(it.first, Address.fromString(it.second, stringToAddressConverter))
         }
     }
@@ -48,7 +44,7 @@ class StringToAddressConverterTest {
     fun `should fail to convert invalid string to Address`() {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToAddressConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { Address.fromString(it, TezosCore(dependencyRegistry)) }
+            assertFailsWith<IllegalArgumentException> { Address.fromString(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Address.fromString(it, stringToAddressConverter) }
         }
     }

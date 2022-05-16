@@ -4,14 +4,15 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -23,7 +24,9 @@ import kotlin.test.assertFailsWith
 class SignatureBytesCoderTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
+
+    private lateinit var tezos: Tezos
 
     private lateinit var signatureBytesCoder: SignatureBytesCoder
 
@@ -31,15 +34,14 @@ class SignatureBytesCoderTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        tezos = mockTezos(cryptoProvider)
 
-        signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
+        signatureBytesCoder = SignatureBytesCoder(tezos.core().dependencyRegistry.encodedBytesCoder)
     }
 
     @After
@@ -51,6 +53,7 @@ class SignatureBytesCoderTest {
     fun `should encode SignatureEncoded to bytes`() {
         signaturesWithBytes.forEach {
             assertContentEquals(it.second, signatureBytesCoder.encode(it.first))
+            assertContentEquals(it.second, it.first.encodeToBytes(tezos))
             assertContentEquals(it.second, it.first.encodeToBytes(signatureBytesCoder))
         }
     }
@@ -60,6 +63,7 @@ class SignatureBytesCoderTest {
         bytesWithSignatures.forEach {
             assertEquals(it.second, signatureBytesCoder.decode(it.first))
             assertEquals(it.second, signatureBytesCoder.decodeConsuming(it.first.toMutableList()))
+            assertEquals(it.second, Signature.decodeFromBytes(it.first, tezos))
             assertEquals(it.second, Signature.decodeFromBytes(it.first, signatureBytesCoder))
             assertEquals(it.second, Signature.decodeConsumingFromBytes(it.first.toMutableList(), signatureBytesCoder))
         }
@@ -75,6 +79,7 @@ class SignatureBytesCoderTest {
             ),
         ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> { signatureBytesCoder.decode(it) }
+            assertFailsWith<IllegalArgumentException> { Signature.decodeFromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Signature.decodeFromBytes(it, signatureBytesCoder) }
         }
 

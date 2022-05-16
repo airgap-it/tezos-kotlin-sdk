@@ -4,7 +4,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.toMicheline
 import michelsonComparableTypeMichelinePairs
 import michelsonDataMichelinePairs

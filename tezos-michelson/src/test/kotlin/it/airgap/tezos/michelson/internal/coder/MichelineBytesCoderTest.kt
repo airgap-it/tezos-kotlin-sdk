@@ -1,23 +1,14 @@
 package it.airgap.tezos.michelson.internal.coder
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
-import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.michelson.coder.*
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import mockTezosSdk
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -27,24 +18,12 @@ import kotlin.test.assertFailsWith
 
 class MichelineBytesCoderTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
     private lateinit var michelineBytesCoder: MichelineBytesCoder
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        val stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
-        val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
-        val michelineToCompactStringConverter = MichelineToCompactStringConverter()
-        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalBytesCoder())
-
-        michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
-
-        every { dependencyRegistry.michelineBytesCoder } returns michelineBytesCoder
     }
 
     @After

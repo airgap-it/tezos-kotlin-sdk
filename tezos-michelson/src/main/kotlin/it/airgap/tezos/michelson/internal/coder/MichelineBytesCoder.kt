@@ -1,30 +1,30 @@
 package it.airgap.tezos.michelson.internal.coder
 
-import it.airgap.tezos.core.decodeConsumingFromBytes
-import it.airgap.tezos.core.encodeToBytes
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.coder.zarith.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.zarith.encodeToBytes
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.zarith.ZarithInteger
-import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
+import it.airgap.tezos.michelson.Michelson
+import it.airgap.tezos.michelson.coder.decodeConsumingFromBytes
+import it.airgap.tezos.michelson.coder.encodeToBytes
+import it.airgap.tezos.michelson.converter.fromStringOrNull
+import it.airgap.tezos.michelson.converter.fromTagOrNull
+import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.internal.utils.second
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-@InternalTezosSdkApi
-public class MichelineBytesCoder(
-    stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    tagToMichelsonPrimConverter: TagToMichelsonPrimConverter,
-    michelineToCompactStringConverter: MichelineToCompactStringConverter,
-    zarithIntegerBytesCoder: ZarithIntegerBytesCoder,
+internal class MichelineBytesCoder(
+    stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    tagToMichelsonPrimConverter: Converter<ByteArray, Michelson.Prim>,
+    michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>,
 ) : ConsumingBytesCoder<MichelineNode> {
     private val literalBytesCoder: MichelineLiteralBytesCoder = MichelineLiteralBytesCoder(zarithIntegerBytesCoder)
     private val primitiveApplicationBytesCoder: MichelinePrimitiveApplicationBytesCoder = MichelinePrimitiveApplicationBytesCoder(
@@ -54,7 +54,7 @@ public class MichelineBytesCoder(
     private fun failWithUnknownTag(): Nothing = failWithIllegalArgument("Unknown Micheline encoding tag.")
 }
 
-private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: ZarithIntegerBytesCoder) : Coder<MichelineLiteral, ByteArray> {
+private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>) : Coder<MichelineLiteral, ByteArray> {
     override fun encode(value: MichelineLiteral): ByteArray =
         when (value) {
             is MichelineLiteral.Integer -> encodeInteger(value)
@@ -127,9 +127,9 @@ private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: Za
 }
 
 private class MichelinePrimitiveApplicationBytesCoder(
-    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    private val tagToMichelsonPrimConverter: TagToMichelsonPrimConverter,
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
+    private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    private val tagToMichelsonPrimConverter: Converter<ByteArray, Michelson.Prim>,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
     private val bytesCoder: MichelineBytesCoder,
 ) : Coder<MichelinePrimitiveApplication, ByteArray> {
     override fun encode(value: MichelinePrimitiveApplication): ByteArray =

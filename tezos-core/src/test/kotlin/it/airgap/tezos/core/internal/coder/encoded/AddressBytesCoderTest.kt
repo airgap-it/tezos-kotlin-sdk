@@ -4,14 +4,15 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import java.security.MessageDigest
@@ -23,7 +24,9 @@ import kotlin.test.assertFailsWith
 class AddressBytesCoderTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
+
+    private lateinit var tezos: Tezos
 
     private lateinit var addressBytesCoder: AddressBytesCoder
 
@@ -31,17 +34,16 @@ class AddressBytesCoderTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
-
-        addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
+        tezos = mockTezos(cryptoProvider)
+        addressBytesCoder = AddressBytesCoder(
+            tezos.core().dependencyRegistry.implicitAddressBytesCoder,
+            tezos.core().dependencyRegistry.encodedBytesCoder,
+        )
     }
 
     @After
@@ -53,6 +55,7 @@ class AddressBytesCoderTest {
     fun `should encode Address to bytes`() {
         addressesWithBytes.forEach {
             assertContentEquals(it.second, addressBytesCoder.encode(it.first))
+            assertContentEquals(it.second, it.first.encodeToBytes(tezos))
             assertContentEquals(it.second, it.first.encodeToBytes(addressBytesCoder))
         }
     }
@@ -62,6 +65,7 @@ class AddressBytesCoderTest {
         addressesWithBytes.forEach {
             assertEquals(it.first, addressBytesCoder.decode(it.second))
             assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()))
+            assertEquals(it.first, Address.decodeFromBytes(it.second, tezos))
             assertEquals(it.first, Address.decodeFromBytes(it.second, addressBytesCoder))
             assertEquals(it.first, Address.decodeConsumingFromBytes(it.second.toMutableList(), addressBytesCoder))
         }
@@ -79,6 +83,7 @@ class AddressBytesCoderTest {
             ),
         ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> { addressBytesCoder.decode(it) }
+            assertFailsWith<IllegalArgumentException> { Address.decodeFromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Address.decodeFromBytes(it, addressBytesCoder) }
         }
 

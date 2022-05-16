@@ -1,13 +1,11 @@
 package it.airgap.tezos.core.internal.converter.encoded
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.core.type.encoded.*
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -16,8 +14,7 @@ import kotlin.test.assertFailsWith
 
 class StringToSignatureConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var stringToSignatureConverter: StringToSignatureConverter
 
@@ -25,9 +22,8 @@ class StringToSignatureConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
+        tezos = mockTezos()
         stringToSignatureConverter = StringToSignatureConverter()
-
-        every { dependencyRegistry.stringToSignatureConverter } returns stringToSignatureConverter
     }
 
     @After
@@ -39,7 +35,7 @@ class StringToSignatureConverterTest {
     fun `should convert string to SignatureEncoded`() {
         signaturesWithStrings.forEach {
             assertEquals(it.first, stringToSignatureConverter.convert(it.second))
-            assertEquals(it.first, Signature.fromString(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, Signature.fromString(it.second, tezos))
             assertEquals(it.first, Signature.fromString(it.second, stringToSignatureConverter))
         }
     }
@@ -48,7 +44,7 @@ class StringToSignatureConverterTest {
     fun `should fail to convert invalid string to SignatureEncoded`() {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToSignatureConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { Signature.fromString(it, TezosCore(dependencyRegistry)) }
+            assertFailsWith<IllegalArgumentException> { Signature.fromString(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Signature.fromString(it, stringToSignatureConverter) }
         }
     }

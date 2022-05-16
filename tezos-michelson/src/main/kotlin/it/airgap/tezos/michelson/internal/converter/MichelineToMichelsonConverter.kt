@@ -1,11 +1,13 @@
 package it.airgap.tezos.michelson.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.allIsInstance
 import it.airgap.tezos.core.internal.utils.anyIsInstance
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.*
+import it.airgap.tezos.michelson.comparator.isPrim
+import it.airgap.tezos.michelson.converter.fromStringOrNull
+import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.internal.utils.firstInstanceOfOrNull
 import it.airgap.tezos.michelson.internal.utils.second
 import it.airgap.tezos.michelson.internal.utils.secondInstanceOfOrNull
@@ -15,10 +17,9 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-@InternalTezosSdkApi
-public class MichelineToMichelsonConverter(
-    stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    michelineToCompactStringConverter: MichelineToCompactStringConverter,
+internal class MichelineToMichelsonConverter(
+    stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    michelineToCompactStringConverter: Converter<MichelineNode, String>,
 ) : Converter<MichelineNode, Michelson> {
     private val literalToMichelsonConverter: MichelineLiteralToMichelsonConverter = MichelineLiteralToMichelsonConverter(michelineToCompactStringConverter)
     private val primitiveApplicationToMichelsonConverter: MichelinePrimitiveApplicationToMichelsonConverter = MichelinePrimitiveApplicationToMichelsonConverter(
@@ -36,7 +37,7 @@ public class MichelineToMichelsonConverter(
         }
 }
 
-private class MichelineLiteralToMichelsonConverter(private val michelineToCompactStringConverter: MichelineToCompactStringConverter) : Converter<MichelineLiteral, Michelson> {
+private class MichelineLiteralToMichelsonConverter(private val michelineToCompactStringConverter: Converter<MichelineNode, String>) : Converter<MichelineLiteral, Michelson> {
     override fun convert(value: MichelineLiteral): Michelson = with(value) {
         try {
             when (this) {
@@ -54,9 +55,9 @@ private class MichelineLiteralToMichelsonConverter(private val michelineToCompac
 }
 
 private class MichelinePrimitiveApplicationToMichelsonConverter(
-    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
-    private val toMichelsonConverter: MichelineToMichelsonConverter,
+    private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    private val toMichelsonConverter: Converter<MichelineNode, Michelson>,
 ) : Converter<MichelinePrimitiveApplication, Michelson> {
     override fun convert(value: MichelinePrimitiveApplication): Michelson = with(value) {
         val prim = Michelson.Prim.fromStringOrNull(prim.value, stringToMichelsonPrimConverter) ?: failWithUnknownPrimitiveApplication(this)
@@ -1101,13 +1102,13 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
 }
 
 private class MichelineSequenceToMichelsonConverter(
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
     private val toMichelsonConverter: MichelineToMichelsonConverter,
 ) : Converter<MichelineSequence, Michelson> {
     @Suppress("UNCHECKED_CAST")
     override fun convert(value: MichelineSequence): Michelson {
         val michelsonValues = value.nodes.map {
-            if (it is MichelinePrimitiveApplication && it.isElt) it.convertToElt()
+            if (it.isPrim(MichelsonData.Elt)) it.convertToElt()
             else toMichelsonConverter.convert(it)
         }
         with(michelsonValues) {
@@ -1121,9 +1122,6 @@ private class MichelineSequenceToMichelsonConverter(
             }
         }
     }
-
-    private val MichelinePrimitiveApplication.isElt: Boolean
-        get() = prim.value == MichelsonData.Elt.name
 
     private fun MichelinePrimitiveApplication.convertToElt(): MichelsonData.Elt {
         val key = args.first().convertToExpected<MichelsonData>()

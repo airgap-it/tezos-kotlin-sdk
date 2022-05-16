@@ -4,14 +4,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -21,8 +21,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class EncodedBytesCoderTest {
+
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
+
+    private lateinit var tezos: Tezos
 
     private lateinit var encodedBytesCoder: EncodedBytesCoder
 
@@ -30,13 +33,13 @@ class EncodedBytesCoderTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        encodedBytesCoder = EncodedBytesCoder(base58Check)
+        tezos = mockTezos(cryptoProvider)
+        encodedBytesCoder = EncodedBytesCoder(tezos.dependencyRegistry.base58Check)
     }
 
     @After
@@ -47,114 +50,151 @@ class EncodedBytesCoderTest {
     @Test
     fun `should encode Encoded to bytes`() {
         assertContentEquals(blockHash.second, encodedBytesCoder.encode(blockHash.first))
+        assertContentEquals(blockHash.second, blockHash.first.encodeToBytes(tezos))
         assertContentEquals(blockHash.second, blockHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(blockPayloadHash.second, encodedBytesCoder.encode(blockPayloadHash.first))
+        assertContentEquals(blockPayloadHash.second, blockPayloadHash.first.encodeToBytes(tezos))
         assertContentEquals(blockPayloadHash.second, blockPayloadHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(blockMetadataHash.second, encodedBytesCoder.encode(blockMetadataHash.first))
+        assertContentEquals(blockMetadataHash.second, blockMetadataHash.first.encodeToBytes(tezos))
         assertContentEquals(blockMetadataHash.second, blockMetadataHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(chainId.second, encodedBytesCoder.encode(chainId.first))
+        assertContentEquals(chainId.second, chainId.first.encodeToBytes(tezos))
         assertContentEquals(chainId.second, chainId.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(contextHash.second, encodedBytesCoder.encode(contextHash.first))
+        assertContentEquals(contextHash.second, contextHash.first.encodeToBytes(tezos))
         assertContentEquals(contextHash.second, contextHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(contractHash.second, encodedBytesCoder.encode(contractHash.first))
+        assertContentEquals(contractHash.second, contractHash.first.encodeToBytes(tezos))
         assertContentEquals(contractHash.second, contractHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(cryptoboxPublicKeyHash.second, encodedBytesCoder.encode(cryptoboxPublicKeyHash.first))
+        assertContentEquals(cryptoboxPublicKeyHash.second, cryptoboxPublicKeyHash.first.encodeToBytes(tezos))
         assertContentEquals(cryptoboxPublicKeyHash.second, cryptoboxPublicKeyHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(ed25519EncryptedSeed.second, encodedBytesCoder.encode(ed25519EncryptedSeed.first))
+        assertContentEquals(ed25519EncryptedSeed.second, ed25519EncryptedSeed.first.encodeToBytes(tezos))
         assertContentEquals(ed25519EncryptedSeed.second, ed25519EncryptedSeed.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(ed25519PublicKey.second, encodedBytesCoder.encode(ed25519PublicKey.first))
+        assertContentEquals(ed25519PublicKey.second, ed25519PublicKey.first.encodeToBytes(tezos))
         assertContentEquals(ed25519PublicKey.second, ed25519PublicKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(ed25519PublicKeyHash.second, encodedBytesCoder.encode(ed25519PublicKeyHash.first))
+        assertContentEquals(ed25519PublicKeyHash.second, ed25519PublicKeyHash.first.encodeToBytes(tezos))
         assertContentEquals(ed25519PublicKeyHash.second, ed25519PublicKeyHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(ed25519SecretKey.second, encodedBytesCoder.encode(ed25519SecretKey.first))
+        assertContentEquals(ed25519SecretKey.second, ed25519SecretKey.first.encodeToBytes(tezos))
         assertContentEquals(ed25519SecretKey.second, ed25519SecretKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(ed25519Seed.second, encodedBytesCoder.encode(ed25519Seed.first))
+        assertContentEquals(ed25519Seed.second, ed25519Seed.first.encodeToBytes(tezos))
         assertContentEquals(ed25519Seed.second, ed25519Seed.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(ed25519Signature.second, encodedBytesCoder.encode(ed25519Signature.first))
+        assertContentEquals(ed25519Signature.second, ed25519Signature.first.encodeToBytes(tezos))
         assertContentEquals(ed25519Signature.second, ed25519Signature.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(genericSignature.second, encodedBytesCoder.encode(genericSignature.first))
+        assertContentEquals(genericSignature.second, genericSignature.first.encodeToBytes(tezos))
         assertContentEquals(genericSignature.second, genericSignature.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(nonceHash.second, encodedBytesCoder.encode(nonceHash.first))
+        assertContentEquals(nonceHash.second, nonceHash.first.encodeToBytes(tezos))
         assertContentEquals(nonceHash.second, nonceHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(operationHash.second, encodedBytesCoder.encode(operationHash.first))
+        assertContentEquals(operationHash.second, operationHash.first.encodeToBytes(tezos))
         assertContentEquals(operationHash.second, operationHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(operationListHash.second, encodedBytesCoder.encode(operationListHash.first))
+        assertContentEquals(operationListHash.second, operationListHash.first.encodeToBytes(tezos))
         assertContentEquals(operationListHash.second, operationListHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(operationListListHash.second, encodedBytesCoder.encode(operationListListHash.first))
+        assertContentEquals(operationListListHash.second, operationListListHash.first.encodeToBytes(tezos))
         assertContentEquals(operationListListHash.second, operationListListHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(operationMetadataHash.second, encodedBytesCoder.encode(operationMetadataHash.first))
+        assertContentEquals(operationMetadataHash.second, operationMetadataHash.first.encodeToBytes(tezos))
         assertContentEquals(operationMetadataHash.second, operationMetadataHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(operationMetadataListHash.second, encodedBytesCoder.encode(operationMetadataListHash.first))
+        assertContentEquals(operationMetadataListHash.second, operationMetadataListHash.first.encodeToBytes(tezos))
         assertContentEquals(operationMetadataListHash.second, operationMetadataListHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(operationMetadataListListHash.second, encodedBytesCoder.encode(operationMetadataListListHash.first))
+        assertContentEquals(operationMetadataListListHash.second, operationMetadataListListHash.first.encodeToBytes(tezos))
         assertContentEquals(operationMetadataListListHash.second, operationMetadataListListHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(p256EncryptedSecretKey.second, encodedBytesCoder.encode(p256EncryptedSecretKey.first))
+        assertContentEquals(p256EncryptedSecretKey.second, p256EncryptedSecretKey.first.encodeToBytes(tezos))
         assertContentEquals(p256EncryptedSecretKey.second, p256EncryptedSecretKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(p256PublicKey.second, encodedBytesCoder.encode(p256PublicKey.first))
+        assertContentEquals(p256PublicKey.second, p256PublicKey.first.encodeToBytes(tezos))
         assertContentEquals(p256PublicKey.second, p256PublicKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(p256PublicKeyHash.second, encodedBytesCoder.encode(p256PublicKeyHash.first))
+        assertContentEquals(p256PublicKeyHash.second, p256PublicKeyHash.first.encodeToBytes(tezos))
         assertContentEquals(p256PublicKeyHash.second, p256PublicKeyHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(p256SecretKey.second, encodedBytesCoder.encode(p256SecretKey.first))
+        assertContentEquals(p256SecretKey.second, p256SecretKey.first.encodeToBytes(tezos))
         assertContentEquals(p256SecretKey.second, p256SecretKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(p256Signature.second, encodedBytesCoder.encode(p256Signature.first))
+        assertContentEquals(p256Signature.second, p256Signature.first.encodeToBytes(tezos))
         assertContentEquals(p256Signature.second, p256Signature.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(protocolHash.second, encodedBytesCoder.encode(protocolHash.first))
+        assertContentEquals(protocolHash.second, protocolHash.first.encodeToBytes(tezos))
         assertContentEquals(protocolHash.second, protocolHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(saplingAddress.second, encodedBytesCoder.encode(saplingAddress.first))
+        assertContentEquals(saplingAddress.second, saplingAddress.first.encodeToBytes(tezos))
         assertContentEquals(saplingAddress.second, saplingAddress.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(saplingSpendingKey.second, encodedBytesCoder.encode(saplingSpendingKey.first))
+        assertContentEquals(saplingSpendingKey.second, saplingSpendingKey.first.encodeToBytes(tezos))
         assertContentEquals(saplingSpendingKey.second, saplingSpendingKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1Element.second, encodedBytesCoder.encode(secp256K1Element.first))
+        assertContentEquals(secp256K1Element.second, secp256K1Element.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1Element.second, secp256K1Element.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1EncryptedScalar.second, encodedBytesCoder.encode(secp256K1EncryptedScalar.first))
+        assertContentEquals(secp256K1EncryptedScalar.second, secp256K1EncryptedScalar.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1EncryptedScalar.second, secp256K1EncryptedScalar.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1EncryptedSecretKey.second, encodedBytesCoder.encode(secp256K1EncryptedSecretKey.first))
+        assertContentEquals(secp256K1EncryptedSecretKey.second, secp256K1EncryptedSecretKey.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1EncryptedSecretKey.second, secp256K1EncryptedSecretKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1PublicKey.second, encodedBytesCoder.encode(secp256K1PublicKey.first))
+        assertContentEquals(secp256K1PublicKey.second, secp256K1PublicKey.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1PublicKey.second, secp256K1PublicKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1PublicKeyHash.second, encodedBytesCoder.encode(secp256K1PublicKeyHash.first))
+        assertContentEquals(secp256K1PublicKeyHash.second, secp256K1PublicKeyHash.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1PublicKeyHash.second, secp256K1PublicKeyHash.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1Scalar.second, encodedBytesCoder.encode(secp256K1Scalar.first))
+        assertContentEquals(secp256K1Scalar.second, secp256K1Scalar.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1Scalar.second, secp256K1Scalar.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1SecretKey.second, encodedBytesCoder.encode(secp256K1SecretKey.first))
+        assertContentEquals(secp256K1SecretKey.second, secp256K1SecretKey.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1SecretKey.second, secp256K1SecretKey.first.encodeToBytes(encodedBytesCoder))
 
         assertContentEquals(secp256K1Signature.second, encodedBytesCoder.encode(secp256K1Signature.first))
+        assertContentEquals(secp256K1Signature.second, secp256K1Signature.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1Signature.second, secp256K1Signature.first.encodeToBytes(encodedBytesCoder))
     }
 
@@ -164,6 +204,7 @@ class EncodedBytesCoderTest {
         assertEquals(blockHash.first, encodedBytesCoder.decodeConsuming((blockHash.first.kind.base58Bytes + blockHash.second).toMutableList()))
         assertEquals(blockHash.first, encodedBytesCoder.decode(blockHash.second, blockHash.first.kind))
         assertEquals(blockHash.first, encodedBytesCoder.decodeConsuming(blockHash.second.toMutableList(), blockHash.first.kind))
+        assertEquals(blockHash.first, BlockHash.decodeFromBytes(blockHash.second, tezos))
         assertEquals(blockHash.first, BlockHash.decodeFromBytes(blockHash.second, encodedBytesCoder))
         assertEquals(blockHash.first, BlockHash.decodeConsumingFromBytes(blockHash.second.toMutableList(), encodedBytesCoder))
 
@@ -171,6 +212,7 @@ class EncodedBytesCoderTest {
         assertEquals(blockPayloadHash.first, encodedBytesCoder.decodeConsuming((blockPayloadHash.first.kind.base58Bytes + blockPayloadHash.second).toMutableList()))
         assertEquals(blockPayloadHash.first, encodedBytesCoder.decode(blockPayloadHash.second, blockPayloadHash.first.kind))
         assertEquals(blockPayloadHash.first, encodedBytesCoder.decodeConsuming(blockPayloadHash.second.toMutableList(), blockPayloadHash.first.kind))
+        assertEquals(blockPayloadHash.first, BlockPayloadHash.decodeFromBytes(blockPayloadHash.second, tezos))
         assertEquals(blockPayloadHash.first, BlockPayloadHash.decodeFromBytes(blockPayloadHash.second, encodedBytesCoder))
         assertEquals(blockPayloadHash.first, BlockPayloadHash.decodeConsumingFromBytes(blockPayloadHash.second.toMutableList(), encodedBytesCoder))
 
@@ -178,6 +220,7 @@ class EncodedBytesCoderTest {
         assertEquals(blockMetadataHash.first, encodedBytesCoder.decodeConsuming((blockMetadataHash.first.kind.base58Bytes + blockMetadataHash.second).toMutableList()))
         assertEquals(blockMetadataHash.first, encodedBytesCoder.decode(blockMetadataHash.second, blockMetadataHash.first.kind))
         assertEquals(blockMetadataHash.first, encodedBytesCoder.decodeConsuming(blockMetadataHash.second.toMutableList(), blockMetadataHash.first.kind))
+        assertEquals(blockMetadataHash.first, BlockMetadataHash.decodeFromBytes(blockMetadataHash.second, tezos))
         assertEquals(blockMetadataHash.first, BlockMetadataHash.decodeFromBytes(blockMetadataHash.second, encodedBytesCoder))
         assertEquals(blockMetadataHash.first, BlockMetadataHash.decodeConsumingFromBytes(blockMetadataHash.second.toMutableList(), encodedBytesCoder))
 
@@ -185,6 +228,7 @@ class EncodedBytesCoderTest {
         assertEquals(chainId.first, encodedBytesCoder.decodeConsuming((chainId.first.kind.base58Bytes + chainId.second).toMutableList()))
         assertEquals(chainId.first, encodedBytesCoder.decode(chainId.second, chainId.first.kind))
         assertEquals(chainId.first, encodedBytesCoder.decodeConsuming(chainId.second.toMutableList(), chainId.first.kind))
+        assertEquals(chainId.first, ChainId.decodeFromBytes(chainId.second, tezos))
         assertEquals(chainId.first, ChainId.decodeFromBytes(chainId.second, encodedBytesCoder))
         assertEquals(chainId.first, ChainId.decodeConsumingFromBytes(chainId.second.toMutableList(), encodedBytesCoder))
 
@@ -192,6 +236,7 @@ class EncodedBytesCoderTest {
         assertEquals(contextHash.first, encodedBytesCoder.decodeConsuming((contextHash.first.kind.base58Bytes + contextHash.second).toMutableList()))
         assertEquals(contextHash.first, encodedBytesCoder.decode(contextHash.second, contextHash.first.kind))
         assertEquals(contextHash.first, encodedBytesCoder.decodeConsuming(contextHash.second.toMutableList(), contextHash.first.kind))
+        assertEquals(contextHash.first, ContextHash.decodeFromBytes(contextHash.second, tezos))
         assertEquals(contextHash.first, ContextHash.decodeFromBytes(contextHash.second, encodedBytesCoder))
         assertEquals(contextHash.first, ContextHash.decodeConsumingFromBytes(contextHash.second.toMutableList(), encodedBytesCoder))
 
@@ -199,6 +244,7 @@ class EncodedBytesCoderTest {
         assertEquals(contractHash.first, encodedBytesCoder.decodeConsuming((contractHash.first.kind.base58Bytes + contractHash.second).toMutableList()))
         assertEquals(contractHash.first, encodedBytesCoder.decode(contractHash.second, contractHash.first.kind))
         assertEquals(contractHash.first, encodedBytesCoder.decodeConsuming(contractHash.second.toMutableList(), contractHash.first.kind))
+        assertEquals(contractHash.first, ContractHash.decodeFromBytes(contractHash.second, tezos))
         assertEquals(contractHash.first, ContractHash.decodeFromBytes(contractHash.second, encodedBytesCoder))
         assertEquals(contractHash.first, ContractHash.decodeConsumingFromBytes(contractHash.second.toMutableList(), encodedBytesCoder))
 
@@ -206,6 +252,7 @@ class EncodedBytesCoderTest {
         assertEquals(cryptoboxPublicKeyHash.first, encodedBytesCoder.decodeConsuming((cryptoboxPublicKeyHash.first.kind.base58Bytes + cryptoboxPublicKeyHash.second).toMutableList()))
         assertEquals(cryptoboxPublicKeyHash.first, encodedBytesCoder.decode(cryptoboxPublicKeyHash.second, cryptoboxPublicKeyHash.first.kind))
         assertEquals(cryptoboxPublicKeyHash.first, encodedBytesCoder.decodeConsuming(cryptoboxPublicKeyHash.second.toMutableList(), cryptoboxPublicKeyHash.first.kind))
+        assertEquals(cryptoboxPublicKeyHash.first, CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second, tezos))
         assertEquals(cryptoboxPublicKeyHash.first, CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second, encodedBytesCoder))
         assertEquals(cryptoboxPublicKeyHash.first, CryptoboxPublicKeyHash.decodeConsumingFromBytes(cryptoboxPublicKeyHash.second.toMutableList(), encodedBytesCoder))
 
@@ -213,6 +260,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decodeConsuming((ed25519BlindedPublicKeyHash.first.kind.base58Bytes + ed25519BlindedPublicKeyHash.second).toMutableList()))
         assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decode(ed25519BlindedPublicKeyHash.second, ed25519BlindedPublicKeyHash.first.kind))
         assertEquals(ed25519BlindedPublicKeyHash.first, encodedBytesCoder.decodeConsuming(ed25519BlindedPublicKeyHash.second.toMutableList(), ed25519BlindedPublicKeyHash.first.kind))
+        assertEquals(ed25519BlindedPublicKeyHash.first, Ed25519BlindedPublicKeyHash.decodeFromBytes(ed25519BlindedPublicKeyHash.second, tezos))
         assertEquals(ed25519BlindedPublicKeyHash.first, Ed25519BlindedPublicKeyHash.decodeFromBytes(ed25519BlindedPublicKeyHash.second, encodedBytesCoder))
         assertEquals(ed25519BlindedPublicKeyHash.first, Ed25519BlindedPublicKeyHash.decodeConsumingFromBytes(ed25519BlindedPublicKeyHash.second.toMutableList(), encodedBytesCoder))
 
@@ -220,6 +268,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519EncryptedSeed.first, encodedBytesCoder.decodeConsuming((ed25519EncryptedSeed.first.kind.base58Bytes + ed25519EncryptedSeed.second).toMutableList()))
         assertEquals(ed25519EncryptedSeed.first, encodedBytesCoder.decode(ed25519EncryptedSeed.second, ed25519EncryptedSeed.first.kind))
         assertEquals(ed25519EncryptedSeed.first, encodedBytesCoder.decodeConsuming(ed25519EncryptedSeed.second.toMutableList(), ed25519EncryptedSeed.first.kind))
+        assertEquals(ed25519EncryptedSeed.first, Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second, tezos))
         assertEquals(ed25519EncryptedSeed.first, Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second, encodedBytesCoder))
         assertEquals(ed25519EncryptedSeed.first, Ed25519EncryptedSeed.decodeConsumingFromBytes(ed25519EncryptedSeed.second.toMutableList(), encodedBytesCoder))
 
@@ -227,6 +276,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519PublicKey.first, encodedBytesCoder.decodeConsuming((ed25519PublicKey.first.kind.base58Bytes + ed25519PublicKey.second).toMutableList()))
         assertEquals(ed25519PublicKey.first, encodedBytesCoder.decode(ed25519PublicKey.second, ed25519PublicKey.first.kind))
         assertEquals(ed25519PublicKey.first, encodedBytesCoder.decodeConsuming(ed25519PublicKey.second.toMutableList(), ed25519PublicKey.first.kind))
+        assertEquals(ed25519PublicKey.first, Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second, tezos))
         assertEquals(ed25519PublicKey.first, Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second, encodedBytesCoder))
         assertEquals(ed25519PublicKey.first, Ed25519PublicKey.decodeConsumingFromBytes(ed25519PublicKey.second.toMutableList(), encodedBytesCoder))
 
@@ -234,6 +284,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519PublicKeyHash.first, encodedBytesCoder.decodeConsuming((ed25519PublicKeyHash.first.kind.base58Bytes + ed25519PublicKeyHash.second).toMutableList()))
         assertEquals(ed25519PublicKeyHash.first, encodedBytesCoder.decode(ed25519PublicKeyHash.second, ed25519PublicKeyHash.first.kind))
         assertEquals(ed25519PublicKeyHash.first, encodedBytesCoder.decodeConsuming(ed25519PublicKeyHash.second.toMutableList(), ed25519PublicKeyHash.first.kind))
+        assertEquals(ed25519PublicKeyHash.first, Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second, tezos))
         assertEquals(ed25519PublicKeyHash.first, Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second, encodedBytesCoder))
         assertEquals(ed25519PublicKeyHash.first, Ed25519PublicKeyHash.decodeConsumingFromBytes(ed25519PublicKeyHash.second.toMutableList(), encodedBytesCoder))
 
@@ -241,6 +292,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519SecretKey.first, encodedBytesCoder.decodeConsuming((ed25519SecretKey.first.kind.base58Bytes + ed25519SecretKey.second).toMutableList()))
         assertEquals(ed25519SecretKey.first, encodedBytesCoder.decode(ed25519SecretKey.second, ed25519SecretKey.first.kind))
         assertEquals(ed25519SecretKey.first, encodedBytesCoder.decodeConsuming(ed25519SecretKey.second.toMutableList(), ed25519SecretKey.first.kind))
+        assertEquals(ed25519SecretKey.first, Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second, tezos))
         assertEquals(ed25519SecretKey.first, Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second, encodedBytesCoder))
         assertEquals(ed25519SecretKey.first, Ed25519SecretKey.decodeConsumingFromBytes(ed25519SecretKey.second.toMutableList(), encodedBytesCoder))
 
@@ -248,6 +300,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519Seed.first, encodedBytesCoder.decodeConsuming((ed25519Seed.first.kind.base58Bytes + ed25519Seed.second).toMutableList()))
         assertEquals(ed25519Seed.first, encodedBytesCoder.decode(ed25519Seed.second, ed25519Seed.first.kind))
         assertEquals(ed25519Seed.first, encodedBytesCoder.decodeConsuming(ed25519Seed.second.toMutableList(), ed25519Seed.first.kind))
+        assertEquals(ed25519Seed.first, Ed25519Seed.decodeFromBytes(ed25519Seed.second, tezos))
         assertEquals(ed25519Seed.first, Ed25519Seed.decodeFromBytes(ed25519Seed.second, encodedBytesCoder))
         assertEquals(ed25519Seed.first, Ed25519Seed.decodeConsumingFromBytes(ed25519Seed.second.toMutableList(), encodedBytesCoder))
 
@@ -255,6 +308,7 @@ class EncodedBytesCoderTest {
         assertEquals(ed25519Signature.first, encodedBytesCoder.decodeConsuming((ed25519Signature.first.kind.base58Bytes + ed25519Signature.second).toMutableList()))
         assertEquals(ed25519Signature.first, encodedBytesCoder.decode(ed25519Signature.second, ed25519Signature.first.kind))
         assertEquals(ed25519Signature.first, encodedBytesCoder.decodeConsuming(ed25519Signature.second.toMutableList(), ed25519Signature.first.kind))
+        assertEquals(ed25519Signature.first, Ed25519Signature.decodeFromBytes(ed25519Signature.second, tezos))
         assertEquals(ed25519Signature.first, Ed25519Signature.decodeFromBytes(ed25519Signature.second, encodedBytesCoder))
         assertEquals(ed25519Signature.first, Ed25519Signature.decodeConsumingFromBytes(ed25519Signature.second.toMutableList(), encodedBytesCoder))
 
@@ -262,6 +316,7 @@ class EncodedBytesCoderTest {
         assertEquals(genericSignature.first, encodedBytesCoder.decodeConsuming((genericSignature.first.kind.base58Bytes + genericSignature.second).toMutableList()))
         assertEquals(genericSignature.first, encodedBytesCoder.decode(genericSignature.second, genericSignature.first.kind))
         assertEquals(genericSignature.first, encodedBytesCoder.decodeConsuming(genericSignature.second.toMutableList(), genericSignature.first.kind))
+        assertEquals(genericSignature.first, GenericSignature.decodeFromBytes(genericSignature.second, tezos))
         assertEquals(genericSignature.first, GenericSignature.decodeFromBytes(genericSignature.second, encodedBytesCoder))
         assertEquals(genericSignature.first, GenericSignature.decodeConsumingFromBytes(genericSignature.second.toMutableList(), encodedBytesCoder))
 
@@ -269,6 +324,7 @@ class EncodedBytesCoderTest {
         assertEquals(nonceHash.first, encodedBytesCoder.decodeConsuming((nonceHash.first.kind.base58Bytes + nonceHash.second).toMutableList()))
         assertEquals(nonceHash.first, encodedBytesCoder.decode(nonceHash.second, nonceHash.first.kind))
         assertEquals(nonceHash.first, encodedBytesCoder.decodeConsuming(nonceHash.second.toMutableList(), nonceHash.first.kind))
+        assertEquals(nonceHash.first, NonceHash.decodeFromBytes(nonceHash.second, tezos))
         assertEquals(nonceHash.first, NonceHash.decodeFromBytes(nonceHash.second, encodedBytesCoder))
         assertEquals(nonceHash.first, NonceHash.decodeConsumingFromBytes(nonceHash.second.toMutableList(), encodedBytesCoder))
 
@@ -276,6 +332,7 @@ class EncodedBytesCoderTest {
         assertEquals(operationHash.first, encodedBytesCoder.decodeConsuming((operationHash.first.kind.base58Bytes + operationHash.second).toMutableList()))
         assertEquals(operationHash.first, encodedBytesCoder.decode(operationHash.second, operationHash.first.kind))
         assertEquals(operationHash.first, encodedBytesCoder.decodeConsuming(operationHash.second.toMutableList(), operationHash.first.kind))
+        assertEquals(operationHash.first, OperationHash.decodeFromBytes(operationHash.second, tezos))
         assertEquals(operationHash.first, OperationHash.decodeFromBytes(operationHash.second, encodedBytesCoder))
         assertEquals(operationHash.first, OperationHash.decodeConsumingFromBytes(operationHash.second.toMutableList(), encodedBytesCoder))
 
@@ -283,6 +340,7 @@ class EncodedBytesCoderTest {
         assertEquals(operationListHash.first, encodedBytesCoder.decodeConsuming((operationListHash.first.kind.base58Bytes + operationListHash.second).toMutableList()))
         assertEquals(operationListHash.first, encodedBytesCoder.decode(operationListHash.second, operationListHash.first.kind))
         assertEquals(operationListHash.first, encodedBytesCoder.decodeConsuming(operationListHash.second.toMutableList(), operationListHash.first.kind))
+        assertEquals(operationListHash.first, OperationListHash.decodeFromBytes(operationListHash.second, tezos))
         assertEquals(operationListHash.first, OperationListHash.decodeFromBytes(operationListHash.second, encodedBytesCoder))
         assertEquals(operationListHash.first, OperationListHash.decodeConsumingFromBytes(operationListHash.second.toMutableList(), encodedBytesCoder))
 
@@ -290,6 +348,7 @@ class EncodedBytesCoderTest {
         assertEquals(operationListListHash.first, encodedBytesCoder.decodeConsuming((operationListListHash.first.kind.base58Bytes + operationListListHash.second).toMutableList()))
         assertEquals(operationListListHash.first, encodedBytesCoder.decode(operationListListHash.second, operationListListHash.first.kind))
         assertEquals(operationListListHash.first, encodedBytesCoder.decodeConsuming(operationListListHash.second.toMutableList(), operationListListHash.first.kind))
+        assertEquals(operationListListHash.first, OperationListListHash.decodeFromBytes(operationListListHash.second, tezos))
         assertEquals(operationListListHash.first, OperationListListHash.decodeFromBytes(operationListListHash.second, encodedBytesCoder))
         assertEquals(operationListListHash.first, OperationListListHash.decodeConsumingFromBytes(operationListListHash.second.toMutableList(), encodedBytesCoder))
 
@@ -297,6 +356,7 @@ class EncodedBytesCoderTest {
         assertEquals(operationMetadataHash.first, encodedBytesCoder.decodeConsuming((operationMetadataHash.first.kind.base58Bytes + operationMetadataHash.second).toMutableList()))
         assertEquals(operationMetadataHash.first, encodedBytesCoder.decode(operationMetadataHash.second, operationMetadataHash.first.kind))
         assertEquals(operationMetadataHash.first, encodedBytesCoder.decodeConsuming(operationMetadataHash.second.toMutableList(), operationMetadataHash.first.kind))
+        assertEquals(operationMetadataHash.first, OperationMetadataHash.decodeFromBytes(operationMetadataHash.second, tezos))
         assertEquals(operationMetadataHash.first, OperationMetadataHash.decodeFromBytes(operationMetadataHash.second, encodedBytesCoder))
         assertEquals(operationMetadataHash.first, OperationMetadataHash.decodeConsumingFromBytes(operationMetadataHash.second.toMutableList(), encodedBytesCoder))
 
@@ -304,6 +364,7 @@ class EncodedBytesCoderTest {
         assertEquals(operationMetadataListHash.first, encodedBytesCoder.decodeConsuming((operationMetadataListHash.first.kind.base58Bytes + operationMetadataListHash.second).toMutableList()))
         assertEquals(operationMetadataListHash.first, encodedBytesCoder.decode(operationMetadataListHash.second, operationMetadataListHash.first.kind))
         assertEquals(operationMetadataListHash.first, encodedBytesCoder.decodeConsuming(operationMetadataListHash.second.toMutableList(), operationMetadataListHash.first.kind))
+        assertEquals(operationMetadataListHash.first, OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second, tezos))
         assertEquals(operationMetadataListHash.first, OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second, encodedBytesCoder))
         assertEquals(operationMetadataListHash.first, OperationMetadataListHash.decodeConsumingFromBytes(operationMetadataListHash.second.toMutableList(), encodedBytesCoder))
 
@@ -311,6 +372,7 @@ class EncodedBytesCoderTest {
         assertEquals(operationMetadataListListHash.first, encodedBytesCoder.decodeConsuming((operationMetadataListListHash.first.kind.base58Bytes + operationMetadataListListHash.second).toMutableList()))
         assertEquals(operationMetadataListListHash.first, encodedBytesCoder.decode(operationMetadataListListHash.second, operationMetadataListListHash.first.kind))
         assertEquals(operationMetadataListListHash.first, encodedBytesCoder.decodeConsuming(operationMetadataListListHash.second.toMutableList(), operationMetadataListListHash.first.kind))
+        assertEquals(operationMetadataListListHash.first, OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second, tezos))
         assertEquals(operationMetadataListListHash.first, OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second, encodedBytesCoder))
         assertEquals(operationMetadataListListHash.first, OperationMetadataListListHash.decodeConsumingFromBytes(operationMetadataListListHash.second.toMutableList(), encodedBytesCoder))
 
@@ -318,6 +380,7 @@ class EncodedBytesCoderTest {
         assertEquals(p256EncryptedSecretKey.first, encodedBytesCoder.decodeConsuming((p256EncryptedSecretKey.first.kind.base58Bytes + p256EncryptedSecretKey.second).toMutableList()))
         assertEquals(p256EncryptedSecretKey.first, encodedBytesCoder.decode(p256EncryptedSecretKey.second, p256EncryptedSecretKey.first.kind))
         assertEquals(p256EncryptedSecretKey.first, encodedBytesCoder.decodeConsuming(p256EncryptedSecretKey.second.toMutableList(), p256EncryptedSecretKey.first.kind))
+        assertEquals(p256EncryptedSecretKey.first, P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second, tezos))
         assertEquals(p256EncryptedSecretKey.first, P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second, encodedBytesCoder))
         assertEquals(p256EncryptedSecretKey.first, P256EncryptedSecretKey.decodeConsumingFromBytes(p256EncryptedSecretKey.second.toMutableList(), encodedBytesCoder))
 
@@ -325,6 +388,7 @@ class EncodedBytesCoderTest {
         assertEquals(p256PublicKey.first, encodedBytesCoder.decodeConsuming((p256PublicKey.first.kind.base58Bytes + p256PublicKey.second).toMutableList()))
         assertEquals(p256PublicKey.first, encodedBytesCoder.decode(p256PublicKey.second, p256PublicKey.first.kind))
         assertEquals(p256PublicKey.first, encodedBytesCoder.decodeConsuming(p256PublicKey.second.toMutableList(), p256PublicKey.first.kind))
+        assertEquals(p256PublicKey.first, P256PublicKey.decodeFromBytes(p256PublicKey.second, tezos))
         assertEquals(p256PublicKey.first, P256PublicKey.decodeFromBytes(p256PublicKey.second, encodedBytesCoder))
         assertEquals(p256PublicKey.first, P256PublicKey.decodeConsumingFromBytes(p256PublicKey.second.toMutableList(), encodedBytesCoder))
 
@@ -332,6 +396,7 @@ class EncodedBytesCoderTest {
         assertEquals(p256PublicKeyHash.first, encodedBytesCoder.decodeConsuming((p256PublicKeyHash.first.kind.base58Bytes + p256PublicKeyHash.second).toMutableList()))
         assertEquals(p256PublicKeyHash.first, encodedBytesCoder.decode(p256PublicKeyHash.second, p256PublicKeyHash.first.kind))
         assertEquals(p256PublicKeyHash.first, encodedBytesCoder.decodeConsuming(p256PublicKeyHash.second.toMutableList(), p256PublicKeyHash.first.kind))
+        assertEquals(p256PublicKeyHash.first, P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second, tezos))
         assertEquals(p256PublicKeyHash.first, P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second, encodedBytesCoder))
         assertEquals(p256PublicKeyHash.first, P256PublicKeyHash.decodeConsumingFromBytes(p256PublicKeyHash.second.toMutableList(), encodedBytesCoder))
 
@@ -339,6 +404,7 @@ class EncodedBytesCoderTest {
         assertEquals(p256SecretKey.first, encodedBytesCoder.decodeConsuming((p256SecretKey.first.kind.base58Bytes + p256SecretKey.second).toMutableList()))
         assertEquals(p256SecretKey.first, encodedBytesCoder.decode(p256SecretKey.second, p256SecretKey.first.kind))
         assertEquals(p256SecretKey.first, encodedBytesCoder.decodeConsuming(p256SecretKey.second.toMutableList(), p256SecretKey.first.kind))
+        assertEquals(p256SecretKey.first, P256SecretKey.decodeFromBytes(p256SecretKey.second, tezos))
         assertEquals(p256SecretKey.first, P256SecretKey.decodeFromBytes(p256SecretKey.second, encodedBytesCoder))
         assertEquals(p256SecretKey.first, P256SecretKey.decodeConsumingFromBytes(p256SecretKey.second.toMutableList(), encodedBytesCoder))
 
@@ -346,6 +412,7 @@ class EncodedBytesCoderTest {
         assertEquals(p256Signature.first, encodedBytesCoder.decodeConsuming((p256Signature.first.kind.base58Bytes + p256Signature.second).toMutableList()))
         assertEquals(p256Signature.first, encodedBytesCoder.decode(p256Signature.second, p256Signature.first.kind))
         assertEquals(p256Signature.first, encodedBytesCoder.decodeConsuming(p256Signature.second.toMutableList(), p256Signature.first.kind))
+        assertEquals(p256Signature.first, P256Signature.decodeFromBytes(p256Signature.second, tezos))
         assertEquals(p256Signature.first, P256Signature.decodeFromBytes(p256Signature.second, encodedBytesCoder))
         assertEquals(p256Signature.first, P256Signature.decodeConsumingFromBytes(p256Signature.second.toMutableList(), encodedBytesCoder))
 
@@ -353,6 +420,7 @@ class EncodedBytesCoderTest {
         assertEquals(protocolHash.first, encodedBytesCoder.decodeConsuming((protocolHash.first.kind.base58Bytes + protocolHash.second).toMutableList()))
         assertEquals(protocolHash.first, encodedBytesCoder.decode(protocolHash.second, protocolHash.first.kind))
         assertEquals(protocolHash.first, encodedBytesCoder.decodeConsuming(protocolHash.second.toMutableList(), protocolHash.first.kind))
+        assertEquals(protocolHash.first, ProtocolHash.decodeFromBytes(protocolHash.second, tezos))
         assertEquals(protocolHash.first, ProtocolHash.decodeFromBytes(protocolHash.second, encodedBytesCoder))
         assertEquals(protocolHash.first, ProtocolHash.decodeConsumingFromBytes(protocolHash.second.toMutableList(), encodedBytesCoder))
 
@@ -360,6 +428,7 @@ class EncodedBytesCoderTest {
         assertEquals(saplingAddress.first, encodedBytesCoder.decodeConsuming((saplingAddress.first.kind.base58Bytes + saplingAddress.second).toMutableList()))
         assertEquals(saplingAddress.first, encodedBytesCoder.decode(saplingAddress.second, saplingAddress.first.kind))
         assertEquals(saplingAddress.first, encodedBytesCoder.decodeConsuming(saplingAddress.second.toMutableList(), saplingAddress.first.kind))
+        assertEquals(saplingAddress.first, SaplingAddress.decodeFromBytes(saplingAddress.second, tezos))
         assertEquals(saplingAddress.first, SaplingAddress.decodeFromBytes(saplingAddress.second, encodedBytesCoder))
         assertEquals(saplingAddress.first, SaplingAddress.decodeConsumingFromBytes(saplingAddress.second.toMutableList(), encodedBytesCoder))
 
@@ -367,6 +436,7 @@ class EncodedBytesCoderTest {
         assertEquals(saplingSpendingKey.first, encodedBytesCoder.decodeConsuming((saplingSpendingKey.first.kind.base58Bytes + saplingSpendingKey.second).toMutableList()))
         assertEquals(saplingSpendingKey.first, encodedBytesCoder.decode(saplingSpendingKey.second, saplingSpendingKey.first.kind))
         assertEquals(saplingSpendingKey.first, encodedBytesCoder.decodeConsuming(saplingSpendingKey.second.toMutableList(), saplingSpendingKey.first.kind))
+        assertEquals(saplingSpendingKey.first, SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second, tezos))
         assertEquals(saplingSpendingKey.first, SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second, encodedBytesCoder))
         assertEquals(saplingSpendingKey.first, SaplingSpendingKey.decodeConsumingFromBytes(saplingSpendingKey.second.toMutableList(), encodedBytesCoder))
 
@@ -374,6 +444,7 @@ class EncodedBytesCoderTest {
         assertEquals(scriptExprHash.first, encodedBytesCoder.decodeConsuming((scriptExprHash.first.kind.base58Bytes + scriptExprHash.second).toMutableList()))
         assertEquals(scriptExprHash.first, encodedBytesCoder.decode(scriptExprHash.second, scriptExprHash.first.kind))
         assertEquals(scriptExprHash.first, encodedBytesCoder.decodeConsuming(scriptExprHash.second.toMutableList(), scriptExprHash.first.kind))
+        assertEquals(scriptExprHash.first, ScriptExprHash.decodeFromBytes(scriptExprHash.second, tezos))
         assertEquals(scriptExprHash.first, ScriptExprHash.decodeFromBytes(scriptExprHash.second, encodedBytesCoder))
         assertEquals(scriptExprHash.first, ScriptExprHash.decodeConsumingFromBytes(scriptExprHash.second.toMutableList(), encodedBytesCoder))
 
@@ -381,6 +452,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1Element.first, encodedBytesCoder.decodeConsuming((secp256K1Element.first.kind.base58Bytes + secp256K1Element.second).toMutableList()))
         assertEquals(secp256K1Element.first, encodedBytesCoder.decode(secp256K1Element.second, secp256K1Element.first.kind))
         assertEquals(secp256K1Element.first, encodedBytesCoder.decodeConsuming(secp256K1Element.second.toMutableList(), secp256K1Element.first.kind))
+        assertEquals(secp256K1Element.first, Secp256K1Element.decodeFromBytes(secp256K1Element.second, tezos))
         assertEquals(secp256K1Element.first, Secp256K1Element.decodeFromBytes(secp256K1Element.second, encodedBytesCoder))
         assertEquals(secp256K1Element.first, Secp256K1Element.decodeConsumingFromBytes(secp256K1Element.second.toMutableList(), encodedBytesCoder))
 
@@ -388,6 +460,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1EncryptedScalar.first, encodedBytesCoder.decodeConsuming((secp256K1EncryptedScalar.first.kind.base58Bytes + secp256K1EncryptedScalar.second).toMutableList()))
         assertEquals(secp256K1EncryptedScalar.first, encodedBytesCoder.decode(secp256K1EncryptedScalar.second, secp256K1EncryptedScalar.first.kind))
         assertEquals(secp256K1EncryptedScalar.first, encodedBytesCoder.decodeConsuming(secp256K1EncryptedScalar.second.toMutableList(), secp256K1EncryptedScalar.first.kind))
+        assertEquals(secp256K1EncryptedScalar.first, Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second, tezos))
         assertEquals(secp256K1EncryptedScalar.first, Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second, encodedBytesCoder))
         assertEquals(secp256K1EncryptedScalar.first, Secp256K1EncryptedScalar.decodeConsumingFromBytes(secp256K1EncryptedScalar.second.toMutableList(), encodedBytesCoder))
 
@@ -395,6 +468,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1EncryptedSecretKey.first, encodedBytesCoder.decodeConsuming((secp256K1EncryptedSecretKey.first.kind.base58Bytes + secp256K1EncryptedSecretKey.second).toMutableList()))
         assertEquals(secp256K1EncryptedSecretKey.first, encodedBytesCoder.decode(secp256K1EncryptedSecretKey.second, secp256K1EncryptedSecretKey.first.kind))
         assertEquals(secp256K1EncryptedSecretKey.first, encodedBytesCoder.decodeConsuming(secp256K1EncryptedSecretKey.second.toMutableList(), secp256K1EncryptedSecretKey.first.kind))
+        assertEquals(secp256K1EncryptedSecretKey.first, Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second, tezos))
         assertEquals(secp256K1EncryptedSecretKey.first, Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second, encodedBytesCoder))
         assertEquals(secp256K1EncryptedSecretKey.first, Secp256K1EncryptedSecretKey.decodeConsumingFromBytes(secp256K1EncryptedSecretKey.second.toMutableList(), encodedBytesCoder))
 
@@ -402,6 +476,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1PublicKey.first, encodedBytesCoder.decodeConsuming((secp256K1PublicKey.first.kind.base58Bytes + secp256K1PublicKey.second).toMutableList()))
         assertEquals(secp256K1PublicKey.first, encodedBytesCoder.decode(secp256K1PublicKey.second, secp256K1PublicKey.first.kind))
         assertEquals(secp256K1PublicKey.first, encodedBytesCoder.decodeConsuming(secp256K1PublicKey.second.toMutableList(), secp256K1PublicKey.first.kind))
+        assertEquals(secp256K1PublicKey.first, Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second, tezos))
         assertEquals(secp256K1PublicKey.first, Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second, encodedBytesCoder))
         assertEquals(secp256K1PublicKey.first, Secp256K1PublicKey.decodeConsumingFromBytes(secp256K1PublicKey.second.toMutableList(), encodedBytesCoder))
 
@@ -409,6 +484,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1PublicKeyHash.first, encodedBytesCoder.decodeConsuming((secp256K1PublicKeyHash.first.kind.base58Bytes + secp256K1PublicKeyHash.second).toMutableList()))
         assertEquals(secp256K1PublicKeyHash.first, encodedBytesCoder.decode(secp256K1PublicKeyHash.second, secp256K1PublicKeyHash.first.kind))
         assertEquals(secp256K1PublicKeyHash.first, encodedBytesCoder.decodeConsuming(secp256K1PublicKeyHash.second.toMutableList(), secp256K1PublicKeyHash.first.kind))
+        assertEquals(secp256K1PublicKeyHash.first, Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second, tezos))
         assertEquals(secp256K1PublicKeyHash.first, Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second, encodedBytesCoder))
         assertEquals(secp256K1PublicKeyHash.first, Secp256K1PublicKeyHash.decodeConsumingFromBytes(secp256K1PublicKeyHash.second.toMutableList(), encodedBytesCoder))
 
@@ -416,6 +492,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1Scalar.first, encodedBytesCoder.decodeConsuming((secp256K1Scalar.first.kind.base58Bytes + secp256K1Scalar.second).toMutableList()))
         assertEquals(secp256K1Scalar.first, encodedBytesCoder.decode(secp256K1Scalar.second, secp256K1Scalar.first.kind))
         assertEquals(secp256K1Scalar.first, encodedBytesCoder.decodeConsuming(secp256K1Scalar.second.toMutableList(), secp256K1Scalar.first.kind))
+        assertEquals(secp256K1Scalar.first, Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second, tezos))
         assertEquals(secp256K1Scalar.first, Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second, encodedBytesCoder))
         assertEquals(secp256K1Scalar.first, Secp256K1Scalar.decodeConsumingFromBytes(secp256K1Scalar.second.toMutableList(), encodedBytesCoder))
 
@@ -423,6 +500,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1SecretKey.first, encodedBytesCoder.decodeConsuming((secp256K1SecretKey.first.kind.base58Bytes + secp256K1SecretKey.second).toMutableList()))
         assertEquals(secp256K1SecretKey.first, encodedBytesCoder.decode(secp256K1SecretKey.second, secp256K1SecretKey.first.kind))
         assertEquals(secp256K1SecretKey.first, encodedBytesCoder.decodeConsuming(secp256K1SecretKey.second.toMutableList(), secp256K1SecretKey.first.kind))
+        assertEquals(secp256K1SecretKey.first, Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second, tezos))
         assertEquals(secp256K1SecretKey.first, Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second, encodedBytesCoder))
         assertEquals(secp256K1SecretKey.first, Secp256K1SecretKey.decodeConsumingFromBytes(secp256K1SecretKey.second.toMutableList(), encodedBytesCoder))
 
@@ -430,6 +508,7 @@ class EncodedBytesCoderTest {
         assertEquals(secp256K1Signature.first, encodedBytesCoder.decodeConsuming((secp256K1Signature.first.kind.base58Bytes + secp256K1Signature.second).toMutableList()))
         assertEquals(secp256K1Signature.first, encodedBytesCoder.decode(secp256K1Signature.second, secp256K1Signature.first.kind))
         assertEquals(secp256K1Signature.first, encodedBytesCoder.decodeConsuming(secp256K1Signature.second.toMutableList(), secp256K1Signature.first.kind))
+        assertEquals(secp256K1Signature.first, Secp256K1Signature.decodeFromBytes(secp256K1Signature.second, tezos))
         assertEquals(secp256K1Signature.first, Secp256K1Signature.decodeFromBytes(secp256K1Signature.second, encodedBytesCoder))
         assertEquals(secp256K1Signature.first, Secp256K1Signature.decodeConsumingFromBytes(secp256K1Signature.second.toMutableList(), encodedBytesCoder))
     }
@@ -441,6 +520,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(blockHash.second.sliceArray(1 until blockHash.second.size).toMutableList(), blockHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            BlockHash.decodeFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             BlockHash.decodeFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size), encodedBytesCoder)
@@ -456,6 +538,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size).toMutableList(), blockPayloadHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            BlockPayloadHash.decodeFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             BlockPayloadHash.decodeFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -467,6 +552,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size).toMutableList(), blockMetadataHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            BlockMetadataHash.decodeFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             BlockMetadataHash.decodeFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), encodedBytesCoder)
@@ -482,6 +570,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(chainId.second.sliceArray(1 until chainId.second.size).toMutableList(), chainId.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            ChainId.decodeFromBytes(chainId.second.sliceArray(1 until chainId.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             ChainId.decodeFromBytes(chainId.second.sliceArray(1 until chainId.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -493,6 +584,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(contextHash.second.sliceArray(1 until contextHash.second.size).toMutableList(), contextHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            ContextHash.decodeFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             ContextHash.decodeFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size), encodedBytesCoder)
@@ -508,6 +602,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(contractHash.second.sliceArray(1 until contractHash.second.size).toMutableList(), contractHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            ContractHash.decodeFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             ContractHash.decodeFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -519,6 +616,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size).toMutableList(), cryptoboxPublicKeyHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), encodedBytesCoder)
@@ -534,6 +634,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), ed25519BlindedPublicKeyHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -545,6 +648,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size).toMutableList(), ed25519EncryptedSeed.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), encodedBytesCoder)
@@ -560,6 +666,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size).toMutableList(), ed25519PublicKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -571,6 +680,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size).toMutableList(), ed25519PublicKeyHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), encodedBytesCoder)
@@ -586,6 +698,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size).toMutableList(), ed25519SecretKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -597,6 +712,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size).toMutableList(), ed25519Seed.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519Seed.decodeFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Ed25519Seed.decodeFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), encodedBytesCoder)
@@ -612,6 +730,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size).toMutableList(), ed25519Signature.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Ed25519Signature.decodeFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Ed25519Signature.decodeFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -623,6 +744,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(genericSignature.second.sliceArray(1 until genericSignature.second.size).toMutableList(), genericSignature.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            GenericSignature.decodeFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             GenericSignature.decodeFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size), encodedBytesCoder)
@@ -638,6 +762,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(nonceHash.second.sliceArray(1 until nonceHash.second.size).toMutableList(), nonceHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            NonceHash.decodeFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             NonceHash.decodeFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -649,6 +776,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(operationHash.second.sliceArray(1 until operationHash.second.size).toMutableList(), operationHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            OperationHash.decodeFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             OperationHash.decodeFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size), encodedBytesCoder)
@@ -664,6 +794,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(operationListHash.second.sliceArray(1 until operationListHash.second.size).toMutableList(), operationListHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            OperationListHash.decodeFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             OperationListHash.decodeFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -675,6 +808,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(operationListListHash.second.sliceArray(1 until operationListListHash.second.size).toMutableList(), operationListListHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            OperationListListHash.decodeFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             OperationListListHash.decodeFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), encodedBytesCoder)
@@ -690,6 +826,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size).toMutableList(), operationMetadataHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            OperationMetadataHash.decodeFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             OperationMetadataHash.decodeFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -701,6 +840,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size).toMutableList(), operationMetadataListHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), encodedBytesCoder)
@@ -716,6 +858,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size).toMutableList(), operationMetadataListListHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -727,6 +872,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size).toMutableList(), p256EncryptedSecretKey.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), encodedBytesCoder)
@@ -742,6 +890,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size).toMutableList(), p256PublicKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            P256PublicKey.decodeFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             P256PublicKey.decodeFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -753,6 +904,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size).toMutableList(), p256PublicKeyHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), encodedBytesCoder)
@@ -768,6 +922,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size).toMutableList(), p256SecretKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            P256SecretKey.decodeFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             P256SecretKey.decodeFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -779,6 +936,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(p256Signature.second.sliceArray(1 until p256Signature.second.size).toMutableList(), p256Signature.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            P256Signature.decodeFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             P256Signature.decodeFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size), encodedBytesCoder)
@@ -794,6 +954,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(protocolHash.second.sliceArray(1 until protocolHash.second.size).toMutableList(), protocolHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            ProtocolHash.decodeFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             ProtocolHash.decodeFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -805,6 +968,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(saplingAddress.second.sliceArray(1 until saplingAddress.second.size).toMutableList(), saplingAddress.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            SaplingAddress.decodeFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             SaplingAddress.decodeFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), encodedBytesCoder)
@@ -820,6 +986,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size).toMutableList(), saplingSpendingKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -831,6 +1000,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), scriptExprHash.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), encodedBytesCoder)
@@ -846,6 +1018,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size).toMutableList(), secp256K1Element.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Secp256K1Element.decodeFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Secp256K1Element.decodeFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -857,6 +1032,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size).toMutableList(), secp256K1EncryptedScalar.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), encodedBytesCoder)
@@ -872,6 +1050,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size).toMutableList(), secp256K1EncryptedSecretKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -883,6 +1064,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size).toMutableList(), secp256K1PublicKey.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), encodedBytesCoder)
@@ -898,6 +1082,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size).toMutableList(), secp256K1PublicKeyHash.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -909,6 +1096,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size).toMutableList(), secp256K1Scalar.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), encodedBytesCoder)
@@ -924,6 +1114,9 @@ class EncodedBytesCoderTest {
             encodedBytesCoder.decodeConsuming(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size).toMutableList(), secp256K1SecretKey.first.kind)
         }
         assertFailsWith<IllegalArgumentException> {
+            Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), tezos)
+        }
+        assertFailsWith<IllegalArgumentException> {
             Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), encodedBytesCoder)
         }
         assertFailsWith<IllegalArgumentException> {
@@ -935,6 +1128,9 @@ class EncodedBytesCoderTest {
         }
         assertFailsWith<IllegalArgumentException> {
             encodedBytesCoder.decodeConsuming(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size).toMutableList(), secp256K1Signature.first.kind)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            Secp256K1Signature.decodeFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), tezos)
         }
         assertFailsWith<IllegalArgumentException> {
             Secp256K1Signature.decodeFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), encodedBytesCoder)

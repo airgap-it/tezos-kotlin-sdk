@@ -4,17 +4,18 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
 import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKey
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +27,9 @@ import kotlin.test.assertFailsWith
 class PublicKeyBytesCoderTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
+
+    private lateinit var tezos: Tezos
 
     private lateinit var publicKeyBytesCoder: PublicKeyBytesCoder
 
@@ -34,15 +37,14 @@ class PublicKeyBytesCoderTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        tezos = mockTezos(cryptoProvider)
 
-        publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
+        publicKeyBytesCoder = PublicKeyBytesCoder(tezos.core().dependencyRegistry.encodedBytesCoder)
     }
 
     @After
@@ -54,6 +56,7 @@ class PublicKeyBytesCoderTest {
     fun `should encode PublicKeyEncoded to bytes`() {
         keysWithBytes.forEach {
             assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first))
+            assertContentEquals(it.second, it.first.encodeToBytes(tezos))
             assertContentEquals(it.second, it.first.encodeToBytes(publicKeyBytesCoder))
         }
     }
@@ -64,6 +67,7 @@ class PublicKeyBytesCoderTest {
             assertEquals(it.first, publicKeyBytesCoder.decode(it.second))
             assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()))
             assertEquals(it.first, PublicKey.decodeFromBytes(it.second, publicKeyBytesCoder))
+            assertEquals(it.first, PublicKey.decodeFromBytes(it.second, tezos))
             assertEquals(it.first, PublicKey.decodeConsumingFromBytes(it.second.toMutableList(), publicKeyBytesCoder))
         }
     }
@@ -79,6 +83,7 @@ class PublicKeyBytesCoderTest {
             ),
         ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> { publicKeyBytesCoder.decode(it) }
+            assertFailsWith<IllegalArgumentException> { PublicKey.decodeFromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { PublicKey.decodeFromBytes(it, publicKeyBytesCoder) }
         }
 

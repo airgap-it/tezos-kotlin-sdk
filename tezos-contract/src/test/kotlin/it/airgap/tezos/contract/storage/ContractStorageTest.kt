@@ -17,7 +17,12 @@ import it.airgap.tezos.core.internal.converter.encoded.StringToPublicKeyConverte
 import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.*
+import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
+import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
+import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.normalizer.MichelinePrimitiveApplicationToNormalizedConverter
+import it.airgap.tezos.michelson.internal.normalizer.MichelineToNormalizedConverter
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication

@@ -11,18 +11,18 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class MichelsonScopedDependencyRegistryTest {
+class MichelsonDependencyRegistryTest {
 
     @MockK(relaxed = true)
     private lateinit var dependencyRegistry: DependencyRegistry
 
-    private lateinit var michelsonScopedDependencyRegistry: MichelsonScopedDependencyRegistry
+    private lateinit var michelsonDependencyRegistry: MichelsonDependencyRegistry
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        michelsonScopedDependencyRegistry = MichelsonScopedDependencyRegistry(dependencyRegistry)
+        michelsonDependencyRegistry = MichelsonDependencyRegistry(dependencyRegistry)
     }
 
     @After
@@ -32,21 +32,21 @@ class MichelsonScopedDependencyRegistryTest {
 
     @Test
     fun `when asked to scope registry, should return itself if already scoped`() {
-        val scoped = michelsonScopedDependencyRegistry.michelson()
-        assertEquals(michelsonScopedDependencyRegistry, scoped)
+        val scoped = michelsonDependencyRegistry.michelson()
+        assertEquals(michelsonDependencyRegistry, scoped)
     }
 
     @Test
     fun `when asked to scope registry, should use one already registered`() {
-        every { dependencyRegistry.findScoped(MichelsonScopedDependencyRegistry::class) } returns michelsonScopedDependencyRegistry
+        every { dependencyRegistry.findScoped(MichelsonDependencyRegistry::class) } returns michelsonDependencyRegistry
 
         val scoped = dependencyRegistry.michelson()
-        assertEquals(michelsonScopedDependencyRegistry, scoped)
+        assertEquals(michelsonDependencyRegistry, scoped)
     }
 
     @Test
     fun `when asked to scope registry and none is registered, should create new and register it`() {
-        every { dependencyRegistry.findScoped(MichelsonScopedDependencyRegistry::class) } returns null
+        every { dependencyRegistry.findScoped(MichelsonDependencyRegistry::class) } returns null
 
         val scoped = dependencyRegistry.michelson()
         verify { dependencyRegistry.addScoped(scoped) }

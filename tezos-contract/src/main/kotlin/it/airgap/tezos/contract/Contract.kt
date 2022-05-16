@@ -9,8 +9,8 @@ import it.airgap.tezos.contract.storage.ContractStorage
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.MichelsonType
-import it.airgap.tezos.michelson.internal.converter.MichelineToNormalizedConverter
-import it.airgap.tezos.michelson.isPrim
+import it.airgap.tezos.michelson.comparator.isPrim
+import it.airgap.tezos.michelson.internal.normalizer.MichelineToNormalizedConverter
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence

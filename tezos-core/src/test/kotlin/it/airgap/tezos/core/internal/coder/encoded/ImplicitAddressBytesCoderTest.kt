@@ -4,17 +4,18 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKeyHash
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +27,9 @@ import kotlin.test.assertFailsWith
 class ImplicitAddressBytesCoderTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
+
+    private lateinit var tezos: Tezos
 
     private lateinit var implicitAddressBytesCoder: ImplicitAddressBytesCoder
 
@@ -34,15 +37,14 @@ class ImplicitAddressBytesCoderTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
+        tezos = mockTezos(cryptoProvider)
 
-        implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
+        implicitAddressBytesCoder = ImplicitAddressBytesCoder(tezos.core().dependencyRegistry.encodedBytesCoder)
     }
 
     @After
@@ -54,6 +56,7 @@ class ImplicitAddressBytesCoderTest {
     fun `should encode ImplicitAddress to bytes`() {
         keyHashesWithBytes.forEach {
             assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first))
+            assertContentEquals(it.second, it.first.encodeToBytes(tezos))
             assertContentEquals(it.second, it.first.encodeToBytes(implicitAddressBytesCoder))
         }
     }
@@ -64,6 +67,7 @@ class ImplicitAddressBytesCoderTest {
             assertEquals(it.first, implicitAddressBytesCoder.decode(it.second))
             assertEquals(it.first, implicitAddressBytesCoder.decodeConsuming(it.second.toMutableList()))
             assertEquals(it.first, ImplicitAddress.decodeFromBytes(it.second, implicitAddressBytesCoder))
+            assertEquals(it.first, ImplicitAddress.decodeFromBytes(it.second, tezos))
             assertEquals(it.first, ImplicitAddress.decodeConsumingFromBytes(it.second.toMutableList(), implicitAddressBytesCoder))
         }
     }
@@ -79,6 +83,7 @@ class ImplicitAddressBytesCoderTest {
             ),
         ).flatten().forEach {
             assertFailsWith<IllegalArgumentException> { implicitAddressBytesCoder.decode(it) }
+            assertFailsWith<IllegalArgumentException> { ImplicitAddress.decodeFromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { ImplicitAddress.decodeFromBytes(it, implicitAddressBytesCoder) }
         }
 

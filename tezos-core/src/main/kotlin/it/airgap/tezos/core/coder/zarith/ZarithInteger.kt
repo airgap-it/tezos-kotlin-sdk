@@ -3,16 +3,16 @@ package it.airgap.tezos.core.coder.zarith
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.core.internal.di.core
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.type.zarith.ZarithInteger
 
 // -- ZarithInteger <-> ByteArray --
 
 public fun ZarithInteger.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
-    encodeToBytes(tezos.dependencyRegistry.core().zarithIntegerBytesCoder)
+    encodeToBytes(tezos.core().dependencyRegistry.zarithIntegerBytesCoder)
 
 public fun ZarithInteger.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): ZarithInteger =
-    ZarithInteger.decodeFromBytes(bytes, tezos.dependencyRegistry.core().zarithIntegerBytesCoder)
+    ZarithInteger.decodeFromBytes(bytes, tezos.core().dependencyRegistry.zarithIntegerBytesCoder)
 
 @InternalTezosSdkApi
 public fun ZarithInteger.encodeToBytes(zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>): ByteArray =

@@ -3,16 +3,16 @@ package it.airgap.tezos.core.coder.encoded
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
-import it.airgap.tezos.core.internal.di.core
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.type.encoded.Secp256K1Scalar
 
 // -- Secp256K1Scalar <-> ByteArray --
 
 public fun Secp256K1Scalar.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
-    encodeToBytes(tezos.dependencyRegistry.core().encodedBytesCoder)
+    encodeToBytes(tezos.core().dependencyRegistry.encodedBytesCoder)
 
 public fun Secp256K1Scalar.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): Secp256K1Scalar =
-    Secp256K1Scalar.decodeFromBytes(bytes, tezos.dependencyRegistry.core().encodedBytesCoder)
+    decodeFromBytes(bytes, tezos.core().dependencyRegistry.encodedBytesCoder)
 
 @InternalTezosSdkApi
 public fun Secp256K1Scalar.encodeToBytes(encodedBytesCoder: EncodedBytesCoder): ByteArray =

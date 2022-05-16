@@ -4,14 +4,12 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -22,10 +20,9 @@ import kotlin.test.assertFailsWith
 class BytesToAddressConverterTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var bytesToAddressConverter: BytesToAddressConverter
 
@@ -33,15 +30,13 @@ class BytesToAddressConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        bytesToAddressConverter = BytesToAddressConverter(base58Check)
-
-        every { dependencyRegistry.bytesToAddressConverter } returns bytesToAddressConverter
+        tezos = mockTezos(cryptoProvider)
+        bytesToAddressConverter = BytesToAddressConverter(tezos.dependencyRegistry.base58Check)
     }
 
     @After
@@ -53,7 +48,7 @@ class BytesToAddressConverterTest {
     fun `should convert bytes to Address`() {
         addressesWithBytes.forEach {
             assertEquals(it.first, bytesToAddressConverter.convert(it.second))
-            assertEquals(it.first, Address.fromBytes(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, Address.fromBytes(it.second, tezos))
             assertEquals(it.first, Address.fromBytes(it.second, bytesToAddressConverter))
         }
     }
@@ -62,7 +57,7 @@ class BytesToAddressConverterTest {
     fun `should fail to convert invalid bytes to Address`() {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToAddressConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { Address.fromBytes(it, TezosCore(dependencyRegistry)) }
+            assertFailsWith<IllegalArgumentException> { Address.fromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Address.fromBytes(it, bytesToAddressConverter) }
         }
     }

@@ -4,17 +4,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromGenericSignature
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
-import it.airgap.tezos.core.internal.coder.encoded.SignatureBytesCoder
-import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.P256Signature
 import it.airgap.tezos.core.type.encoded.Signature
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -24,10 +21,9 @@ import kotlin.test.assertEquals
 class GenericSignatureToP256SignatureConverterTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var genericSignatureToP256SignatureConverter: GenericSignatureToP256SignatureConverter
 
@@ -35,18 +31,16 @@ class GenericSignatureToP256SignatureConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-
-        genericSignatureToP256SignatureConverter = GenericSignatureToP256SignatureConverter(signatureBytesCoder, encodedBytesCoder)
-
-        every { dependencyRegistry.genericSignatureToP256SignatureConverter } returns genericSignatureToP256SignatureConverter
+        tezos = mockTezos(cryptoProvider)
+        genericSignatureToP256SignatureConverter = GenericSignatureToP256SignatureConverter(
+            tezos.core().dependencyRegistry.signatureBytesCoder,
+            tezos.core().dependencyRegistry.encodedBytesCoder,
+        )
     }
 
     @After
@@ -58,7 +52,7 @@ class GenericSignatureToP256SignatureConverterTest {
     fun `should convert GenericSignature to P256Signature`() {
         signaturesWithGenerics.forEach {
             assertEquals(it.first, genericSignatureToP256SignatureConverter.convert(it.second))
-            assertEquals(it.first, P256Signature.fromGenericSignature(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, P256Signature.fromGenericSignature(it.second, tezos))
             assertEquals(it.first, P256Signature.fromGenericSignature(it.second, genericSignatureToP256SignatureConverter))
         }
     }

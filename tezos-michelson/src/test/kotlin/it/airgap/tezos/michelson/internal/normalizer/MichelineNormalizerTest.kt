@@ -1,10 +1,9 @@
-package it.airgap.tezos.michelson.internal.converter
+package it.airgap.tezos.michelson.internal.normalizer
 
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -16,7 +15,7 @@ import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MichelineToNormalizedConverterTest {
+class MichelineNormalizerTest {
 
     @MockK
     private lateinit var dependencyRegistry: ScopedDependencyRegistry

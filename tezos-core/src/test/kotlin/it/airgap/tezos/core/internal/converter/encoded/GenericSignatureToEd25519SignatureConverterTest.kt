@@ -4,17 +4,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromGenericSignature
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
-import it.airgap.tezos.core.internal.coder.encoded.SignatureBytesCoder
-import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.type.encoded.Ed25519Signature
 import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.Signature
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -24,10 +21,9 @@ import kotlin.test.assertEquals
 class GenericSignatureToEd25519SignatureConverterTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var genericSignatureToEd25519SignatureConverter: GenericSignatureToEd25519SignatureConverter
 
@@ -35,18 +31,16 @@ class GenericSignatureToEd25519SignatureConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-
-        genericSignatureToEd25519SignatureConverter = GenericSignatureToEd25519SignatureConverter(signatureBytesCoder, encodedBytesCoder)
-
-        every { dependencyRegistry.genericSignatureToEd25519SignatureConverter } returns genericSignatureToEd25519SignatureConverter
+        tezos = mockTezos(cryptoProvider)
+        genericSignatureToEd25519SignatureConverter = GenericSignatureToEd25519SignatureConverter(
+            tezos.core().dependencyRegistry.signatureBytesCoder,
+            tezos.core().dependencyRegistry.encodedBytesCoder,
+        )
     }
 
     @After
@@ -58,7 +52,7 @@ class GenericSignatureToEd25519SignatureConverterTest {
     fun `should convert GenericSignature to Ed25519Signature`() {
         signaturesWithGenerics.forEach {
             assertEquals(it.first, genericSignatureToEd25519SignatureConverter.convert(it.second))
-            assertEquals(it.first, Ed25519Signature.fromGenericSignature(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, Ed25519Signature.fromGenericSignature(it.second, tezos))
             assertEquals(it.first, Ed25519Signature.fromGenericSignature(it.second, genericSignatureToEd25519SignatureConverter))
         }
     }

@@ -4,17 +4,15 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.TezosCore
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKeyHash
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -25,10 +23,9 @@ import kotlin.test.assertFailsWith
 class BytesToImplicitAddressConverterTest {
 
     @MockK
-    private lateinit var crypto: Crypto
+    private lateinit var cryptoProvider: CryptoProvider
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var bytesToImplicitAddressConverter: BytesToImplicitAddressConverter
 
@@ -36,15 +33,13 @@ class BytesToImplicitAddressConverterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        val base58Check = Base58Check(Base58(), crypto)
-        bytesToImplicitAddressConverter = BytesToImplicitAddressConverter(base58Check)
-
-        every { dependencyRegistry.bytesToImplicitAddressConverter } returns bytesToImplicitAddressConverter
+        tezos = mockTezos(cryptoProvider)
+        bytesToImplicitAddressConverter = BytesToImplicitAddressConverter(tezos.dependencyRegistry.base58Check)
     }
 
     @After
@@ -56,7 +51,7 @@ class BytesToImplicitAddressConverterTest {
     fun `should convert bytes to ImplicitAddress`() {
         addressesWithBytes.forEach {
             assertEquals(it.first, bytesToImplicitAddressConverter.convert(it.second))
-            assertEquals(it.first, ImplicitAddress.fromBytes(it.second, TezosCore(dependencyRegistry)))
+            assertEquals(it.first, ImplicitAddress.fromBytes(it.second, tezos))
             assertEquals(it.first, ImplicitAddress.fromBytes(it.second, bytesToImplicitAddressConverter))
         }
     }
@@ -65,7 +60,7 @@ class BytesToImplicitAddressConverterTest {
     fun `should fail to convert invalid bytes to ImplicitAddress`() {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToImplicitAddressConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { ImplicitAddress.fromBytes(it, TezosCore(dependencyRegistry)) }
+            assertFailsWith<IllegalArgumentException> { ImplicitAddress.fromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { ImplicitAddress.fromBytes(it, bytesToImplicitAddressConverter) }
         }
     }

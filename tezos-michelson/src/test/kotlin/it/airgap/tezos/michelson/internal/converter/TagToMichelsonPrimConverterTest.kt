@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import mockTezosSdk
 import org.junit.After
 import org.junit.Before
