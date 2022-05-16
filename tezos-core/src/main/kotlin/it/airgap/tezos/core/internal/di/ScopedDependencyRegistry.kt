@@ -3,7 +3,7 @@ package it.airgap.tezos.core.internal.di
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.Timestamp

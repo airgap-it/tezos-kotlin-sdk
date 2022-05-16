@@ -2,7 +2,24 @@ package it.airgap.tezos.core.internal.di
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.coder.encoded.*
+import it.airgap.tezos.core.internal.coder.encoded.AddressBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.ImplicitAddressBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.PublicKeyBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.SignatureBytesCoder
+import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
+import it.airgap.tezos.core.internal.coder.tez.NanotezBytesCoder
+import it.airgap.tezos.core.internal.coder.tez.TezBytesCoder
+import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.converter.*
+import it.airgap.tezos.core.internal.converter.encoded.*
+import it.airgap.tezos.core.internal.converter.encoded.BytesToBlindedPublicKeyHashConverter
+import it.airgap.tezos.core.internal.converter.encoded.BytesToPublicKeyHashConverter
+import it.airgap.tezos.core.internal.converter.encoded.SignatureToGenericSignatureConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToBlindedPublicKeyHashConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
 import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.Timestamp

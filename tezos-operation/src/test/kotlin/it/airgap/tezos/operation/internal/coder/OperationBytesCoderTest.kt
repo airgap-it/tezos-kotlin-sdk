@@ -6,7 +6,11 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.coder.encoded.*
+import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
+import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString

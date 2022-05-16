@@ -5,10 +5,12 @@ import it.airgap.tezos.core.encodeToBytes
 import it.airgap.tezos.core.fromString
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.converter.StringToAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToPublicKeyConverter
-import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
+import it.airgap.tezos.core.internal.coder.encoded.*
+import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.converter.encoded.StringToAddressConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToImplicitAddressConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToPublicKeyConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument

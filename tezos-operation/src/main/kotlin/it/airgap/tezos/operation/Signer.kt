@@ -1,6 +1,5 @@
 package it.airgap.tezos.operation
 
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.internal.di.operation
 import it.airgap.tezos.operation.internal.signer.OperationEd25519Signer

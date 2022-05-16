@@ -1,6 +1,5 @@
 package it.airgap.tezos.michelson
 
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder

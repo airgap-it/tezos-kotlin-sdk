@@ -13,8 +13,8 @@ public fun BlindedPublicKeyHash.Companion.fromBytes(bytes: ByteArray, tezos: Tez
     BlindedPublicKeyHash.fromBytes(bytes, tezos.dependencyRegistry.core().bytesToBlindedPublicKeyHashConverter)
 
 @InternalTezosSdkApi
-public fun BlindedPublicKeyHash.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, MetaBlindedPublicKeyHash<*>>): BlindedPublicKeyHash =
-    converter.convert(bytes).encoded
+public fun BlindedPublicKeyHash.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, BlindedPublicKeyHash>): BlindedPublicKeyHash =
+    converter.convert(bytes)
 
 // -- BlindedPublicKeyHash <- String --
 
@@ -22,5 +22,5 @@ public fun BlindedPublicKeyHash.Companion.fromString(string: String, tezos: Tezo
     BlindedPublicKeyHash.fromString(string, tezos.dependencyRegistry.core().stringToBlindedPublicKeyHashConverter)
 
 @InternalTezosSdkApi
-public fun BlindedPublicKeyHash.Companion.fromString(string: String, converter: Converter<String, MetaBlindedPublicKeyHash<*>>): BlindedPublicKeyHash =
-    converter.convert(string).encoded
+public fun BlindedPublicKeyHash.Companion.fromString(string: String, converter: Converter<String, BlindedPublicKeyHash>): BlindedPublicKeyHash =
+    converter.convert(string)

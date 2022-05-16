@@ -1,6 +1,5 @@
 package it.airgap.tezos.operation
 
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 import it.airgap.tezos.operation.internal.di.operation
 

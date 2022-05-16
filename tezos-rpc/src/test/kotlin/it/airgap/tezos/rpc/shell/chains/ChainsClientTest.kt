@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.shell.chains
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.Timestamp

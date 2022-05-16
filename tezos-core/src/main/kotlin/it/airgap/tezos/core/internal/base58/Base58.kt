@@ -6,7 +6,7 @@ import it.airgap.tezos.core.internal.utils.tail
 import it.airgap.tezos.core.internal.utils.toHexString
 
 @InternalTezosSdkApi
-public class Base58 {
+public class Base58 internal constructor() {
     private val bs58Regex = Regex("^[$ALPHABET]+$")
 
     private val bi0: BigInt by lazy { BigInt.valueOf(0) }
@@ -61,7 +61,7 @@ public class Base58 {
 
     private fun failWithInvalidString(): Nothing = throw IllegalArgumentException("Base58 string contains invalid characters")
 
-    public companion object {
+    internal companion object {
         private const val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
     }
 }

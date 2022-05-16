@@ -5,7 +5,6 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.encoded.GenericSignature
-import it.airgap.tezos.core.type.encoded.MetaSignature
 import it.airgap.tezos.core.type.encoded.Signature
 
 // -- Signature <- ByteArray --
@@ -14,8 +13,8 @@ public fun Signature.Companion.fromBytes(bytes: ByteArray, tezos: Tezos = Tezos.
     Signature.fromBytes(bytes, tezos.dependencyRegistry.core().bytesToSignatureConverter)
 
 @InternalTezosSdkApi
-public fun Signature.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, MetaSignature<*>>): Signature =
-    converter.convert(bytes).encoded
+public fun Signature.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, Signature>): Signature =
+    converter.convert(bytes)
 
 // -- Signature <- String --
 
@@ -23,8 +22,8 @@ public fun Signature.Companion.fromString(string: String, tezos: Tezos = Tezos.D
     Signature.fromString(string, tezos.dependencyRegistry.core().stringToSignatureConverter)
 
 @InternalTezosSdkApi
-public fun Signature.Companion.fromString(string: String, converter: Converter<String, MetaSignature<*>>): Signature =
-    converter.convert(string).encoded
+public fun Signature.Companion.fromString(string: String, converter: Converter<String, Signature>): Signature =
+    converter.convert(string)
 
 // -- Signature -> GenericSignature --
 
@@ -32,5 +31,5 @@ public fun <T : Signature> T.toGenericSignature(tezos: Tezos = Tezos.Default): G
     toGenericSignature(tezos.dependencyRegistry.core().signatureToGenericSignatureConverter)
 
 @InternalTezosSdkApi
-public fun <T : Signature> T.toGenericSignature(converter: Converter<MetaSignature<*>, GenericSignature>): GenericSignature =
-    converter.convert(meta)
+public fun <T : Signature> T.toGenericSignature(converter: Converter<Signature, GenericSignature>): GenericSignature =
+    converter.convert(this)

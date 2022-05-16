@@ -1,6 +1,5 @@
 package it.airgap.tezos.operation
 
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.operation.internal.coder.OperationBytesCoder

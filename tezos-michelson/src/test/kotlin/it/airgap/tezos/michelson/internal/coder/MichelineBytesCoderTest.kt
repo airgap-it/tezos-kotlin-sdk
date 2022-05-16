@@ -4,8 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.ZarithNaturalBytesCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.*

@@ -5,7 +5,7 @@ import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.utils.splitAt
 
 @InternalTezosSdkApi
-public class Base58Check(private val base58: Base58, private val crypto: Crypto) {
+public class Base58Check internal constructor(private val base58: Base58, private val crypto: Crypto) {
 
     public fun encode(bytes: ByteArray): String {
         val checksum = createChecksum(bytes)

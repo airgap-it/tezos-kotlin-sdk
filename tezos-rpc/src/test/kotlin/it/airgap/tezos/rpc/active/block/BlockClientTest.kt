@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.active.block
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import it.airgap.tezos.core.internal.converter.*
+import it.airgap.tezos.core.internal.converter.encoded.*
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.HexString

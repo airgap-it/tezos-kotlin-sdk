@@ -1,6 +1,5 @@
 package it.airgap.tezos.operation
 
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.core.internal.di.DependencyRegistryFactory
 import it.airgap.tezos.operation.internal.di.OperationScopedDependencyRegistry
 

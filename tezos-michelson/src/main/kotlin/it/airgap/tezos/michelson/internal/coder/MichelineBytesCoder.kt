@@ -5,7 +5,7 @@ import it.airgap.tezos.core.encodeToBytes
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.core.internal.coder.ZarithIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.zarith.ZarithInteger

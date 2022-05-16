@@ -4,7 +4,7 @@ import it.airgap.tezos.core.decodeConsumingFromBytes
 import it.airgap.tezos.core.encodeToBytes
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent

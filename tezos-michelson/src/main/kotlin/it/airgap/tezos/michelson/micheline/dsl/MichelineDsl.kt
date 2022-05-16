@@ -1,6 +1,5 @@
 package it.airgap.tezos.michelson.micheline.dsl
 
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.internal.di.michelson
 import it.airgap.tezos.michelson.micheline.MichelineNode

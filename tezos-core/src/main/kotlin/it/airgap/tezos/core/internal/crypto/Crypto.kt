@@ -5,7 +5,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.type.HexString
 
 @InternalTezosSdkApi
-public class Crypto(private val provider: CryptoProvider)  {
+public class Crypto internal constructor(private val provider: CryptoProvider)  {
     public fun hashSha256(message: HexString): ByteArray = hashSha256(message.toByteArray())
     public fun hashSha256(message: ByteArray): ByteArray = provider.sha256(message)
 

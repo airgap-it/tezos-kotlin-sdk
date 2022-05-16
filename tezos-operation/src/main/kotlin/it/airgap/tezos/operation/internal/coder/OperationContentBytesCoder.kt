@@ -4,6 +4,10 @@ import it.airgap.tezos.core.decodeConsumingFromBytes
 import it.airgap.tezos.core.encodeToBytes
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.internal.coder.encoded.*
+import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
+import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.HexString

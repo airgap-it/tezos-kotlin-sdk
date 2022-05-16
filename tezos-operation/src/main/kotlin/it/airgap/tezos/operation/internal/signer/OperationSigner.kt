@@ -3,7 +3,7 @@ package it.airgap.tezos.operation.internal.signer
 import it.airgap.tezos.core.decodeFromBytes
 import it.airgap.tezos.core.encodeToBytes
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.signer.Signer
 import it.airgap.tezos.core.type.Watermark

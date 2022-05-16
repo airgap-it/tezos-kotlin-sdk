@@ -2,7 +2,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkObject
-import it.airgap.tezos.core.TezosSdk
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 
 // -- static --

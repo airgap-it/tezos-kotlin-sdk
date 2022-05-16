@@ -4,10 +4,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.converter.StringToAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToPublicKeyHashConverter
-import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToAddressConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToImplicitAddressConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToPublicKeyHashConverter
+import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.Timestamp

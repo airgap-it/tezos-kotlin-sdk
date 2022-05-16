@@ -2,7 +2,7 @@ package it.airgap.tezos.contract.internal.converter
 
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
-import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.ConfigurableConverter
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.Michelson

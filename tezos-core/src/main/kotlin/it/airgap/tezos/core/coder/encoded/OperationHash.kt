@@ -2,7 +2,7 @@ package it.airgap.tezos.core.coder.encoded
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.EncodedBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.encoded.OperationHash
 

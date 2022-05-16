@@ -4,7 +4,6 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.di.core
-import it.airgap.tezos.core.type.encoded.MetaPublicKey
 import it.airgap.tezos.core.type.encoded.PublicKey
 
 // -- PublicKey <- ByteArray --
@@ -13,8 +12,8 @@ public fun PublicKey.Companion.fromBytes(bytes: ByteArray,tezos: Tezos = Tezos.D
     PublicKey.fromBytes(bytes, tezos.dependencyRegistry.core().bytesToPublicKeyConverter)
 
 @InternalTezosSdkApi
-public fun PublicKey.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, MetaPublicKey<*>>): PublicKey =
-    converter.convert(bytes).encoded
+public fun PublicKey.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, PublicKey>): PublicKey =
+    converter.convert(bytes)
 
 // -- PublicKey <- String --
 
@@ -22,5 +21,5 @@ public fun PublicKey.Companion.fromString(string: String, tezos: Tezos = Tezos.D
     PublicKey.fromString(string, tezos.dependencyRegistry.core().stringToPublicKeyConverter)
 
 @InternalTezosSdkApi
-public fun PublicKey.Companion.fromString(string: String, converter: Converter<String, MetaPublicKey<*>>): PublicKey =
-    converter.convert(string).encoded
+public fun PublicKey.Companion.fromString(string: String, converter: Converter<String, PublicKey>): PublicKey =
+    converter.convert(string)
