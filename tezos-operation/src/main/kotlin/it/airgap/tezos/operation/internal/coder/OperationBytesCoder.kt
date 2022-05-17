@@ -1,17 +1,15 @@
 package it.airgap.tezos.operation.internal.coder
 
-import it.airgap.tezos.core.decodeConsumingFromBytes
-import it.airgap.tezos.core.encodeToBytes
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.encoded.encodeToBytes
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 
-@InternalTezosSdkApi
-public class OperationBytesCoder(
-    private val operationContentsBytesCoder: OperationContentBytesCoder,
+internal class OperationBytesCoder(
+    private val operationContentsBytesCoder: ConsumingBytesCoder<OperationContent>,
     private val encodedBytesCoder: EncodedBytesCoder,
 ) : ConsumingBytesCoder<Operation> {
     override fun encode(value: Operation): ByteArray = with(value) {

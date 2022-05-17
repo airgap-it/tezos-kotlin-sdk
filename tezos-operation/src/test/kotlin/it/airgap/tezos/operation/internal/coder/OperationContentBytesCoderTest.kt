@@ -1,23 +1,16 @@
 package it.airgap.tezos.operation.internal.coder
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.michelson
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
@@ -26,61 +19,36 @@ import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
-import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
+import it.airgap.tezos.operation.internal.operation
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class OperationContentBytesCoderTest {
 
-    @MockK
-    private lateinit var crypto: Crypto
-
+    private lateinit var tezos: Tezos
     private lateinit var operationContentBytesCoder: OperationContentBytesCoder
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        val base58Check = Base58Check(Base58(), crypto)
-
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
-        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
-        val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
-        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
-        val michelineBytesCoder = MichelineBytesCoder(
-            StringToMichelsonPrimConverter(),
-            TagToMichelsonPrimConverter(),
-            MichelineToCompactStringConverter(),
-            ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
-        )
-
-        val timestampBigIntCoder = TimestampBigIntCoder()
-        val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
-
+        tezos = mockTezos()
         operationContentBytesCoder = OperationContentBytesCoder(
-            encodedBytesCoder,
-            addressBytesCoder,
-            publicKeyBytesCoder,
-            implicitAddressBytesCoder,
-            signatureBytesCoder,
-            zarithNaturalBytesCoder,
-            mutezBytesCoder,
-            michelineBytesCoder,
-            timestampBigIntCoder,
-            tagToOperationContentKindConverter,
+            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.core().dependencyRegistry.addressBytesCoder,
+            tezos.core().dependencyRegistry.publicKeyBytesCoder,
+            tezos.core().dependencyRegistry.implicitAddressBytesCoder,
+            tezos.core().dependencyRegistry.signatureBytesCoder,
+            tezos.core().dependencyRegistry.zarithNaturalBytesCoder,
+            tezos.core().dependencyRegistry.mutezBytesCoder,
+            tezos.michelson().dependencyRegistry.michelineBytesCoder,
+            tezos.core().dependencyRegistry.timestampBigIntCoder,
+            tezos.operation().dependencyRegistry.tagToOperationContentKindConverter,
         )
     }
 

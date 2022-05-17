@@ -1,15 +1,13 @@
 package it.airgap.tezos.core
 
 import it.airgap.tezos.core.crypto.CryptoProvider
-import it.airgap.tezos.core.internal.TezosInstance
-import it.airgap.tezos.core.internal.TezosStatic
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.internal.delegate.default
 import it.airgap.tezos.core.internal.di.DependencyRegistry
+import java.util.*
 import kotlin.reflect.KClass
 
-public abstract class Tezos {
-    internal abstract val dependencyRegistry: DependencyRegistry
-
+public class Tezos internal constructor(@InternalTezosSdkApi public val dependencyRegistry: DependencyRegistry){
     private val dynamicModules: MutableMap<String, DynamicModule> = mutableMapOf()
 
     @InternalTezosSdkApi
@@ -31,15 +29,30 @@ public abstract class Tezos {
     @InternalTezosSdkApi
     public interface DynamicModule
 
-    public class Builder(private val cryptoProvider: CryptoProvider = TezosStatic.defaultCryptoProvider) {
+    internal object Static {
+        var defaultTezos: Tezos by default { Tezos { cryptoProvider = defaultCryptoProvider } }
+
+        val defaultCryptoProvider: CryptoProvider
+            get() = cryptoProviders.firstOrNull() ?: failWithDependencyNotFound("CryptoProvider", "tezos-crypto")
+
+        private val cryptoProviders: List<CryptoProvider> = CryptoProvider::class.java.let {
+            ServiceLoader.load(it, it.classLoader).toList()
+        }
+
+        private fun failWithDependencyNotFound(name: String, module: String): Nothing =
+            error("Failed to find $name implementation in the classpath. Consider adding a `$module` dependency or use a manually created Tezos instance.")
+    }
+
+    public class Builder {
         public var default: Boolean = false
+        public var cryptoProvider: CryptoProvider by default { Static.defaultCryptoProvider }
 
         public fun build(): Tezos {
             val dependencyRegistry = DependencyRegistry(cryptoProvider)
 
-            return TezosInstance(dependencyRegistry).also {
+            return Tezos(dependencyRegistry).also {
                 if (default) {
-                    TezosStatic.defaultTezos = it
+                    Static.defaultTezos = it
                 }
             }
         }
@@ -47,11 +60,8 @@ public abstract class Tezos {
 
     public companion object {
         public val Default: Tezos
-            get() = TezosStatic.defaultTezos
+            get() = Static.defaultTezos
     }
 }
 
-public fun Tezos(
-    cryptoProvider: CryptoProvider = TezosStatic.defaultCryptoProvider,
-    builder: Tezos.Builder.() -> Unit = {}
-): Tezos = Tezos.Builder(cryptoProvider).apply(builder).build()
+public fun Tezos(builder: Tezos.Builder.() -> Unit = {}): Tezos = Tezos.Builder().apply(builder).build()

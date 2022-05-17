@@ -1,22 +1,20 @@
 package it.airgap.tezos.operation.internal.signer
 
-import it.airgap.tezos.core.decodeFromBytes
-import it.airgap.tezos.core.encodeToBytes
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.coder.encoded.decodeFromBytes
+import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.signer.Signer
 import it.airgap.tezos.core.type.Watermark
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.Operation
-import it.airgap.tezos.operation.forgeToBytes
-import it.airgap.tezos.operation.internal.coder.OperationBytesCoder
+import it.airgap.tezos.operation.coder.forgeToBytes
 
-@InternalTezosSdkApi
-public class OperationSigner(
-    private val operationEd25519Signer: OperationEd25519Signer,
-    private val operationSecp256K1Signer: OperationSecp256K1Signer,
-    private val operationP256Signer: OperationP256Signer,
+internal class OperationSigner(
+    private val operationEd25519Signer: Signer<Operation, Ed25519SecretKey, Ed25519PublicKey, Ed25519Signature>,
+    private val operationSecp256K1Signer: Signer<Operation, Secp256K1SecretKey, Secp256K1PublicKey, Secp256K1Signature>,
+    private val operationP256Signer: Signer<Operation, P256SecretKey, P256PublicKey, P256Signature>,
 ) : Signer<Operation, SecretKey, PublicKey, Signature> {
 
     override fun sign(message: Operation, key: SecretKey): Signature =
@@ -35,10 +33,9 @@ public class OperationSigner(
         }
 }
 
-@InternalTezosSdkApi
-public class OperationEd25519Signer(
+internal class OperationEd25519Signer(
     crypto: Crypto,
-    operationBytesCoder: OperationBytesCoder,
+    operationBytesCoder: ConsumingBytesCoder<Operation>,
     private val encodedBytesCoder: EncodedBytesCoder,
 ) : Signer<Operation, Ed25519SecretKey, Ed25519PublicKey, Ed25519Signature> {
     private val operationRawSigner: OperationRawSigner = OperationRawSigner(crypto, operationBytesCoder)
@@ -52,10 +49,9 @@ public class OperationEd25519Signer(
         operationRawSigner.verify(message, signature.encodeToBytes(encodedBytesCoder), key.encodeToBytes(encodedBytesCoder), Crypto::verifyEd25519)
 }
 
-@InternalTezosSdkApi
-public class OperationSecp256K1Signer(
+internal class OperationSecp256K1Signer(
     crypto: Crypto,
-    operationBytesCoder: OperationBytesCoder,
+    operationBytesCoder: ConsumingBytesCoder<Operation>,
     private val encodedBytesCoder: EncodedBytesCoder,
 ): Signer<Operation, Secp256K1SecretKey, Secp256K1PublicKey, Secp256K1Signature> {
     private val operationRawSigner: OperationRawSigner = OperationRawSigner(crypto, operationBytesCoder)
@@ -69,10 +65,9 @@ public class OperationSecp256K1Signer(
         operationRawSigner.verify(message, signature.encodeToBytes(encodedBytesCoder), key.encodeToBytes(encodedBytesCoder), Crypto::verifySecp256K1)
 }
 
-@InternalTezosSdkApi
-public class OperationP256Signer(
+internal class OperationP256Signer(
     crypto: Crypto,
-    operationBytesCoder: OperationBytesCoder,
+    operationBytesCoder: ConsumingBytesCoder<Operation>,
     private val encodedBytesCoder: EncodedBytesCoder,
 ) : Signer<Operation, P256SecretKey, P256PublicKey, P256Signature> {
     private val operationRawSigner: OperationRawSigner = OperationRawSigner(crypto, operationBytesCoder)
@@ -88,7 +83,7 @@ public class OperationP256Signer(
 
 private class OperationRawSigner(
     private val crypto: Crypto,
-    private val operationBytesCoder: OperationBytesCoder,
+    private val operationBytesCoder: ConsumingBytesCoder<Operation>,
 ) {
     fun sign(message: Operation, key: ByteArray, signer: Crypto.(ByteArray, ByteArray) -> ByteArray): ByteArray =
         crypto.signer(hash(message), key)

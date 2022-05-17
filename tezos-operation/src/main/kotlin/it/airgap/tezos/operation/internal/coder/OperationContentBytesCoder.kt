@@ -1,13 +1,15 @@
 package it.airgap.tezos.operation.internal.coder
 
-import it.airgap.tezos.core.decodeConsumingFromBytes
-import it.airgap.tezos.core.encodeToBytes
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.coder.encoded.*
-import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
-import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
+import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.coder.tez.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.tez.encodeToBytes
+import it.airgap.tezos.core.coder.zarith.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.zarith.encodeToBytes
+import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.HexString
@@ -15,32 +17,29 @@ import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
-import it.airgap.tezos.michelson.decodeFromBytes
-import it.airgap.tezos.michelson.encodeToBytes
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.coder.decodeFromBytes
+import it.airgap.tezos.michelson.coder.encodeToBytes
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
-import it.airgap.tezos.operation.fromTagOrNull
+import it.airgap.tezos.operation.converter.fromTagOrNull
 import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
-import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 
-@InternalTezosSdkApi
-public class OperationContentBytesCoder(
+internal class OperationContentBytesCoder(
     private val encodedBytesCoder: EncodedBytesCoder,
-    private val addressBytesCoder: AddressBytesCoder,
-    private val publicKeyBytesCoder: PublicKeyBytesCoder,
-    private val implicitAddressBytesCoder: ImplicitAddressBytesCoder,
-    private val signatureBytesCoder: SignatureBytesCoder,
-    private val zarithNaturalBytesCoder: ZarithNaturalBytesCoder,
-    private val mutezBytesCoder: MutezBytesCoder,
-    private val michelineBytesCoder: MichelineBytesCoder,
-    private val timestampBigIntCoder: TimestampBigIntCoder,
-    private val tagToOperationContentKindConverter: TagToOperationContentKindConverter,
+    private val addressBytesCoder: ConsumingBytesCoder<Address>,
+    private val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>,
+    private val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>,
+    private val signatureBytesCoder: ConsumingBytesCoder<Signature>,
+    private val zarithNaturalBytesCoder: ConsumingBytesCoder<ZarithNatural>,
+    private val mutezBytesCoder: ConsumingBytesCoder<Mutez>,
+    private val michelineBytesCoder: ConsumingBytesCoder<MichelineNode>,
+    private val timestampBigIntCoder: Coder<Timestamp, BigInt>,
+    private val tagToOperationContentKindConverter: Converter<UByte, OperationContent.Kind>,
 ) : ConsumingBytesCoder<OperationContent> {
     override fun encode(value: OperationContent): ByteArray =
         when (value) {
@@ -258,7 +257,7 @@ public class OperationContentBytesCoder(
         val seedNonceHashPresence = encodeBooleanToBytes(seedNonceHashBytes.isNotEmpty())
 
         val liquidityBankingEscapeVoteBytes = encodeBooleanToBytes(liquidityBakingEscapeVote)
-        val signatureBytes = signatureBytesCoder.encode(signature.meta)
+        val signatureBytes = signature.encodeToBytes(signatureBytesCoder)
 
         levelBytes +
                 protoBytes +
@@ -581,7 +580,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedEndorsement(bytes: MutableList<Byte>): InlinedEndorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodeEndorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
+        val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return InlinedEndorsement(branch, operations, signature)
     }
@@ -606,7 +605,7 @@ public class OperationContentBytesCoder(
         val seedNonceHash = if (seedNonceHashPresence) NonceHash.decodeConsumingFromBytes(bytes, encodedBytesCoder) else null
 
         val liquidityBankingEscapeVote = decodeBoolean(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
+        val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return BlockHeader(
             level,
@@ -629,7 +628,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedPreendorsement(bytes: MutableList<Byte>): InlinedPreendorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodePreendorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
+        val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return InlinedPreendorsement(branch, operations, signature)
     }

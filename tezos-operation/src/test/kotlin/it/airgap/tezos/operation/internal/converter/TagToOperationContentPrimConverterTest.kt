@@ -1,13 +1,11 @@
 package it.airgap.tezos.operation.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.operation.fromTagOrNull
-import it.airgap.tezos.operation.internal.di.ScopedDependencyRegistry
-import mockTezosSdk
+import it.airgap.tezos.operation.converter.fromTagOrNull
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -17,19 +15,15 @@ import kotlin.test.assertNull
 
 class TagToOperationContentPrimConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var tagToOperationContentKindConverter: TagToOperationContentKindConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         tagToOperationContentKindConverter = TagToOperationContentKindConverter()
-
-        every { dependencyRegistry.tagToOperationContentKindConverter } returns tagToOperationContentKindConverter
     }
 
     @After
@@ -45,7 +39,7 @@ class TagToOperationContentPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, tagToOperationContentKindConverter.convert(it.first))
-            assertEquals(it.second, OperationContent.Kind.fromTagOrNull(it.first))
+            assertEquals(it.second, OperationContent.Kind.fromTagOrNull(it.first, tezos))
             assertEquals(it.second, OperationContent.Kind.fromTagOrNull(it.first, tagToOperationContentKindConverter))
         }
     }
@@ -57,7 +51,7 @@ class TagToOperationContentPrimConverterTest {
 
         unknownTags.forEach {
             assertFailsWith<IllegalArgumentException> { tagToOperationContentKindConverter.convert(it) }
-            assertNull(OperationContent.Kind.fromTagOrNull(it))
+            assertNull(OperationContent.Kind.fromTagOrNull(it, tezos))
             assertNull(OperationContent.Kind.fromTagOrNull(it, tagToOperationContentKindConverter))
         }
     }
