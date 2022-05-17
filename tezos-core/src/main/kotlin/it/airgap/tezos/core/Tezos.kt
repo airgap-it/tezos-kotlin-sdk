@@ -4,32 +4,18 @@ import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.delegate.default
 import it.airgap.tezos.core.internal.di.DependencyRegistry
+import it.airgap.tezos.core.internal.module.ModuleRegistry
+import it.airgap.tezos.core.internal.module.TezosModule
+import it.airgap.tezos.core.internal.module.withModuleResolver
+import it.airgap.tezos.core.internal.utils.failWithDependencyNotFound
 import java.util.*
 import kotlin.reflect.KClass
 
-public class Tezos internal constructor(@InternalTezosSdkApi public val dependencyRegistry: DependencyRegistry){
-    private val dynamicModules: MutableMap<String, DynamicModule> = mutableMapOf()
-
-    @InternalTezosSdkApi
-    public fun registerDynamicModule(module: DynamicModule) {
-        val key = module::class.qualifiedName ?: return
-        dynamicModules[key] = module
-    }
-
-    @InternalTezosSdkApi
-    public inline fun <reified T : DynamicModule> findModule(): T? = findModule(T::class)
-
-    @PublishedApi
-    @Suppress("UNCHECKED_CAST")
-    internal fun <T : DynamicModule> findModule(targetClass: KClass<T>): T? {
-        val key = targetClass.qualifiedName ?: return null
-        return dynamicModules[key] as T?
-    }
-
-    @InternalTezosSdkApi
-    public interface DynamicModule
-
-    internal object Static {
+public class Tezos internal constructor(
+    @InternalTezosSdkApi public val dependencyRegistry: DependencyRegistry,
+    @InternalTezosSdkApi public val moduleRegistry: ModuleRegistry,
+){
+    private object Static {
         var defaultTezos: Tezos by default { Tezos { cryptoProvider = defaultCryptoProvider } }
 
         val defaultCryptoProvider: CryptoProvider
@@ -38,19 +24,29 @@ public class Tezos internal constructor(@InternalTezosSdkApi public val dependen
         private val cryptoProviders: List<CryptoProvider> = CryptoProvider::class.java.let {
             ServiceLoader.load(it, it.classLoader).toList()
         }
-
-        private fun failWithDependencyNotFound(name: String, module: String): Nothing =
-            error("Failed to find $name implementation in the classpath. Consider adding a `$module` dependency or use a manually created Tezos instance.")
     }
 
     public class Builder {
         public var default: Boolean = false
         public var cryptoProvider: CryptoProvider by default { Static.defaultCryptoProvider }
 
+        @InternalTezosSdkApi
+        public val moduleBuilders: MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>> = mutableMapOf()
+
+        public inline fun <reified T : TezosModule> install(builder: TezosModule.Builder<T>): Builder = apply { install(builder, T::class) }
+
+        @PublishedApi
+        internal fun <T : TezosModule> install(builder: TezosModule.Builder<T>, moduleClass: KClass<T>) {
+            moduleBuilders[moduleClass] = builder
+        }
+
         public fun build(): Tezos {
             val dependencyRegistry = DependencyRegistry(cryptoProvider)
 
-            return Tezos(dependencyRegistry).also {
+            val modules = withModuleResolver { moduleBuilders.build(dependencyRegistry) }
+            val moduleRegistry = ModuleRegistry(modules)
+
+            return Tezos(dependencyRegistry, moduleRegistry).also {
                 if (default) {
                     Static.defaultTezos = it
                 }
@@ -64,4 +60,4 @@ public class Tezos internal constructor(@InternalTezosSdkApi public val dependen
     }
 }
 
-public fun Tezos(builder: Tezos.Builder.() -> Unit = {}): Tezos = Tezos.Builder().apply(builder).build()
+public inline fun Tezos(builder: Tezos.Builder.() -> Unit = {}): Tezos = Tezos.Builder().apply(builder).build()

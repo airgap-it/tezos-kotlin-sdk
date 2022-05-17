@@ -2,7 +2,7 @@
 
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.core.fromString
+import it.airgap.tezos.core.converter.encoded.fromString
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
@@ -140,4 +140,4 @@ internal open class BaseEncodedSerializer<E : Encoded>(
     }
 }
 
-internal open class EncodedSerializer<E>(kind: MetaEncoded.Kind<E>, kClass: KClass<E>) : BaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E>
+internal open class EncodedSerializer<E>(kind: MetaEncoded.Kind<E, E>, kClass: KClass<E>) : BaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E, E>

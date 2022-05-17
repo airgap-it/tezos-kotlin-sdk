@@ -1,16 +1,12 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.allIsInstance
-import it.airgap.tezos.core.internal.utils.anyIsInstance
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.comparator.isPrim
 import it.airgap.tezos.michelson.converter.fromStringOrNull
 import it.airgap.tezos.michelson.converter.toCompactExpression
-import it.airgap.tezos.michelson.internal.utils.firstInstanceOfOrNull
 import it.airgap.tezos.michelson.internal.utils.second
-import it.airgap.tezos.michelson.internal.utils.secondInstanceOfOrNull
 import it.airgap.tezos.michelson.internal.utils.third
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode

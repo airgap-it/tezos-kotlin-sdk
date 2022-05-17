@@ -2,9 +2,7 @@ package it.airgap.tezos.rpc.active.block
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import it.airgap.tezos.core.internal.converter.encoded.*
-import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.core.internal.di.core
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
@@ -18,6 +16,7 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
+import it.airgap.tezos.rpc.internal.rpc
 import it.airgap.tezos.rpc.internal.serializer.rpcJson
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
@@ -31,7 +30,7 @@ import it.airgap.tezos.rpc.type.sapling.RpcSaplingCiphertext
 import it.airgap.tezos.rpc.type.sapling.RpcSaplingStateDiff
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import mockTezosSdk
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -41,11 +40,9 @@ import kotlin.test.assertEquals
 class BlockClientTest {
 
     @MockK
-    private lateinit var dependencyRegistry: DependencyRegistry
-
-    @MockK
     private lateinit var httpClientProvider : HttpClientProvider
 
+    private lateinit var tezos: Tezos
     private lateinit var json: Json
     private lateinit var httpClient: HttpClient
     private lateinit var blockClient: BlockClient
@@ -56,18 +53,12 @@ class BlockClientTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        every { dependencyRegistry.core().stringToAddressConverter } returns StringToAddressConverter()
-        every { dependencyRegistry.core().stringToImplicitAddressConverter } returns StringToImplicitAddressConverter()
-        every { dependencyRegistry.core().stringToPublicKeyConverter } returns StringToPublicKeyConverter()
-        every { dependencyRegistry.core().stringToPublicKeyHashConverter } returns StringToPublicKeyHashConverter()
-        every { dependencyRegistry.core().stringToSignatureConverter } returns StringToSignatureConverter()
-
+        tezos = mockTezos(httpClientProvider = httpClientProvider)
         json = Json(from = rpcJson) {
             prettyPrint = true
         }
-        httpClient = HttpClient(httpClientProvider, json)
+        httpClient = spyk(tezos.rpc().dependencyRegistry.httpClient)
         blockClient = BlockClient(nodeUrl, blockId, httpClient)
     }
 

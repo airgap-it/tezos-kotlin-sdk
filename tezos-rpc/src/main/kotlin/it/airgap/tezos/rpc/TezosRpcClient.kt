@@ -1,11 +1,14 @@
 package it.airgap.tezos.rpc
 
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.applyLimits
-import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.operation.type.Limits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
+import it.airgap.tezos.rpc.converter.asOperation
+import it.airgap.tezos.rpc.converter.asRunnable
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.CachedMap
 import it.airgap.tezos.rpc.internal.utils.updateWith
@@ -24,7 +27,7 @@ internal class TezosRpcClient(
     override val injection: Injection,
     override val monitor: Monitor,
     override val network: Network,
-    private val operationContentBytesCoder: OperationContentBytesCoder,
+    private val operationContentBytesCoder: ConsumingBytesCoder<OperationContent>,
 ) : TezosRpc, ShellSimplifiedRpc by shellRpc, ActiveSimplifiedRpc by activeRpc {
 
     private val chainIdCached: CachedMap<String, ChainId> = CachedMap { key, headers -> chains(key).chainId.get(headers).chainId }

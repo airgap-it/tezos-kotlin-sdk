@@ -1,19 +1,19 @@
 package it.airgap.tezos.rpc.internal.utils
 
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.apply
-import it.airgap.tezos.operation.forgeToBytes
+import it.airgap.tezos.operation.coder.forgeToBytes
 import it.airgap.tezos.operation.hasFee
-import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 
-internal fun OperationContent.updateWith(rpcContent: RpcOperationContent, operationContentBytesCoder: OperationContentBytesCoder): OperationContent =
+internal fun OperationContent.updateWith(rpcContent: RpcOperationContent, operationContentBytesCoder: ConsumingBytesCoder<OperationContent>): OperationContent =
     when {
         !hasFee && this is OperationContent.Manager -> updateWith(rpcContent, operationContentBytesCoder)
         else -> this
     }
 
-internal fun OperationContent.Manager.updateWith(rpcContent: RpcOperationContent, operationContentBytesCoder: OperationContentBytesCoder): OperationContent {
+internal fun OperationContent.Manager.updateWith(rpcContent: RpcOperationContent, operationContentBytesCoder: ConsumingBytesCoder<OperationContent>): OperationContent {
     if (!matches(rpcContent)) return this
 
     val metadataLimits = rpcContent.metadataLimits ?: return this

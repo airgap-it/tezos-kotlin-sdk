@@ -1,23 +1,12 @@
-package it.airgap.tezos.rpc
+package it.airgap.tezos.rpc.converter
 
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.asZarithNatural
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.operation.contract.Entrypoint
-import it.airgap.tezos.operation.contract.Parameters
-import it.airgap.tezos.operation.contract.Script
-import it.airgap.tezos.operation.header.BlockHeader
-import it.airgap.tezos.operation.inlined.InlinedEndorsement
-import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.rpc.internal.utils.isSigned
 import it.airgap.tezos.rpc.internal.utils.signatureOrPlaceholder
-import it.airgap.tezos.rpc.type.block.RpcBlockHeader
-import it.airgap.tezos.rpc.type.contract.RpcParameters
-import it.airgap.tezos.rpc.type.contract.RpcScript
-import it.airgap.tezos.rpc.type.operation.RpcInlinedEndorsement
-import it.airgap.tezos.rpc.type.operation.RpcInlinedPreendorsement
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
@@ -63,21 +52,21 @@ public fun OperationContent.asRpc(): RpcOperationContent =
     }
 
 public fun OperationContent.ActivateAccount.asRpc(): RpcOperationContent.ActivateAccount = RpcOperationContent.ActivateAccount(pkh, secret.asString())
-public fun OperationContent.Ballot.asRpc():RpcOperationContent.Ballot = RpcOperationContent.Ballot(source, period, proposal, ballot.asRpc())
-public fun OperationContent.Endorsement.asRpc():RpcOperationContent.Endorsement = RpcOperationContent.Endorsement(slot, level, round, blockPayloadHash)
-public fun OperationContent.Preendorsement.asRpc():RpcOperationContent.Preendorsement = RpcOperationContent.Preendorsement(slot, level, round, blockPayloadHash)
-public fun OperationContent.DoubleBakingEvidence.asRpc():RpcOperationContent.DoubleBakingEvidence = RpcOperationContent.DoubleBakingEvidence(bh1.asRpc(), bh2.asRpc())
-public fun OperationContent.DoubleEndorsementEvidence.asRpc():RpcOperationContent.DoubleEndorsementEvidence = RpcOperationContent.DoubleEndorsementEvidence(op1.asRpc(), op2.asRpc())
-public fun OperationContent.DoublePreendorsementEvidence.asRpc():RpcOperationContent.DoublePreendorsementEvidence = RpcOperationContent.DoublePreendorsementEvidence(op1.asRpc(), op2.asRpc())
-public fun OperationContent.FailingNoop.asRpc():RpcOperationContent.FailingNoop = RpcOperationContent.FailingNoop(arbitrary.asString())
-public fun OperationContent.Delegation.asRpc():RpcOperationContent.Delegation = RpcOperationContent.Delegation(source, fee, counter.int, gasLimit.int, storageLimit.int, delegate)
-public fun OperationContent.Origination.asRpc():RpcOperationContent.Origination = RpcOperationContent.Origination(source, fee, counter.int, gasLimit.int, storageLimit.int, balance, delegate, script.asRpc())
-public fun OperationContent.RegisterGlobalConstant.asRpc():RpcOperationContent.RegisterGlobalConstant = RpcOperationContent.RegisterGlobalConstant(source, fee, counter.int, gasLimit.int, storageLimit.int, value)
-public fun OperationContent.Reveal.asRpc():RpcOperationContent.Reveal = RpcOperationContent.Reveal(source, fee, counter.int, gasLimit.int, storageLimit.int, publicKey)
-public fun OperationContent.SetDepositsLimit.asRpc():RpcOperationContent.SetDepositsLimit = RpcOperationContent.SetDepositsLimit(source, fee, counter.int, gasLimit.int, storageLimit.int, limit?.int)
-public fun OperationContent.Transaction.asRpc():RpcOperationContent.Transaction = RpcOperationContent.Transaction(source, fee, counter.int, gasLimit.int, storageLimit.int, amount, destination, parameters?.asRpc())
-public fun OperationContent.Proposals.asRpc():RpcOperationContent.Proposals = RpcOperationContent.Proposals(source, period, proposals)
-public fun OperationContent.SeedNonceRevelation.asRpc():RpcOperationContent.SeedNonceRevelation = RpcOperationContent.SeedNonceRevelation(level, nonce.asString())
+public fun OperationContent.Ballot.asRpc(): RpcOperationContent.Ballot = RpcOperationContent.Ballot(source, period, proposal, ballot.asRpc())
+public fun OperationContent.Endorsement.asRpc(): RpcOperationContent.Endorsement = RpcOperationContent.Endorsement(slot, level, round, blockPayloadHash)
+public fun OperationContent.Preendorsement.asRpc(): RpcOperationContent.Preendorsement = RpcOperationContent.Preendorsement(slot, level, round, blockPayloadHash)
+public fun OperationContent.DoubleBakingEvidence.asRpc(): RpcOperationContent.DoubleBakingEvidence = RpcOperationContent.DoubleBakingEvidence(bh1.asRpc(), bh2.asRpc())
+public fun OperationContent.DoubleEndorsementEvidence.asRpc(): RpcOperationContent.DoubleEndorsementEvidence = RpcOperationContent.DoubleEndorsementEvidence(op1.asRpc(), op2.asRpc())
+public fun OperationContent.DoublePreendorsementEvidence.asRpc(): RpcOperationContent.DoublePreendorsementEvidence = RpcOperationContent.DoublePreendorsementEvidence(op1.asRpc(), op2.asRpc())
+public fun OperationContent.FailingNoop.asRpc(): RpcOperationContent.FailingNoop = RpcOperationContent.FailingNoop(arbitrary.asString())
+public fun OperationContent.Delegation.asRpc(): RpcOperationContent.Delegation = RpcOperationContent.Delegation(source, fee, counter.int, gasLimit.int, storageLimit.int, delegate)
+public fun OperationContent.Origination.asRpc(): RpcOperationContent.Origination = RpcOperationContent.Origination(source, fee, counter.int, gasLimit.int, storageLimit.int, balance, delegate, script.asRpc())
+public fun OperationContent.RegisterGlobalConstant.asRpc(): RpcOperationContent.RegisterGlobalConstant = RpcOperationContent.RegisterGlobalConstant(source, fee, counter.int, gasLimit.int, storageLimit.int, value)
+public fun OperationContent.Reveal.asRpc(): RpcOperationContent.Reveal = RpcOperationContent.Reveal(source, fee, counter.int, gasLimit.int, storageLimit.int, publicKey)
+public fun OperationContent.SetDepositsLimit.asRpc(): RpcOperationContent.SetDepositsLimit = RpcOperationContent.SetDepositsLimit(source, fee, counter.int, gasLimit.int, storageLimit.int, limit?.int)
+public fun OperationContent.Transaction.asRpc(): RpcOperationContent.Transaction = RpcOperationContent.Transaction(source, fee, counter.int, gasLimit.int, storageLimit.int, amount, destination, parameters?.asRpc())
+public fun OperationContent.Proposals.asRpc(): RpcOperationContent.Proposals = RpcOperationContent.Proposals(source, period, proposals)
+public fun OperationContent.SeedNonceRevelation.asRpc(): RpcOperationContent.SeedNonceRevelation = RpcOperationContent.SeedNonceRevelation(level, nonce.asString())
 
 // -- RpcOperationContent -> OperationContent --
 
@@ -135,75 +124,3 @@ public fun RpcOperationContent.Ballot.BallotType.asBallotType(): OperationConten
         RpcOperationContent.Ballot.BallotType.Nay -> OperationContent.Ballot.BallotType.Nay
         RpcOperationContent.Ballot.BallotType.Pass -> OperationContent.Ballot.BallotType.Pass
     }
-
-// -- BlockHeader -> RpcBlockHeader --
-
-public fun BlockHeader.asRpc(): RpcBlockHeader =
-    RpcBlockHeader(
-        level,
-        proto,
-        predecessor,
-        timestamp,
-        validationPass,
-        operationsHash,
-        fitness.map { it.asString() },
-        context,
-        payloadHash,
-        payloadRound,
-        proofOfWorkNonce.asString(),
-        seedNonceHash,
-        liquidityBakingEscapeVote,
-        signature,
-    )
-
-// -- RpcBlockHeader -> BlockHeader --
-
-public fun RpcBlockHeader.asBlockHeader(): BlockHeader =
-    BlockHeader(
-        level,
-        proto,
-        predecessor,
-        timestamp,
-        validationPass,
-        operationsHash,
-        fitness.map { it.asHexString() },
-        context,
-        payloadHash,
-        payloadRound,
-        proofOfWorkNonce.asHexString(),
-        seedNonceHash,
-        liquidityBakingEscapeVote,
-        signature,
-    )
-
-// -- InlinedEndorsement -> RpcInlinedEndorsement --
-
-public fun InlinedEndorsement.asRpc(): RpcInlinedEndorsement = RpcInlinedEndorsement(branch, operations.asRpc(), signature)
-
-// -- RpcInlinedEndorsement -> InlinedEndorsement --
-
-public fun RpcInlinedEndorsement.asInlinedEndorsement(): InlinedEndorsement = InlinedEndorsement(branch, operations.asEndorsement(), signature)
-
-// -- InlinedPreendorsement -> RpcInlinedPreendorsement --
-
-public fun InlinedPreendorsement.asRpc(): RpcInlinedPreendorsement = RpcInlinedPreendorsement(branch, operations.asRpc(), signature)
-
-// -- RpcInlinedPreendorsement -> InlinedPreendorsement --
-
-public fun RpcInlinedPreendorsement.asInlinedPreendorsement(): InlinedPreendorsement = InlinedPreendorsement(branch, operations.asPreendorsement(), signature)
-
-// -- Script -> RpcScript --
-
-public fun Script.asRpc(): RpcScript = RpcScript(code, storage)
-
-// -- RpcScript -> Script --
-
-public fun RpcScript.asScript(): Script = Script(code, storage)
-
-// -- Parameters -> RpcParameters --
-
-public fun Parameters.asRpc(): RpcParameters = RpcParameters(entrypoint.value, value)
-
-// -- RpcParameters -> Parameters --
-
-public fun RpcParameters.asParameters(): Parameters = Parameters(Entrypoint.fromString(entrypoint), value)

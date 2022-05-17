@@ -2,32 +2,19 @@ package it.airgap.tezos.rpc
 
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.encoded.*
-import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
-import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.fee
-import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
-import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
+import it.airgap.tezos.operation.internal.operation
 import it.airgap.tezos.operation.limits
 import it.airgap.tezos.operation.type.OperationLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
@@ -43,10 +30,10 @@ import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata
 import it.airgap.tezos.rpc.type.operation.RpcOperationResult
 import kotlinx.coroutines.runBlocking
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertEquals
 
 class TezosRpcClientTest {
@@ -72,52 +59,15 @@ class TezosRpcClientTest {
     @MockK
     private lateinit var network: Network
 
-    @MockK
-    private lateinit var crypto: Crypto
-
+    private lateinit var tezos: Tezos
     private lateinit var tezosRpcClient: TezosRpcClient
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        val base58Check = Base58Check(Base58(), crypto)
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
-        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
-        val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
-        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
-        val michelineBytesCoder = MichelineBytesCoder(
-            StringToMichelsonPrimConverter(),
-            TagToMichelsonPrimConverter(),
-            MichelineToCompactStringConverter(),
-            ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
-        )
-
-        val timestampBigIntCoder = TimestampBigIntCoder()
-        val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
-
-        val operationContentBytesCoder = OperationContentBytesCoder(
-            encodedBytesCoder,
-            addressBytesCoder,
-            publicKeyBytesCoder,
-            implicitAddressBytesCoder,
-            signatureBytesCoder,
-            zarithNaturalBytesCoder,
-            mutezBytesCoder,
-            michelineBytesCoder,
-            timestampBigIntCoder,
-            tagToOperationContentKindConverter,
-        )
-
-        tezosRpcClient = TezosRpcClient(shellRpc, activeRpc, chains, config, injection, monitor, network, operationContentBytesCoder)
+        val tezos = mockTezos()
+        tezosRpcClient = TezosRpcClient(shellRpc, activeRpc, chains, config, injection, monitor, network, tezos.operation().dependencyRegistry.operationContentBytesCoder)
     }
 
     @After

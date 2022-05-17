@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import it.airgap.tezos.core.toMutez
+import it.airgap.tezos.core.converter.tez.toMutez
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.tez.Nanotez
 import it.airgap.tezos.operation.type.OperationLimits

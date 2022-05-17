@@ -5,17 +5,14 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.TezosCoreModule
 import it.airgap.tezos.core.internal.core
-import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.padStartEven
 import it.airgap.tezos.core.internal.utils.splitAt
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.internal.TezosMichelsonModule
-import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.michelson.internal.michelson
 import it.airgap.tezos.operation.internal.TezosOperationModule
-import it.airgap.tezos.operation.internal.di.OperationDependencyRegistry
 import it.airgap.tezos.operation.internal.operation
 import org.bouncycastle.crypto.digests.Blake2bDigest
 import org.bouncycastle.crypto.digests.SHA256Digest
@@ -158,13 +155,10 @@ internal fun mockTezos(cryptoProvider: CryptoProvider? = null): Tezos =
         }
 
         val dependencyRegistry = DependencyRegistry(cryptoProvider)
-        val coreDependencyRegistry = CoreDependencyRegistry(dependencyRegistry)
-        val michelsonDependencyRegistry = MichelsonDependencyRegistry(coreDependencyRegistry)
-        val operationDependencyRegistry = OperationDependencyRegistry(dependencyRegistry, coreDependencyRegistry, michelsonDependencyRegistry)
 
-        val core = TezosCoreModule(coreDependencyRegistry)
-        val michelson = TezosMichelsonModule(michelsonDependencyRegistry)
-        val operation = TezosOperationModule(operationDependencyRegistry)
+        val core = TezosCoreModule.Builder().build(dependencyRegistry, emptyList())
+        val michelson = TezosMichelsonModule.Builder().build(dependencyRegistry, listOf(core))
+        val operation = TezosOperationModule.Builder().build(dependencyRegistry, listOf(core, michelson))
 
         every { it.dependencyRegistry } returns dependencyRegistry
         every { it.core() } returns core
