@@ -1,15 +1,14 @@
 package it.airgap.tezos.michelson.internal.normalizer
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.normalized
-import mockTezosSdk
+import it.airgap.tezos.michelson.normalizer.normalized
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import kotlin.test.Test
@@ -17,26 +16,21 @@ import kotlin.test.assertEquals
 
 class MichelineNormalizerTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
-    private lateinit var michelineToNormalizedConverter: MichelineToNormalizedConverter
-    private lateinit var michelinePrimitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter
-    private lateinit var michelineSequenceToNormalizedConverter: MichelineSequenceToNormalizedConverter
+    private lateinit var michelineNormalizer: MichelineNormalizer
+    private lateinit var michelinePrimitiveApplicationNormalizer: MichelinePrimitiveApplicationNormalizer
+    private lateinit var michelineSequenceNormalizer: MichelineSequenceNormalizer
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        michelineToNormalizedConverter = MichelineToNormalizedConverter()
-        michelinePrimitiveApplicationToNormalizedConverter =
-            MichelinePrimitiveApplicationToNormalizedConverter(michelineToNormalizedConverter)
-        michelineSequenceToNormalizedConverter = MichelineSequenceToNormalizedConverter(michelineToNormalizedConverter)
+        tezos = mockTezos()
 
-        every { dependencyRegistry.michelineToNormalizedConverter } returns michelineToNormalizedConverter
-        every { dependencyRegistry.michelinePrimitiveApplicationToNormalizedConverter } returns michelinePrimitiveApplicationToNormalizedConverter
-        every { dependencyRegistry.michelineSequenceToNormalizedConverter } returns michelineSequenceToNormalizedConverter
+        michelineNormalizer = MichelineNormalizer()
+        michelinePrimitiveApplicationNormalizer = MichelinePrimitiveApplicationNormalizer(michelineNormalizer)
+        michelineSequenceNormalizer = MichelineSequenceNormalizer(michelineNormalizer)
     }
 
     @After
@@ -53,9 +47,9 @@ class MichelineNormalizerTest {
         ).map { it to it }
 
         expectedWithMicheline.forEach {
-            assertEquals(it.first, michelineToNormalizedConverter.convert(it.second))
-            assertEquals(it.first, it.second.normalized())
-            assertEquals(it.first, it.second.normalized(michelineToNormalizedConverter))
+            assertEquals(it.first, michelineNormalizer.normalize(it.second))
+            assertEquals(it.first, it.second.normalized(tezos))
+            assertEquals(it.first, it.second.normalized(michelineNormalizer))
         }
     }
 
@@ -69,9 +63,9 @@ class MichelineNormalizerTest {
         ).map { it to it }
 
         expectedWithMicheline.forEach {
-            assertEquals(it.first, michelineToNormalizedConverter.convert(it.second))
-            assertEquals(it.first, it.second.normalized())
-            assertEquals(it.first, it.second.normalized(michelineToNormalizedConverter))
+            assertEquals(it.first, michelineNormalizer.normalize(it.second))
+            assertEquals(it.first, it.second.normalized(tezos))
+            assertEquals(it.first, it.second.normalized(michelineNormalizer))
         }
     }
 
@@ -85,9 +79,9 @@ class MichelineNormalizerTest {
             }
 
         expectedWithMicheline.forEach {
-            assertEquals(it.first, michelineToNormalizedConverter.convert(it.second))
-            assertEquals(it.first, it.second.normalized())
-            assertEquals(it.first, it.second.normalized(michelineToNormalizedConverter))
+            assertEquals(it.first, michelineNormalizer.normalize(it.second))
+            assertEquals(it.first, it.second.normalized(tezos))
+            assertEquals(it.first, it.second.normalized(michelineNormalizer))
         }
     }
 

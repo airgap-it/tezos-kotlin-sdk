@@ -18,7 +18,6 @@ import kotlin.test.assertFailsWith
 class StringToPublicKeyConverterTest {
 
     private lateinit var tezos: Tezos
-
     private lateinit var stringToPublicKeyConverter: StringToPublicKeyConverter
 
     @Before

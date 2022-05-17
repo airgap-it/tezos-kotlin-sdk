@@ -10,11 +10,19 @@ import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.michelson.internal.TezosMichelson
 import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.michelson.internal.michelson
+import java.security.MessageDigest
 
 // -- Tezos --
 
-internal fun mockTezos(cryptoProvider: CryptoProvider = mockk(relaxed = true)): Tezos =
+internal fun mockTezos(cryptoProvider: CryptoProvider? = null): Tezos =
     mockkClass(Tezos::class).also {
+        val cryptoProvider = cryptoProvider ?: mockk<CryptoProvider>(relaxed = true).also {
+            every { it.sha256(any()) } answers {
+                val messageDigest = MessageDigest.getInstance("SHA-256")
+                messageDigest.digest(firstArg())
+            }
+        }
+
         val dependencyRegistry = DependencyRegistry(cryptoProvider)
         val coreDependencyRegistry = CoreDependencyRegistry(dependencyRegistry)
         val michelsonDependencyRegistry = MichelsonDependencyRegistry(coreDependencyRegistry)

@@ -15,7 +15,6 @@ import kotlin.test.assertFailsWith
 class StringToSignatureConverterTest {
 
     private lateinit var tezos: Tezos
-
     private lateinit var stringToSignatureConverter: StringToSignatureConverter
 
     @Before

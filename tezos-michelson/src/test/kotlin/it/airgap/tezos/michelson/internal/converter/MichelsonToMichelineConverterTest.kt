@@ -1,15 +1,14 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.toMicheline
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.converter.toMicheline
 import michelsonComparableTypeMichelinePairs
 import michelsonDataMichelinePairs
 import michelsonInstructionMichelinePairs
 import michelsonTypeMichelinePairs
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -17,19 +16,15 @@ import kotlin.test.assertEquals
 
 class MichelsonToMichelineConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        every { dependencyRegistry.michelsonToMichelineConverter } returns michelsonToMichelineConverter
     }
 
     @After
@@ -43,7 +38,7 @@ class MichelsonToMichelineConverterTest {
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }
@@ -54,7 +49,7 @@ class MichelsonToMichelineConverterTest {
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }
@@ -65,7 +60,7 @@ class MichelsonToMichelineConverterTest {
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }
@@ -76,7 +71,7 @@ class MichelsonToMichelineConverterTest {
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }

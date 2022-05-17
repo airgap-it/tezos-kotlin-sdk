@@ -18,7 +18,6 @@ import kotlin.test.assertFailsWith
 class StringToImplicitAddressConverterTest {
 
     private lateinit var tezos: Tezos
-
     private lateinit var stringToImplicitAddressConverter: StringToImplicitAddressConverter
 
     @Before

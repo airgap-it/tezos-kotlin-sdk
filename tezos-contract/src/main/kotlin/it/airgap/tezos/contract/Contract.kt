@@ -10,7 +10,7 @@ import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.internal.normalizer.MichelineToNormalizedConverter
+import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
@@ -28,7 +28,7 @@ import kotlin.reflect.KClass
 public class Contract internal constructor(
     public val address: ContractHash,
     private val rpc: TezosRpc,
-    private val michelineToNormalizedConverter: MichelineToNormalizedConverter,
+    private val michelineNormalizer: MichelineNormalizer,
     private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
     private val entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter,
 ) {
@@ -61,14 +61,14 @@ public class Contract internal constructor(
 
     private fun ContractCode.toMetaContractStorage(): MetaContractStorage {
         if (storage !is MichelinePrimitiveApplication || storage.args.size != 1) failWithUnknownStorageType()
-        val type = storage.args.first().normalized(michelineToNormalizedConverter)
+        val type = storage.args.first().normalized(michelineNormalizer)
 
         return MetaContractStorage(type, michelineToStorageEntryConverter)
     }
 
     private suspend fun GetContractEntrypointsResponse.toMetaContractEntrypoint(headers: List<HttpHeader>): Map<String, MetaContractEntrypoint> {
         val defaultEntrypoint = entrypoints[Entrypoint.Default.value] ?: run {
-            val parameter = codeCached.get(headers).parameter.normalized(michelineToNormalizedConverter)
+            val parameter = codeCached.get(headers).parameter.normalized(michelineNormalizer)
             if (parameter is MichelinePrimitiveApplication && parameter.args.size == 1) parameter.args.first() else failWithUnknownCodeType()
         }
         val entrypoints = entrypoints + Pair(Entrypoint.Default.value, defaultEntrypoint)

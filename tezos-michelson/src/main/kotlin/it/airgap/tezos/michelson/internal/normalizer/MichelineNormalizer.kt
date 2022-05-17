@@ -10,9 +10,9 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelineToNormalizedConverter : Normalizer<MichelineNode> {
-    internal val primitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter((this))
-    internal val sequenceToNormalizedConverter: MichelineSequenceToNormalizedConverter = MichelineSequenceToNormalizedConverter(this)
+internal class MichelineNormalizer : Normalizer<MichelineNode> {
+    internal val primitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationNormalizer = MichelinePrimitiveApplicationNormalizer((this))
+    internal val sequenceToNormalizedConverter: MichelineSequenceNormalizer = MichelineSequenceNormalizer(this)
 
     override fun normalize(value: MichelineNode): MichelineNode =
         when (value) {
@@ -22,15 +22,15 @@ internal class MichelineToNormalizedConverter : Normalizer<MichelineNode> {
         }
 }
 
-internal class MichelinePrimitiveApplicationToNormalizedConverter(private val toNormalizedConverter: MichelineToNormalizedConverter) : Normalizer<MichelinePrimitiveApplication> {
+internal class MichelinePrimitiveApplicationNormalizer(private val normalizer: MichelineNormalizer) : Normalizer<MichelinePrimitiveApplication> {
     override fun normalize(value: MichelinePrimitiveApplication): MichelinePrimitiveApplication =
         when {
             value.isPrim(MichelsonData.Pair) || value.isPrim(MichelsonType.Pair) || value.isPrim(MichelsonComparableType.Pair) -> {
                 if (value.args.size <= 2) value
                 else value.copy(
                     args = listOf(
-                        toNormalizedConverter.normalize(value.args.first()),
-                        toNormalizedConverter.normalize(
+                        normalizer.normalize(value.args.first()),
+                        normalizer.normalize(
                             MichelinePrimitiveApplication(
                                 prim = value.prim,
                                 args = value.args.subList(1, value.args.size),
@@ -40,10 +40,10 @@ internal class MichelinePrimitiveApplicationToNormalizedConverter(private val to
                     ),
                 )
             }
-            else -> value.copy(args = value.args.map { toNormalizedConverter.normalize(it) })
+            else -> value.copy(args = value.args.map { normalizer.normalize(it) })
         }
 }
 
-internal class MichelineSequenceToNormalizedConverter(private val toNormalizedConverter: MichelineToNormalizedConverter) : Normalizer<MichelineSequence> {
-    override fun normalize(value: MichelineSequence): MichelineSequence = MichelineSequence(value.nodes.map { toNormalizedConverter.normalize(it) })
+internal class MichelineSequenceNormalizer(private val normalizer: MichelineNormalizer) : Normalizer<MichelineSequence> {
+    override fun normalize(value: MichelineSequence): MichelineSequence = MichelineSequence(value.nodes.map { normalizer.normalize(it) })
 }

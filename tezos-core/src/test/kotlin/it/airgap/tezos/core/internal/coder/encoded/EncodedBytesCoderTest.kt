@@ -1,44 +1,31 @@
 package it.airgap.tezos.core.internal.coder.encoded
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class EncodedBytesCoderTest {
 
-    @MockK
-    private lateinit var cryptoProvider: CryptoProvider
-
     private lateinit var tezos: Tezos
-
     private lateinit var encodedBytesCoder: EncodedBytesCoder
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { cryptoProvider.sha256(any()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        tezos = mockTezos(cryptoProvider)
+        tezos = mockTezos()
         encodedBytesCoder = EncodedBytesCoder(tezos.dependencyRegistry.base58Check)
     }
 

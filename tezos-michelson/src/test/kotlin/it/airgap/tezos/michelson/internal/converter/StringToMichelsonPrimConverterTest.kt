@@ -1,11 +1,11 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.*
-import mockTezosSdk
+import it.airgap.tezos.michelson.converter.fromStringOrNull
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -15,8 +15,7 @@ import kotlin.test.assertNull
 
 class StringToMichelsonPrimConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var stringToMichelsonPrimConverter: StringToMichelsonPrimConverter
     private lateinit var stringToMichelsonDataPrimConverter: StringToMichelsonDataPrimConverter
@@ -27,19 +26,14 @@ class StringToMichelsonPrimConverterTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
+
+        tezos = mockTezos()
 
         stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
         stringToMichelsonDataPrimConverter = StringToMichelsonDataPrimConverter()
         stringToMichelsonInstructionPrimConverter = StringToMichelsonInstructionPrimConverter()
         stringToMichelsonTypePrimConverter = StringToMichelsonTypePrimConverter()
         stringToMichelsonComparableTypePrimConverter = StringToMichelsonComparableTypePrimConverter()
-
-        every { dependencyRegistry.stringToMichelsonPrimConverter } returns stringToMichelsonPrimConverter
-        every { dependencyRegistry.stringToMichelsonDataPrimConverter } returns stringToMichelsonDataPrimConverter
-        every { dependencyRegistry.stringToMichelsonInstructionPrimConverter } returns stringToMichelsonInstructionPrimConverter
-        every { dependencyRegistry.stringToMichelsonTypePrimConverter } returns stringToMichelsonTypePrimConverter
-        every { dependencyRegistry.stringToMichelsonComparableTypePrimConverter } returns stringToMichelsonComparableTypePrimConverter
     }
 
     @After
@@ -60,7 +54,7 @@ class StringToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, stringToMichelsonPrimConverter.convert(it.first))
-            assertEquals(it.second, Michelson.Prim.fromStringOrNull(it.first))
+            assertEquals(it.second, Michelson.Prim.fromStringOrNull(it.first, tezos))
             assertEquals(it.second, Michelson.Prim.fromStringOrNull(it.first, stringToMichelsonPrimConverter))
         }
     }
@@ -71,7 +65,7 @@ class StringToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, stringToMichelsonDataPrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonData.Prim.fromStringOrNull(it.first))
+            assertEquals(it.second, MichelsonData.Prim.fromStringOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonData.Prim.fromStringOrNull(it.first, stringToMichelsonDataPrimConverter))
         }
     }
@@ -82,7 +76,7 @@ class StringToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, stringToMichelsonInstructionPrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonInstruction.Prim.fromStringOrNull(it.first))
+            assertEquals(it.second, MichelsonInstruction.Prim.fromStringOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonInstruction.Prim.fromStringOrNull(it.first, stringToMichelsonInstructionPrimConverter))
         }
     }
@@ -100,7 +94,7 @@ class StringToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, stringToMichelsonTypePrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonType.Prim.fromStringOrNull(it.first))
+            assertEquals(it.second, MichelsonType.Prim.fromStringOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonType.Prim.fromStringOrNull(it.first, stringToMichelsonTypePrimConverter))
         }
     }
@@ -111,7 +105,7 @@ class StringToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, stringToMichelsonComparableTypePrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonComparableType.Prim.fromStringOrNull(it.first))
+            assertEquals(it.second, MichelsonComparableType.Prim.fromStringOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonComparableType.Prim.fromStringOrNull(it.first, stringToMichelsonComparableTypePrimConverter))
         }
     }
@@ -122,23 +116,23 @@ class StringToMichelsonPrimConverterTest {
 
         unknownStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToMichelsonPrimConverter.convert(it) }
-            assertNull(Michelson.Prim.fromStringOrNull(it))
+            assertNull(Michelson.Prim.fromStringOrNull(it, tezos))
             assertNull(Michelson.Prim.fromStringOrNull(it, stringToMichelsonPrimConverter))
 
             assertFailsWith<IllegalArgumentException> { stringToMichelsonDataPrimConverter.convert(it) }
-            assertNull(MichelsonData.Prim.fromStringOrNull(it))
+            assertNull(MichelsonData.Prim.fromStringOrNull(it, tezos))
             assertNull(MichelsonData.Prim.fromStringOrNull(it, stringToMichelsonDataPrimConverter))
 
             assertFailsWith<IllegalArgumentException> { stringToMichelsonInstructionPrimConverter.convert(it) }
-            assertNull(MichelsonInstruction.Prim.fromStringOrNull(it))
+            assertNull(MichelsonInstruction.Prim.fromStringOrNull(it, tezos))
             assertNull(MichelsonInstruction.Prim.fromStringOrNull(it, stringToMichelsonInstructionPrimConverter))
 
             assertFailsWith<IllegalArgumentException> { stringToMichelsonTypePrimConverter.convert(it) }
-            assertNull(MichelsonType.Prim.fromStringOrNull(it))
+            assertNull(MichelsonType.Prim.fromStringOrNull(it, tezos))
             assertNull(MichelsonType.Prim.fromStringOrNull(it, stringToMichelsonTypePrimConverter))
 
             assertFailsWith<IllegalArgumentException> { stringToMichelsonComparableTypePrimConverter.convert(it) }
-            assertNull(MichelsonComparableType.Prim.fromStringOrNull(it))
+            assertNull(MichelsonComparableType.Prim.fromStringOrNull(it, tezos))
             assertNull(MichelsonComparableType.Prim.fromStringOrNull(it, stringToMichelsonComparableTypePrimConverter))
         }
     }

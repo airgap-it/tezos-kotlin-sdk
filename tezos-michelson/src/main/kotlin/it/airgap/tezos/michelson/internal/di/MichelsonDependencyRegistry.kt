@@ -11,7 +11,7 @@ import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.converter.*
-import it.airgap.tezos.michelson.internal.normalizer.MichelineToNormalizedConverter
+import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineNode
@@ -111,7 +111,7 @@ public class MichelsonDependencyRegistry(core: CoreDependencyRegistry) {
 
         // -- normalizer --
 
-        val michelineNormalizer: MichelineToNormalizedConverter by lazyWeak { MichelineToNormalizedConverter() }
+        val michelineNormalizer: MichelineNormalizer by lazyWeak { MichelineNormalizer() }
         val michelinePrimitiveApplicationNormalizer: Normalizer<MichelinePrimitiveApplication> get() = michelineNormalizer.primitiveApplicationToNormalizedConverter
         val michelineSequenceNormalizer: Normalizer<MichelineSequence> get() = michelineNormalizer.sequenceToNormalizedConverter
     }

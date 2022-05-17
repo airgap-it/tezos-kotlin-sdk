@@ -15,7 +15,6 @@ import kotlin.test.assertFailsWith
 class StringToAddressConverterTest {
 
     private lateinit var tezos: Tezos
-
     private lateinit var stringToAddressConverter: StringToAddressConverter
 
     @Before

@@ -21,8 +21,8 @@ import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConv
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
 import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.normalizer.MichelinePrimitiveApplicationToNormalizedConverter
-import it.airgap.tezos.michelson.internal.normalizer.MichelineToNormalizedConverter
+import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
+import it.airgap.tezos.michelson.internal.normalizer.MichelinePrimitiveApplicationNormalizer
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -64,8 +64,8 @@ class ContractStorageTest {
         val base58Check = Base58Check(Base58(), crypto)
 
         val stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
-        val michelineToNormalizedConverter = MichelineToNormalizedConverter()
-        val michelinePrimitiveApplicationToNormalizedConverter = MichelinePrimitiveApplicationToNormalizedConverter(michelineToNormalizedConverter)
+        val michelineNormalizer = MichelineNormalizer()
+        val michelinePrimitiveApplicationNormalizer = MichelinePrimitiveApplicationNormalizer(michelineNormalizer)
         val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
         val michelineToCompactStringConverter = MichelineToCompactStringConverter()
 
@@ -87,7 +87,7 @@ class ContractStorageTest {
         val michelinePacker = MichelinePacker(
             michelineBytesCoder,
             stringToMichelsonPrimConverter,
-            michelinePrimitiveApplicationToNormalizedConverter,
+            michelinePrimitiveApplicationNormalizer,
             michelineToCompactStringConverter,
             encodedBytesCoder,
             addressBytesCoder,

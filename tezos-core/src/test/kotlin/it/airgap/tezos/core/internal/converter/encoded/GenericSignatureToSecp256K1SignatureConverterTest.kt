@@ -1,12 +1,9 @@
 package it.airgap.tezos.core.internal.converter.encoded
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromGenericSignature
-import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.Secp256K1Signature
@@ -15,28 +12,18 @@ import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertEquals
 
 class GenericSignatureToSecp256K1SignatureConverterTest {
 
-    @MockK
-    private lateinit var cryptoProvider: CryptoProvider
-
     private lateinit var tezos: Tezos
-
     private lateinit var genericSignatureToSecp256K1SignatureConverter: GenericSignatureToSecp256K1SignatureConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { cryptoProvider.sha256(any()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        tezos = mockTezos(cryptoProvider)
+        tezos = mockTezos()
         genericSignatureToSecp256K1SignatureConverter = GenericSignatureToSecp256K1SignatureConverter(
             tezos.core().dependencyRegistry.signatureBytesCoder,
             tezos.core().dependencyRegistry.encodedBytesCoder,

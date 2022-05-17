@@ -16,6 +16,9 @@ import kotlinx.serialization.json.JsonElement
 public fun <T : MichelineNode> T.toJsonString(tezos: Tezos = Tezos.Default): String =
     toJsonString(tezos.michelson().dependencyRegistry.michelineJsonCoder)
 
+public fun MichelineNode.Companion.fromJsonString(json: String, tezos: Tezos = Tezos.Default): MichelineNode =
+    fromJsonString(json, tezos.michelson().dependencyRegistry.michelineJsonCoder)
+
 @InternalTezosSdkApi
 public fun <T : MichelineNode> T.toJsonString(michelineJsonCoder: Coder<MichelineNode, JsonElement>): String =
     michelineJsonCoder.encode(this).toString()
