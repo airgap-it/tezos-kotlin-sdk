@@ -1,7 +1,7 @@
 package it.airgap.tezos.contract.internal.entrypoint
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointArgument
-import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
+import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.converter.toMicheline
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
 import it.airgap.tezos.core.internal.utils.flatten
@@ -12,7 +12,7 @@ import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 
 internal class MetaContractEntrypoint(
     private val type: MichelineNode,
-    private val entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter,
+    private val entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointArgument, MichelineNode>,
 ) {
     fun valueFrom(argument: ContractEntrypointArgument): MichelineNode = argument.toMicheline(type, entrypointArgumentToMichelineConverter)
 }

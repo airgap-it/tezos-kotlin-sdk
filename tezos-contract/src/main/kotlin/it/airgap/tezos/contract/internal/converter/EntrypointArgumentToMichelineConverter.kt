@@ -3,23 +3,27 @@ package it.airgap.tezos.contract.internal.converter
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointArgument
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypointArgument
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
-import it.airgap.tezos.core.internal.converter.ConfigurableConverter
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.consume
 import it.airgap.tezos.core.internal.utils.consumeAll
 import it.airgap.tezos.core.internal.utils.consumeAt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.Michelson
+import it.airgap.tezos.michelson.MichelsonComparableType
+import it.airgap.tezos.michelson.MichelsonData
+import it.airgap.tezos.michelson.MichelsonType
+import it.airgap.tezos.michelson.comparator.isPrim
+import it.airgap.tezos.michelson.converter.fromStringOrNull
+import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
 internal class EntrypointArgumentToMichelineConverter(
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
-    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-) : ConfigurableConverter<ContractEntrypointArgument, MichelineNode, EntrypointArgumentToMichelineConverter.Configuration> {
-    override fun convert(value: ContractEntrypointArgument, configuration: Configuration): MichelineNode = with(configuration) {
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+) : TypedConverter<ContractEntrypointArgument, MichelineNode> {
+    override fun convert(value: ContractEntrypointArgument, type: MichelineNode): MichelineNode {
         val meta = createMetaEntrypointArgument(type)
         return createMicheline(value, meta)
     }
@@ -306,6 +310,4 @@ internal class EntrypointArgumentToMichelineConverter(
 
     private fun failWithValueMetaMismatch(value: ContractEntrypointArgument, meta: MetaContractEntrypointArgument): Nothing =
         failWithIllegalArgument("Micheline type ${meta.type.toCompactExpression(michelineToCompactStringConverter)} and value $value mismatch.")
-
-    data class Configuration(val type: MichelineNode)
 }

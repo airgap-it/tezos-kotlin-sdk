@@ -5,25 +5,9 @@ import io.mockk.impl.annotations.MockK
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.encoded.*
-import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
-import it.airgap.tezos.core.internal.converter.encoded.StringToAddressConverter
-import it.airgap.tezos.core.internal.converter.encoded.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.encoded.StringToPublicKeyConverter
-import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
-import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
-import it.airgap.tezos.michelson.internal.normalizer.MichelinePrimitiveApplicationNormalizer
-import it.airgap.tezos.michelson.internal.packer.MichelinePacker
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.internal.coreModule
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
@@ -32,19 +16,16 @@ import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.active.block.GetContractNormalizedStorageResponse
 import it.airgap.tezos.rpc.internal.cache.Cached
 import kotlinx.coroutines.runBlocking
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertEquals
 
 class ContractStorageTest {
 
-    private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
+    private lateinit var tezos: Tezos
     private lateinit var michelineToStorageEntryConverter: MichelineToStorageEntryConverter
-
-    @MockK
-    private lateinit var crypto: Crypto
 
     @MockK
     private lateinit var blockRpc: Block
@@ -56,58 +37,13 @@ class ContractStorageTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        val base58Check = Base58Check(Base58(), crypto)
-
-        val stringToMichelsonPrimConverter = StringToMichelsonPrimConverter()
-        val michelineNormalizer = MichelineNormalizer()
-        val michelinePrimitiveApplicationNormalizer = MichelinePrimitiveApplicationNormalizer(michelineNormalizer)
-        val tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
-        val michelineToCompactStringConverter = MichelineToCompactStringConverter()
-
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
-        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-        val timestampBigIntCoder = TimestampBigIntCoder()
-        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
-        val zarithIntegerBytesCoder = ZarithIntegerBytesCoder(ZarithNaturalBytesCoder())
-
-        val stringToAddressConverter = StringToAddressConverter()
-        val stringToImplicitAddressConverter = StringToImplicitAddressConverter()
-        val stringToPublicKeyConverter = StringToPublicKeyConverter()
-        val stringToSignatureConverter = StringToSignatureConverter()
-
-        val michelineBytesCoder = MichelineBytesCoder(stringToMichelsonPrimConverter, tagToMichelsonPrimConverter, michelineToCompactStringConverter, zarithIntegerBytesCoder)
-
-        val michelinePacker = MichelinePacker(
-            michelineBytesCoder,
-            stringToMichelsonPrimConverter,
-            michelinePrimitiveApplicationNormalizer,
-            michelineToCompactStringConverter,
-            encodedBytesCoder,
-            addressBytesCoder,
-            publicKeyBytesCoder,
-            implicitAddressBytesCoder,
-            signatureBytesCoder,
-            timestampBigIntCoder,
-            stringToAddressConverter,
-            stringToImplicitAddressConverter,
-            stringToPublicKeyConverter,
-            stringToSignatureConverter,
-        )
-
-        michelsonToMichelineConverter = MichelsonToMichelineConverter()
+        tezos = mockTezos()
         michelineToStorageEntryConverter = MichelineToStorageEntryConverter(
             blockRpc,
-            encodedBytesCoder,
-            michelinePacker,
-            michelineToCompactStringConverter,
-            stringToMichelsonPrimConverter,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
+            tezos.michelsonModule.dependencyRegistry.michelinePacker,
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
+            tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
         )
     }
 
@@ -137,7 +73,7 @@ class ContractStorageTest {
     private val storageTestCases: List<StorageTestCase>
         get() = listOf(
             StorageTestCase {
-                val type = micheline(michelsonToMichelineConverter) {
+                val type = micheline(tezos) {
                     pair {
                         arg {
                             bigMap {
@@ -178,7 +114,7 @@ class ContractStorageTest {
                     }
                 }
 
-                val value = micheline(michelsonToMichelineConverter) {
+                val value = micheline(tezos) {
                     Pair {
                         arg { int(51296) }
                         arg {

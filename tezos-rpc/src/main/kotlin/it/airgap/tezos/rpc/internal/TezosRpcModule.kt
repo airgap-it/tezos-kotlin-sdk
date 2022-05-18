@@ -8,7 +8,6 @@ import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.module.TezosModule
 import it.airgap.tezos.core.internal.utils.failWithDependencyNotFound
-import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
@@ -31,14 +30,12 @@ public class TezosRpcModule private constructor(public val dependencyRegistry: R
         @InternalTezosSdkApi
         override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosRpcModule {
             val core = moduleRegistry.coreModule(dependencyRegistry)
-            val michelson = moduleRegistry.michelsonModule(dependencyRegistry)
             val operation = moduleRegistry.operationModule(dependencyRegistry)
 
             return TezosRpcModule(
                 RpcDependencyRegistry(
                     httpClientProvider,
                     core.dependencyRegistry,
-                    michelson.dependencyRegistry,
                     operation.dependencyRegistry,
                 ),
             )

@@ -23,7 +23,7 @@ import it.airgap.tezos.core.type.zarith.ZarithInteger
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 
 @InternalTezosSdkApi
-public class CoreDependencyRegistry(global: DependencyRegistry) {
+public class CoreDependencyRegistry internal constructor(global: DependencyRegistry) {
 
     // -- coder --
 

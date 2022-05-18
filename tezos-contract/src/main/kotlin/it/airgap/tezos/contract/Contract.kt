@@ -1,20 +1,23 @@
 package it.airgap.tezos.contract
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
-import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
-import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
+import it.airgap.tezos.contract.entrypoint.ContractEntrypointArgument
+import it.airgap.tezos.contract.internal.contractModule
+import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.storage.ContractStorage
+import it.airgap.tezos.contract.storage.ContractStorageEntry
 import it.airgap.tezos.contract.type.ContractCode
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.normalized
+import it.airgap.tezos.michelson.normalizer.normalized
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
@@ -28,9 +31,9 @@ import kotlin.reflect.KClass
 public class Contract internal constructor(
     public val address: ContractHash,
     private val rpc: TezosRpc,
-    private val michelineNormalizer: MichelineNormalizer,
-    private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
-    private val entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter,
+    private val michelineNormalizer: Normalizer<MichelineNode>,
+    private val michelineToStorageEntryConverter: TypedConverter<MichelineNode, ContractStorageEntry>,
+    private val entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointArgument, MichelineNode>,
 ) {
     private val TezosRpc.block: Block
         get() = chains.main.blocks.head
@@ -84,3 +87,6 @@ public class Contract internal constructor(
     private fun failWithUnknownCodeType(): Nothing = throw Exception("Unknown contract code type.")
     private fun failWithUnknownStorageType(): Nothing = throw Exception("Unknown contract storage type.")
 }
+
+public fun Contract(nodeUrl: String, address: ContractHash, tezos: Tezos = Tezos.Default): Contract =
+    tezos.contractModule.dependencyRegistry.contract(nodeUrl, address)

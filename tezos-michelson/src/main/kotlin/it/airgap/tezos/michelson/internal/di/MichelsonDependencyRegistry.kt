@@ -20,7 +20,7 @@ import it.airgap.tezos.michelson.micheline.MichelineSequence
 import kotlinx.serialization.json.JsonElement
 
 @InternalTezosSdkApi
-public class MichelsonDependencyRegistry(core: CoreDependencyRegistry) {
+public class MichelsonDependencyRegistry internal constructor(core: CoreDependencyRegistry) {
 
     // -- coder --
 

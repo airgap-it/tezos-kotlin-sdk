@@ -3,34 +3,31 @@ package it.airgap.tezos.contract.internal.converter
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
-import it.airgap.tezos.core.internal.converter.ConfigurableConverter
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonType
-import it.airgap.tezos.michelson.fromStringOrNull
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.packer.MichelinePacker
+import it.airgap.tezos.michelson.converter.fromStringOrNull
+import it.airgap.tezos.michelson.converter.toCompactExpression
+import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.toCompactExpression
 import it.airgap.tezos.rpc.active.block.Block
 
 internal class MichelineToStorageEntryConverter(
     private val rpc: Block,
     private val encodedBytesCoder: EncodedBytesCoder,
-    private val michelinePacker: MichelinePacker,
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
-    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-) : ConfigurableConverter<MichelineNode, ContractStorageEntry, MichelineToStorageEntryConverter.Configuration> {
-    override fun convert(value: MichelineNode, configuration: Configuration): ContractStorageEntry = with(configuration) {
+    private val michelinePacker: Packer<MichelineNode>,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+) : TypedConverter<MichelineNode, ContractStorageEntry> {
+    override fun convert(value: MichelineNode, type: MichelineNode): ContractStorageEntry =
         when (type) {
             is MichelinePrimitiveApplication -> createStorageEntry(type, value)
             else -> failWithInvalidType(type)
         }
-    }
 
     private fun createStorageEntry(type: MichelinePrimitiveApplication, value: MichelineNode): ContractStorageEntry =
         when (val prim = Michelson.Prim.fromStringOrNull(type.prim.value, stringToMichelsonPrimConverter)) {
@@ -66,7 +63,7 @@ internal class MichelineToStorageEntryConverter(
         return ContractStorageEntry.Sequence(
             value,
             MetaContractStorageEntry.Basic(type),
-            value.nodes.map { convert(it, Configuration(type.args.first())) },
+            value.nodes.map { convert(it, type.args.first()) },
         )
     }
 
@@ -74,7 +71,7 @@ internal class MichelineToStorageEntryConverter(
         ContractStorageEntry.Sequence(
             value,
             MetaContractStorageEntry.Basic(type),
-            value.nodes.map { convert(it, Configuration(type)) },
+            value.nodes.map { convert(it, type) },
         )
 
     private fun createMapStorageEntry(type: MichelinePrimitiveApplication, value: MichelineSequence): ContractStorageEntry {
@@ -84,7 +81,7 @@ internal class MichelineToStorageEntryConverter(
             value,
             MetaContractStorageEntry.Basic(type),
             value.nodes.associate {
-                convert(it, Configuration(type.args[0])) to convert(it, Configuration(type.args[1]))
+                convert(it, type.args[0]) to convert(it, type.args[1])
             },
         )
     }
@@ -99,7 +96,7 @@ internal class MichelineToStorageEntryConverter(
             value,
             MetaContractStorageEntry.Basic(type),
             value.args.zip(type.args).flatMap { (v, t) ->
-                val entry = convert(v, Configuration(t))
+                val entry = convert(v, t)
 
                 if (entry is ContractStorageEntry.Object && entry.names.isEmpty()) entry.elements
                 else listOf(entry)
@@ -112,6 +109,4 @@ internal class MichelineToStorageEntryConverter(
 
     private fun failWithTypeValueMismatch(type: MichelineNode, value: MichelineNode): Nothing =
         failWithIllegalArgument("Micheline type ${type.toCompactExpression(michelineToCompactStringConverter)} and value ${value.toCompactExpression(michelineToCompactStringConverter)} mismatch.")
-
-    data class Configuration(val type: MichelineNode)
 }

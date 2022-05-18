@@ -3,7 +3,6 @@ package it.airgap.tezos.rpc.internal.di
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
 import it.airgap.tezos.core.internal.utils.getOrPutWeak
-import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.operation.internal.di.OperationDependencyRegistry
 import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.TezosRpcClient
@@ -28,10 +27,9 @@ import kotlinx.serialization.json.Json
 import java.lang.ref.WeakReference
 
 @InternalTezosSdkApi
-public class RpcDependencyRegistry(
+public class RpcDependencyRegistry internal constructor(
     httpClientProvider: HttpClientProvider,
     private val core: CoreDependencyRegistry,
-    private val michelson: MichelsonDependencyRegistry,
     private val operation: OperationDependencyRegistry,
 ) {
 

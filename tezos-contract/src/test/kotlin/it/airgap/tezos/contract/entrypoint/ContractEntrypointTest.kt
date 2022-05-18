@@ -6,15 +6,14 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.MichelsonData
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -28,6 +27,7 @@ import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.internal.cache.Cached
 import kotlinx.coroutines.runBlocking
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -35,10 +35,7 @@ import kotlin.test.assertEquals
 
 class ContractEntrypointTest {
 
-    private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
-    private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
-    private lateinit var stringToMichelinePrimConverter: StringToMichelsonPrimConverter
-
+    private lateinit var tezos: Tezos
     private lateinit var entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter
 
     @MockK
@@ -51,12 +48,11 @@ class ContractEntrypointTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        michelineToCompactStringConverter = MichelineToCompactStringConverter()
-        stringToMichelinePrimConverter = StringToMichelsonPrimConverter()
-
-        entrypointArgumentToMichelineConverter = EntrypointArgumentToMichelineConverter(michelineToCompactStringConverter, stringToMichelinePrimConverter)
+        tezos = mockTezos()
+        entrypointArgumentToMichelineConverter = EntrypointArgumentToMichelineConverter(
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
+            tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
+        )
     }
 
     @After
@@ -155,7 +151,7 @@ class ContractEntrypointTest {
             EntrypointTestCase(
                 name = "test_entrypoint1",
                 contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
-                type = micheline(michelsonToMichelineConverter) {
+                type = micheline(tezos) {
                     pair {
                         arg {
                             pair {
@@ -185,7 +181,7 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                value = micheline(michelsonToMichelineConverter) {
+                value = micheline(tezos) {
                     Pair {
                         arg {
                             Pair {
@@ -225,7 +221,7 @@ class ContractEntrypointTest {
             EntrypointTestCase(
                 name = "test_entrypoint2",
                 contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
-                type = micheline(michelsonToMichelineConverter) {
+                type = micheline(tezos) {
                     pair {
                         arg {
                             pair {
@@ -316,7 +312,7 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                value = micheline(michelsonToMichelineConverter) {
+                value = micheline(tezos) {
                     Pair {
                         arg {
                             Pair {
