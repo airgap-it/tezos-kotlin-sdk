@@ -7,15 +7,15 @@ import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.SecretKey
 import it.airgap.tezos.core.type.encoded.Signature
 import it.airgap.tezos.operation.Operation
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 
 // -- Operation --
 
 public fun <T : Operation> T.sign(key: SecretKey, tezos: Tezos = Tezos.Default): Operation.Signed =
-    sign(key, tezos.operation().dependencyRegistry.operationSigner)
+    sign(key, tezos.operationModule.dependencyRegistry.operationSigner)
 
 public fun Operation.Signed.verify(key: PublicKey, tezos: Tezos = Tezos.Default): Boolean =
-    verify(key, tezos.operation().dependencyRegistry.operationSigner)
+    verify(key, tezos.operationModule.dependencyRegistry.operationSigner)
 
 @InternalTezosSdkApi
 public fun <T : Operation> T.sign(key: SecretKey, operationSigner: Signer<Operation, SecretKey, PublicKey, Signature>): Operation.Signed =

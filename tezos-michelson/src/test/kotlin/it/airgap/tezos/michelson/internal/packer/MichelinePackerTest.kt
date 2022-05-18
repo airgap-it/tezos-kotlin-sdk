@@ -3,10 +3,10 @@ package it.airgap.tezos.michelson.internal.packer
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
-import it.airgap.tezos.michelson.internal.michelson
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -37,20 +37,20 @@ class MichelinePackerTest {
 
         tezos = mockTezos()
         michelinePacker = MichelinePacker(
-            tezos.michelson().dependencyRegistry.michelineBytesCoder,
-            tezos.michelson().dependencyRegistry.michelinePrimitiveApplicationNormalizer,
-            tezos.michelson().dependencyRegistry.stringToMichelsonPrimConverter,
-            tezos.michelson().dependencyRegistry.michelineToCompactStringConverter,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
-            tezos.core().dependencyRegistry.addressBytesCoder,
-            tezos.core().dependencyRegistry.publicKeyBytesCoder,
-            tezos.core().dependencyRegistry.implicitAddressBytesCoder,
-            tezos.core().dependencyRegistry.signatureBytesCoder,
-            tezos.core().dependencyRegistry.timestampBigIntCoder,
-            tezos.core().dependencyRegistry.stringToAddressConverter,
-            tezos.core().dependencyRegistry.stringToImplicitAddressConverter,
-            tezos.core().dependencyRegistry.stringToPublicKeyConverter,
-            tezos.core().dependencyRegistry.stringToSignatureConverter,
+            tezos.michelsonModule.dependencyRegistry.michelineBytesCoder,
+            tezos.michelsonModule.dependencyRegistry.michelinePrimitiveApplicationNormalizer,
+            tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
+            tezos.coreModule.dependencyRegistry.addressBytesCoder,
+            tezos.coreModule.dependencyRegistry.publicKeyBytesCoder,
+            tezos.coreModule.dependencyRegistry.implicitAddressBytesCoder,
+            tezos.coreModule.dependencyRegistry.signatureBytesCoder,
+            tezos.coreModule.dependencyRegistry.timestampBigIntCoder,
+            tezos.coreModule.dependencyRegistry.stringToAddressConverter,
+            tezos.coreModule.dependencyRegistry.stringToImplicitAddressConverter,
+            tezos.coreModule.dependencyRegistry.stringToPublicKeyConverter,
+            tezos.coreModule.dependencyRegistry.stringToSignatureConverter,
         )
     }
 

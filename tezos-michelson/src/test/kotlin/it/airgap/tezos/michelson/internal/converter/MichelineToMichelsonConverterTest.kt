@@ -10,7 +10,7 @@ import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.converter.toMichelson
-import it.airgap.tezos.michelson.internal.michelson
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
@@ -35,8 +35,8 @@ class MichelineToMichelsonConverterTest {
 
         tezos = mockTezos()
         michelineToMichelsonConverter = MichelineToMichelsonConverter(
-            spyk(tezos.michelson().dependencyRegistry.stringToMichelsonPrimConverter).also { stringToMichelsonPrimConverter = it },
-            tezos.michelson().dependencyRegistry.michelineToCompactStringConverter,
+            spyk(tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter).also { stringToMichelsonPrimConverter = it },
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
         )
     }
 

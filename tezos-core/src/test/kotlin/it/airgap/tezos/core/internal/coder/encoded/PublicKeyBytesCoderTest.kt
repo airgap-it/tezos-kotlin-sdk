@@ -6,7 +6,7 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
@@ -30,7 +30,7 @@ class PublicKeyBytesCoderTest {
         MockKAnnotations.init(this)
 
         tezos = mockTezos()
-        publicKeyBytesCoder = PublicKeyBytesCoder(tezos.core().dependencyRegistry.encodedBytesCoder)
+        publicKeyBytesCoder = PublicKeyBytesCoder(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
     }
 
     @After

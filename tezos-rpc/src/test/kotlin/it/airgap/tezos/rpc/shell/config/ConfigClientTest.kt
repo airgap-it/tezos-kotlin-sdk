@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.shell.chains
+package it.airgap.tezos.rpc.shell.config
 
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -9,14 +9,14 @@ import it.airgap.tezos.core.type.encoded.ProtocolHash
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
-import it.airgap.tezos.rpc.shell.config.*
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.history.RpcHistoryMode
 import it.airgap.tezos.rpc.type.protocol.RpcUserActivatedProtocolOverride
 import it.airgap.tezos.rpc.type.protocol.RpcUserActivatedUpgrade
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -30,6 +30,7 @@ class ConfigClientTest {
 
     private lateinit var json: Json
     private lateinit var httpClient: HttpClient
+
     private lateinit var configClient: ConfigClient
 
     private val nodeUrl = "https://example.com"
@@ -38,10 +39,11 @@ class ConfigClientTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        json = Json(from = rpcJson) {
-            prettyPrint = true
-        }
-        httpClient = HttpClient(httpClientProvider, json)
+        val tezos = mockTezos(httpClientProvider = httpClientProvider)
+
+        json = tezos.rpcModule.dependencyRegistry.json
+        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
+
         configClient = ConfigClient(nodeUrl, httpClient)
     }
 

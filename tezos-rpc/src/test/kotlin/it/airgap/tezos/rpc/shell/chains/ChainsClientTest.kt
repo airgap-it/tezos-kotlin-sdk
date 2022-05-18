@@ -1,10 +1,10 @@
 package it.airgap.tezos.rpc.shell.chains
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
-import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.core.internal.di.core
+import io.mockk.unmockkAll
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.active.block.GetBlockResponse
@@ -12,7 +12,7 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.RpcError
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
@@ -20,7 +20,7 @@ import it.airgap.tezos.rpc.type.block.RpcInvalidBlock
 import it.airgap.tezos.rpc.type.chain.RpcChainStatus
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import mockTezosSdk
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -30,13 +30,11 @@ import kotlin.test.assertEquals
 class ChainsClientTest {
 
     @MockK
-    private lateinit var dependencyRegistry: DependencyRegistry
-
-    @MockK
     private lateinit var httpClientProvider : HttpClientProvider
 
     private lateinit var json: Json
     private lateinit var httpClient: HttpClient
+
     private lateinit var chainsClient: ChainsClient
 
     private val nodeUrl = "https://example.com"
@@ -44,14 +42,12 @@ class ChainsClientTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        every { dependencyRegistry.core().stringToSignatureConverter } returns StringToSignatureConverter()
+        val tezos = mockTezos(httpClientProvider = httpClientProvider)
 
-        json = Json(from = rpcJson) {
-            prettyPrint = true
-        }
-        httpClient = HttpClient(httpClientProvider, json)
+        json = tezos.rpcModule.dependencyRegistry.json
+        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
+
         chainsClient = ChainsClient(nodeUrl, httpClient)
     }
 

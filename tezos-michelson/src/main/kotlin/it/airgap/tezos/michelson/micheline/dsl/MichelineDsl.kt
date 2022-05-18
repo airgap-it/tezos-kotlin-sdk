@@ -4,24 +4,24 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.Michelson
-import it.airgap.tezos.michelson.internal.michelson
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 
 public fun micheline(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonExpressionBuilder.() -> Unit = {}): MichelineNode =
-    micheline(tezos.michelson().dependencyRegistry.michelsonToMichelineConverter, builderAction)
+    micheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
 
 public fun michelineType(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit = {}): MichelineNode =
-    michelineType(tezos.michelson().dependencyRegistry.michelsonToMichelineConverter, builderAction)
+    michelineType(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
 
 public fun michelineComparableType(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit = {}): MichelineNode =
-    michelineComparableType(tezos.michelson().dependencyRegistry.michelsonToMichelineConverter, builderAction)
+    michelineComparableType(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
 
 public fun michelineData(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit = {}): MichelineNode =
-    michelineData(tezos.michelson().dependencyRegistry.michelsonToMichelineConverter, builderAction)
+    michelineData(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
 
 public fun michelineInstruction(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit = {}): MichelineNode =
-    michelineInstruction(tezos.michelson().dependencyRegistry.michelsonToMichelineConverter, builderAction)
+    michelineInstruction(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
 
 @InternalTezosSdkApi
 public fun micheline(

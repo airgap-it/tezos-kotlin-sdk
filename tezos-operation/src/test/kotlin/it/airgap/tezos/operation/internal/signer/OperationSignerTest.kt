@@ -3,12 +3,12 @@ package it.airgap.tezos.operation.internal.signer
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.operation.signer.sign
 import it.airgap.tezos.operation.signer.verify
 import mockTezos
@@ -37,20 +37,20 @@ class OperationSignerTest {
 
         operationEd25519Signer = OperationEd25519Signer(
             tezos.dependencyRegistry.crypto,
-            tezos.operation().dependencyRegistry.operationBytesCoder,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.operationModule.dependencyRegistry.operationBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
 
         operationSecp256K1Signer = OperationSecp256K1Signer(
             tezos.dependencyRegistry.crypto,
-            tezos.operation().dependencyRegistry.operationBytesCoder,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.operationModule.dependencyRegistry.operationBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
 
         operationP256Signer = OperationP256Signer(
             tezos.dependencyRegistry.crypto,
-            tezos.operation().dependencyRegistry.operationBytesCoder,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.operationModule.dependencyRegistry.operationBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
 
         operationSigner = OperationSigner(operationEd25519Signer, operationSecp256K1Signer, operationP256Signer)

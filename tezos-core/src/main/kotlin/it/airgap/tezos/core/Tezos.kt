@@ -6,7 +6,6 @@ import it.airgap.tezos.core.internal.delegate.default
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.module.TezosModule
-import it.airgap.tezos.core.internal.module.withModuleResolver
 import it.airgap.tezos.core.internal.utils.failWithDependencyNotFound
 import java.util.*
 import kotlin.reflect.KClass
@@ -30,8 +29,7 @@ public class Tezos internal constructor(
         public var default: Boolean = false
         public var cryptoProvider: CryptoProvider by default { Static.defaultCryptoProvider }
 
-        @InternalTezosSdkApi
-        public val moduleBuilders: MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>> = mutableMapOf()
+        private val moduleBuilders: MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>> = mutableMapOf()
 
         public inline fun <reified T : TezosModule> install(builder: TezosModule.Builder<T>): Builder = apply { install(builder, T::class) }
 
@@ -42,9 +40,7 @@ public class Tezos internal constructor(
 
         public fun build(): Tezos {
             val dependencyRegistry = DependencyRegistry(cryptoProvider)
-
-            val modules = withModuleResolver { moduleBuilders.build(dependencyRegistry) }
-            val moduleRegistry = ModuleRegistry(modules)
+            val moduleRegistry = ModuleRegistry(builders = moduleBuilders)
 
             return Tezos(dependencyRegistry, moduleRegistry).also {
                 if (default) {

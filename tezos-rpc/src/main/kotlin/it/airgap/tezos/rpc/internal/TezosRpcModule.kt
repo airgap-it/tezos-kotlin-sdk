@@ -2,15 +2,17 @@ package it.airgap.tezos.rpc.internal
 
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.delegate.default
 import it.airgap.tezos.core.internal.di.DependencyRegistry
+import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.module.TezosModule
 import it.airgap.tezos.core.internal.utils.failWithDependencyNotFound
-import it.airgap.tezos.operation.internal.TezosOperationModule
+import it.airgap.tezos.michelson.internal.michelsonModule
+import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
 import java.util.*
-import kotlin.reflect.KClass
 
 public class TezosRpcModule private constructor(public val dependencyRegistry: RpcDependencyRegistry) : TezosModule {
 
@@ -27,31 +29,30 @@ public class TezosRpcModule private constructor(public val dependencyRegistry: R
         public var httpClientProvider: HttpClientProvider by default { Static.defaultHttpClientProvider }
 
         @InternalTezosSdkApi
-        override val moduleDependencies: Set<KClass<out TezosModule>> = setOf(TezosOperationModule::class)
+        override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosRpcModule {
+            val core = moduleRegistry.coreModule(dependencyRegistry)
+            val michelson = moduleRegistry.michelsonModule(dependencyRegistry)
+            val operation = moduleRegistry.operationModule(dependencyRegistry)
 
-        @InternalTezosSdkApi
-        override fun build(dependencyRegistry: DependencyRegistry, modules: List<TezosModule>): TezosRpcModule =
-            TezosRpcModule(
+            return TezosRpcModule(
                 RpcDependencyRegistry(
                     httpClientProvider,
+                    core.dependencyRegistry,
+                    michelson.dependencyRegistry,
+                    operation.dependencyRegistry,
                 ),
             )
+        }
     }
 }
 
-public var Tezos.Builder.httpClientProvider: HttpClientProvider
-    get() = moduleBuilders.getOrPut { TezosRpcModule.Builder() }.httpClientProvider
-    set(value) {
-        val builder = moduleBuilders.getOrPut { TezosRpcModule.Builder() }
-        builder.httpClientProvider = value
-    }
-
-@Suppress("UNCHECKED_CAST")
-private inline fun <reified T : TezosModule, B : TezosModule.Builder<T>> MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>>.getOrPut(defaultValue: () -> B): B {
-    val key = T::class
-    return this[key] as? B ?: defaultValue().also { put(key, it) }
-}
+public inline fun Tezos.Builder.installRpc(builder: TezosRpcModule.Builder.() -> Unit): Tezos.Builder =
+    install(TezosRpcModule.Builder().apply(builder))
 
 @InternalTezosSdkApi
-public fun Tezos.rpc(): TezosRpcModule = moduleRegistry.findModule()
-    ?: TezosRpcModule.Builder().build(dependencyRegistry, emptyList()).also { moduleRegistry.registerModule(it) }
+public val Tezos.rpcModule: TezosRpcModule
+    get() = moduleRegistry.rpcModule(dependencyRegistry)
+
+@InternalTezosSdkApi
+public fun ModuleRegistry.rpcModule(dependencyRegistry: DependencyRegistry): TezosRpcModule =
+    module(dependencyRegistry) { TezosRpcModule.Builder() }

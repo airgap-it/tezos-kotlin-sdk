@@ -4,7 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.toGenericSignature
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -23,8 +23,8 @@ class SignatureToGenericSignatureConverterTest {
 
         tezos = mockTezos()
         signatureToGenericSignatureConverter = SignatureToGenericSignatureConverter(
-            tezos.core().dependencyRegistry.signatureBytesCoder,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.coreModule.dependencyRegistry.signatureBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
     }
 

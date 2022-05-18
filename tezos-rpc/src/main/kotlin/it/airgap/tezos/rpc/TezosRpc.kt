@@ -1,10 +1,12 @@
 package it.airgap.tezos.rpc
 
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.type.Limits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.http.HttpHeader
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.internal.utils.Constants
 import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
 import it.airgap.tezos.rpc.shell.chains.Chains
@@ -36,3 +38,6 @@ public interface TezosRpc : ShellSimplifiedRpc, ActiveSimplifiedRpc {
         headers: List<HttpHeader> = emptyList(),
     ): Operation = minFee(chainId.base58, operation, limits, headers)
 }
+
+public fun TezosRpc(nodeUrl: String, tezos: Tezos = Tezos.Default): TezosRpc =
+    tezos.rpcModule.dependencyRegistry.tezosRpc(nodeUrl)

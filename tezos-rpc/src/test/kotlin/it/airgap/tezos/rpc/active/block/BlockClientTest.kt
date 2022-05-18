@@ -1,8 +1,10 @@
 package it.airgap.tezos.rpc.active.block
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import it.airgap.tezos.core.Tezos
+import io.mockk.unmockkAll
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
@@ -16,8 +18,7 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.internal.rpc
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
@@ -42,9 +43,9 @@ class BlockClientTest {
     @MockK
     private lateinit var httpClientProvider : HttpClientProvider
 
-    private lateinit var tezos: Tezos
     private lateinit var json: Json
     private lateinit var httpClient: HttpClient
+
     private lateinit var blockClient: BlockClient
 
     private val nodeUrl = "https://example.com/chains/chainId/blocks"
@@ -54,11 +55,11 @@ class BlockClientTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        tezos = mockTezos(httpClientProvider = httpClientProvider)
-        json = Json(from = rpcJson) {
-            prettyPrint = true
-        }
-        httpClient = spyk(tezos.rpc().dependencyRegistry.httpClient)
+        val tezos = mockTezos(httpClientProvider = httpClientProvider)
+
+        json = tezos.rpcModule.dependencyRegistry.json
+        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
+
         blockClient = BlockClient(nodeUrl, blockId, httpClient)
     }
 
@@ -629,7 +630,7 @@ class BlockClientTest {
             assertEquals(expectedResponse, response)
 
             coVerify { httpClient.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, parameters = emptyList(), body = jsonRequest) }
+            coVerify { httpClientProvider.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 

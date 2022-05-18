@@ -6,15 +6,15 @@ import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 
 // -- OperationContent <-> ByteArray --
 
 public fun OperationContent.forgeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
-    forgeToBytes(tezos.operation().dependencyRegistry.operationContentBytesCoder)
+    forgeToBytes(tezos.operationModule.dependencyRegistry.operationContentBytesCoder)
 
 public fun OperationContent.Companion.unforgeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): OperationContent =
-    unforgeFromBytes(bytes, tezos.operation().dependencyRegistry.operationContentBytesCoder)
+    unforgeFromBytes(bytes, tezos.operationModule.dependencyRegistry.operationContentBytesCoder)
 
 @InternalTezosSdkApi
 public fun OperationContent.forgeToBytes(operationContentBytesCoder: ConsumingBytesCoder<OperationContent>): ByteArray =
@@ -27,10 +27,10 @@ public fun OperationContent.Companion.unforgeFromBytes(bytes: ByteArray, operati
 // -- OperationContent <-> String --
 
 public fun OperationContent.forgeToString(withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String =
-    forgeToString(withHexPrefix, tezos.operation().dependencyRegistry.operationContentBytesCoder)
+    forgeToString(withHexPrefix, tezos.operationModule.dependencyRegistry.operationContentBytesCoder)
 
 public fun OperationContent.Companion.unforgeFromString(string: String, tezos: Tezos = Tezos.Default): OperationContent =
-    unforgeFromString(string, tezos.operation().dependencyRegistry.operationContentBytesCoder)
+    unforgeFromString(string, tezos.operationModule.dependencyRegistry.operationContentBytesCoder)
 
 @InternalTezosSdkApi
 public fun OperationContent.forgeToString(withHexPrefix: Boolean = false, operationContentBytesCoder: ConsumingBytesCoder<OperationContent>): String =

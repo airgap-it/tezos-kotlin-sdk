@@ -6,7 +6,7 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -30,7 +30,7 @@ class ImplicitAddressBytesCoderTest {
         MockKAnnotations.init(this)
 
         tezos = mockTezos()
-        implicitAddressBytesCoder = ImplicitAddressBytesCoder(tezos.core().dependencyRegistry.encodedBytesCoder)
+        implicitAddressBytesCoder = ImplicitAddressBytesCoder(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
     }
 
     @After

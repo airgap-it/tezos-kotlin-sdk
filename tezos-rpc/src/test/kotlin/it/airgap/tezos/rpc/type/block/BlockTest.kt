@@ -1,15 +1,7 @@
 package it.airgap.tezos.rpc.type.block
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.converter.encoded.StringToAddressConverter
-import it.airgap.tezos.core.internal.converter.encoded.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.encoded.StringToPublicKeyHashConverter
-import it.airgap.tezos.core.internal.converter.encoded.StringToSignatureConverter
-import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.core.internal.di.core
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
@@ -17,7 +9,7 @@ import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.internal.utils.encodeToString
 import it.airgap.tezos.rpc.type.bigmap.RpcBigMapDiff
 import it.airgap.tezos.rpc.type.chain.RpcTestChainStatus
@@ -28,7 +20,7 @@ import it.airgap.tezos.rpc.type.storage.RpcStorageBigMapDiff
 import it.airgap.tezos.rpc.type.storage.RpcStorageBigMapUpdate
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import mockTezosSdk
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -37,22 +29,14 @@ import kotlin.test.assertEquals
 
 class BlockTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: DependencyRegistry
-
     private lateinit var json: Json
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        every { dependencyRegistry.core().stringToAddressConverter } returns StringToAddressConverter()
-        every { dependencyRegistry.core().stringToImplicitAddressConverter } returns StringToImplicitAddressConverter()
-        every { dependencyRegistry.core().stringToPublicKeyHashConverter } returns StringToPublicKeyHashConverter()
-        every { dependencyRegistry.core().stringToSignatureConverter } returns StringToSignatureConverter()
-
-        json = Json(from = rpcJson) {
+        val tezos = mockTezos()
+        json = Json(from = tezos.rpcModule.dependencyRegistry.json) {
             prettyPrint = true
         }
     }

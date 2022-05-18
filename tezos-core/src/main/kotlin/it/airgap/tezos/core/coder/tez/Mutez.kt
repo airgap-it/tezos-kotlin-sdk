@@ -3,16 +3,16 @@ package it.airgap.tezos.core.coder.tez
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.tez.Mutez
 
 // -- Mutez <-> ByteArray --
 
 public fun Mutez.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
-    encodeToBytes(tezos.core().dependencyRegistry.mutezBytesCoder)
+    encodeToBytes(tezos.coreModule.dependencyRegistry.mutezBytesCoder)
 
 public fun Mutez.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): Mutez =
-    Mutez.decodeFromBytes(bytes, tezos.core().dependencyRegistry.mutezBytesCoder)
+    Mutez.decodeFromBytes(bytes, tezos.coreModule.dependencyRegistry.mutezBytesCoder)
 
 @InternalTezosSdkApi
 public fun Mutez.encodeToBytes(mutezBytesCoder: ConsumingBytesCoder<Mutez>): ByteArray =

@@ -4,7 +4,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
@@ -14,7 +13,7 @@ import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.fee
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.operation.limits
 import it.airgap.tezos.operation.type.OperationLimits
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
@@ -59,7 +58,6 @@ class TezosRpcClientTest {
     @MockK
     private lateinit var network: Network
 
-    private lateinit var tezos: Tezos
     private lateinit var tezosRpcClient: TezosRpcClient
 
     @Before
@@ -67,7 +65,16 @@ class TezosRpcClientTest {
         MockKAnnotations.init(this)
 
         val tezos = mockTezos()
-        tezosRpcClient = TezosRpcClient(shellRpc, activeRpc, chains, config, injection, monitor, network, tezos.operation().dependencyRegistry.operationContentBytesCoder)
+        tezosRpcClient = TezosRpcClient(
+            shellRpc,
+            activeRpc,
+            chains,
+            config,
+            injection,
+            monitor,
+            network,
+            tezos.operationModule.dependencyRegistry.operationContentBytesCoder,
+        )
     }
 
     @After

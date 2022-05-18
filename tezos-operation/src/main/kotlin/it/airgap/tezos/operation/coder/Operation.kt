@@ -6,15 +6,15 @@ import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.operation.Operation
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 
 // -- Operation <-> ByteArray --
 
 public fun Operation.forgeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
-    forgeToBytes(tezos.operation().dependencyRegistry.operationBytesCoder)
+    forgeToBytes(tezos.operationModule.dependencyRegistry.operationBytesCoder)
 
 public fun Operation.Companion.unforgeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): Operation =
-    unforgeFromBytes(bytes, tezos.operation().dependencyRegistry.operationBytesCoder)
+    unforgeFromBytes(bytes, tezos.operationModule.dependencyRegistry.operationBytesCoder)
 
 @InternalTezosSdkApi
 public fun Operation.forgeToBytes(operationBytesCoder: ConsumingBytesCoder<Operation>): ByteArray =
@@ -27,10 +27,10 @@ public fun Operation.Companion.unforgeFromBytes(bytes: ByteArray, operationBytes
 // -- Operation <-> String --
 
 public fun Operation.forgeToString(withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String =
-    forgeToString(withHexPrefix, tezos.operation().dependencyRegistry.operationBytesCoder)
+    forgeToString(withHexPrefix, tezos.operationModule.dependencyRegistry.operationBytesCoder)
 
 public fun Operation.Companion.unforgeFromString(string: String, tezos: Tezos = Tezos.Default): Operation =
-    unforgeFromString(string, tezos.operation().dependencyRegistry.operationBytesCoder)
+    unforgeFromString(string, tezos.operationModule.dependencyRegistry.operationBytesCoder)
 
 @InternalTezosSdkApi
 public fun Operation.forgeToString(withHexPrefix: Boolean = false, operationBytesCoder: ConsumingBytesCoder<Operation>): String =

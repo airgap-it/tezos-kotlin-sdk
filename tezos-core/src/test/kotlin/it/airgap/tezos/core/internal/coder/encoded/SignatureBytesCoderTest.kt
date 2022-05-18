@@ -6,7 +6,7 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
@@ -27,7 +27,7 @@ class SignatureBytesCoderTest {
         MockKAnnotations.init(this)
 
         tezos = mockTezos()
-        signatureBytesCoder = SignatureBytesCoder(tezos.core().dependencyRegistry.encodedBytesCoder)
+        signatureBytesCoder = SignatureBytesCoder(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
     }
 
     @After

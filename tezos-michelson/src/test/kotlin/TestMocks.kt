@@ -4,10 +4,9 @@ import io.mockk.mockkClass
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.TezosCoreModule
-import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.di.DependencyRegistry
+import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.michelson.internal.TezosMichelsonModule
-import it.airgap.tezos.michelson.internal.michelson
 import java.security.MessageDigest
 
 // -- Tezos --
@@ -22,11 +21,13 @@ internal fun mockTezos(cryptoProvider: CryptoProvider? = null): Tezos =
         }
 
         val dependencyRegistry = DependencyRegistry(cryptoProvider)
-
-        val core = TezosCoreModule.Builder().build(dependencyRegistry, emptyList())
-        val michelson = TezosMichelsonModule.Builder().build(dependencyRegistry, listOf(core))
+        val moduleRegistry = ModuleRegistry(
+            builders = mapOf(
+                TezosCoreModule::class to TezosCoreModule.Builder(),
+                TezosMichelsonModule::class to TezosMichelsonModule.Builder(),
+            ),
+        )
 
         every { it.dependencyRegistry } returns dependencyRegistry
-        every { it.core() } returns core
-        every { it.michelson() } returns michelson
+        every { it.moduleRegistry } returns moduleRegistry
     }

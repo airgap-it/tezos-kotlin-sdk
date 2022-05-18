@@ -3,7 +3,7 @@ package it.airgap.tezos.operation.internal.coder
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.encoded.BlockHash
@@ -14,7 +14,7 @@ import it.airgap.tezos.operation.coder.forgeToBytes
 import it.airgap.tezos.operation.coder.forgeToString
 import it.airgap.tezos.operation.coder.unforgeFromBytes
 import it.airgap.tezos.operation.coder.unforgeFromString
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 import mockTezos
 import org.junit.After
 import org.junit.Before
@@ -34,8 +34,8 @@ class OperationBytesCoderTest {
 
         tezos = mockTezos()
         operationBytesCoder = OperationBytesCoder(
-            tezos.operation().dependencyRegistry.operationContentBytesCoder,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.operationModule.dependencyRegistry.operationContentBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
     }
 

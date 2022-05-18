@@ -6,7 +6,7 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
@@ -28,8 +28,8 @@ class AddressBytesCoderTest {
 
         tezos = mockTezos()
         addressBytesCoder = AddressBytesCoder(
-            tezos.core().dependencyRegistry.implicitAddressBytesCoder,
-            tezos.core().dependencyRegistry.encodedBytesCoder,
+            tezos.coreModule.dependencyRegistry.implicitAddressBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
     }
 

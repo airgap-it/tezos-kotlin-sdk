@@ -3,11 +3,11 @@ package it.airgap.tezos.michelson.internal.coder
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.coder.*
-import it.airgap.tezos.michelson.internal.michelson
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -32,10 +32,10 @@ class MichelineBytesCoderTest {
 
         tezos = mockTezos()
         michelineBytesCoder = MichelineBytesCoder(
-            tezos.michelson().dependencyRegistry.stringToMichelsonPrimConverter,
-            tezos.michelson().dependencyRegistry.tagToMichelsonPrimConverter,
-            tezos.michelson().dependencyRegistry.michelineToCompactStringConverter,
-            tezos.core().dependencyRegistry.zarithIntegerBytesCoder,
+            tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
+            tezos.michelsonModule.dependencyRegistry.tagToMichelsonPrimConverter,
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
+            tezos.coreModule.dependencyRegistry.zarithIntegerBytesCoder,
         )
     }
 

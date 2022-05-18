@@ -3,14 +3,14 @@ package it.airgap.tezos.operation.internal.coder
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.core
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
-import it.airgap.tezos.michelson.internal.michelson
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
@@ -19,7 +19,7 @@ import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
-import it.airgap.tezos.operation.internal.operation
+import it.airgap.tezos.operation.internal.operationModule
 import mockTezos
 import org.junit.After
 import org.junit.Before
@@ -39,16 +39,16 @@ class OperationContentBytesCoderTest {
 
         tezos = mockTezos()
         operationContentBytesCoder = OperationContentBytesCoder(
-            tezos.core().dependencyRegistry.encodedBytesCoder,
-            tezos.core().dependencyRegistry.addressBytesCoder,
-            tezos.core().dependencyRegistry.publicKeyBytesCoder,
-            tezos.core().dependencyRegistry.implicitAddressBytesCoder,
-            tezos.core().dependencyRegistry.signatureBytesCoder,
-            tezos.core().dependencyRegistry.zarithNaturalBytesCoder,
-            tezos.core().dependencyRegistry.mutezBytesCoder,
-            tezos.michelson().dependencyRegistry.michelineBytesCoder,
-            tezos.core().dependencyRegistry.timestampBigIntCoder,
-            tezos.operation().dependencyRegistry.tagToOperationContentKindConverter,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
+            tezos.coreModule.dependencyRegistry.addressBytesCoder,
+            tezos.coreModule.dependencyRegistry.publicKeyBytesCoder,
+            tezos.coreModule.dependencyRegistry.implicitAddressBytesCoder,
+            tezos.coreModule.dependencyRegistry.signatureBytesCoder,
+            tezos.coreModule.dependencyRegistry.zarithNaturalBytesCoder,
+            tezos.coreModule.dependencyRegistry.mutezBytesCoder,
+            tezos.michelsonModule.dependencyRegistry.michelineBytesCoder,
+            tezos.coreModule.dependencyRegistry.timestampBigIntCoder,
+            tezos.operationModule.dependencyRegistry.tagToOperationContentKindConverter,
         )
     }
 

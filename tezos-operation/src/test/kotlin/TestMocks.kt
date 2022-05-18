@@ -4,16 +4,14 @@ import io.mockk.mockkClass
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.TezosCoreModule
-import it.airgap.tezos.core.internal.core
 import it.airgap.tezos.core.internal.di.DependencyRegistry
+import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.padStartEven
 import it.airgap.tezos.core.internal.utils.splitAt
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.michelson.internal.TezosMichelsonModule
-import it.airgap.tezos.michelson.internal.michelson
 import it.airgap.tezos.operation.internal.TezosOperationModule
-import it.airgap.tezos.operation.internal.operation
 import org.bouncycastle.crypto.digests.Blake2bDigest
 import org.bouncycastle.crypto.digests.SHA256Digest
 import org.bouncycastle.crypto.params.*
@@ -155,13 +153,14 @@ internal fun mockTezos(cryptoProvider: CryptoProvider? = null): Tezos =
         }
 
         val dependencyRegistry = DependencyRegistry(cryptoProvider)
-
-        val core = TezosCoreModule.Builder().build(dependencyRegistry, emptyList())
-        val michelson = TezosMichelsonModule.Builder().build(dependencyRegistry, listOf(core))
-        val operation = TezosOperationModule.Builder().build(dependencyRegistry, listOf(core, michelson))
+        val moduleRegistry = ModuleRegistry(
+            builders = mapOf(
+                TezosCoreModule::class to TezosCoreModule.Builder(),
+                TezosMichelsonModule::class to TezosMichelsonModule.Builder(),
+                TezosOperationModule::class to TezosOperationModule.Builder(),
+            ),
+        )
 
         every { it.dependencyRegistry } returns dependencyRegistry
-        every { it.core() } returns core
-        every { it.michelson() } returns michelson
-        every { it.operation() } returns operation
+        every { it.moduleRegistry } returns moduleRegistry
     }

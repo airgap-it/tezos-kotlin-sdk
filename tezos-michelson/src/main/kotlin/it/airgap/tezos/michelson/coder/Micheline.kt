@@ -6,7 +6,7 @@ import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
-import it.airgap.tezos.michelson.internal.michelson
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -14,10 +14,10 @@ import kotlinx.serialization.json.JsonElement
 // -- Micheline <-> JSON --
 
 public fun <T : MichelineNode> T.toJsonString(tezos: Tezos = Tezos.Default): String =
-    toJsonString(tezos.michelson().dependencyRegistry.michelineJsonCoder)
+    toJsonString(tezos.michelsonModule.dependencyRegistry.michelineJsonCoder)
 
 public fun MichelineNode.Companion.fromJsonString(json: String, tezos: Tezos = Tezos.Default): MichelineNode =
-    fromJsonString(json, tezos.michelson().dependencyRegistry.michelineJsonCoder)
+    fromJsonString(json, tezos.michelsonModule.dependencyRegistry.michelineJsonCoder)
 
 @InternalTezosSdkApi
 public fun <T : MichelineNode> T.toJsonString(michelineJsonCoder: Coder<MichelineNode, JsonElement>): String =
@@ -30,13 +30,13 @@ public fun MichelineNode.Companion.fromJsonString(json: String, michelineJsonCod
 // -- Micheline <-> ByteArray --
 
 public fun <T : MichelineNode> T.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
-    encodeToBytes(tezos.michelson().dependencyRegistry.michelineBytesCoder)
+    encodeToBytes(tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 
 public fun MichelineNode.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): MichelineNode =
-    decodeFromBytes(bytes, tezos.michelson().dependencyRegistry.michelineBytesCoder)
+    decodeFromBytes(bytes, tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 
 public fun MichelineNode.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, tezos: Tezos = Tezos.Default): MichelineNode =
-    decodeConsumingFromBytes(bytes, tezos.michelson().dependencyRegistry.michelineBytesCoder)
+    decodeConsumingFromBytes(bytes, tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 
 @InternalTezosSdkApi
 public fun <T : MichelineNode> T.encodeToBytes(michelineBytesCoder: ConsumingBytesCoder<MichelineNode>): ByteArray =
@@ -53,10 +53,10 @@ public fun MichelineNode.Companion.decodeConsumingFromBytes(bytes: MutableList<B
 // -- Micheline <-> String --
 
 public fun <T : MichelineNode> T.encodeToString(withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String =
-    encodeToString(tezos.michelson().dependencyRegistry.michelineBytesCoder, withHexPrefix)
+    encodeToString(tezos.michelsonModule.dependencyRegistry.michelineBytesCoder, withHexPrefix)
 
 public fun MichelineNode.Companion.decodeFromString(string: String, tezos: Tezos = Tezos.Default): MichelineNode =
-    decodeFromString(string, tezos.michelson().dependencyRegistry.michelineBytesCoder)
+    decodeFromString(string, tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 
 @InternalTezosSdkApi
 public fun <T : MichelineNode> T.encodeToString(michelineBytesCoder: ConsumingBytesCoder<MichelineNode>, withHexPrefix: Boolean = false): String =
