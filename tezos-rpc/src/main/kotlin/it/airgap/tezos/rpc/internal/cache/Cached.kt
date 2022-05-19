@@ -6,11 +6,12 @@ import it.airgap.tezos.rpc.http.HttpHeader
 // -- Cached --
 
 @InternalTezosSdkApi
-public class Cached<V>(private val fetch: suspend (List<HttpHeader>) -> V) {
-    private var value: V? = null
+public class Cached<T>(private val fetch: suspend (List<HttpHeader>) -> T) {
+    private var value: T? = null
 
-    public suspend fun get(headers: List<HttpHeader> = emptyList()): V = value ?: fetch(headers).also { value = it }
-    public fun <R> map(transform: (V) -> R): Cached<R> = Cached { headers -> transform(value ?: fetch(headers)) }
+    public suspend fun get(headers: List<HttpHeader> = emptyList()): T = value ?: fetch(headers).also { value = it }
+    public fun <R> map(transform: (T) -> R): Cached<R> = Cached { headers -> transform(value ?: fetch(headers)) }
+    public fun <S> combine(other: Cached<S>): Cached<Pair<T, S>> = Cached { headers -> Pair(get(headers), other.get(headers)) }
 }
 
 // -- CachedMap --

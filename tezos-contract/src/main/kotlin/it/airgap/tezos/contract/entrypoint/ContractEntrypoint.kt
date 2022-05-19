@@ -1,6 +1,10 @@
 package it.airgap.tezos.contract.entrypoint
 
+import it.airgap.tezos.contract.internal.entrypoint.LazyMetaContractEntrypoint
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.contract.type.ContractCode
+import it.airgap.tezos.contract.type.LazyContractCode
+import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.toZarithNatural
 import it.airgap.tezos.core.type.encoded.BlockHash
@@ -8,7 +12,10 @@ import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.michelson.MichelsonType
+import it.airgap.tezos.michelson.comparator.isPrim
 import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.normalizer.normalized
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
@@ -18,6 +25,7 @@ import it.airgap.tezos.operation.limits
 import it.airgap.tezos.operation.type.OperationLimits
 import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
+import it.airgap.tezos.rpc.active.block.GetContractEntrypointsResponse
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.Cached
 
@@ -28,7 +36,7 @@ public class ContractEntrypoint internal constructor(
     private val contractAddress: ContractHash,
     private val block: Block,
     private val rpc: TezosRpc, // TODO: extract fee calculation logic to a separate class and use it here instead
-    private val metaCached: Cached<MetaContractEntrypoint?>,
+    private val meta: LazyMetaContractEntrypoint,
 ) {
 
     public suspend fun call(
@@ -77,7 +85,7 @@ public class ContractEntrypoint internal constructor(
         amount: Mutez? = null,
         headers: List<HttpHeader> = emptyList(),
     ): Operation.Unsigned {
-        val meta = metaCached.get(headers) ?: failWithUnknownEntrypoint()
+        val meta = meta.get(headers)
         val value = meta.valueFrom(args)
 
         return call(value, source, branch, fee, counter, limits, amount, headers)
@@ -89,8 +97,34 @@ public class ContractEntrypoint internal constructor(
             is Operation.Signed -> Operation.Unsigned(branch, contents)
         }
 
-    private fun failWithUnknownEntrypoint(): Nothing =
-        failWithIllegalArgument("Entrypoint $name could not be found.")
+    internal class Factory(
+        private val meta: MetaContractEntrypoint.Factory,
+        private val contractAddress: ContractHash,
+        private val block: Block,
+        private val contract: Block.Context.Contracts.Contract,
+        private val rpc: TezosRpc,
+        private val michelineNormalizer: Normalizer<MichelineNode>,
+    ) {
+        private val contractEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> contract.entrypoints.get(headers).toMetaContractEntrypoint() }
+
+        fun create(code: LazyContractCode, name: String): ContractEntrypoint {
+            val meta = contractEntrypointsCached.combine(code).map { (entrypoints, code) -> entrypoints[name] ?: code.findEntrypoint(name) ?: failWithUnknownEntrypoint(name) }
+            return ContractEntrypoint(name, contractAddress, block, rpc, meta)
+        }
+
+        private fun GetContractEntrypointsResponse.toMetaContractEntrypoint(): Map<String, MetaContractEntrypoint> =
+            entrypoints.mapValues { meta.create(it.value.normalized(michelineNormalizer)) }
+
+        private fun ContractCode.findEntrypoint(name: String): MetaContractEntrypoint? {
+            if (name != Entrypoint.Default.value) return null
+            if (!parameter.isPrim(MichelsonType.Parameter) || parameter.args.size != 1) failWithUnknownCodeType()
+
+            return meta.create(parameter.args.first())
+        }
+
+        private fun failWithUnknownCodeType(): Nothing = throw Exception("Unknown contract code type.")
+        private fun failWithUnknownEntrypoint(name: String): Nothing = failWithIllegalArgument("Entrypoint $name could not be found.")
+    }
 }
 
 // -- ContractEntrypointArgument --

@@ -7,6 +7,7 @@ import it.airgap.tezos.contract.internal.micheline.MichelineTrace
 import it.airgap.tezos.core.internal.utils.flatten
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
+import it.airgap.tezos.rpc.internal.cache.Cached
 
 // -- MetaContractEntrypoint --
 
@@ -15,7 +16,13 @@ internal class MetaContractEntrypoint(
     private val entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointArgument, MichelineNode>,
 ) {
     fun valueFrom(argument: ContractEntrypointArgument): MichelineNode = argument.toMicheline(type, entrypointArgumentToMichelineConverter)
+
+    class Factory(private val entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointArgument, MichelineNode>) {
+        fun create(type: MichelineNode): MetaContractEntrypoint = MetaContractEntrypoint(type, entrypointArgumentToMichelineConverter)
+    }
 }
+
+internal typealias LazyMetaContractEntrypoint = Cached<MetaContractEntrypoint>
 
 // -- MetaContractEntrypointArgument --
 

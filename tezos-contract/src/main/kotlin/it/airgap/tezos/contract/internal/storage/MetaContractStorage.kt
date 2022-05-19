@@ -14,6 +14,7 @@ import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.packer.packToBytes
+import it.airgap.tezos.rpc.internal.cache.Cached
 
 // -- MetaContractStorage --
 
@@ -22,7 +23,13 @@ internal class MetaContractStorage(
     private val michelineToStorageEntryConverter: TypedConverter<MichelineNode, ContractStorageEntry>,
 ) {
     fun entryFrom(value: MichelineNode): ContractStorageEntry = value.toStorageEntry(type, michelineToStorageEntryConverter)
+
+    class Factory(private val michelineToStorageEntryConverter: TypedConverter<MichelineNode, ContractStorageEntry>) {
+        fun create(type: MichelineNode): MetaContractStorage = MetaContractStorage(type, michelineToStorageEntryConverter)
+    }
 }
+
+internal typealias LazyMetaContractStorage = Cached<MetaContractStorage>
 
 // -- MetaContractStorageEntry --
 
