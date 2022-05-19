@@ -2,6 +2,8 @@ package it.airgap.tezos.contract.entrypoint
 
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.core.internal.utils.toZarithNatural
+import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.tez.Mutez
@@ -11,6 +13,9 @@ import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
+import it.airgap.tezos.operation.fee
+import it.airgap.tezos.operation.limits
+import it.airgap.tezos.operation.type.OperationLimits
 import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -29,11 +34,15 @@ public class ContractEntrypoint internal constructor(
     public suspend fun call(
         args: MichelineNode,
         source: ImplicitAddress,
+        branch: BlockHash? = null,
         fee: Mutez? = null,
+        counter: String? = null,
+        limits: OperationLimits? = null,
+        amount: Mutez? = null,
         headers: List<HttpHeader> = emptyList(),
     ): Operation.Unsigned {
-        val branch = block.header.get(headers).header.hash
-        val counter = block.context.contracts(source).counter.get(headers).counter
+        val branch = branch ?: block.header.get(headers).header.hash
+        val counter = counter ?: block.context.contracts(source).counter.get(headers).counter
 
         val operation = Operation.Unsigned(
             branch,
@@ -42,9 +51,9 @@ public class ContractEntrypoint internal constructor(
                     source = source,
                     fee = fee ?: Mutez(0U),
                     counter = counter?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
-                    gasLimit = ZarithNatural(0U),
-                    storageLimit = ZarithNatural(0U),
-                    amount = Mutez(0U),
+                    gasLimit = limits?.gas?.toZarithNatural() ?: ZarithNatural(0U),
+                    storageLimit = limits?.gas?.toZarithNatural() ?: ZarithNatural(0U),
+                    amount = amount ?: Mutez(0U),
                     destination = contractAddress,
                     parameters = Parameters(
                         Entrypoint.fromString(name),
@@ -54,19 +63,24 @@ public class ContractEntrypoint internal constructor(
             ),
         )
 
-        return rpc.minFee(operation = operation, headers = headers).asUnsigned()
+        return if (operation.fee == fee && operation.limits == limits) operation
+        else rpc.minFee(operation = operation, headers = headers).asUnsigned()
     }
 
     public suspend fun call(
         args: ContractEntrypointArgument,
         source: ImplicitAddress,
+        branch: BlockHash? = null,
         fee: Mutez? = null,
+        counter: String? = null,
+        limits: OperationLimits? = null,
+        amount: Mutez? = null,
         headers: List<HttpHeader> = emptyList(),
     ): Operation.Unsigned {
         val meta = metaCached.get(headers) ?: failWithUnknownEntrypoint()
         val value = meta.valueFrom(args)
 
-        return call(value, source, fee, headers)
+        return call(value, source, branch, fee, counter, limits, amount, headers)
     }
 
     private fun Operation.asUnsigned(): Operation.Unsigned =

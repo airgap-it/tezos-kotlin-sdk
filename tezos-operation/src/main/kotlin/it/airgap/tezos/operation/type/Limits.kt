@@ -1,5 +1,6 @@
 package it.airgap.tezos.operation.type
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 
 private const val LIMIT_PER_OPERATION_GAS = 1040000U
@@ -55,7 +56,9 @@ public data class Limits internal constructor(
     )
 }
 
-public data class OperationLimits(val gas: BigInt, val storage: BigInt) {
+public data class OperationLimits @InternalTezosSdkApi constructor(val gas: BigInt, val storage: BigInt) {
+    public constructor(gas: String, storage: String) : this(BigInt.valueOf(gas), BigInt.valueOf(storage))
+
     public operator fun plus(other: OperationLimits): OperationLimits =
         OperationLimits(gas + other.gas, storage + other.storage)
 
@@ -64,7 +67,9 @@ public data class OperationLimits(val gas: BigInt, val storage: BigInt) {
             get() = OperationLimits(BigInt.zero, BigInt.zero)
     }
 }
-public data class BlockLimits(val gas: BigInt) {
+public data class BlockLimits @InternalTezosSdkApi constructor(val gas: BigInt) {
+    public constructor(gas: String) : this(BigInt.valueOf(gas))
+
     public companion object {
         public val zero: BlockLimits
             get() = BlockLimits(BigInt.zero)
