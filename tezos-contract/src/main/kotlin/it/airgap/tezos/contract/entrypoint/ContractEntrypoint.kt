@@ -3,11 +3,11 @@ package it.airgap.tezos.contract.entrypoint
 import it.airgap.tezos.contract.internal.entrypoint.LazyMetaContractEntrypoint
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.estimator.withMinFee
+import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.contract.type.LazyContractCode
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.internal.utils.asTezosNatural
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -116,8 +116,8 @@ public class ContractEntrypoint internal constructor(
             return meta.create(parameter.args.first())
         }
 
-        private fun failWithUnknownCodeType(): Nothing = throw Exception("Unknown contract code type.")
-        private fun failWithUnknownEntrypoint(name: String): Nothing = failWithIllegalArgument("Entrypoint $name could not be found.")
+        private fun failWithUnknownCodeType(): Nothing = failWithContractException("Unknown contract code type.")
+        private fun failWithUnknownEntrypoint(name: String): Nothing = failWithContractException("Entrypoint $name could not be found.")
     }
 }
 

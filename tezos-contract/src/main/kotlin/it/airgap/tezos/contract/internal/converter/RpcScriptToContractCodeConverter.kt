@@ -1,5 +1,6 @@
 package it.airgap.tezos.contract.internal.converter
 
+import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.MichelsonType
@@ -21,9 +22,9 @@ internal class RpcScriptToContractCodeConverter : Converter<RpcScript, ContractC
         return ContractCode(parameter, storage, code)
     }
 
-    // TODO: better error handling
     private fun failWithInvalidMichelineType(expected: KClass<out MichelineNode>, actual: KClass<out MichelineNode>): Nothing =
-        throw Exception("Invalid Micheline type, expected `$expected` but got `$actual`.")
+        failWithContractException("Invalid Micheline type, expected `$expected` but got `$actual`.")
 
-    private fun failWithUnknownCodeType(): Nothing = throw Exception("Unknown contract code type.")
+    private fun failWithUnknownCodeType(): Nothing =
+        failWithContractException("Unknown contract code type.")
 }

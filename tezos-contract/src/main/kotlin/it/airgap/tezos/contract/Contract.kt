@@ -2,6 +2,7 @@ package it.airgap.tezos.contract
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
 import it.airgap.tezos.contract.internal.contractModule
+import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.storage.ContractStorage
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.Tezos
@@ -34,8 +35,7 @@ public class Contract internal constructor(
         return rpcScriptToContractCodeConverter.convert(script)
     }
 
-    // TODO: better error handling
-    private fun failWithScriptNotFound(): Nothing = throw Exception("Script not found for contract ${address.base58}.")
+    private fun failWithScriptNotFound(): Nothing = failWithContractException("Script not found for contract ${address.base58}.")
 }
 
 public fun Contract(nodeUrl: String, address: ContractHash, tezos: Tezos = Tezos.Default): Contract =

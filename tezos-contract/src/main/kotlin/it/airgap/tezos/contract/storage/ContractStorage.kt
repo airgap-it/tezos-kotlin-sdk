@@ -3,6 +3,7 @@ package it.airgap.tezos.contract.storage
 import it.airgap.tezos.contract.internal.storage.LazyMetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
+import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.contract.type.LazyContractCode
 import it.airgap.tezos.core.internal.normalizer.Normalizer
@@ -43,7 +44,7 @@ public class ContractStorage internal constructor(
             return metaFactory.create(type)
         }
 
-        private fun failWithUnknownStorageType(): Nothing = throw Exception("Unknown contract storage type.")
+        private fun failWithUnknownStorageType(): Nothing = failWithContractException("Unknown contract storage type.")
     }
 }
 

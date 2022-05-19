@@ -2,6 +2,7 @@ package it.airgap.tezos.core.internal.base58
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
+import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.tail
 import it.airgap.tezos.core.internal.utils.toHexString
 
@@ -59,7 +60,7 @@ public class Base58 internal constructor() {
         return base58ToBigInt(acc * biAlphabet + reminder, next.tail())
     }
 
-    private fun failWithInvalidString(): Nothing = throw IllegalArgumentException("Base58 string contains invalid characters")
+    private fun failWithInvalidString(): Nothing = failWithIllegalArgument("Base58 string contains invalid characters")
 
     internal companion object {
         private const val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"

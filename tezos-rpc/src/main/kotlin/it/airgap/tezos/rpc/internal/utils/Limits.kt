@@ -4,6 +4,7 @@ import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.rpc.type.RpcError
 import it.airgap.tezos.rpc.type.limits.OperationLimits
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata
@@ -51,7 +52,7 @@ internal val RpcOperationResult.limits: OperationLimits
     }
 
 internal fun RpcOperationResult.assertApplied() {
-    errors?.let { failWithRpcErrors(it) }
+    errors?.let { failWithOperationError(it) }
 }
 
 private val RpcOperationResult.gasLimit: BigInt
@@ -72,3 +73,6 @@ private val RpcOperationResult.burnFee: BigInt
         val allocatedDestinationContractFee = if (allocatedDestinationContract == true) STORAGE_CONTRACT_ALLOCATION.toInt() else 0
         return originatedContractsFee + allocatedDestinationContractFee
     }
+
+private fun failWithOperationError(errors: List<RpcError>): Nothing =
+    failWithRpcException("Operation failed with errors: $errors")

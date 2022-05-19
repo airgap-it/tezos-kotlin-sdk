@@ -122,7 +122,7 @@ private class MichelineLiteralBytesCoder(private val tezosIntegerBytesCoder: Con
         return MichelineLiteral.Bytes(bytes)
     }
 
-    private fun failWithInvalidEncodedInteger(): Nothing = throw IllegalArgumentException("Invalid encoded MichelineLiteral.Integer value.")
+    private fun failWithInvalidEncodedInteger(): Nothing = failWithIllegalArgument("Invalid encoded MichelineLiteral.Integer value.")
     private fun failWithUnknownTag(): Nothing = failWithIllegalArgument("Unknown Micheline encoding tag.")
 }
 
@@ -302,7 +302,7 @@ private class MichelinePrimitiveApplicationBytesCoder(
     private fun failWithUnknownPrimitiveApplication(tag: Int): Nothing =
         failWithIllegalArgument("Unknown Micheline Primitive Application: $tag.")
 
-    private fun failWithInvalidEncodedPrimitiveApplication(): Nothing = throw IllegalArgumentException("Invalid encoded MichelinePrimitiveApplication value.")
+    private fun failWithInvalidEncodedPrimitiveApplication(): Nothing = failWithIllegalArgument("Invalid encoded MichelinePrimitiveApplication value.")
     private fun failWithUnknownTag(): Nothing = failWithIllegalArgument("Unknown Micheline encoding tag.")
 }
 
