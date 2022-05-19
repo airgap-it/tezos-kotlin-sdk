@@ -1,9 +1,9 @@
 package it.airgap.tezos.contract.internal.converter
 
-import it.airgap.tezos.contract.entrypoint.ContractEntrypointArgument
+import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
 import it.airgap.tezos.michelson.micheline.MichelineNode
 
 // -- ContractEntrypointArgument -> MichelineNode
 
-internal fun ContractEntrypointArgument.toMicheline(type: MichelineNode, entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointArgument, MichelineNode>): MichelineNode =
+internal fun ContractEntrypointParameter.toMicheline(type: MichelineNode, entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointParameter, MichelineNode>): MichelineNode =
     entrypointArgumentToMichelineConverter.convert(this, type)

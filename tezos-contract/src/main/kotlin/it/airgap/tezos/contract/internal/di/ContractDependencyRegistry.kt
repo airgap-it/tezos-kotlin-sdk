@@ -2,8 +2,8 @@ package it.airgap.tezos.contract.internal.di
 
 import it.airgap.tezos.contract.Contract
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
-import it.airgap.tezos.contract.entrypoint.ContractEntrypointArgument
-import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
+import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
+import it.airgap.tezos.contract.internal.converter.EntrypointParameterToMichelineConverter
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
 import it.airgap.tezos.contract.internal.converter.RpcScriptToContractCodeConverter
 import it.airgap.tezos.contract.internal.converter.TypedConverter
@@ -81,7 +81,7 @@ public class ContractDependencyRegistry internal constructor(
             michelson.michelineNormalizer,
         )
 
-    private val metaContractEntrypointFactory: MetaContractEntrypoint.Factory by lazy { MetaContractEntrypoint.Factory(entrypointArgumentToMichelineConverter) }
+    private val metaContractEntrypointFactory: MetaContractEntrypoint.Factory by lazy { MetaContractEntrypoint.Factory(entrypointParameterToMichelineConverter) }
 
     // -- converter --
 
@@ -94,8 +94,8 @@ public class ContractDependencyRegistry internal constructor(
             michelson.stringToMichelsonPrimConverter,
         )
 
-    private val entrypointArgumentToMichelineConverter: TypedConverter<ContractEntrypointArgument, MichelineNode> by lazy {
-        EntrypointArgumentToMichelineConverter(
+    private val entrypointParameterToMichelineConverter: TypedConverter<ContractEntrypointParameter, MichelineNode> by lazy {
+        EntrypointParameterToMichelineConverter(
             michelson.michelineToCompactStringConverter,
             michelson.stringToMichelsonPrimConverter,
         )

@@ -39,7 +39,7 @@ public class ContractEntrypoint internal constructor(
 ) {
 
     public suspend fun call(
-        args: MichelineNode,
+        parameters: MichelineNode,
         source: ImplicitAddress,
         branch: BlockHash? = null,
         fee: Mutez? = null,
@@ -64,7 +64,7 @@ public class ContractEntrypoint internal constructor(
                     destination = contractAddress,
                     parameters = Parameters(
                         Entrypoint.fromString(name),
-                        args,
+                        parameters,
                     ),
                 ),
             ),
@@ -75,7 +75,7 @@ public class ContractEntrypoint internal constructor(
     }
 
     public suspend fun call(
-        args: ContractEntrypointArgument,
+        parameters: ContractEntrypointParameter,
         source: ImplicitAddress,
         branch: BlockHash? = null,
         fee: Mutez? = null,
@@ -85,7 +85,7 @@ public class ContractEntrypoint internal constructor(
         headers: List<HttpHeader> = emptyList(),
     ): Operation.Unsigned {
         val meta = meta.get(headers)
-        val value = meta.valueFrom(args)
+        val value = meta.valueFrom(parameters)
 
         return call(value, source, branch, fee, counter, limits, amount, headers)
     }
@@ -121,31 +121,31 @@ public class ContractEntrypoint internal constructor(
     }
 }
 
-// -- ContractEntrypointArgument --
+// -- ContractEntrypointParameter --
 
-public sealed interface ContractEntrypointArgument {
+public sealed interface ContractEntrypointParameter {
     public val name: String?
 
-    public class Value(public val value: MichelineNode? = null, override val name: String? = null) : ContractEntrypointArgument {
+    public class Value(public val value: MichelineNode?, override val name: String? = null) : ContractEntrypointParameter {
         public companion object {}
     }
 
-    public class Object(internal val elements: MutableList<ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
-        public constructor(vararg elements: ContractEntrypointArgument, name: String? = null) : this(elements.toMutableList(), name)
+    public class Object(internal val elements: MutableList<ContractEntrypointParameter>, override val name: String? = null) : ContractEntrypointParameter {
+        public constructor(vararg elements: ContractEntrypointParameter, name: String? = null) : this(elements.toMutableList(), name)
 
         internal val fields: Set<String> = elements.mapNotNull { it.name }.toSet()
 
         public companion object {}
     }
 
-    public class Sequence internal constructor(internal val elements: List<ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
-        public constructor(vararg elements: ContractEntrypointArgument, name: String? = null) : this(elements.toList(), name)
+    public class Sequence internal constructor(internal val elements: List<ContractEntrypointParameter>, override val name: String? = null) : ContractEntrypointParameter {
+        public constructor(vararg elements: ContractEntrypointParameter, name: String? = null) : this(elements.toList(), name)
 
         public companion object {}
     }
 
-    public class Map internal constructor(internal val map: kotlin.collections.Map<ContractEntrypointArgument, ContractEntrypointArgument>, override val name: String? = null) : ContractEntrypointArgument {
-        public constructor(vararg elements: Pair<ContractEntrypointArgument, ContractEntrypointArgument>, name: String? = null) : this(elements.toMap().toMutableMap(), name)
+    public class Map internal constructor(internal val map: kotlin.collections.Map<ContractEntrypointParameter, ContractEntrypointParameter>, override val name: String? = null) : ContractEntrypointParameter {
+        public constructor(vararg elements: Pair<ContractEntrypointParameter, ContractEntrypointParameter>, name: String? = null) : this(elements.toMap().toMutableMap(), name)
 
         public companion object {}
     }
