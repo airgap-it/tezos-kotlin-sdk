@@ -2,11 +2,11 @@ package it.airgap.tezos.contract.entrypoint
 
 import it.airgap.tezos.contract.internal.entrypoint.LazyMetaContractEntrypoint
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.contract.internal.estimator.withMinFee
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.contract.type.LazyContractCode
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.toZarithNatural
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -20,14 +20,12 @@ import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
-import it.airgap.tezos.operation.fee
-import it.airgap.tezos.operation.limits
-import it.airgap.tezos.operation.type.OperationLimits
-import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.active.block.GetContractEntrypointsResponse
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.Cached
+import it.airgap.tezos.rpc.internal.estimator.FeeEstimator
+import it.airgap.tezos.rpc.type.limits.OperationLimits
 
 // -- ContractEntrypoint --
 
@@ -35,7 +33,7 @@ public class ContractEntrypoint internal constructor(
     public val name: String,
     private val contractAddress: ContractHash,
     private val block: Block,
-    private val rpc: TezosRpc, // TODO: extract fee calculation logic to a separate class and use it here instead
+    private val operationFeeEstimator: FeeEstimator<Operation>,
     private val meta: LazyMetaContractEntrypoint,
 ) {
 
@@ -59,8 +57,8 @@ public class ContractEntrypoint internal constructor(
                     source = source,
                     fee = fee ?: Mutez(0U),
                     counter = counter?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
-                    gasLimit = limits?.gas?.toZarithNatural() ?: ZarithNatural(0U),
-                    storageLimit = limits?.gas?.toZarithNatural() ?: ZarithNatural(0U),
+                    gasLimit = limits?.gas?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
+                    storageLimit = limits?.gas?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
                     amount = amount ?: Mutez(0U),
                     destination = contractAddress,
                     parameters = Parameters(
@@ -71,8 +69,8 @@ public class ContractEntrypoint internal constructor(
             ),
         )
 
-        return if (operation.fee == fee && operation.limits == limits) operation
-        else rpc.minFee(operation = operation, headers = headers).asUnsigned()
+        return if (fee != null && limits != null) operation
+        else operation.withMinFee(operationFeeEstimator, headers)
     }
 
     public suspend fun call(
@@ -91,25 +89,20 @@ public class ContractEntrypoint internal constructor(
         return call(value, source, branch, fee, counter, limits, amount, headers)
     }
 
-    private fun Operation.asUnsigned(): Operation.Unsigned =
-        when (this) {
-            is Operation.Unsigned -> this
-            is Operation.Signed -> Operation.Unsigned(branch, contents)
-        }
-
     internal class Factory(
         private val meta: MetaContractEntrypoint.Factory,
         private val contractAddress: ContractHash,
         private val block: Block,
         private val contract: Block.Context.Contracts.Contract,
-        private val rpc: TezosRpc,
+        private val operationFeeEstimator: FeeEstimator<Operation>,
         private val michelineNormalizer: Normalizer<MichelineNode>,
     ) {
+
         private val contractEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> contract.entrypoints.get(headers).toMetaContractEntrypoint() }
 
         fun create(code: LazyContractCode, name: String): ContractEntrypoint {
             val meta = contractEntrypointsCached.combine(code).map { (entrypoints, code) -> entrypoints[name] ?: code.findEntrypoint(name) ?: failWithUnknownEntrypoint(name) }
-            return ContractEntrypoint(name, contractAddress, block, rpc, meta)
+            return ContractEntrypoint(name, contractAddress, block, operationFeeEstimator, meta)
         }
 
         private fun GetContractEntrypointsResponse.toMetaContractEntrypoint(): Map<String, MetaContractEntrypoint> =

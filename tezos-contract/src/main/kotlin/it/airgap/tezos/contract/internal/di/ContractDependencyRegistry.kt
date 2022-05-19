@@ -19,9 +19,10 @@ import it.airgap.tezos.core.internal.utils.getOrPutWeak
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineNode
-import it.airgap.tezos.rpc.TezosRpc
+import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
+import it.airgap.tezos.rpc.internal.estimator.FeeEstimator
 import it.airgap.tezos.rpc.type.contract.RpcScript
 import java.lang.ref.WeakReference
 
@@ -36,15 +37,17 @@ public class ContractDependencyRegistry internal constructor(
 
     private val contracts: MutableMap<String, WeakReference<Contract>> = mutableMapOf()
     public fun contract(nodeUrl: String, address: ContractHash): Contract = contracts.getOrPutWeak("${nodeUrl}_${address}") {
-        val rpc = rpc.tezosRpc(nodeUrl)
-        val block = rpc.chains.main.blocks.head
+        val tezosRpc = rpc.tezosRpc(nodeUrl)
+        val block = tezosRpc.chains.main.blocks.head
         val contract = block.context.contracts(address)
+
+        val operationFeeEstimator = rpc.operationFeeEstimator(nodeUrl)
 
         Contract(
             address,
             contract,
             contractStorageFactory(block, contract),
-            contractEntrypointFactory(address, block, contract, rpc),
+            contractEntrypointFactory(address, block, contract, operationFeeEstimator),
             rpcStrictToContractCodeConverter,
         )
     }
@@ -67,14 +70,14 @@ public class ContractDependencyRegistry internal constructor(
         address: ContractHash,
         block: Block,
         contract: Block.Context.Contracts.Contract,
-        rpc: TezosRpc,
+        operationFeeEstimator: FeeEstimator<Operation>,
     ): ContractEntrypoint.Factory =
         ContractEntrypoint.Factory(
             metaContractEntrypointFactory,
             address,
             block,
             contract,
-            rpc,
+            operationFeeEstimator,
             michelson.michelineNormalizer,
         )
 

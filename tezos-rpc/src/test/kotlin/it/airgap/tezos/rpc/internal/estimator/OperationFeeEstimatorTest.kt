@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc
+package it.airgap.tezos.rpc.internal.estimator
 
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -12,18 +12,12 @@ import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.operation.fee
 import it.airgap.tezos.operation.internal.operationModule
-import it.airgap.tezos.operation.limits
-import it.airgap.tezos.operation.type.OperationLimits
-import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.active.block.RunOperationResponse
-import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
+import it.airgap.tezos.rpc.internal.type.OperationLimits
+import it.airgap.tezos.rpc.internal.utils.fee
+import it.airgap.tezos.rpc.internal.utils.limits
 import it.airgap.tezos.rpc.shell.chains.Chains
-import it.airgap.tezos.rpc.shell.config.Config
-import it.airgap.tezos.rpc.shell.injection.Injection
-import it.airgap.tezos.rpc.shell.monitor.Monitor
-import it.airgap.tezos.rpc.shell.network.Network
 import it.airgap.tezos.rpc.type.operation.RpcBalanceUpdate
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata
@@ -38,43 +32,16 @@ import kotlin.test.assertEquals
 class TezosRpcClientTest {
 
     @MockK
-    private lateinit var shellRpc: ShellSimplifiedRpc
-
-    @MockK
-    private lateinit var activeRpc: ActiveSimplifiedRpc
-
-    @MockK
     private lateinit var chains: Chains
 
-    @MockK
-    private lateinit var config: Config
-
-    @MockK
-    private lateinit var injection: Injection
-
-    @MockK
-    private lateinit var monitor: Monitor
-
-    @MockK
-    private lateinit var network: Network
-
-    private lateinit var tezosRpcClient: TezosRpcClient
+    private lateinit var operationFeeEstimator: OperationFeeEstimator
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
         val tezos = mockTezos()
-        tezosRpcClient = TezosRpcClient(
-            shellRpc,
-            activeRpc,
-            chains,
-            config,
-            injection,
-            monitor,
-            network,
-            tezos.operationModule.dependencyRegistry.operationContentBytesCoder,
-        )
+        operationFeeEstimator = OperationFeeEstimator(chains, tezos.operationModule.dependencyRegistry.operationContentBytesCoder)
     }
 
     @After
@@ -133,7 +100,7 @@ class TezosRpcClientTest {
             )
         )
 
-        val updatedOperation = runBlocking { tezosRpcClient.minFee(chainId, operation) }
+        val updatedOperation = runBlocking { operationFeeEstimator.minFee(chainId, operation) }
 
         assertEquals(Mutez(507U), updatedOperation.fee)
         assertEquals(

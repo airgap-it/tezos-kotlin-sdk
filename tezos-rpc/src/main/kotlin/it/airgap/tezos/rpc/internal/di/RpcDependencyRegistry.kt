@@ -3,12 +3,15 @@ package it.airgap.tezos.rpc.internal.di
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
 import it.airgap.tezos.core.internal.utils.getOrPutWeak
+import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.internal.di.OperationDependencyRegistry
 import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.TezosRpcClient
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpcClient
 import it.airgap.tezos.rpc.http.HttpClientProvider
+import it.airgap.tezos.rpc.internal.estimator.FeeEstimator
+import it.airgap.tezos.rpc.internal.estimator.OperationFeeEstimator
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.serializer.rpcJson
 import it.airgap.tezos.rpc.shell.ShellSimplifiedRpc
@@ -61,12 +64,12 @@ public class RpcDependencyRegistry internal constructor(
         TezosRpcClient(
             shellRpc(nodeUrl),
             activeRpc(nodeUrl),
+            operationFeeEstimator(nodeUrl),
             chains(nodeUrl),
             config(nodeUrl),
             injection(nodeUrl),
             monitor(nodeUrl),
             network(nodeUrl),
-            operation.operationContentBytesCoder,
         )
     }
 
@@ -90,4 +93,9 @@ public class RpcDependencyRegistry internal constructor(
 
     private val networks: MutableMap<String, WeakReference<Network>> = mutableMapOf()
     private fun network(nodeUrl: String): Network = networks.getOrPutWeak(nodeUrl) { NetworkClient(nodeUrl, httpClient, json) }
+
+    // -- estimator --
+
+    public fun operationFeeEstimator(nodeUrl: String): FeeEstimator<Operation> =
+        OperationFeeEstimator(chains(nodeUrl), operation.operationContentBytesCoder)
 }

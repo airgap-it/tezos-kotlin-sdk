@@ -1,20 +1,22 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import it.airgap.tezos.core.converter.tez.toMutez
+import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.tez.Nanotez
-import it.airgap.tezos.operation.type.OperationLimits
+import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.OperationContent
 
-private const val FEE_BASE_MUTEZ = 100U
+// -- Operation --
 
-private const val FEE_PER_GAS_UNIT_NANOTEZ = 100U
-private const val FEE_PER_STORAGE_BYTE_NANOTEZ = 1000U
+internal val Operation.fee: Mutez
+    get() = contents.fold(Mutez(0U)) { acc, content -> acc + content.fee }
 
-private const val FEE_SAFETY_MARGIN_MUTEZ = 100U
+// -- OperationContent --
 
-internal fun fee(operationSize: Int, limits: OperationLimits): Mutez {
-    val gasFee = Nanotez(limits.gas * FEE_PER_GAS_UNIT_NANOTEZ.toInt()).toMutez()
-    val storageFee = Nanotez(operationSize.toUInt() * FEE_PER_STORAGE_BYTE_NANOTEZ).toMutez()
+internal val OperationContent.fee: Mutez
+    get() = when (this) {
+        is OperationContent.Manager -> fee
+        else -> Mutez(0U)
+    }
 
-    return Mutez(FEE_BASE_MUTEZ) + gasFee + storageFee + Mutez(FEE_SAFETY_MARGIN_MUTEZ)
-}
+internal val OperationContent.hasFee: Boolean
+    get() = fee != Mutez(BigInt.zero)

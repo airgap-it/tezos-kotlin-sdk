@@ -1,6 +1,5 @@
-package it.airgap.tezos.operation.type
+package it.airgap.tezos.rpc.type.limits
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 
 private const val LIMIT_PER_OPERATION_GAS = 1040000U
@@ -56,22 +55,31 @@ public data class Limits internal constructor(
     )
 }
 
-public data class OperationLimits @InternalTezosSdkApi constructor(val gas: BigInt, val storage: BigInt) {
+// -- OperationLimits --
+
+public data class OperationLimits internal constructor(
+    internal val gasBigInt: BigInt,
+    internal val storageBigInt: BigInt,
+) {
     public constructor(gas: String, storage: String) : this(BigInt.valueOf(gas), BigInt.valueOf(storage))
 
-    public operator fun plus(other: OperationLimits): OperationLimits =
-        OperationLimits(gas + other.gas, storage + other.storage)
+    public val gas: String
+        get() = gasBigInt.toString()
+
+    public val storage: String
+        get() = storageBigInt.toString()
+
+    internal operator fun plus(other: OperationLimits): OperationLimits =
+        OperationLimits(gasBigInt + other.gasBigInt, storageBigInt + other.storageBigInt)
 
     public companion object {
-        public val zero: OperationLimits
+        internal val zero: OperationLimits
             get() = OperationLimits(BigInt.zero, BigInt.zero)
     }
 }
-public data class BlockLimits @InternalTezosSdkApi constructor(val gas: BigInt) {
-    public constructor(gas: String) : this(BigInt.valueOf(gas))
 
-    public companion object {
-        public val zero: BlockLimits
-            get() = BlockLimits(BigInt.zero)
-    }
+// -- BlockLimits
+
+public data class BlockLimits constructor(val gas: BigInt) {
+    public companion object {}
 }
