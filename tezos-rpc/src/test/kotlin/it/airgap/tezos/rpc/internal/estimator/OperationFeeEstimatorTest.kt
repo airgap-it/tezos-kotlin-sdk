@@ -8,16 +8,16 @@ import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
-import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.number.TezosNatural
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.rpc.active.block.RunOperationResponse
-import it.airgap.tezos.rpc.internal.type.OperationLimits
 import it.airgap.tezos.rpc.internal.utils.fee
 import it.airgap.tezos.rpc.internal.utils.limits
 import it.airgap.tezos.rpc.shell.chains.Chains
+import it.airgap.tezos.rpc.type.limits.OperationLimits
 import it.airgap.tezos.rpc.type.operation.RpcBalanceUpdate
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata
@@ -105,8 +105,8 @@ class TezosRpcClientTest {
         assertEquals(Mutez(507U), updatedOperation.fee)
         assertEquals(
             OperationLimits(
-                gas = BigInt.valueOf(1521),
-                storage = BigInt.valueOf(100),
+                BigInt.valueOf(1521),
+                BigInt.valueOf(100),
             ),
             updatedOperation.limits,
         )
