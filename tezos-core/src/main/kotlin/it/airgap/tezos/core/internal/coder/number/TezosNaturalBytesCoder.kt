@@ -1,26 +1,26 @@
-package it.airgap.tezos.core.internal.coder.zarith
+package it.airgap.tezos.core.internal.coder.number
 
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.consumeAt
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.toBigInt
-import it.airgap.tezos.core.internal.utils.toZarithNatural
-import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.core.internal.utils.toTezosNatural
+import it.airgap.tezos.core.type.number.TezosNatural
 
-internal class ZarithNaturalBytesCoder : ConsumingBytesCoder<ZarithNatural> {
-    override fun encode(value: ZarithNatural): ByteArray =
+internal class TezosNaturalBytesCoder : ConsumingBytesCoder<TezosNatural> {
+    override fun encode(value: TezosNatural): ByteArray =
         when (value.toBigInt()) {
             BigInt.zero -> byteArrayOf(0)
             else -> encode(value.toBigInt(), byteArrayOf())
         }
 
-    override fun decode(value: ByteArray): ZarithNatural = decodeConsuming(value.toMutableList())
-    override fun decodeConsuming(value: MutableList<Byte>): ZarithNatural {
+    override fun decode(value: ByteArray): TezosNatural = decodeConsuming(value.toMutableList())
+    override fun decodeConsuming(value: MutableList<Byte>): TezosNatural {
         if (value.isEmpty()) failWithInvalidNaturalNumberBytes(value)
         val int = decode(value, BigInt.valueOf(0))
 
-        return int.toZarithNatural()
+        return int.toTezosNatural()
     }
 
     private tailrec fun encode(value: BigInt, encoded: ByteArray): ByteArray {
@@ -44,5 +44,5 @@ internal class ZarithNaturalBytesCoder : ConsumingBytesCoder<ZarithNatural> {
         return decode(if (hasNext) value else mutableListOf(), decoded + (part shl shift), shift = shift + 7)
     }
 
-    private fun failWithInvalidNaturalNumberBytes(value: MutableList<Byte>): Nothing = failWithIllegalArgument("Bytes `${value.joinToString(prefix = "[", postfix = "]")}` are not valid Zarith natural number bytes.")
+    private fun failWithInvalidNaturalNumberBytes(value: MutableList<Byte>): Nothing = failWithIllegalArgument("Bytes `${value.joinToString(prefix = "[", postfix = "]")}` are not valid Tezos natural number bytes.")
 }

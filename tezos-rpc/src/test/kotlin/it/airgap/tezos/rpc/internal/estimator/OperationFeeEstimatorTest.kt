@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.internal.operationModule
@@ -58,9 +58,9 @@ class TezosRpcClientTest {
             OperationContent.Transaction(
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                 fee = Mutez(0U),
-                counter = ZarithNatural(8680641U),
-                gasLimit = ZarithNatural(1030000U),
-                storageLimit = ZarithNatural(50000U),
+                counter = TezosNatural(8680641U),
+                gasLimit = TezosNatural(1030000U),
+                storageLimit = TezosNatural(50000U),
                 amount = Mutez(1000U),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),

@@ -2,10 +2,10 @@ package it.airgap.tezos.operation.internal.coder
 
 import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.coder.number.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.number.encodeToBytes
 import it.airgap.tezos.core.coder.tez.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.tez.encodeToBytes
-import it.airgap.tezos.core.coder.zarith.decodeConsumingFromBytes
-import it.airgap.tezos.core.coder.zarith.encodeToBytes
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
@@ -15,8 +15,8 @@ import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.coder.decodeFromBytes
 import it.airgap.tezos.michelson.coder.encodeToBytes
 import it.airgap.tezos.michelson.micheline.MichelineNode
@@ -35,7 +35,7 @@ internal class OperationContentBytesCoder(
     private val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>,
     private val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>,
     private val signatureBytesCoder: ConsumingBytesCoder<Signature>,
-    private val zarithNaturalBytesCoder: ConsumingBytesCoder<ZarithNatural>,
+    private val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural>,
     private val mutezBytesCoder: ConsumingBytesCoder<Mutez>,
     private val michelineBytesCoder: ConsumingBytesCoder<MichelineNode>,
     private val timestampBigIntCoder: Coder<Timestamp, BigInt>,
@@ -204,7 +204,7 @@ internal class OperationContentBytesCoder(
         }
 
     private fun encodeSetDepositsLimit(content: OperationContent.SetDepositsLimit): ByteArray = with(content) {
-        val limitBytes = limit?.encodeToBytes(zarithNaturalBytesCoder) ?: byteArrayOf()
+        val limitBytes = limit?.encodeToBytes(tezosNaturalBytesCoder) ?: byteArrayOf()
         val limitPresence = encodeBooleanToBytes(limitBytes.isNotEmpty())
 
         OperationContent.SetDepositsLimit.tag + encodeManagerOperation(this) + limitPresence + limitBytes
@@ -222,9 +222,9 @@ internal class OperationContentBytesCoder(
     private fun encodeManagerOperation(content: OperationContent.Manager): ByteArray = with(content) {
         val sourceBytes = source.encodeToBytes(implicitAddressBytesCoder)
         val feeBytes = fee.encodeToBytes(mutezBytesCoder)
-        val counterBytes = counter.encodeToBytes(zarithNaturalBytesCoder)
-        val gasLimitBytes = gasLimit.encodeToBytes(zarithNaturalBytesCoder)
-        val storageLimitBytes = storageLimit.encodeToBytes(zarithNaturalBytesCoder)
+        val counterBytes = counter.encodeToBytes(tezosNaturalBytesCoder)
+        val gasLimitBytes = gasLimit.encodeToBytes(tezosNaturalBytesCoder)
+        val storageLimitBytes = storageLimit.encodeToBytes(tezosNaturalBytesCoder)
 
         sourceBytes + feeBytes + counterBytes + gasLimitBytes + storageLimitBytes
     }
@@ -539,7 +539,7 @@ internal class OperationContentBytesCoder(
 
         return decodeManagerOperation(value) { source, fee, counter, gasLimit, storageLimit, bytes ->
             val limitPresence = decodeBoolean(bytes)
-            val limit = if (limitPresence) ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder) else null
+            val limit = if (limitPresence) TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder) else null
 
             OperationContent.SetDepositsLimit(
                 source,
@@ -566,13 +566,13 @@ internal class OperationContentBytesCoder(
 
     private fun <T : OperationContent.Manager> decodeManagerOperation(
         bytes: MutableList<Byte>,
-        create: (source: ImplicitAddress, fee: Mutez, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
+        create: (source: ImplicitAddress, fee: Mutez, counter: TezosNatural, gasLimit: TezosNatural, storageLimit: TezosNatural, MutableList<Byte>) -> T
     ): T {
         val source = ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder)
         val fee = Mutez.decodeConsumingFromBytes(bytes, mutezBytesCoder)
-        val counter = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
-        val gasLimit = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
-        val storageLimit = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
+        val counter = TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder)
+        val gasLimit = TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder)
+        val storageLimit = TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder)
 
         return create(source, fee, counter, gasLimit, storageLimit, bytes)
     }

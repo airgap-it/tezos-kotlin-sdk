@@ -1,4 +1,4 @@
-package it.airgap.tezos.core.type.zarith
+package it.airgap.tezos.core.type.number
 
 import inRange
 import org.junit.Test
@@ -7,10 +7,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ZarithIntegerTest {
+class TezosIntegerTest {
 
     @Test
-    fun `recognizes valid and invalid ZarithInteger`() {
+    fun `recognizes valid and invalid TezosInteger`() {
         val valid = listOf(
             "-9223372036854775809",
             "-9223372036854775808",
@@ -39,16 +39,16 @@ class ZarithIntegerTest {
         )
 
         valid.forEach {
-            assertTrue(ZarithInteger.isValid(it), "Expected `$it` to be recognized as valid ZarithInteger.")
+            assertTrue(TezosInteger.isValid(it), "Expected `$it` to be recognized as valid TezosInteger.")
         }
 
         invalid.forEach {
-            assertFalse(ZarithInteger.isValid(it), "Expected `$it` to be recognized as invalid ZarithInteger.")
+            assertFalse(TezosInteger.isValid(it), "Expected `$it` to be recognized as invalid TezosInteger.")
         }
     }
 
     @Test
-    fun `creates ZarithInteger from valid string`() {
+    fun `creates TezosInteger from valid string`() {
         val valid = listOf(
             "-9223372036854775809",
             "-9223372036854775808",
@@ -66,12 +66,12 @@ class ZarithIntegerTest {
         )
 
         valid.forEach {
-            assertEquals(it, ZarithInteger(it).int)
+            assertEquals(it, TezosInteger(it).int)
         }
     }
 
     @Test
-    fun `creates ZarithInteger from Number`() {
+    fun `creates TezosInteger from Number`() {
         val valid = listOf(
             "-9223372036854775809",
             "-9223372036854775808",
@@ -90,25 +90,25 @@ class ZarithIntegerTest {
 
         valid.forEach {
             if (it.inRange(Byte.MIN_VALUE..Byte.MAX_VALUE)) {
-                assertEquals(it, ZarithInteger(it.toByte()).int)
+                assertEquals(it, TezosInteger(it.toByte()).int)
             }
 
             if (it.inRange(Short.MIN_VALUE..Short.MAX_VALUE)) {
-                assertEquals(it, ZarithInteger(it.toShort()).int)
+                assertEquals(it, TezosInteger(it.toShort()).int)
             }
 
             if (it.inRange(Int.MIN_VALUE..Int.MAX_VALUE)) {
-                assertEquals(it, ZarithInteger(it.toInt()).int)
+                assertEquals(it, TezosInteger(it.toInt()).int)
             }
 
             if (it.inRange(Long.MIN_VALUE..Long.MAX_VALUE)) {
-                assertEquals(it, ZarithInteger(it.toLong()).int)
+                assertEquals(it, TezosInteger(it.toLong()).int)
             }
         }
     }
 
     @Test
-    fun `fails to create ZarithInteger from invalid string`() {
+    fun `fails to create TezosInteger from invalid string`() {
         val invalid = listOf(
             "",
             "abc",
@@ -121,12 +121,12 @@ class ZarithIntegerTest {
         )
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> { ZarithInteger(it) }
+            assertFailsWith<IllegalArgumentException> { TezosInteger(it) }
         }
     }
 
     @Test
-    fun `converts ZarithInteger to specified Number type or fails if out of range`() {
+    fun `converts TezosInteger to specified Number type or fails if out of range`() {
         val numbers = listOf(
             "-9223372036854775809",
             "-9223372036854775808",
@@ -144,7 +144,7 @@ class ZarithIntegerTest {
         )
 
         numbers.forEach {
-            val integer = ZarithInteger(it)
+            val integer = TezosInteger(it)
 
             if (it.inRange(Byte.MIN_VALUE..Byte.MAX_VALUE)) {
                 assertEquals(it.toByte(), integer.toByte())

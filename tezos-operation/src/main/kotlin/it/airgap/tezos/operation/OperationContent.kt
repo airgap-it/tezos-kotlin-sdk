@@ -4,7 +4,7 @@ import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
@@ -157,17 +157,17 @@ public sealed interface OperationContent {
     public sealed interface Manager : OperationContent {
         public val source: ImplicitAddress
         public val fee: Mutez
-        public val counter: ZarithNatural
-        public val gasLimit: ZarithNatural
-        public val storageLimit: ZarithNatural
+        public val counter: TezosNatural
+        public val gasLimit: TezosNatural
+        public val storageLimit: TezosNatural
     }
 
     public data class Reveal(
         override val source: ImplicitAddress,
         override val fee: Mutez,
-        override val counter: ZarithNatural,
-        override val gasLimit: ZarithNatural,
-        override val storageLimit: ZarithNatural,
+        override val counter: TezosNatural,
+        override val gasLimit: TezosNatural,
+        override val storageLimit: TezosNatural,
         public val publicKey: PublicKey,
     ) : Manager {
         public companion object : Kind {
@@ -178,9 +178,9 @@ public sealed interface OperationContent {
     public data class Transaction(
         override val source: ImplicitAddress,
         override val fee: Mutez,
-        override val counter: ZarithNatural,
-        override val gasLimit: ZarithNatural,
-        override val storageLimit: ZarithNatural,
+        override val counter: TezosNatural,
+        override val gasLimit: TezosNatural,
+        override val storageLimit: TezosNatural,
         public val amount: Mutez,
         public val destination: Address,
         public val parameters: Parameters? = null,
@@ -193,9 +193,9 @@ public sealed interface OperationContent {
     public data class Origination(
         override val source: ImplicitAddress,
         override val fee: Mutez,
-        override val counter: ZarithNatural,
-        override val gasLimit: ZarithNatural,
-        override val storageLimit: ZarithNatural,
+        override val counter: TezosNatural,
+        override val gasLimit: TezosNatural,
+        override val storageLimit: TezosNatural,
         public val balance: Mutez,
         public val delegate: ImplicitAddress? = null,
         public val script: Script,
@@ -208,9 +208,9 @@ public sealed interface OperationContent {
     public data class Delegation(
         override val source: ImplicitAddress,
         override val fee: Mutez,
-        override val counter: ZarithNatural,
-        override val gasLimit: ZarithNatural,
-        override val storageLimit: ZarithNatural,
+        override val counter: TezosNatural,
+        override val gasLimit: TezosNatural,
+        override val storageLimit: TezosNatural,
         public val delegate: ImplicitAddress? = null,
     ) : Manager {
         public companion object : Kind {
@@ -221,9 +221,9 @@ public sealed interface OperationContent {
     public data class RegisterGlobalConstant(
         override val source: ImplicitAddress,
         override val fee: Mutez,
-        override val counter: ZarithNatural,
-        override val gasLimit: ZarithNatural,
-        override val storageLimit: ZarithNatural,
+        override val counter: TezosNatural,
+        override val gasLimit: TezosNatural,
+        override val storageLimit: TezosNatural,
         public val value: MichelineNode,
     ) : Manager {
         public companion object : Kind {
@@ -234,10 +234,10 @@ public sealed interface OperationContent {
     public data class SetDepositsLimit(
         override val source: ImplicitAddress,
         override val fee: Mutez,
-        override val counter: ZarithNatural,
-        override val gasLimit: ZarithNatural,
-        override val storageLimit: ZarithNatural,
-        public val limit: ZarithNatural? = null,
+        override val counter: TezosNatural,
+        override val gasLimit: TezosNatural,
+        override val storageLimit: TezosNatural,
+        public val limit: TezosNatural? = null,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 112U

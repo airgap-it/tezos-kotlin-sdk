@@ -11,7 +11,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
@@ -86,9 +86,9 @@ class ContractEntrypointTest {
                     OperationContent.Transaction(
                         source = source,
                         fee = Mutez(0U),
-                        counter = ZarithNatural(counter),
-                        gasLimit = ZarithNatural(0U),
-                        storageLimit = ZarithNatural(0U),
+                        counter = TezosNatural(counter),
+                        gasLimit = TezosNatural(0U),
+                        storageLimit = TezosNatural(0U),
                         amount = Mutez(0U),
                         destination = contractAddress,
                         parameters = Parameters(
@@ -129,9 +129,9 @@ class ContractEntrypointTest {
                     OperationContent.Transaction(
                         source = source,
                         fee = Mutez(0U),
-                        counter = ZarithNatural(counter),
-                        gasLimit = ZarithNatural(0U),
-                        storageLimit = ZarithNatural(0U),
+                        counter = TezosNatural(counter),
+                        gasLimit = TezosNatural(0U),
+                        storageLimit = TezosNatural(0U),
                         amount = Mutez(0U),
                         destination = contractAddress,
                         parameters = Parameters(

@@ -29,7 +29,7 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
             stringToMichelsonPrimConverter,
             tagToMichelsonPrimConverter,
             michelineToCompactStringConverter,
-            core.zarithIntegerBytesCoder,
+            core.tezosIntegerBytesCoder,
         )
     }
     public val michelineJsonCoder: Coder<MichelineNode, JsonElement> by lazy { Static.michelineJsonCoder }

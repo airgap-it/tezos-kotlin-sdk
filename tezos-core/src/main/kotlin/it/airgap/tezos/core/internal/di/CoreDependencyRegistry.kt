@@ -4,23 +4,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.*
+import it.airgap.tezos.core.internal.coder.number.TezosIntegerBytesCoder
+import it.airgap.tezos.core.internal.coder.number.TezosNaturalBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.NanotezBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.TezBytesCoder
 import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithIntegerBytesCoder
-import it.airgap.tezos.core.internal.coder.zarith.ZarithNaturalBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.converter.encoded.*
 import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.number.TezosInteger
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.tez.Nanotez
 import it.airgap.tezos.core.type.tez.Tez
-import it.airgap.tezos.core.type.zarith.ZarithInteger
-import it.airgap.tezos.core.type.zarith.ZarithNatural
 
 @InternalTezosSdkApi
 public class CoreDependencyRegistry internal constructor(global: DependencyRegistry) {
@@ -35,8 +35,8 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
     public val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey> by lazy { PublicKeyBytesCoder(encodedBytesCoder) }
     public val signatureBytesCoder: ConsumingBytesCoder<Signature> by lazy { SignatureBytesCoder(encodedBytesCoder) }
 
-    public val zarithNaturalBytesCoder: ConsumingBytesCoder<ZarithNatural> by lazy { Static.zarithNaturalBytesCoder }
-    public val zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger> by lazy { Static.zarithIntegerBytesCoder }
+    public val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural> by lazy { Static.tezosNaturalBytesCoder }
+    public val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger> by lazy { Static.tezosIntegerBytesCoder }
 
     public val tezBytesCoder: ConsumingBytesCoder<Tez> by lazy { Static.tezBytesCoder }
     public val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazy { Static.mutezBytesCoder }
@@ -73,12 +73,12 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
 
         // -- coder --
 
-        val zarithNaturalBytesCoder: ConsumingBytesCoder<ZarithNatural> by lazyWeak { ZarithNaturalBytesCoder() }
-        val zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger> by lazyWeak { ZarithIntegerBytesCoder(zarithNaturalBytesCoder) }
+        val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural> by lazyWeak { TezosNaturalBytesCoder() }
+        val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger> by lazyWeak { TezosIntegerBytesCoder(tezosNaturalBytesCoder) }
 
-        val tezBytesCoder: ConsumingBytesCoder<Tez> by lazyWeak { TezBytesCoder(zarithNaturalBytesCoder) }
-        val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazyWeak { MutezBytesCoder(zarithNaturalBytesCoder) }
-        val nanotezBytesCoder: ConsumingBytesCoder<Nanotez> by lazyWeak { NanotezBytesCoder(zarithNaturalBytesCoder) }
+        val tezBytesCoder: ConsumingBytesCoder<Tez> by lazyWeak { TezBytesCoder(tezosNaturalBytesCoder) }
+        val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazyWeak { MutezBytesCoder(tezosNaturalBytesCoder) }
+        val nanotezBytesCoder: ConsumingBytesCoder<Nanotez> by lazyWeak { NanotezBytesCoder(tezosNaturalBytesCoder) }
 
         val timestampBigIntCoder: Coder<Timestamp, BigInt> by lazyWeak { TimestampBigIntCoder() }
 

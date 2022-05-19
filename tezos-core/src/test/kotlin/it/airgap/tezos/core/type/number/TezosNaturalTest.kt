@@ -1,4 +1,4 @@
-package it.airgap.tezos.core.type.zarith
+package it.airgap.tezos.core.type.number
 
 import inRange
 import org.junit.Test
@@ -7,10 +7,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ZarithNaturalTest {
+class TezosNaturalTest {
 
     @Test
-    fun `recognizes valid and invalid ZarithNatural`() {
+    fun `recognizes valid and invalid TezosNatural`() {
         val valid = listOf(
             "0",
             "1",
@@ -39,16 +39,16 @@ class ZarithNaturalTest {
         )
 
         valid.forEach {
-            assertTrue(ZarithNatural.isValid(it), "Expected `$it` to be recognized as valid ZarithNatural.")
+            assertTrue(TezosNatural.isValid(it), "Expected `$it` to be recognized as valid TezosNatural.")
         }
 
         invalid.forEach {
-            assertFalse(ZarithNatural.isValid(it), "Expected `$it` to be recognized as invalid ZarithNatural.")
+            assertFalse(TezosNatural.isValid(it), "Expected `$it` to be recognized as invalid TezosNatural.")
         }
     }
 
     @Test
-    fun `creates ZarithNatural from valid string`() {
+    fun `creates TezosNatural from valid string`() {
         val valid = listOf(
             "0",
             "1",
@@ -60,12 +60,12 @@ class ZarithNaturalTest {
         )
 
         valid.forEach {
-            assertEquals(it, ZarithNatural(it).int)
+            assertEquals(it, TezosNatural(it).int)
         }
     }
 
     @Test
-    fun `creates ZarithNatural from Number`() {
+    fun `creates TezosNatural from Number`() {
         val valid = listOf(
             "0",
             "1",
@@ -78,25 +78,25 @@ class ZarithNaturalTest {
 
         valid.forEach {
             if (it.inRange(UByte.MIN_VALUE..UByte.MAX_VALUE)) {
-                assertEquals(it, ZarithNatural(it.toUByte()).int)
+                assertEquals(it, TezosNatural(it.toUByte()).int)
             }
 
             if (it.inRange(UShort.MIN_VALUE..UShort.MAX_VALUE)) {
-                assertEquals(it, ZarithNatural(it.toUShort()).int)
+                assertEquals(it, TezosNatural(it.toUShort()).int)
             }
 
             if (it.inRange(UInt.MIN_VALUE..UInt.MAX_VALUE)) {
-                assertEquals(it, ZarithNatural(it.toUInt()).int)
+                assertEquals(it, TezosNatural(it.toUInt()).int)
             }
 
             if (it.inRange(ULong.MIN_VALUE..ULong.MAX_VALUE)) {
-                assertEquals(it, ZarithNatural(it.toULong()).int)
+                assertEquals(it, TezosNatural(it.toULong()).int)
             }
         }
     }
 
     @Test
-    fun `fails to create ZarithNatural from invalid string`() {
+    fun `fails to create TezosNatural from invalid string`() {
         val invalid = listOf(
             "",
             "abc",
@@ -115,12 +115,12 @@ class ZarithNaturalTest {
         )
 
         invalid.forEach {
-            assertFailsWith<IllegalArgumentException> { ZarithNatural(it) }
+            assertFailsWith<IllegalArgumentException> { TezosNatural(it) }
         }
     }
 
     @Test
-    fun `converts ZarithNatural to specified Number type or fails if out of range`() {
+    fun `converts TezosNatural to specified Number type or fails if out of range`() {
         val numbers = listOf(
             "0",
             "1",
@@ -132,7 +132,7 @@ class ZarithNaturalTest {
         )
 
         numbers.forEach {
-            val natural = ZarithNatural(it)
+            val natural = TezosNatural(it)
 
             if (it.inRange(UByte.MIN_VALUE..UByte.MAX_VALUE)) {
                 assertEquals(it.toUByte(), natural.toUByte())

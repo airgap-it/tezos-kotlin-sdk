@@ -3,7 +3,7 @@ package it.airgap.tezos.rpc.internal.estimator
 import it.airgap.tezos.core.converter.tez.toMutez
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.toZarithNatural
+import it.airgap.tezos.core.internal.utils.toTezosNatural
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.tez.Nanotez
@@ -67,33 +67,33 @@ internal class OperationFeeEstimator(
         when (this) {
             is OperationContent.Reveal -> copy(
                 fee = fee,
-                gasLimit = limits.gasBigInt.toZarithNatural(),
-                storageLimit = limits.storageBigInt.toZarithNatural()
+                gasLimit = limits.gasBigInt.toTezosNatural(),
+                storageLimit = limits.storageBigInt.toTezosNatural()
             )
             is OperationContent.Transaction -> copy(
                 fee = fee,
-                gasLimit = limits.gasBigInt.toZarithNatural(),
-                storageLimit = limits.storageBigInt.toZarithNatural(),
+                gasLimit = limits.gasBigInt.toTezosNatural(),
+                storageLimit = limits.storageBigInt.toTezosNatural(),
             )
             is OperationContent.Origination -> copy(
                 fee = fee,
-                gasLimit = limits.gasBigInt.toZarithNatural(),
-                storageLimit = limits.storageBigInt.toZarithNatural(),
+                gasLimit = limits.gasBigInt.toTezosNatural(),
+                storageLimit = limits.storageBigInt.toTezosNatural(),
             )
             is OperationContent.Delegation -> copy(
                 fee = fee,
-                gasLimit = limits.gasBigInt.toZarithNatural(),
-                storageLimit = limits.storageBigInt.toZarithNatural(),
+                gasLimit = limits.gasBigInt.toTezosNatural(),
+                storageLimit = limits.storageBigInt.toTezosNatural(),
             )
             is OperationContent.RegisterGlobalConstant -> copy(
                 fee = fee,
-                gasLimit = limits.gasBigInt.toZarithNatural(),
-                storageLimit = limits.storageBigInt.toZarithNatural(),
+                gasLimit = limits.gasBigInt.toTezosNatural(),
+                storageLimit = limits.storageBigInt.toTezosNatural(),
             )
             is OperationContent.SetDepositsLimit -> copy(
                 fee = fee,
-                gasLimit = limits.gasBigInt.toZarithNatural(),
-                storageLimit = limits.storageBigInt.toZarithNatural(),
+                gasLimit = limits.gasBigInt.toTezosNatural(),
+                storageLimit = limits.storageBigInt.toTezosNatural(),
             )
             else -> this
         }

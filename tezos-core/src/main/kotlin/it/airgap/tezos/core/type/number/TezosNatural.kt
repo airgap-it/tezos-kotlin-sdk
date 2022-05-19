@@ -1,7 +1,7 @@
-package it.airgap.tezos.core.type.zarith
+package it.airgap.tezos.core.type.number
 
 @JvmInline
-public value class ZarithNatural(public val int: String) {
+public value class TezosNatural(public val int: String) {
 
     public constructor(value: UByte) : this(value.toString())
     public constructor(value: UShort) : this(value.toString())
@@ -9,7 +9,7 @@ public value class ZarithNatural(public val int: String) {
     public constructor(value: ULong) : this(value.toString())
 
     init {
-        require(isValid(int)) { "Invalid Zarith natural number." }
+        require(isValid(int)) { "Invalid Tezos natural number." }
     }
 
     public fun toUByte(): UByte = int.toUByte()

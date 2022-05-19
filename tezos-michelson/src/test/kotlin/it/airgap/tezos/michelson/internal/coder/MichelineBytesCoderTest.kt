@@ -35,7 +35,7 @@ class MichelineBytesCoderTest {
             tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
             tezos.michelsonModule.dependencyRegistry.tagToMichelsonPrimConverter,
             tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
-            tezos.coreModule.dependencyRegistry.zarithIntegerBytesCoder,
+            tezos.coreModule.dependencyRegistry.tezosIntegerBytesCoder,
         )
     }
 

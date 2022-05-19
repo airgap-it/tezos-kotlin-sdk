@@ -6,12 +6,13 @@ import it.airgap.tezos.contract.internal.estimator.withMinFee
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.contract.type.LazyContractCode
 import it.airgap.tezos.core.internal.normalizer.Normalizer
+import it.airgap.tezos.core.internal.utils.asTezosNatural
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
 import it.airgap.tezos.michelson.micheline.MichelineNode
@@ -56,9 +57,9 @@ public class ContractEntrypoint internal constructor(
                 OperationContent.Transaction(
                     source = source,
                     fee = fee ?: Mutez(0U),
-                    counter = counter?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
-                    gasLimit = limits?.gas?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
-                    storageLimit = limits?.gas?.let { ZarithNatural(it) } ?: ZarithNatural(0U),
+                    counter = counter?.asTezosNatural() ?: TezosNatural(0U),
+                    gasLimit = limits?.gas?.asTezosNatural() ?: TezosNatural(0U),
+                    storageLimit = limits?.gas?.asTezosNatural() ?: TezosNatural(0U),
                     amount = amount ?: Mutez(0U),
                     destination = contractAddress,
                     parameters = Parameters(

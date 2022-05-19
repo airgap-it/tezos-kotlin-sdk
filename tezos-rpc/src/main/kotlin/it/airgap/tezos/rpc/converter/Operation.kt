@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.converter
 
 import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.asZarithNatural
+import it.airgap.tezos.core.internal.utils.asTezosNatural
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
@@ -92,20 +92,20 @@ public fun RpcOperationContent.asOperationContent(): OperationContent =
 
 public fun RpcOperationContent.ActivateAccount.asActivateAccount(): OperationContent.ActivateAccount = OperationContent.ActivateAccount(pkh, secret.asHexString())
 public fun RpcOperationContent.Ballot.asBallot(): OperationContent.Ballot = OperationContent.Ballot(source, period, proposal, ballot.asBallotType())
-public fun RpcOperationContent.Delegation.asDelegation(): OperationContent.Delegation = OperationContent.Delegation(source, fee, counter.asZarithNatural(), gasLimit.asZarithNatural(), storageLimit.asZarithNatural(), delegate)
+public fun RpcOperationContent.Delegation.asDelegation(): OperationContent.Delegation = OperationContent.Delegation(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), delegate)
 public fun RpcOperationContent.DoubleBakingEvidence.asDoubleBakingEvidence(): OperationContent.DoubleBakingEvidence = OperationContent.DoubleBakingEvidence(bh1.asBlockHeader(), bh2.asBlockHeader())
 public fun RpcOperationContent.DoubleEndorsementEvidence.asDoubleEndorsementEvidence(): OperationContent.DoubleEndorsementEvidence = OperationContent.DoubleEndorsementEvidence(op1.asInlinedEndorsement(), op2.asInlinedEndorsement())
 public fun RpcOperationContent.DoublePreendorsementEvidence.asDoublePreendorsementEvidence(): OperationContent.DoublePreendorsementEvidence = OperationContent.DoublePreendorsementEvidence(op1.asInlinedPreendorsement(), op2.asInlinedPreendorsement())
 public fun RpcOperationContent.Endorsement.asEndorsement(): OperationContent.Endorsement = OperationContent.Endorsement(slot, level, round, blockPayloadHash)
 public fun RpcOperationContent.FailingNoop.asFailingNoop(): OperationContent.FailingNoop = OperationContent.FailingNoop(arbitrary.asHexString())
-public fun RpcOperationContent.Origination.asOrigination(): OperationContent.Origination = OperationContent.Origination(source, fee, counter.asZarithNatural(), gasLimit.asZarithNatural(), storageLimit.asZarithNatural(), balance, delegate, script.asScript())
+public fun RpcOperationContent.Origination.asOrigination(): OperationContent.Origination = OperationContent.Origination(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), balance, delegate, script.asScript())
 public fun RpcOperationContent.Preendorsement.asPreendorsement(): OperationContent.Preendorsement = OperationContent.Preendorsement(slot, level, round, blockPayloadHash)
 public fun RpcOperationContent.Proposals.asProposals(): OperationContent.Proposals = OperationContent.Proposals(source, period, proposals)
-public fun RpcOperationContent.RegisterGlobalConstant.asRegisterGlobalConstant(): OperationContent.RegisterGlobalConstant = OperationContent.RegisterGlobalConstant(source, fee, counter.asZarithNatural(), gasLimit.asZarithNatural(), storageLimit.asZarithNatural(), value)
-public fun RpcOperationContent.Reveal.asReveal(): OperationContent.Reveal = OperationContent.Reveal(source, fee, counter.asZarithNatural(), gasLimit.asZarithNatural(), storageLimit.asZarithNatural(), publicKey)
+public fun RpcOperationContent.RegisterGlobalConstant.asRegisterGlobalConstant(): OperationContent.RegisterGlobalConstant = OperationContent.RegisterGlobalConstant(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), value)
+public fun RpcOperationContent.Reveal.asReveal(): OperationContent.Reveal = OperationContent.Reveal(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), publicKey)
 public fun RpcOperationContent.SeedNonceRevelation.asSeedNonceRevelation(): OperationContent.SeedNonceRevelation = OperationContent.SeedNonceRevelation(level, nonce.asHexString())
-public fun RpcOperationContent.SetDepositsLimit.asSetDepositsLimit(): OperationContent.SetDepositsLimit = OperationContent.SetDepositsLimit(source, fee, counter.asZarithNatural(), gasLimit.asZarithNatural(), storageLimit.asZarithNatural(), limit?.asZarithNatural())
-public fun RpcOperationContent.Transaction.asTransaction(): OperationContent.Transaction = OperationContent.Transaction(source, fee, counter.asZarithNatural(), gasLimit.asZarithNatural(), storageLimit.asZarithNatural(), amount, destination, parameters?.asParameters())
+public fun RpcOperationContent.SetDepositsLimit.asSetDepositsLimit(): OperationContent.SetDepositsLimit = OperationContent.SetDepositsLimit(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), limit?.asTezosNatural())
+public fun RpcOperationContent.Transaction.asTransaction(): OperationContent.Transaction = OperationContent.Transaction(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), amount, destination, parameters?.asParameters())
 
 // -- OperationContent.Ballot.BallotType -> RpcOperationContent.Ballot.BallotType --
 

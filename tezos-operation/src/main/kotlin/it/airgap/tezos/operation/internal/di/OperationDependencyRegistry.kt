@@ -36,7 +36,7 @@ public class OperationDependencyRegistry internal constructor(
             core.publicKeyBytesCoder,
             core.implicitAddressBytesCoder,
             core.signatureBytesCoder,
-            core.zarithNaturalBytesCoder,
+            core.tezosNaturalBytesCoder,
             core.mutezBytesCoder,
             michelson.michelineBytesCoder,
             core.timestampBigIntCoder,

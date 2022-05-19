@@ -1,13 +1,13 @@
 package it.airgap.tezos.michelson.internal.coder
 
-import it.airgap.tezos.core.coder.zarith.decodeConsumingFromBytes
-import it.airgap.tezos.core.coder.zarith.encodeToBytes
+import it.airgap.tezos.core.coder.number.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.number.encodeToBytes
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.internal.utils.*
-import it.airgap.tezos.core.type.zarith.ZarithInteger
+import it.airgap.tezos.core.type.number.TezosInteger
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.coder.decodeConsumingFromBytes
 import it.airgap.tezos.michelson.coder.encodeToBytes
@@ -24,9 +24,9 @@ internal class MichelineBytesCoder(
     stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
     tagToMichelsonPrimConverter: Converter<ByteArray, Michelson.Prim>,
     michelineToCompactStringConverter: Converter<MichelineNode, String>,
-    zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>,
+    tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger>,
 ) : ConsumingBytesCoder<MichelineNode> {
-    private val literalBytesCoder: MichelineLiteralBytesCoder = MichelineLiteralBytesCoder(zarithIntegerBytesCoder)
+    private val literalBytesCoder: MichelineLiteralBytesCoder = MichelineLiteralBytesCoder(tezosIntegerBytesCoder)
     private val primitiveApplicationBytesCoder: MichelinePrimitiveApplicationBytesCoder = MichelinePrimitiveApplicationBytesCoder(
         stringToMichelsonPrimConverter,
         tagToMichelsonPrimConverter,
@@ -54,7 +54,7 @@ internal class MichelineBytesCoder(
     private fun failWithUnknownTag(): Nothing = failWithIllegalArgument("Unknown Micheline encoding tag.")
 }
 
-private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: ConsumingBytesCoder<ZarithInteger>) : Coder<MichelineLiteral, ByteArray> {
+private class MichelineLiteralBytesCoder(private val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger>) : Coder<MichelineLiteral, ByteArray> {
     override fun encode(value: MichelineLiteral): ByteArray =
         when (value) {
             is MichelineLiteral.Integer -> encodeInteger(value)
@@ -74,7 +74,7 @@ private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: Co
     fun recognizesTag(value: List<Byte>): Boolean =
         listOf(Tag.Int, Tag.String, Tag.Bytes).any { it == Tag.recognize(value) }
 
-    private fun encodeInteger(value: MichelineLiteral.Integer): ByteArray = Tag.Int + ZarithInteger(value.int).encodeToBytes(zarithIntegerBytesCoder)
+    private fun encodeInteger(value: MichelineLiteral.Integer): ByteArray = Tag.Int + TezosInteger(value.int).encodeToBytes(tezosIntegerBytesCoder)
     private fun encodeString(value: MichelineLiteral.String): ByteArray = Tag.String + encodeString(value.string)
     private fun encodeBytes(value: MichelineLiteral.Bytes): ByteArray = Tag.Bytes + encodeBytes(value.toByteArray())
 
@@ -95,9 +95,9 @@ private class MichelineLiteralBytesCoder(private val zarithIntegerBytesCoder: Co
         requireConsumingTag(Tag.Int, value)
 
         if (value.isEmpty()) failWithInvalidEncodedInteger()
-        val zarith = ZarithInteger.decodeConsumingFromBytes(value, zarithIntegerBytesCoder)
+        val integer = TezosInteger.decodeConsumingFromBytes(value, tezosIntegerBytesCoder)
 
-        return MichelineLiteral.Integer(zarith.int)
+        return MichelineLiteral.Integer(integer.int)
     }
 
     private fun decodeString(value: MutableList<Byte>): MichelineLiteral.String {

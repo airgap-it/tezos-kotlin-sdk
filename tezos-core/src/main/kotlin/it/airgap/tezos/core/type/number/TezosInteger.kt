@@ -1,7 +1,7 @@
-package it.airgap.tezos.core.type.zarith
+package it.airgap.tezos.core.type.number
 
 @JvmInline
-public value class ZarithInteger(public val int: String) {
+public value class TezosInteger(public val int: String) {
 
     public constructor(value: Byte) : this(value.toString())
     public constructor(value: Short) : this(value.toString())
@@ -9,7 +9,7 @@ public value class ZarithInteger(public val int: String) {
     public constructor(value: Long) : this(value.toString())
 
     init {
-        require(isValid(int)) { "Invalid Zarith integer." }
+        require(isValid(int)) { "Invalid Tezos integer." }
     }
 
     public fun toByte(): Byte = int.toByte()
