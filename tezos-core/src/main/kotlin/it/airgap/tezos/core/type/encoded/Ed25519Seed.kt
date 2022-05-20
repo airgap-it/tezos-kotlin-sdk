@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* edsk(54) */
 
 @JvmInline
-public value class Ed25519Seed(override val base58: String) : SeedEncoded, MetaSeedEncoded<Ed25519Seed> {
+public value class Ed25519Seed(override val base58: String) : Seed, MetaSeed<Ed25519Seed, Ed25519Seed> {
 
     init {
         require(isValid(base58)) { "Invalid Ed25519 seed." }
     }
 
-    override val kind: MetaSeedEncoded.Kind<Ed25519Seed>
+    override val kind: MetaSeed.Kind<Ed25519Seed, Ed25519Seed>
         get() = Companion
 
-    override val meta: MetaSeedEncoded<*>
+    override val meta: MetaSeed<*, *>
         get() = this
 
-    override val encoded: SeedEncoded
+    override val encoded: Ed25519Seed
         get() = this
 
-    public companion object : MetaSeedEncoded.Kind<Ed25519Seed> {
+    public companion object : MetaSeed.Kind<Ed25519Seed, Ed25519Seed> {
         override val base58Prefix: String = "edsk"
         override val base58Bytes: ByteArray = byteArrayOf(13, 15, 58, 7)
         override val base58Length: Int = 54

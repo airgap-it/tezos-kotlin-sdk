@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* edpk(54) */
 
 @JvmInline
-public value class Ed25519PublicKey(override val base58: String) : PublicKeyEncoded, MetaPublicKeyEncoded<Ed25519PublicKey> {
+public value class Ed25519PublicKey(override val base58: String) : PublicKey, MetaPublicKey<Ed25519PublicKey, Ed25519PublicKey> {
 
     init {
         require(isValid(base58)) { "Invalid Ed25519 public key." }
     }
 
-    override val kind: MetaPublicKeyEncoded.Kind<Ed25519PublicKey>
+    override val kind: MetaPublicKey.Kind<Ed25519PublicKey, Ed25519PublicKey>
         get() = Companion
 
-    override val meta: MetaPublicKeyEncoded<*>
+    override val meta: MetaPublicKey<*, *>
         get() = this
 
-    override val encoded: PublicKeyEncoded
+    override val encoded: Ed25519PublicKey
         get() = this
 
-    public companion object : MetaPublicKeyEncoded.Kind<Ed25519PublicKey> {
+    public companion object : MetaPublicKey.Kind<Ed25519PublicKey, Ed25519PublicKey> {
         override val base58Prefix: String = "edpk"
         override val base58Bytes: ByteArray = byteArrayOf(13, 15, 37, (217).toByte())
         override val base58Length: Int = 54

@@ -5,23 +5,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 /* Co(52) */
 
 @JvmInline
-public value class ContextHash(override val base58: String) : Encoded, MetaEncoded<ContextHash> {
+public value class ContextHash(override val base58: String) : Encoded, MetaEncoded<ContextHash, ContextHash> {
 
     init {
         require(isValid(base58)) { "Invalid context hash." }
     }
 
-    override val kind: MetaEncoded.Kind<ContextHash>
+    override val kind: MetaEncoded.Kind<ContextHash, ContextHash>
         get() = Companion
 
     @InternalTezosSdkApi
-    override val meta: MetaEncoded<*>
+    override val meta: MetaEncoded<*, *>
         get() = this
 
-    override val encoded: Encoded
+    override val encoded: ContextHash
         get() = this
 
-    public companion object : MetaEncoded.Kind<ContextHash> {
+    public companion object : MetaEncoded.Kind<ContextHash, ContextHash> {
         override val base58Prefix: String = "Co"
         override val base58Bytes: ByteArray = byteArrayOf(79, (199).toByte())
         override val base58Length: Int = 52

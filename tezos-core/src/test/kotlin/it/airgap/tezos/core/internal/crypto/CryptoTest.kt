@@ -33,12 +33,12 @@ class CryptoTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { cryptoProvider.sha256(any<ByteArray>()) } answers {
+        every { cryptoProvider.sha256(any()) } answers {
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.digest(firstArg())
         }
 
-        every { cryptoProvider.blake2b(any<ByteArray>(), any()) } answers {
+        every { cryptoProvider.blake2b(any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val size = secondArg<Int>()
             val blake2bDigest = Blake2bDigest(min(size * 8, 512))
@@ -51,7 +51,7 @@ class CryptoTest {
             }
         }
 
-        every { cryptoProvider.signEd25519(any<ByteArray>(), any<ByteArray>()) } answers {
+        every { cryptoProvider.signEd25519(any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val key = secondArg<ByteArray>()
 
@@ -64,7 +64,7 @@ class CryptoTest {
             signature
         }
 
-        every { cryptoProvider.verifyEd25519(any<ByteArray>(), any<ByteArray>(), any<ByteArray>()) } answers {
+        every { cryptoProvider.verifyEd25519(any(), any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val signature = secondArg<ByteArray>()
             val key = thirdArg<ByteArray>()
@@ -78,7 +78,7 @@ class CryptoTest {
             verified
         }
 
-        every { cryptoProvider.signSecp256K1(any<ByteArray>(), any<ByteArray>()) } answers {
+        every { cryptoProvider.signSecp256K1(any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val key = secondArg<ByteArray>()
 
@@ -97,7 +97,7 @@ class CryptoTest {
             signature.asHexString().toByteArray()
         }
 
-        every { cryptoProvider.verifySecp256K1(any<ByteArray>(), any<ByteArray>(), any<ByteArray>()) } answers {
+        every { cryptoProvider.verifySecp256K1(any(), any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val signature = secondArg<ByteArray>()
             val key = thirdArg<ByteArray>()
@@ -117,7 +117,7 @@ class CryptoTest {
             verified
         }
 
-        every { cryptoProvider.signP256(any<ByteArray>(), any<ByteArray>()) } answers {
+        every { cryptoProvider.signP256(any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val key = secondArg<ByteArray>()
 
@@ -136,7 +136,7 @@ class CryptoTest {
             signature.asHexString().toByteArray()
         }
 
-        every { cryptoProvider.verifyP256(any<ByteArray>(), any<ByteArray>(), any<ByteArray>()) } answers {
+        every { cryptoProvider.verifyP256(any(), any(), any()) } answers {
             val message = firstArg<ByteArray>()
             val signature = secondArg<ByteArray>()
             val key = thirdArg<ByteArray>()

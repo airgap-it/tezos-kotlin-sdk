@@ -1,6 +1,7 @@
 package it.airgap.tezos.michelson.micheline.dsl.builder
 
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
+import it.airgap.tezos.core.internal.converter.Converter
+import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.MichelineDslMaker
 
@@ -10,7 +11,7 @@ public fun interface MichelineBuilder {
 
 @MichelineDslMaker
 public abstract class MichelineTransformableBuilder internal constructor(
-    @PublishedApi internal val michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    @PublishedApi internal val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
 ) : MichelineBuilder {
     protected abstract val value: MichelineNode
 

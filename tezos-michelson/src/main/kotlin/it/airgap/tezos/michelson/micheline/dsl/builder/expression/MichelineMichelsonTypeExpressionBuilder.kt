@@ -1,11 +1,13 @@
 package it.airgap.tezos.michelson.micheline.dsl.builder.expression
 
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.replaceOrAdd
+import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonType
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.internal.utils.failWithUnexpectedMichelsonPrim
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
+import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.*
 
 public typealias MichelineMichelsonTypeExpressionBuilder = MichelineNodeBuilder<MichelsonType, MichelsonType.Prim>
@@ -15,21 +17,21 @@ public typealias MichelineMichelsonTypeSingleArgBuilder = MichelinePrimitiveAppl
 public typealias MichelineMichelsonTypeIntegerArgBuilder = MichelinePrimitiveApplicationIntegerArgBuilder<MichelsonType.Prim>
 
 public class MichelineMichelsonTypeCodeBuilder internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Code) {
     public fun arg(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
         MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
 public class MichelineMichelsonTypeOptionBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
 public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun lhs(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
@@ -37,7 +39,7 @@ public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonTyp
 }
 
 public class MichelineMichelsonTypeLambdaBuilder internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Lambda) {
     public fun parameter(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
@@ -47,7 +49,7 @@ public class MichelineMichelsonTypeLambdaBuilder internal constructor(
 }
 
 public class MichelineMichelsonTypeMapBuilder internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: MichelsonType.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit): MichelineMichelsonComparableTypeExpressionBuilder =

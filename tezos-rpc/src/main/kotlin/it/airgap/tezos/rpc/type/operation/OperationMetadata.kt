@@ -1,8 +1,8 @@
 package it.airgap.tezos.rpc.type.operation
 
 import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHashEncoded
-import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
+import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
 import it.airgap.tezos.rpc.internal.serializer.LongSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcBalanceUpdateSerializer
 import kotlinx.serialization.Contextual
@@ -18,7 +18,7 @@ public sealed class RpcOperationMetadata {
     public open val balanceUpdates: List<RpcBalanceUpdate>? = null
 
     @Transient
-    public open val delegate: PublicKeyHashEncoded? = null
+    public open val delegate: PublicKeyHash? = null
 
     @Transient
     public open val endorsementPower: Int? = null
@@ -35,14 +35,14 @@ public sealed class RpcOperationMetadata {
     @Serializable
     public data class Endorsement(
         @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         @SerialName("endorsement_power") override val endorsementPower: Int,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Preendorsement(
         @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         @SerialName("preendorsement_power") override val preendorsementPower: Int,
     ) : RpcOperationMetadata()
 
@@ -132,7 +132,7 @@ public sealed class RpcBalanceUpdate {
     public open val contract: @Contextual Address? = null
 
     @Transient
-    public open val delegate: @Contextual PublicKeyHashEncoded? = null
+    public open val delegate: @Contextual PublicKeyHash? = null
 
     @Transient
     public open val cycle: Int? = null
@@ -144,7 +144,7 @@ public sealed class RpcBalanceUpdate {
     public open val revelation: Boolean? = null
 
     @Transient
-    public open val committer: @Contextual BlindedPublicKeyHashEncoded? = null
+    public open val committer: @Contextual BlindedPublicKeyHash? = null
 
     @Serializable
     public data class Contract(
@@ -157,7 +157,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class LegacyRewards(
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         override val cycle: Int,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
@@ -175,7 +175,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class LegacyDeposits(
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         override val cycle: Int,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
@@ -185,7 +185,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class Deposits(
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         override val cycle: Int,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
@@ -235,7 +235,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class LegacyFees(
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         override val cycle: Int,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
@@ -261,7 +261,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class LostEndorsingRewards(
-        override val delegate: @Contextual PublicKeyHashEncoded,
+        override val delegate: @Contextual PublicKeyHash,
         override val participation: Boolean,
         override val revelation: Boolean,
         @Serializable(with = LongSerializer::class) override val change: Long,
@@ -288,7 +288,7 @@ public sealed class RpcBalanceUpdate {
 
     @Serializable
     public data class Commitments(
-        override val committer: @Contextual BlindedPublicKeyHashEncoded,
+        override val committer: @Contextual BlindedPublicKeyHash,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {

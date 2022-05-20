@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.type.delegate
 
-import it.airgap.tezos.core.type.encoded.PublicKeyEncoded
+import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.rpc.internal.serializer.RpcDelegateSelectionSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcRandomDelegateSelectionSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcRoundRobinOverDelegateSelectionSerializer
@@ -17,5 +17,5 @@ public sealed class RpcDelegateSelection {
     public object Random : RpcDelegateSelection()
 
     @Serializable(with = RpcRoundRobinOverDelegateSelectionSerializer::class)
-    public data class RoundRobinOver(@SerialName("public_keys") public val publicKeys: List<List<@Contextual PublicKeyEncoded>>) : RpcDelegateSelection()
+    public data class RoundRobinOver(@SerialName("public_keys") public val publicKeys: List<List<@Contextual PublicKey>>) : RpcDelegateSelection()
 }

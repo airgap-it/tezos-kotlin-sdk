@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* p2sig(98) */
 
 @JvmInline
-public value class P256Signature(override val base58: String) : SignatureEncoded, MetaSignatureEncoded<P256Signature> {
+public value class P256Signature(override val base58: String) : Signature, MetaSignature<P256Signature, P256Signature> {
 
     init {
         require(isValid(base58)) { "Invalid P256 signature." }
     }
 
-    override val kind: MetaSignatureEncoded.Kind<P256Signature>
+    override val kind: MetaSignature.Kind<P256Signature, P256Signature>
         get() = Companion
 
-    override val meta: MetaSignatureEncoded<*>
+    override val meta: MetaSignature<*, *>
         get() = this
 
-    override val encoded: SignatureEncoded
+    override val encoded: P256Signature
         get() = this
 
-    public companion object : MetaSignatureEncoded.Kind<P256Signature> {
+    public companion object : MetaSignature.Kind<P256Signature, P256Signature> {
         override val base58Prefix: String = "p2sig"
         override val base58Bytes: ByteArray = byteArrayOf(54, (240).toByte(), 44, 52)
         override val base58Length: Int = 98

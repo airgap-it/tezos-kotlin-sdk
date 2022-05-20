@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.active
 
 import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.block.*
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -133,7 +133,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getDelegateDetails(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateDetailsResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).get(headers)
@@ -141,7 +141,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getCurrentFrozenDeposits(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateCurrentFrozenDepositsResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).currentFrozenDeposits.get(headers)
@@ -149,7 +149,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun isDeactivated(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateDeactivatedStatusResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).deactivated.get(headers)
@@ -157,7 +157,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getDelegatedBalance(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedBalanceResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).delegatedBalance.get(headers)
@@ -165,7 +165,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getDelegatedContracts(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateDelegatedContractsResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).delegatedContracts.get(headers)
@@ -173,7 +173,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getFrozenDeposits(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).frozenDeposits.get(headers)
@@ -181,7 +181,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getFrozenDepositsLimit(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateFrozenDepositsLimitResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).frozenDepositsLimit.get(headers)
@@ -189,7 +189,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getFullBalance(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateFullBalanceResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).fullBalance.get(headers)
@@ -197,7 +197,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getGracePeriod(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateGracePeriodResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).gracePeriod.get(headers)
@@ -205,7 +205,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getParticipation(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateParticipationResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).participation.get(headers)
@@ -213,7 +213,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getStakingBalance(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateStakingBalanceResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).stakingBalance.get(headers)
@@ -221,7 +221,7 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
     override suspend fun getVotingPower(
         chainId: String,
         blockId: String,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader>,
     ): GetDelegateVotingPowerResponse =
         chains(chainId).blocks(blockId).context.delegates(delegateId).votingPower.get(headers)

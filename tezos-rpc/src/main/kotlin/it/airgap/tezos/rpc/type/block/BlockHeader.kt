@@ -23,7 +23,7 @@ public data class RpcBlockHeader(
     @SerialName("proof_of_work_nonce") public val proofOfWorkNonce: String,
     @SerialName("seed_nonce_hash") public val seedNonceHash: @Contextual NonceHash? = null,
     @SerialName("liquidity_baking_escape_vote") public val liquidityBakingEscapeVote: Boolean,
-    public val signature: @Contextual SignatureEncoded,
+    public val signature: @Contextual Signature,
 )
 
 // -- RpcFullBlockHeader --
@@ -46,5 +46,5 @@ public data class RpcFullBlockHeader(
     @SerialName("proof_of_work_nonce") public val proofOfWorkNonce: String,
     @SerialName("seed_nonce_hash") public val seedNonceHash: @Contextual NonceHash? = null,
     @SerialName("liquidity_baking_escape_vote") public val liquidityBakingEscapeVote: Boolean,
-    public val signature: @Contextual SignatureEncoded,
+    public val signature: @Contextual Signature,
 )

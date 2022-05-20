@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* sig(96) */
 
 @JvmInline
-public value class GenericSignature(override val base58: String) : SignatureEncoded, MetaSignatureEncoded<GenericSignature> {
+public value class GenericSignature(override val base58: String) : Signature, MetaSignature<GenericSignature, GenericSignature> {
 
     init {
         require(isValid(base58)) { "Invalid generic signature." }
     }
 
-    override val kind: MetaSignatureEncoded.Kind<GenericSignature>
+    override val kind: MetaSignature.Kind<GenericSignature, GenericSignature>
         get() = Companion
 
-    override val meta: MetaSignatureEncoded<*>
+    override val meta: MetaSignature<*, *>
         get() = this
 
-    override val encoded: SignatureEncoded
+    override val encoded: GenericSignature
         get() = this
 
-    public companion object : MetaSignatureEncoded.Kind<GenericSignature> {
+    public companion object : MetaSignature.Kind<GenericSignature, GenericSignature> {
         override val base58Prefix: String = "sig"
         override val base58Bytes: ByteArray = byteArrayOf(4, (130).toByte(), 43)
         override val base58Length: Int = 96

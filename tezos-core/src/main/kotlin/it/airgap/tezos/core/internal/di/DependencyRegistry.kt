@@ -1,30 +1,21 @@
 package it.airgap.tezos.core.internal.di
 
+import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.crypto.Crypto
-import kotlin.reflect.KClass
+import it.airgap.tezos.core.internal.delegate.lazyWeak
 
 @InternalTezosSdkApi
-public interface DependencyRegistry {
-
-    // -- scoped --
-
-    public val scoped: Map<String, DependencyRegistry>
-    public fun addScoped(scoped: DependencyRegistry)
-    public fun <T : DependencyRegistry> findScoped(targetClass: KClass<T>): T?
+public class DependencyRegistry(cryptoProvider: CryptoProvider) {
 
     // -- base58 --
 
-    public val base58: Base58
-    public val base58Check: Base58Check
+    public val base58: Base58 by lazyWeak { Base58() }
+    public val base58Check: Base58Check by lazyWeak { Base58Check(base58, crypto) }
 
     // -- crypto --
 
-    public val crypto: Crypto
+    public val crypto: Crypto by lazyWeak { Crypto(cryptoProvider) }
 }
-
-public inline fun <reified T : DependencyRegistry> DependencyRegistry.findScoped(): T? = findScoped(T::class)
-
-public typealias DependencyRegistryFactory = (DependencyRegistry) -> DependencyRegistry

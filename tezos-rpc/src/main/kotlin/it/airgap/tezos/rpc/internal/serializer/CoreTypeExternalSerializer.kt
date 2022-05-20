@@ -2,7 +2,8 @@
 
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.core.fromString
+import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
@@ -100,12 +101,12 @@ internal object TimestampMillisSerializer : KSerializer<Timestamp.Millis> {
 
 // -- Encoded --
 
-internal object AddressSerializer : BaseEncodedSerializer<Address>(Address.Companion::fromString, Address::class)
-internal object ImplicitAddressSerializer : BaseEncodedSerializer<ImplicitAddress>(ImplicitAddress.Companion::fromString, ImplicitAddress::class)
-internal object PublicKeyEncodedSerializer : BaseEncodedSerializer<PublicKeyEncoded>(PublicKeyEncoded.Companion::fromString, PublicKeyEncoded::class)
-internal object PublicKeyHashEncodedSerializer : BaseEncodedSerializer<PublicKeyHashEncoded>(PublicKeyHashEncoded.Companion::fromString, PublicKeyHashEncoded::class)
-internal object BlindedPublicKeyHashEncodedSerializer : BaseEncodedSerializer<BlindedPublicKeyHashEncoded>(BlindedPublicKeyHashEncoded.Companion::fromString, BlindedPublicKeyHashEncoded::class)
-internal object SignatureEncodedSerializer : BaseEncodedSerializer<SignatureEncoded>(SignatureEncoded.Companion::fromString, SignatureEncoded::class)
+internal class AddressSerializer(converter: Converter<String, Address>) : BaseEncodedSerializer<Address>({ Address.fromString(it, converter) }, Address::class)
+internal class ImplicitAddressSerializer(converter: Converter<String, ImplicitAddress>) : BaseEncodedSerializer<ImplicitAddress>({ ImplicitAddress.fromString(it, converter) }, ImplicitAddress::class)
+internal class PublicKeySerializer(converter: Converter<String, PublicKey>) : BaseEncodedSerializer<PublicKey>({ PublicKey.fromString(it, converter) }, PublicKey::class)
+internal class PublicKeyHashSerializer(converter: Converter<String, PublicKeyHash>) : BaseEncodedSerializer<PublicKeyHash>({ PublicKeyHash.fromString(it, converter) }, PublicKeyHash::class)
+internal class BlindedPublicKeyHashSerializer(converter: Converter<String, BlindedPublicKeyHash>) : BaseEncodedSerializer<BlindedPublicKeyHash>({ BlindedPublicKeyHash.fromString(it, converter) }, BlindedPublicKeyHash::class)
+internal class SignatureSerializer(converter: Converter<String, Signature>) : BaseEncodedSerializer<Signature>({ Signature.fromString(it, converter) }, Signature::class)
 
 internal object BlockHashSerializer : EncodedSerializer<BlockHash>(BlockHash, BlockHash::class)
 internal object BlockPayloadHashSerializer : EncodedSerializer<BlockPayloadHash>(BlockPayloadHash, BlockPayloadHash::class)
@@ -140,4 +141,4 @@ internal open class BaseEncodedSerializer<E : Encoded>(
     }
 }
 
-internal open class EncodedSerializer<E>(kind: MetaEncoded.Kind<E>, kClass: KClass<E>) : BaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E>
+internal open class EncodedSerializer<E>(kind: MetaEncoded.Kind<E, E>, kClass: KClass<E>) : BaseEncodedSerializer<E>(kind::createValue, kClass) where E : Encoded, E : MetaEncoded<E, E>

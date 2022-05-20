@@ -1,8 +1,8 @@
 package it.airgap.tezos.michelson.micheline.dsl.builder.node
 
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.replaceOrAdd
 import it.airgap.tezos.michelson.Michelson
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -10,7 +10,7 @@ import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
 
 public class MichelinePrimitiveApplicationBuilder<in T : Michelson, in G : Michelson.Prim> @PublishedApi internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: G,
 ) : MichelinePrimitiveApplicationSingleArgBuilder<T, G>(michelsonToMichelineConverter, prim) {
     override fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
@@ -18,7 +18,7 @@ public class MichelinePrimitiveApplicationBuilder<in T : Michelson, in G : Miche
 }
 
 public open class MichelinePrimitiveApplicationSingleArgBuilder<in T : Michelson, in G : Michelson.Prim> internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public open fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
@@ -26,7 +26,7 @@ public open class MichelinePrimitiveApplicationSingleArgBuilder<in T : Michelson
 }
 
 public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Prim> internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: T,
 ) : MichelineTransformableBuilder(michelsonToMichelineConverter) {
     private val prim: MichelinePrimitiveApplication.Primitive = MichelinePrimitiveApplication.Primitive(prim.name)
@@ -38,6 +38,7 @@ public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Pr
     public fun annots(vararg values: String) {
         annots(values.toList())
     }
+
     public infix fun annots(values: List<String>) {
         annots = values.map { MichelinePrimitiveApplication.Annotation(it) }
     }
@@ -48,7 +49,7 @@ public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Pr
 }
 
 public class MichelinePrimitiveApplicationOptionalIntegerArgBuilder<in T : Michelson.Prim> internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: T,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<T>(michelsonToMichelineConverter, prim) {
     public infix fun arg(value: String): MichelineBuilder = MichelineBuilder { MichelineLiteral.Integer(value) }.also { args.replaceOrAdd(0, it) }
@@ -59,7 +60,7 @@ public class MichelinePrimitiveApplicationOptionalIntegerArgBuilder<in T : Miche
 }
 
 public class MichelinePrimitiveApplicationIntegerArgBuilder<in T : Michelson.Prim> internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: T,
     arg: MichelineLiteral.Integer,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<T>(michelsonToMichelineConverter, prim) {

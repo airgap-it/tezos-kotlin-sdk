@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
-import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import it.airgap.tezos.core.type.encoded.Signature
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 import kotlinx.serialization.Contextual
@@ -41,7 +41,7 @@ private data class RpcRunnableOperationSurrogate(
     data class Content(
         val branch: @Contextual BlockHash,
         val contents: List<RpcOperationContent>,
-        val signature: @Contextual SignatureEncoded,
+        val signature: @Contextual Signature,
     )
 }
 

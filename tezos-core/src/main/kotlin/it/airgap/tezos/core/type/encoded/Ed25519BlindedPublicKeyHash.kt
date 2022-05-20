@@ -5,23 +5,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 /* btz1(37) */
 
 @JvmInline
-public value class Ed25519BlindedPublicKeyHash(override val base58: String) : BlindedPublicKeyHashEncoded, MetaBlindedPublicKeyHashEncoded<Ed25519BlindedPublicKeyHash> {
+public value class Ed25519BlindedPublicKeyHash(override val base58: String) : BlindedPublicKeyHash, MetaBlindedPublicKeyHash<Ed25519BlindedPublicKeyHash, Ed25519BlindedPublicKeyHash> {
 
     init {
         require(isValid(base58)) { "Invalid Ed25519 blinded public key hash." }
     }
 
-    override val kind: MetaEncoded.Kind<Ed25519BlindedPublicKeyHash>
+    override val kind: MetaEncoded.Kind<Ed25519BlindedPublicKeyHash, Ed25519BlindedPublicKeyHash>
         get() = Companion
 
     @InternalTezosSdkApi
-    override val meta: MetaBlindedPublicKeyHashEncoded<*>
+    override val meta: MetaBlindedPublicKeyHash<*, *>
         get() = this
 
-    override val encoded: BlindedPublicKeyHashEncoded
+    override val encoded: Ed25519BlindedPublicKeyHash
         get() = this
 
-    public companion object : MetaBlindedPublicKeyHashEncoded.Kind<Ed25519BlindedPublicKeyHash> {
+    public companion object : MetaBlindedPublicKeyHash.Kind<Ed25519BlindedPublicKeyHash, Ed25519BlindedPublicKeyHash> {
         override val base58Prefix: String = "btz1"
         override val base58Bytes: ByteArray = byteArrayOf(1, 2, 49, (223).toByte())
         override val base58Length: Int = 37

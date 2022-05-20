@@ -3,22 +3,22 @@ package it.airgap.tezos.core.type.encoded
 /* seesk(93) */
 
 @JvmInline
-public value class Secp256K1EncryptedScalar(override val base58: String) : EncryptedScalarEncoded, MetaEncryptedScalarEncoded<Secp256K1EncryptedScalar> {
+public value class Secp256K1EncryptedScalar(override val base58: String) : EncryptedScalar, MetaEncryptedScalar<Secp256K1EncryptedScalar, Secp256K1EncryptedScalar> {
 
     init {
         require(isValid(base58)) { "Invalid secp256k1 encrypted scalar." }
     }
 
-    override val kind: MetaEncryptedScalarEncoded.Kind<Secp256K1EncryptedScalar>
+    override val kind: MetaEncryptedScalar.Kind<Secp256K1EncryptedScalar, Secp256K1EncryptedScalar>
         get() = Companion
 
-    override val meta: MetaEncryptedScalarEncoded<*>
+    override val meta: MetaEncryptedScalar<*, *>
         get() = this
 
-    override val encoded: EncryptedScalarEncoded
+    override val encoded: Secp256K1EncryptedScalar
         get() = this
 
-    public companion object : MetaEncryptedScalarEncoded.Kind<Secp256K1EncryptedScalar> {
+    public companion object : MetaEncryptedScalar.Kind<Secp256K1EncryptedScalar, Secp256K1EncryptedScalar> {
         override val base58Prefix: String = "seesk"
         override val base58Bytes: ByteArray = byteArrayOf(1, (131).toByte(), 36, 86, (248).toByte())
         override val base58Length: Int = 93

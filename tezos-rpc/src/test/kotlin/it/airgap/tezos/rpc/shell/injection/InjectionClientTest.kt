@@ -13,12 +13,13 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -32,6 +33,7 @@ class InjectionClientTest {
 
     private lateinit var json: Json
     private lateinit var httpClient: HttpClient
+
     private lateinit var injectionClient: InjectionClient
 
     private val nodeUrl = "https://example.com"
@@ -40,10 +42,11 @@ class InjectionClientTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        json = Json(from = rpcJson) {
-            prettyPrint = true
-        }
-        httpClient = HttpClient(httpClientProvider, json)
+        val tezos = mockTezos(httpClientProvider = httpClientProvider)
+
+        json = tezos.rpcModule.dependencyRegistry.json
+        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
+
         injectionClient = InjectionClient(nodeUrl, httpClient)
     }
 

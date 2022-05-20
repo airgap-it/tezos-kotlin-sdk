@@ -1,88 +1,42 @@
 package it.airgap.tezos.operation.internal.coder
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.GenericSignature
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
-import it.airgap.tezos.operation.*
-import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
-import it.airgap.tezos.operation.internal.di.ScopedDependencyRegistry
-import mockTezosSdk
+import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.operation.coder.forgeToBytes
+import it.airgap.tezos.operation.coder.forgeToString
+import it.airgap.tezos.operation.coder.unforgeFromBytes
+import it.airgap.tezos.operation.coder.unforgeFromString
+import it.airgap.tezos.operation.internal.operationModule
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class OperationBytesCoderTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
-    @MockK
-    private lateinit var crypto: Crypto
-
+    private lateinit var tezos: Tezos
     private lateinit var operationBytesCoder: OperationBytesCoder
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        val base58Check = Base58Check(Base58(), crypto)
-
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
-        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
-        val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
-        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
-        val michelineBytesCoder = MichelineBytesCoder(
-            StringToMichelsonPrimConverter(),
-            TagToMichelsonPrimConverter(),
-            MichelineToCompactStringConverter(),
-            ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
+        tezos = mockTezos()
+        operationBytesCoder = OperationBytesCoder(
+            tezos.operationModule.dependencyRegistry.operationContentBytesCoder,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
-
-        val timestampBigIntCoder = TimestampBigIntCoder()
-        val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
-
-        val operationContentBytesCoder = OperationContentBytesCoder(
-            encodedBytesCoder,
-            addressBytesCoder,
-            publicKeyBytesCoder,
-            implicitAddressBytesCoder,
-            signatureBytesCoder,
-            zarithNaturalBytesCoder,
-            mutezBytesCoder,
-            michelineBytesCoder,
-            timestampBigIntCoder,
-            tagToOperationContentKindConverter,
-        )
-
-        operationBytesCoder = OperationBytesCoder(operationContentBytesCoder, encodedBytesCoder)
-
-        every { dependencyRegistry.operationBytesCoder } returns operationBytesCoder
     }
 
     @After
@@ -103,11 +57,11 @@ class OperationBytesCoderTest {
             ),
         ).flatten().forEach {
             assertContentEquals(it.second, operationBytesCoder.encode(it.first))
-            assertContentEquals(it.second, it.first.forgeToBytes())
+            assertContentEquals(it.second, it.first.forgeToBytes(tezos))
             assertContentEquals(it.second, it.first.forgeToBytes(operationBytesCoder))
-            assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false))
+            assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false, tezos))
             assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false, operationBytesCoder))
-            assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true))
+            assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true, tezos))
             assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true, operationBytesCoder))
         }
     }
@@ -117,9 +71,9 @@ class OperationBytesCoderTest {
         operationsWithBytes.forEach {
             assertEquals(it.first, operationBytesCoder.decode(it.second))
             assertEquals(it.first, operationBytesCoder.decodeConsuming(it.second.toMutableList()))
-            assertEquals(it.first, Operation.unforgeFromBytes(it.second))
+            assertEquals(it.first, Operation.unforgeFromBytes(it.second, tezos))
             assertEquals(it.first, Operation.unforgeFromBytes(it.second, operationBytesCoder))
-            assertEquals(it.first, Operation.unforgeFromString(it.second.toHexString().asString()))
+            assertEquals(it.first, Operation.unforgeFromString(it.second.toHexString().asString(), tezos))
             assertEquals(it.first, Operation.unforgeFromString(it.second.toHexString().asString(), operationBytesCoder))
         }
     }
@@ -129,9 +83,9 @@ class OperationBytesCoderTest {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { operationBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { operationBytesCoder.decodeConsuming(it.toMutableList()) }
-            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromBytes(it) }
+            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Operation.unforgeFromBytes(it, operationBytesCoder) }
-            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromString(it.toHexString().asString()) }
+            assertFailsWith<IllegalArgumentException> { Operation.unforgeFromString(it.toHexString().asString(), tezos) }
             assertFailsWith<IllegalArgumentException> { Operation.unforgeFromString(it.toHexString().asString(), operationBytesCoder) }
         }
     }

@@ -5,10 +5,11 @@ import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.internal.utils.encodeToString
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -21,7 +22,8 @@ class BigMapDiffTest {
 
     @Before
     fun setup() {
-        json = Json(from = rpcJson) {
+        val tezos = mockTezos()
+        json = Json(from = tezos.rpcModule.dependencyRegistry.json) {
             prettyPrint = true
         }
     }

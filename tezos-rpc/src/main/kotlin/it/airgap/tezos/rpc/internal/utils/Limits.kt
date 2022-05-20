@@ -2,7 +2,10 @@ package it.airgap.tezos.rpc.internal.utils
 
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.toBigInt
-import it.airgap.tezos.operation.type.OperationLimits
+import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.rpc.type.RpcError
+import it.airgap.tezos.rpc.type.limits.OperationLimits
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata
 import it.airgap.tezos.rpc.type.operation.RpcOperationResult
@@ -11,6 +14,22 @@ private const val STORAGE_CONTRACT_ALLOCATION = 257U
 
 private const val GAS_SAFETY_MARGIN = 100U
 private const val STORAGE_SAFETY_MARGIN = 100U
+
+// -- Operation --
+
+internal val Operation.limits: OperationLimits
+    get() = contents.fold(OperationLimits.zero) { acc, content -> acc + content.limits }
+
+// -- OperationContent --
+
+internal val OperationContent.limits: OperationLimits
+    get() = when (this) {
+        is OperationContent.Manager -> OperationLimits(
+            gasLimit.toBigInt(),
+            storageLimit.toBigInt(),
+        )
+        else -> OperationLimits.zero
+    }
 
 internal val RpcOperationContent.metadataLimits: OperationLimits?
     get() = when (this) {
@@ -33,7 +52,7 @@ internal val RpcOperationResult.limits: OperationLimits
     }
 
 internal fun RpcOperationResult.assertApplied() {
-    errors?.let { failWithRpcErrors(it) }
+    errors?.let { failWithOperationError(it) }
 }
 
 private val RpcOperationResult.gasLimit: BigInt
@@ -54,3 +73,6 @@ private val RpcOperationResult.burnFee: BigInt
         val allocatedDestinationContractFee = if (allocatedDestinationContract == true) STORAGE_CONTRACT_ALLOCATION.toInt() else 0
         return originatedContractsFee + allocatedDestinationContractFee
     }
+
+private fun failWithOperationError(errors: List<RpcError>): Nothing =
+    failWithRpcException("Operation failed with errors: $errors")
