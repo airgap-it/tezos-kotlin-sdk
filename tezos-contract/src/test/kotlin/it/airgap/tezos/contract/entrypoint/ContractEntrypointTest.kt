@@ -4,17 +4,17 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.contract.internal.converter.EntrypointArgumentToMichelineConverter
+import it.airgap.tezos.contract.entrypoint.dsl.entrypointParameters
+import it.airgap.tezos.contract.internal.converter.EntrypointParameterToMichelineConverter
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
 import it.airgap.tezos.michelson.MichelsonData
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -28,6 +28,7 @@ import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.internal.cache.Cached
 import kotlinx.coroutines.runBlocking
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -35,11 +36,8 @@ import kotlin.test.assertEquals
 
 class ContractEntrypointTest {
 
-    private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
-    private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
-    private lateinit var stringToMichelinePrimConverter: StringToMichelsonPrimConverter
-
-    private lateinit var entrypointArgumentToMichelineConverter: EntrypointArgumentToMichelineConverter
+    private lateinit var tezos: Tezos
+    private lateinit var entrypointParameterToMichelineConverter: EntrypointParameterToMichelineConverter
 
     @MockK
     private lateinit var blockRpc: Block
@@ -51,12 +49,11 @@ class ContractEntrypointTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        michelineToCompactStringConverter = MichelineToCompactStringConverter()
-        stringToMichelinePrimConverter = StringToMichelsonPrimConverter()
-
-        entrypointArgumentToMichelineConverter = EntrypointArgumentToMichelineConverter(michelineToCompactStringConverter, stringToMichelinePrimConverter)
+        tezos = mockTezos()
+        entrypointParameterToMichelineConverter = EntrypointParameterToMichelineConverter(
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
+            tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
+        )
     }
 
     @After
@@ -65,7 +62,7 @@ class ContractEntrypointTest {
     }
 
     @Test
-    fun `should create unsigned operation with raw arguments`() {
+    fun `should create unsigned operation with raw parameters`() {
         val source = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
         val branch = BlockHash("BLkKavdWXZdfEXmup3FQKCrPJXTrVGfrbLhgBE3UU3SvyztZHHh")
         val counter = "1"
@@ -80,7 +77,7 @@ class ContractEntrypointTest {
                 contractAddress,
                 blockRpc,
                 tezosRpc,
-                Cached { MetaContractEntrypoint(type, entrypointArgumentToMichelineConverter) },
+                Cached { MetaContractEntrypoint(type, entrypointParameterToMichelineConverter) },
             )
 
             val actual = runBlocking { contractEntrypoint.call(value, source) }
@@ -90,9 +87,9 @@ class ContractEntrypointTest {
                     OperationContent.Transaction(
                         source = source,
                         fee = Mutez(0U),
-                        counter = ZarithNatural(counter),
-                        gasLimit = ZarithNatural(0U),
-                        storageLimit = ZarithNatural(0U),
+                        counter = TezosNatural(counter),
+                        gasLimit = TezosNatural(0U),
+                        storageLimit = TezosNatural(0U),
                         amount = Mutez(0U),
                         destination = contractAddress,
                         parameters = Parameters(
@@ -108,7 +105,7 @@ class ContractEntrypointTest {
     }
 
     @Test
-    fun `should create unsigned operation with named arguments`() {
+    fun `should create unsigned operation with named parameters`() {
         val source = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
         val branch = BlockHash("BLkKavdWXZdfEXmup3FQKCrPJXTrVGfrbLhgBE3UU3SvyztZHHh")
         val counter = "1"
@@ -123,7 +120,7 @@ class ContractEntrypointTest {
                 contractAddress,
                 blockRpc,
                 tezosRpc,
-                Cached { MetaContractEntrypoint(type, entrypointArgumentToMichelineConverter) },
+                Cached { MetaContractEntrypoint(type, entrypointParameterToMichelineConverter) },
             )
 
             val actual = runBlocking { contractEntrypoint.call(namedValue, source) }
@@ -133,9 +130,9 @@ class ContractEntrypointTest {
                     OperationContent.Transaction(
                         source = source,
                         fee = Mutez(0U),
-                        counter = ZarithNatural(counter),
-                        gasLimit = ZarithNatural(0U),
-                        storageLimit = ZarithNatural(0U),
+                        counter = TezosNatural(counter),
+                        gasLimit = TezosNatural(0U),
+                        storageLimit = TezosNatural(0U),
                         amount = Mutez(0U),
                         destination = contractAddress,
                         parameters = Parameters(
@@ -155,7 +152,7 @@ class ContractEntrypointTest {
             EntrypointTestCase(
                 name = "test_entrypoint1",
                 contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
-                type = micheline(michelsonToMichelineConverter) {
+                type = micheline(tezos) {
                     pair {
                         arg {
                             pair {
@@ -185,7 +182,7 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                value = micheline(michelsonToMichelineConverter) {
+                value = micheline(tezos) {
                     Pair {
                         arg {
                             Pair {
@@ -214,18 +211,18 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                namedValue = ContractEntrypointArgument.Object(
-                    ContractEntrypointArgument.Value(MichelineLiteral.String("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"), "%address"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.Bytes("0x0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c"), "%label"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.String("tz1b6wRXMA2PxATL6aoVGy9j7kSqXijW7VPq"), "%owner"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.Bytes("0x0b51b8ae90e19a079c9db469c4881871a5ba7778acf9773ac00c7dfcda0b1c87"), "%parent"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.Integer(1), "%ttl"),
+                namedValue = ContractEntrypointParameter.Object(
+                    ContractEntrypointParameter.Value(MichelineLiteral.String("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"), "%address"),
+                    ContractEntrypointParameter.Value(MichelineLiteral.Bytes("0x0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c"), "%label"),
+                    ContractEntrypointParameter.Value(MichelineLiteral.String("tz1b6wRXMA2PxATL6aoVGy9j7kSqXijW7VPq"), "%owner"),
+                    ContractEntrypointParameter.Value(MichelineLiteral.Bytes("0x0b51b8ae90e19a079c9db469c4881871a5ba7778acf9773ac00c7dfcda0b1c87"), "%parent"),
+                    ContractEntrypointParameter.Value(MichelineLiteral.Integer(1), "%ttl"),
                 )
             ),
             EntrypointTestCase(
                 name = "test_entrypoint2",
                 contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
-                type = micheline(michelsonToMichelineConverter) {
+                type = micheline(tezos) {
                     pair {
                         arg {
                             pair {
@@ -316,7 +313,7 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                value = micheline(michelsonToMichelineConverter) {
+                value = micheline(tezos) {
                     Pair {
                         arg {
                             Pair {
@@ -393,18 +390,17 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                namedValue = ContractEntrypointArgument.Object(
-                    ContractEntrypointArgument.Value(MichelineLiteral.String("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"), "%address"),
-                    ContractEntrypointArgument.Map(
-                        ContractEntrypointArgument.Value(MichelineLiteral.String("key1")) to ContractEntrypointArgument.Value(MichelinePrimitiveApplication(MichelsonData.True), "%bool"),
-                        ContractEntrypointArgument.Value(MichelineLiteral.String("key2")) to ContractEntrypointArgument.Value(MichelineLiteral.Integer(1), "%nat"),
-                        name = "%data",
-                    ),
-                    ContractEntrypointArgument.Value(MichelineLiteral.Bytes("0x0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c"), "%label"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.String("tz1b6wRXMA2PxATL6aoVGy9j7kSqXijW7VPq"), "%owner"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.Bytes("0x0b51b8ae90e19a079c9db469c4881871a5ba7778acf9773ac00c7dfcda0b1c87"), "%parent"),
-                    ContractEntrypointArgument.Value(MichelineLiteral.Integer(2), "%ttl"),
-                )
+                namedValue = entrypointParameters {
+                    value("%address", MichelineLiteral.String("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"))
+                    map("%data") {
+                        key(MichelineLiteral.String("key1")) pointsTo value("%bool", MichelinePrimitiveApplication(MichelsonData.True))
+                        key(MichelineLiteral.String("key2")) pointsTo value("%nat", MichelineLiteral.Integer(1))
+                    }
+                    value("%label", MichelineLiteral.Bytes("0x0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c"))
+                    value("%owner", MichelineLiteral.String("tz1b6wRXMA2PxATL6aoVGy9j7kSqXijW7VPq"))
+                    value("%parent", MichelineLiteral.Bytes("0x0b51b8ae90e19a079c9db469c4881871a5ba7778acf9773ac00c7dfcda0b1c87"))
+                    value("%ttl", MichelineLiteral.Integer(2))
+                }
             )
         )
 
@@ -413,6 +409,6 @@ class ContractEntrypointTest {
         val contractAddress: ContractHash,
         val type: MichelineNode,
         val value: MichelineNode,
-        val namedValue: ContractEntrypointArgument,
+        val namedValue: ContractEntrypointParameter,
     )
 }

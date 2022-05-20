@@ -10,6 +10,24 @@ public inline fun <reified T> Collection<*>.allIsInstance(): Boolean = all { it 
 public inline fun <reified T> Collection<*>.anyIsInstance(): Boolean = any { it is T }
 
 @InternalTezosSdkApi
+public inline fun <reified R> Collection<*>.firstInstanceOfOrNull(): R? = nthInstanceOfOrNull(1)
+
+@InternalTezosSdkApi
+public inline fun <reified R> Collection<*>.secondInstanceOfOrNull(): R? = nthInstanceOfOrNull(2)
+
+@PublishedApi
+internal inline fun <reified R> Collection<*>.nthInstanceOfOrNull(n: Int): R? {
+    var counter = 0
+    for (item in this) {
+        if (item is R) {
+            if (++counter == n) return item
+        }
+    }
+
+    return null
+}
+
+@InternalTezosSdkApi
 public inline fun <reified T> MutableList<T?>.replaceOrAdd(index: Int, element: T) {
     if (index != 0 && index > lastIndex){
         addAll(arrayOfNulls<T>(abs(size - index)))

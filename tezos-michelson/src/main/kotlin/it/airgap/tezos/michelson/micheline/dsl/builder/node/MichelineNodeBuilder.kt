@@ -1,17 +1,17 @@
 package it.airgap.tezos.michelson.micheline.dsl.builder.node
 
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.michelson.Michelson
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
+import it.airgap.tezos.michelson.converter.toMicheline
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
-import it.airgap.tezos.michelson.toMicheline
 
 public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.Prim> internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
 ) : MichelineTransformableBuilder(michelsonToMichelineConverter) {
     override val value: MichelineNode
         get () {

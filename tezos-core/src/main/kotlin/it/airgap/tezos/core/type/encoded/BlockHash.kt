@@ -5,23 +5,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 /* B(51) */
 
 @JvmInline
-public value class BlockHash(override val base58: String) : Encoded, MetaEncoded<BlockHash> {
+public value class BlockHash(override val base58: String) : Encoded, MetaEncoded<BlockHash, BlockHash> {
 
     init {
         require(isValid(base58)) { "Invalid block hash." }
     }
 
-    override val kind: MetaEncoded.Kind<BlockHash>
+    override val kind: MetaEncoded.Kind<BlockHash, BlockHash>
         get() = Companion
 
     @InternalTezosSdkApi
-    override val meta: MetaEncoded<*>
+    override val meta: MetaEncoded<*, *>
         get() = this
 
-    override val encoded: Encoded
+    override val encoded: BlockHash
         get() = this
 
-    public companion object : MetaEncoded.Kind<BlockHash> {
+    public companion object : MetaEncoded.Kind<BlockHash, BlockHash> {
         override val base58Prefix: String = "B"
         override val base58Bytes: ByteArray = byteArrayOf(1, 52)
         override val base58Length: Int = 51

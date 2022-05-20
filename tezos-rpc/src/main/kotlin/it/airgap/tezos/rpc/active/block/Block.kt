@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.active.block
 
 import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
@@ -111,7 +111,7 @@ public interface Block {
         }
 
         public interface Delegates {
-            public operator fun invoke(publicKeyHash: PublicKeyHashEncoded): Delegate
+            public operator fun invoke(publicKeyHash: PublicKeyHash): Delegate
 
             public interface Delegate {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetDelegateDetailsResponse

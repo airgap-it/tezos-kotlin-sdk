@@ -1,25 +1,50 @@
 package it.airgap.tezos.contract.storage
 
+import it.airgap.tezos.contract.internal.storage.LazyMetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
+import it.airgap.tezos.contract.internal.utils.failWithContractException
+import it.airgap.tezos.contract.type.ContractCode
+import it.airgap.tezos.contract.type.LazyContractCode
+import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
+import it.airgap.tezos.michelson.normalizer.normalized
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
-import it.airgap.tezos.rpc.internal.cache.Cached
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 
 // -- ContractStorage --
 
 public class ContractStorage internal constructor(
-    private val metaCached: Cached<MetaContractStorage>,
-    private val rpc: Block.Context.Contracts.Contract,
+    private val meta: LazyMetaContractStorage,
+    private val contract: Block.Context.Contracts.Contract,
 ) {
     public suspend fun get(headers: List<HttpHeader> = emptyList()): ContractStorageEntry? {
-        val value = rpc.storage.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).storage ?: return null
-        val meta = metaCached.get(headers)
+        val value = contract.storage.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).storage ?: return null
+        val meta = meta.get(headers)
 
         return meta.entryFrom(value)
+    }
+
+    internal class Factory(
+        private val metaFactory: MetaContractStorage.Factory,
+        private val contract: Block.Context.Contracts.Contract,
+        private val michelineNormalizer: Normalizer<MichelineNode>,
+    ) {
+        fun create(code: LazyContractCode): ContractStorage {
+            val meta = code.map { it.toMetaContractStorage() }
+            return ContractStorage(meta, contract)
+        }
+
+        private fun ContractCode.toMetaContractStorage(): MetaContractStorage {
+            if (storage !is MichelinePrimitiveApplication || storage.args.size != 1) failWithUnknownStorageType()
+            val type = storage.args.first().normalized(michelineNormalizer)
+
+            return metaFactory.create(type)
+        }
+
+        private fun failWithUnknownStorageType(): Nothing = failWithContractException("Unknown contract storage type.")
     }
 }
 

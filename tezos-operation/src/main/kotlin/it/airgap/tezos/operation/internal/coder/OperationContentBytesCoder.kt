@@ -1,42 +1,45 @@
 package it.airgap.tezos.operation.internal.coder
 
-import it.airgap.tezos.core.decodeConsumingFromBytes
-import it.airgap.tezos.core.encodeToBytes
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.*
+import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.coder.number.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.number.encodeToBytes
+import it.airgap.tezos.core.coder.tez.decodeConsumingFromBytes
+import it.airgap.tezos.core.coder.tez.encodeToBytes
+import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
-import it.airgap.tezos.michelson.decodeFromBytes
-import it.airgap.tezos.michelson.encodeToBytes
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
+import it.airgap.tezos.michelson.coder.decodeFromBytes
+import it.airgap.tezos.michelson.coder.encodeToBytes
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
-import it.airgap.tezos.operation.fromTagOrNull
+import it.airgap.tezos.operation.converter.fromTagOrNull
 import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
-import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 
-@InternalTezosSdkApi
-public class OperationContentBytesCoder(
+internal class OperationContentBytesCoder(
     private val encodedBytesCoder: EncodedBytesCoder,
-    private val addressBytesCoder: AddressBytesCoder,
-    private val publicKeyBytesCoder: PublicKeyBytesCoder,
-    private val implicitAddressBytesCoder: ImplicitAddressBytesCoder,
-    private val signatureBytesCoder: SignatureBytesCoder,
-    private val zarithNaturalBytesCoder: ZarithNaturalBytesCoder,
-    private val mutezBytesCoder: MutezBytesCoder,
-    private val michelineBytesCoder: MichelineBytesCoder,
-    private val timestampBigIntCoder: TimestampBigIntCoder,
-    private val tagToOperationContentKindConverter: TagToOperationContentKindConverter,
+    private val addressBytesCoder: ConsumingBytesCoder<Address>,
+    private val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>,
+    private val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>,
+    private val signatureBytesCoder: ConsumingBytesCoder<Signature>,
+    private val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural>,
+    private val mutezBytesCoder: ConsumingBytesCoder<Mutez>,
+    private val michelineBytesCoder: ConsumingBytesCoder<MichelineNode>,
+    private val timestampBigIntCoder: Coder<Timestamp, BigInt>,
+    private val tagToOperationContentKindConverter: Converter<UByte, OperationContent.Kind>,
 ) : ConsumingBytesCoder<OperationContent> {
     override fun encode(value: OperationContent): ByteArray =
         when (value) {
@@ -201,7 +204,7 @@ public class OperationContentBytesCoder(
         }
 
     private fun encodeSetDepositsLimit(content: OperationContent.SetDepositsLimit): ByteArray = with(content) {
-        val limitBytes = limit?.encodeToBytes(zarithNaturalBytesCoder) ?: byteArrayOf()
+        val limitBytes = limit?.encodeToBytes(tezosNaturalBytesCoder) ?: byteArrayOf()
         val limitPresence = encodeBooleanToBytes(limitBytes.isNotEmpty())
 
         OperationContent.SetDepositsLimit.tag + encodeManagerOperation(this) + limitPresence + limitBytes
@@ -219,9 +222,9 @@ public class OperationContentBytesCoder(
     private fun encodeManagerOperation(content: OperationContent.Manager): ByteArray = with(content) {
         val sourceBytes = source.encodeToBytes(implicitAddressBytesCoder)
         val feeBytes = fee.encodeToBytes(mutezBytesCoder)
-        val counterBytes = counter.encodeToBytes(zarithNaturalBytesCoder)
-        val gasLimitBytes = gasLimit.encodeToBytes(zarithNaturalBytesCoder)
-        val storageLimitBytes = storageLimit.encodeToBytes(zarithNaturalBytesCoder)
+        val counterBytes = counter.encodeToBytes(tezosNaturalBytesCoder)
+        val gasLimitBytes = gasLimit.encodeToBytes(tezosNaturalBytesCoder)
+        val storageLimitBytes = storageLimit.encodeToBytes(tezosNaturalBytesCoder)
 
         sourceBytes + feeBytes + counterBytes + gasLimitBytes + storageLimitBytes
     }
@@ -254,7 +257,7 @@ public class OperationContentBytesCoder(
         val seedNonceHashPresence = encodeBooleanToBytes(seedNonceHashBytes.isNotEmpty())
 
         val liquidityBankingEscapeVoteBytes = encodeBooleanToBytes(liquidityBakingEscapeVote)
-        val signatureBytes = signatureBytesCoder.encode(signature.meta)
+        val signatureBytes = signature.encodeToBytes(signatureBytesCoder)
 
         levelBytes +
                 protoBytes +
@@ -436,7 +439,7 @@ public class OperationContentBytesCoder(
         requireConsumingKind(OperationContent.Reveal, bytes)
 
         return decodeManagerOperation(bytes) { source, fee, counter, gasLimit, storageLimit, bytes ->
-            val publicKey = PublicKeyEncoded.decodeConsumingFromBytes(bytes, publicKeyBytesCoder)
+            val publicKey = PublicKey.decodeConsumingFromBytes(bytes, publicKeyBytesCoder)
 
             OperationContent.Reveal(
                 source,
@@ -536,7 +539,7 @@ public class OperationContentBytesCoder(
 
         return decodeManagerOperation(value) { source, fee, counter, gasLimit, storageLimit, bytes ->
             val limitPresence = decodeBoolean(bytes)
-            val limit = if (limitPresence) ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder) else null
+            val limit = if (limitPresence) TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder) else null
 
             OperationContent.SetDepositsLimit(
                 source,
@@ -563,13 +566,13 @@ public class OperationContentBytesCoder(
 
     private fun <T : OperationContent.Manager> decodeManagerOperation(
         bytes: MutableList<Byte>,
-        create: (source: ImplicitAddress, fee: Mutez, counter: ZarithNatural, gasLimit: ZarithNatural, storageLimit: ZarithNatural, MutableList<Byte>) -> T
+        create: (source: ImplicitAddress, fee: Mutez, counter: TezosNatural, gasLimit: TezosNatural, storageLimit: TezosNatural, MutableList<Byte>) -> T
     ): T {
         val source = ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder)
         val fee = Mutez.decodeConsumingFromBytes(bytes, mutezBytesCoder)
-        val counter = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
-        val gasLimit = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
-        val storageLimit = ZarithNatural.decodeConsumingFromBytes(bytes, zarithNaturalBytesCoder)
+        val counter = TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder)
+        val gasLimit = TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder)
+        val storageLimit = TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder)
 
         return create(source, fee, counter, gasLimit, storageLimit, bytes)
     }
@@ -577,7 +580,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedEndorsement(bytes: MutableList<Byte>): InlinedEndorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodeEndorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
+        val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return InlinedEndorsement(branch, operations, signature)
     }
@@ -602,7 +605,7 @@ public class OperationContentBytesCoder(
         val seedNonceHash = if (seedNonceHashPresence) NonceHash.decodeConsumingFromBytes(bytes, encodedBytesCoder) else null
 
         val liquidityBankingEscapeVote = decodeBoolean(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
+        val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return BlockHeader(
             level,
@@ -625,7 +628,7 @@ public class OperationContentBytesCoder(
     private fun decodeInlinedPreendorsement(bytes: MutableList<Byte>): InlinedPreendorsement {
         val branch = BlockHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
         val operations = decodePreendorsement(bytes)
-        val signature = signatureBytesCoder.decodeConsuming(bytes).encoded
+        val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return InlinedPreendorsement(branch, operations, signature)
     }

@@ -2,32 +2,32 @@ package it.airgap.tezos.core.internal.utils
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.type.zarith.ZarithInteger
-import it.airgap.tezos.core.type.zarith.ZarithNatural
+import it.airgap.tezos.core.type.number.TezosInteger
+import it.airgap.tezos.core.type.number.TezosNatural
 
 @InternalTezosSdkApi
-public fun BigInt.toZarithInteger(): ZarithInteger = ZarithInteger(toString(10))
+public fun BigInt.toTezosInteger(): TezosInteger = TezosInteger(toString(10))
 
 @InternalTezosSdkApi
-public fun BigInt.toZarithNatural(): ZarithNatural = ZarithNatural(toString(10))
+public fun BigInt.toTezosNatural(): TezosNatural = TezosNatural(toString(10))
 
 @InternalTezosSdkApi
-public fun String.asZarithInteger(): ZarithInteger = asZarithIntegerOrNull() ?: failWithInvalidZarithInteger(this)
+public fun String.asTezosInteger(): TezosInteger = asTezosIntegerOrNull() ?: failWithInvalidTezosInteger(this)
 
 @InternalTezosSdkApi
-public fun String.asZarithIntegerOrNull(): ZarithInteger? = if (ZarithInteger.isValid(this)) ZarithInteger(this) else null
+public fun String.asTezosIntegerOrNull(): TezosInteger? = if (TezosInteger.isValid(this)) TezosInteger(this) else null
 
 @InternalTezosSdkApi
-public fun String.asZarithNatural(): ZarithNatural = asZarithNaturalOrNull() ?: failWithInvalidZarithNatural(this)
+public fun String.asTezosNatural(): TezosNatural = asTezosNaturalOrNull() ?: failWithInvalidTezosNatural(this)
 
 @InternalTezosSdkApi
-public fun String.asZarithNaturalOrNull(): ZarithNatural? = if (ZarithNatural.isValid(this)) ZarithNatural(this) else null
+public fun String.asTezosNaturalOrNull(): TezosNatural? = if (TezosNatural.isValid(this)) TezosNatural(this) else null
 
 @InternalTezosSdkApi
-public fun ZarithInteger.toBigInt(): BigInt = BigInt.valueOf(int)
+public fun TezosInteger.toBigInt(): BigInt = BigInt.valueOf(int)
 
 @InternalTezosSdkApi
-public fun ZarithNatural.toBigInt(): BigInt = BigInt.valueOf(int)
+public fun TezosNatural.toBigInt(): BigInt = BigInt.valueOf(int)
 
 @InternalTezosSdkApi
 public fun Byte.toBigInt(): BigInt = BigInt.valueOf(this)
@@ -53,8 +53,8 @@ public fun Long.toBigInt(): BigInt = BigInt.valueOf(this)
 @InternalTezosSdkApi
 public fun ULong.toBigInt(): BigInt = BigInt.valueOf(this)
 
-private fun failWithInvalidZarithInteger(string: String): Nothing =
-    failWithIllegalArgument("$string is not a valid Zarith integer")
+private fun failWithInvalidTezosInteger(string: String): Nothing =
+    failWithIllegalArgument("$string is not a valid Tezos integer")
 
-private fun failWithInvalidZarithNatural(string: String): Nothing =
-    failWithIllegalArgument("$string is not a valid Zarith natural number")
+private fun failWithInvalidTezosNatural(string: String): Nothing =
+    failWithIllegalArgument("$string is not a valid Tezos natural number")

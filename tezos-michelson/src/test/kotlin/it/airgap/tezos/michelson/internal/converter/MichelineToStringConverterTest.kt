@@ -1,16 +1,14 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.converter.toCompactExpression
+import it.airgap.tezos.michelson.converter.toExpression
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.toCompactExpression
-import it.airgap.tezos.michelson.toExpression
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -18,22 +16,17 @@ import kotlin.test.assertEquals
 
 class MichelineToStringConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelineToStringConverter: MichelineToStringConverter
     private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelineToStringConverter = MichelineToStringConverter()
         michelineToCompactStringConverter = MichelineToCompactStringConverter()
-
-        every { dependencyRegistry.michelineToStringConverter } returns michelineToStringConverter
-        every { dependencyRegistry.michelineToCompactStringConverter } returns michelineToCompactStringConverter
     }
 
     @After
@@ -51,7 +44,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toExpression())
+            assertEquals(it.first, it.second.toExpression(tezos))
             assertEquals(it.first, it.second.toExpression(michelineToStringConverter))
         }
     }
@@ -66,7 +59,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToCompactStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toCompactExpression())
+            assertEquals(it.first, it.second.toCompactExpression(tezos))
             assertEquals(it.first, it.second.toCompactExpression(michelineToCompactStringConverter))
         }
     }
@@ -120,7 +113,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toExpression())
+            assertEquals(it.first, it.second.toExpression(tezos))
             assertEquals(it.first, it.second.toExpression(michelineToStringConverter))
         }
     }
@@ -214,7 +207,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToCompactStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toCompactExpression())
+            assertEquals(it.first, it.second.toCompactExpression(tezos))
         }
     }
 
@@ -272,7 +265,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toExpression())
+            assertEquals(it.first, it.second.toExpression(tezos))
             assertEquals(it.first, it.second.toExpression(michelineToStringConverter))
         }
     }
@@ -336,7 +329,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToCompactStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toCompactExpression())
+            assertEquals(it.first, it.second.toCompactExpression(tezos))
         }
     }
 }

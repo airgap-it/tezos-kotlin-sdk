@@ -15,7 +15,7 @@ public data class RpcOperation(
     public val hash: @Contextual OperationHash,
     public val branch: @Contextual BlockHash,
     public val contents: List<RpcOperationContent>,
-    public val signature: @Contextual SignatureEncoded?,
+    public val signature: @Contextual Signature?,
 )
 
 // -- RpcApplicableOperation --
@@ -25,7 +25,7 @@ public data class RpcApplicableOperation(
     public val protocol: @Contextual ProtocolHash,
     public val branch: @Contextual BlockHash,
     public val contents: List<RpcOperationContent>,
-    public val signature: @Contextual SignatureEncoded,
+    public val signature: @Contextual Signature,
 )
 
 // -- RpcAppliedOperation --
@@ -33,7 +33,7 @@ public data class RpcApplicableOperation(
 @Serializable
 public data class RpcAppliedOperation(
     public val contents: List<RpcOperationContent>,
-    public val signature: @Contextual SignatureEncoded? = null,
+    public val signature: @Contextual Signature? = null,
 )
 
 // -- RpcInjectableOperation --
@@ -51,5 +51,5 @@ public data class RpcRunnableOperation(
     @SerialName("chain_id") public val chainId: @Contextual ChainId,
     public val branch: @Contextual BlockHash,
     public val contents: List<RpcOperationContent>,
-    public val signature: @Contextual SignatureEncoded,
+    public val signature: @Contextual Signature,
 )

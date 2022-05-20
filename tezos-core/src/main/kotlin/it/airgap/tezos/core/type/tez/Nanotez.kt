@@ -1,11 +1,14 @@
 package it.airgap.tezos.core.type.tez
 
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.Number
 import it.airgap.tezos.core.internal.utils.toBigInt
 
 @JvmInline
-public value class Nanotez(public val bigInt: BigInt) : Number<Nanotez> {
+public value class Nanotez @InternalTezosSdkApi public constructor(
+    @InternalTezosSdkApi public val bigInt: BigInt
+) : Number<Nanotez> {
 
     public val value: String
         get() = bigInt.toString(10)
@@ -15,19 +18,29 @@ public value class Nanotez(public val bigInt: BigInt) : Number<Nanotez> {
     public constructor(value: UInt) : this(value.toBigInt())
     public constructor(value: ULong) : this(value.toBigInt())
 
+    @InternalTezosSdkApi
     override fun Byte.toSelf(): Nanotez = Nanotez(toBigInt())
+
+    @InternalTezosSdkApi
     override fun Short.toSelf(): Nanotez = Nanotez(toBigInt())
+
+    @InternalTezosSdkApi
     override fun Int.toSelf(): Nanotez = Nanotez(toBigInt())
+
+    @InternalTezosSdkApi
     override fun Long.toSelf(): Nanotez = Nanotez(toBigInt())
 
     // -- logical operations --
 
+    @InternalTezosSdkApi
     public infix fun and(other: BigInt): Nanotez = Nanotez(bigInt and other)
     override fun and(other: Nanotez): Nanotez = Nanotez(bigInt and other.bigInt)
 
+    @InternalTezosSdkApi
     public infix fun or(other: BigInt): Nanotez = Nanotez(bigInt or other)
     override fun or(other: Nanotez): Nanotez = Nanotez(bigInt or other.bigInt)
 
+    @InternalTezosSdkApi
     public infix fun xor(other: BigInt): Nanotez = Nanotez(bigInt xor other)
     override fun xor(other: Nanotez): Nanotez = Nanotez(bigInt xor other.bigInt)
 
@@ -38,21 +51,27 @@ public value class Nanotez(public val bigInt: BigInt) : Number<Nanotez> {
 
     // -- arithmetic operations --
 
+    @InternalTezosSdkApi
     public operator fun plus(other: BigInt): Nanotez = Nanotez(bigInt + other)
     override fun plus(other: Nanotez): Nanotez = Nanotez(bigInt + other.bigInt)
 
+    @InternalTezosSdkApi
     public operator fun minus(other: BigInt): Nanotez = Nanotez(bigInt - other)
     override fun minus(other: Nanotez): Nanotez = Nanotez(bigInt - other.bigInt)
 
+    @InternalTezosSdkApi
     public operator fun times(other: BigInt): Nanotez = Nanotez(bigInt * other)
     override fun times(other: Nanotez): Nanotez = Nanotez(bigInt * other.bigInt)
 
+    @InternalTezosSdkApi
     public operator fun div(other: BigInt): Nanotez = Nanotez(bigInt / other)
     override fun div(other: Nanotez): Nanotez = Nanotez(bigInt / other.bigInt)
 
+    @InternalTezosSdkApi
     public fun div(other: BigInt, roundingMode: Number.RoundingMode): Nanotez = Nanotez(bigInt.div(other, roundingMode))
     override fun div(other: Nanotez, roundingMode: Number.RoundingMode): Nanotez = Nanotez(bigInt.div(other.bigInt, roundingMode))
 
+    @InternalTezosSdkApi
     public operator fun rem(other: BigInt): Nanotez = Nanotez(bigInt % other)
     override fun rem(other: Nanotez): Nanotez = Nanotez(bigInt % other.bigInt)
 

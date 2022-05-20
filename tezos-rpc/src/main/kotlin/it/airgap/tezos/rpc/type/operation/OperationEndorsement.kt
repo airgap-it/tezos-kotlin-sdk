@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.type.operation
 
 import it.airgap.tezos.core.type.encoded.BlockHash
-import it.airgap.tezos.core.type.encoded.SignatureEncoded
+import it.airgap.tezos.core.type.encoded.Signature
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 public data class RpcInlinedEndorsement(
     public val branch: @Contextual BlockHash,
     public val operations: RpcOperationContent.Endorsement,
-    public val signature: @Contextual SignatureEncoded,
+    public val signature: @Contextual Signature,
 )
 
 // -- RpcInlinedPreendorsement --
@@ -20,5 +20,5 @@ public data class RpcInlinedEndorsement(
 public data class RpcInlinedPreendorsement(
     public val branch: @Contextual BlockHash,
     public val operations: RpcOperationContent.Preendorsement,
-    public val signature: @Contextual SignatureEncoded,
+    public val signature: @Contextual Signature,
 )

@@ -2,10 +2,11 @@ package it.airgap.tezos.core.internal.base58
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.internal.utils.splitAt
 
 @InternalTezosSdkApi
-public class Base58Check(private val base58: Base58, private val crypto: Crypto) {
+public class Base58Check internal constructor(private val base58: Base58, private val crypto: Crypto) {
 
     public fun encode(bytes: ByteArray): String {
         val checksum = createChecksum(bytes)
@@ -27,5 +28,5 @@ public class Base58Check(private val base58: Base58, private val crypto: Crypto)
         return hash.sliceArray(0 until 4)
     }
 
-    private fun failWithInvalidChecksum(): Nothing = throw IllegalArgumentException("Base58Check checksum is invalid")
+    private fun failWithInvalidChecksum(): Nothing = failWithIllegalArgument("Base58Check checksum is invalid")
 }

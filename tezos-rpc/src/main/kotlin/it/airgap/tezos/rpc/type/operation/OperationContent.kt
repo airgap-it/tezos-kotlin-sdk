@@ -148,7 +148,7 @@ public sealed class RpcOperationContent {
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
-        public val publicKey: @Contextual PublicKeyEncoded,
+        public val publicKey: @Contextual PublicKey,
         public val metadata: RpcOperationMetadata.Reveal? = null,
     ) : RpcOperationContent() {
         public companion object {

@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.active.block
 
 import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.PublicKeyHashEncoded
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.http.HttpClient
@@ -172,10 +172,10 @@ private class BlockContextContractsContractStorageNormalizedClient(parentUrl: St
 private class BlockContextDelegatesClient(parentUrl: String, private val httpClient: HttpClient) : Block.Context.Delegates {
     private val baseUrl: String = /* ../<block_id>/context/delegates */ "$parentUrl/delegates"
 
-    override operator fun invoke(publicKeyHash: PublicKeyHashEncoded): Block.Context.Delegates.Delegate = BlockContextDelegatesDelegateClient(baseUrl, publicKeyHash, httpClient)
+    override operator fun invoke(publicKeyHash: PublicKeyHash): Block.Context.Delegates.Delegate = BlockContextDelegatesDelegateClient(baseUrl, publicKeyHash, httpClient)
 }
 
-private class BlockContextDelegatesDelegateClient(parentUrl: String, publicKeyHash: PublicKeyHashEncoded, private val httpClient: HttpClient) : Block.Context.Delegates.Delegate {
+private class BlockContextDelegatesDelegateClient(parentUrl: String, publicKeyHash: PublicKeyHash, private val httpClient: HttpClient) : Block.Context.Delegates.Delegate {
     private val baseUrl: String = /* ../<block_id>/context/delegates/<pkh> */ "$parentUrl/${publicKeyHash.base58}"
 
     override suspend fun get(headers: List<HttpHeader>): GetDelegateDetailsResponse = httpClient.get(baseUrl, "/", headers)

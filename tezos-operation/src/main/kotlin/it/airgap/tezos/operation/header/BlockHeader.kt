@@ -21,7 +21,7 @@ public interface ProtocolBlockHeader {
     public val proofOfWorkNonce: HexString
     public val seedNonceHash: NonceHash?
     public val liquidityBakingEscapeVote: Boolean
-    public val signature: SignatureEncoded
+    public val signature: Signature
 }
 
 public data class BlockHeader(
@@ -38,5 +38,5 @@ public data class BlockHeader(
     override val proofOfWorkNonce: HexString,
     override val seedNonceHash: NonceHash?,
     override val liquidityBakingEscapeVote: Boolean,
-    override val signature: SignatureEncoded,
+    override val signature: Signature,
 ) : ShellBlockHeader, ProtocolBlockHeader

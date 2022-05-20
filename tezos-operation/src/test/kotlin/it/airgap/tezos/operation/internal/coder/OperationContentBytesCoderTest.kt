@@ -1,23 +1,16 @@
 package it.airgap.tezos.operation.internal.coder
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.core.internal.base58.Base58
-import it.airgap.tezos.core.internal.base58.Base58Check
-import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.crypto.Crypto
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.zarith.ZarithNatural
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
-import it.airgap.tezos.michelson.internal.converter.TagToMichelsonPrimConverter
+import it.airgap.tezos.core.type.number.TezosNatural
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
@@ -26,61 +19,36 @@ import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
-import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
+import it.airgap.tezos.operation.internal.operationModule
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.security.MessageDigest
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class OperationContentBytesCoderTest {
 
-    @MockK
-    private lateinit var crypto: Crypto
-
+    private lateinit var tezos: Tezos
     private lateinit var operationContentBytesCoder: OperationContentBytesCoder
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        every { crypto.hashSha256(any<ByteArray>()) } answers {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digest(firstArg())
-        }
-
-        val base58Check = Base58Check(Base58(), crypto)
-
-        val encodedBytesCoder = EncodedBytesCoder(base58Check)
-        val implicitAddressBytesCoder = ImplicitAddressBytesCoder(encodedBytesCoder)
-        val publicKeyBytesCoder = PublicKeyBytesCoder(encodedBytesCoder)
-        val signatureBytesCoder = SignatureBytesCoder(encodedBytesCoder)
-        val addressBytesCoder = AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder)
-        val zarithNaturalBytesCoder = ZarithNaturalBytesCoder()
-        val mutezBytesCoder = MutezBytesCoder(zarithNaturalBytesCoder)
-        val michelineBytesCoder = MichelineBytesCoder(
-            StringToMichelsonPrimConverter(),
-            TagToMichelsonPrimConverter(),
-            MichelineToCompactStringConverter(),
-            ZarithIntegerBytesCoder(zarithNaturalBytesCoder),
-        )
-
-        val timestampBigIntCoder = TimestampBigIntCoder()
-        val tagToOperationContentKindConverter = TagToOperationContentKindConverter()
-
+        tezos = mockTezos()
         operationContentBytesCoder = OperationContentBytesCoder(
-            encodedBytesCoder,
-            addressBytesCoder,
-            publicKeyBytesCoder,
-            implicitAddressBytesCoder,
-            signatureBytesCoder,
-            zarithNaturalBytesCoder,
-            mutezBytesCoder,
-            michelineBytesCoder,
-            timestampBigIntCoder,
-            tagToOperationContentKindConverter,
+            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
+            tezos.coreModule.dependencyRegistry.addressBytesCoder,
+            tezos.coreModule.dependencyRegistry.publicKeyBytesCoder,
+            tezos.coreModule.dependencyRegistry.implicitAddressBytesCoder,
+            tezos.coreModule.dependencyRegistry.signatureBytesCoder,
+            tezos.coreModule.dependencyRegistry.tezosNaturalBytesCoder,
+            tezos.coreModule.dependencyRegistry.mutezBytesCoder,
+            tezos.michelsonModule.dependencyRegistry.michelineBytesCoder,
+            tezos.coreModule.dependencyRegistry.timestampBigIntCoder,
+            tezos.operationModule.dependencyRegistry.tagToOperationContentKindConverter,
         )
     }
 
@@ -278,26 +246,26 @@ class OperationContentBytesCoderTest {
             OperationContent.Reveal(
                 Ed25519PublicKeyHash("tz1SZ2CmbQB7MMXgcMSmyyVXpya1rkb9UGUE"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Ed25519PublicKey("edpkuaARNJPQygG82X1xed6Z2kDutT8XjL3Fmv1XPBbca1uARirj55"),
             ) to "6b004bd66485632a18d61068fc940772dec8add5ff93fba3089a01fbb801e88a02007a79d89acb296dd9ec2be8fba817702dc41adf19e28bb250a337f840eb263c69".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
             ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c800".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Default, MichelineSequence()),
@@ -305,9 +273,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Root, MichelineSequence()),
@@ -315,9 +283,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Do, MichelineSequence()),
@@ -325,9 +293,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.SetDelegate, MichelineSequence()),
@@ -335,9 +303,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.RemoveDelegate, MichelineSequence()),
@@ -345,9 +313,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
                 Parameters(Entrypoint.Named("named"), MichelineSequence()),
@@ -355,9 +323,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Origination(
                 Ed25519PublicKeyHash("tz1LdF7qHCJg8Efa6Cx4LZrRPkvbh61H8tZq"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 null,
                 Script(MichelineSequence(), MichelineSequence())
@@ -365,9 +333,9 @@ class OperationContentBytesCoderTest {
             OperationContent.Origination(
                 Ed25519PublicKeyHash("tz1LdF7qHCJg8Efa6Cx4LZrRPkvbh61H8tZq"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Mutez("763243"),
                 Ed25519PublicKeyHash("tz1RY8er4ybXszZBbhtQDrYhA5AYY3VQXiKn"),
                 Script(MichelineSequence(), MichelineSequence())
@@ -375,40 +343,40 @@ class OperationContentBytesCoderTest {
             OperationContent.Delegation(
                 Ed25519PublicKeyHash("tz1QVAraV1JDRsPikcqJVE4VccvW7vDWCJHy"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
             ) to "6e00352bb30ffdb72d101083a4fc5cd156f007705f5dfba3089a01fbb801e88a0200".asHexString().toByteArray(),
             OperationContent.Delegation(
                 Ed25519PublicKeyHash("tz1QVAraV1JDRsPikcqJVE4VccvW7vDWCJHy"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 Ed25519PublicKeyHash("tz1dStZpfk5bWsvYvuktDJgDEbpuqDc7ipvi"),
             ) to "6e00352bb30ffdb72d101083a4fc5cd156f007705f5dfba3089a01fbb801e88a02ff00c356e7cb9943f6ef4168bea7915c7f88152e6c37".asHexString().toByteArray(),
             OperationContent.RegisterGlobalConstant(
                 Ed25519PublicKeyHash("tz1brHnNaHcpxqHDhqwmAXDq1i4F2A4Xaepz"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
                 MichelineSequence(),
             ) to "6f00b1d399df432bbbdbd45cb6b454699ea96d77dabffba3089a01fbb801e88a02000000050200000000".asHexString().toByteArray(),
             OperationContent.SetDepositsLimit(
                 Ed25519PublicKeyHash("tz1gxabEuUaCKk15qUKnhASJJoXhm9A7DVLM"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
             ) to "7000e9dcc1a4a82c49aeec327b15e9ed457dc22a1ebcfba3089a01fbb801e88a0200".asHexString().toByteArray(),
             OperationContent.SetDepositsLimit(
                 Ed25519PublicKeyHash("tz1gxabEuUaCKk15qUKnhASJJoXhm9A7DVLM"),
                 Mutez("135675"),
-                ZarithNatural("154"),
-                ZarithNatural("23675"),
-                ZarithNatural("34152"),
-                ZarithNatural("634"),
+                TezosNatural("154"),
+                TezosNatural("23675"),
+                TezosNatural("34152"),
+                TezosNatural("634"),
             ) to "7000e9dcc1a4a82c49aeec327b15e9ed457dc22a1ebcfba3089a01fbb801e88a02fffa04".asHexString().toByteArray(),
         )
 

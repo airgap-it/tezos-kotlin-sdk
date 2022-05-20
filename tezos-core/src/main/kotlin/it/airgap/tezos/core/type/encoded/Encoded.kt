@@ -10,7 +10,7 @@ public sealed interface Encoded {
     public val base58: String
 
     @InternalTezosSdkApi
-    public val meta: MetaEncoded<*>
+    public val meta: MetaEncoded<*, *>
 
     public companion object {}
 }
@@ -18,19 +18,19 @@ public sealed interface Encoded {
 // -- MetaEncoded --
 
 @InternalTezosSdkApi
-public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
-    public val kind: Kind<Self>
-    public val encoded: Encoded
+public sealed interface MetaEncoded<out Self : MetaEncoded<Self, E>, out E : Encoded> {
+    public val kind: Kind<Self, E>
+    public val encoded: E
 
-    public sealed interface Kind<out E : MetaEncoded<E>> {
+    public sealed interface Kind<out M : MetaEncoded<M, E>, out E : Encoded> {
         public val base58Prefix: String
         public val base58Bytes: ByteArray
         public val base58Length: Int
 
         public val bytesLength: Int
 
-        public fun createValue(base58: String): E = createValueOrNull(base58) ?: failWithIllegalArgument("Invalid Base58 encoded data.")
-        public fun createValueOrNull(base58: String): E?
+        public fun createValue(base58: String): M = createValueOrNull(base58) ?: failWithIllegalArgument("Invalid Base58 encoded data.")
+        public fun createValueOrNull(base58: String): M?
 
         public operator fun plus(string: String): String = base58Prefix + string
         public operator fun plus(bytes: ByteArray): ByteArray = base58Bytes + bytes
@@ -40,7 +40,7 @@ public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
         public fun isValid(bytes: List<Byte>): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size >= bytesLength + base58Bytes.size)
 
         public companion object {
-            public val values: List<Kind<*>>
+            public val values: List<Kind<*, *>>
                 get() = listOf(
                     BlockHash, /* B(51) */
                     BlockMetadataHash, /* bm(52) */
@@ -97,9 +97,9 @@ public sealed interface MetaEncoded<out Self : MetaEncoded<Self>> {
                     ScriptExprHash, /* expr(54) */
                 )
 
-            public fun recognize(string: String): Kind<*>? = values.find { it.isValid(string) }
-            public fun recognize(bytes: ByteArray): Kind<*>? = values.find { it.isValid(bytes) }
-            public fun recognize(bytes: List<Byte>): Kind<*>? = values.find { it.isValid(bytes) }
+            public fun recognize(string: String): Kind<*, *>? = values.find { it.isValid(string) }
+            public fun recognize(bytes: ByteArray): Kind<*, *>? = values.find { it.isValid(bytes) }
+            public fun recognize(bytes: List<Byte>): Kind<*, *>? = values.find { it.isValid(bytes) }
         }
     }
 }

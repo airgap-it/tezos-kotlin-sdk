@@ -1,10 +1,10 @@
 package it.airgap.tezos.rpc.active.block
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import it.airgap.tezos.core.internal.converter.*
-import it.airgap.tezos.core.internal.di.DependencyRegistry
-import it.airgap.tezos.core.internal.di.core
+import io.mockk.unmockkAll
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
@@ -18,7 +18,7 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
@@ -31,7 +31,7 @@ import it.airgap.tezos.rpc.type.sapling.RpcSaplingCiphertext
 import it.airgap.tezos.rpc.type.sapling.RpcSaplingStateDiff
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import mockTezosSdk
+import mockTezos
 import normalizeWith
 import org.junit.After
 import org.junit.Before
@@ -41,13 +41,11 @@ import kotlin.test.assertEquals
 class BlockClientTest {
 
     @MockK
-    private lateinit var dependencyRegistry: DependencyRegistry
-
-    @MockK
     private lateinit var httpClientProvider : HttpClientProvider
 
     private lateinit var json: Json
     private lateinit var httpClient: HttpClient
+
     private lateinit var blockClient: BlockClient
 
     private val nodeUrl = "https://example.com/chains/chainId/blocks"
@@ -56,18 +54,12 @@ class BlockClientTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        every { dependencyRegistry.core().stringToAddressConverter } returns StringToAddressConverter()
-        every { dependencyRegistry.core().stringToImplicitAddressConverter } returns StringToImplicitAddressConverter()
-        every { dependencyRegistry.core().stringToPublicKeyConverter } returns StringToPublicKeyConverter()
-        every { dependencyRegistry.core().stringToPublicKeyHashConverter } returns StringToPublicKeyHashConverter()
-        every { dependencyRegistry.core().stringToSignatureConverter } returns StringToSignatureConverter()
+        val tezos = mockTezos(httpClientProvider = httpClientProvider)
 
-        json = Json(from = rpcJson) {
-            prettyPrint = true
-        }
-        httpClient = HttpClient(httpClientProvider, json)
+        json = tezos.rpcModule.dependencyRegistry.json
+        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
+
         blockClient = BlockClient(nodeUrl, blockId, httpClient)
     }
 
@@ -638,7 +630,7 @@ class BlockClientTest {
             assertEquals(expectedResponse, response)
 
             coVerify { httpClient.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, parameters = emptyList(), body = jsonRequest) }
+            coVerify { httpClientProvider.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 

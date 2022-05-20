@@ -11,10 +11,10 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
-import it.airgap.tezos.rpc.internal.serializer.rpcJson
+import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.chain.RpcActiveChain
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -25,7 +25,6 @@ class MonitorClientTest {
     @MockK
     private lateinit var httpClientProvider : HttpClientProvider
 
-    private lateinit var json: Json
     private lateinit var httpClient: HttpClient
     private lateinit var monitorClient: MonitorClient
 
@@ -35,10 +34,9 @@ class MonitorClientTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        json = Json(from = rpcJson) {
-            prettyPrint = true
-        }
-        httpClient = HttpClient(httpClientProvider, json)
+        val tezos = mockTezos(httpClientProvider = httpClientProvider)
+
+        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
         monitorClient = MonitorClient(nodeUrl, httpClient)
     }
 

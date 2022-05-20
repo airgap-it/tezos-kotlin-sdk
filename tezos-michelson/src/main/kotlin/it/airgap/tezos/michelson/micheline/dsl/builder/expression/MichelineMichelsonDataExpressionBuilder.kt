@@ -2,9 +2,11 @@
 
 package it.airgap.tezos.michelson.micheline.dsl.builder.expression
 
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.utils.replaceOrAdd
+import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonData
-import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
+import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelineNodeBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationNoArgsBuilder
@@ -17,7 +19,7 @@ public typealias MichelineMichelsonDataSingleArgBuilder = MichelinePrimitiveAppl
 public typealias MichelineMichelsonDataWithArgsBuilder = MichelinePrimitiveApplicationBuilder<MichelsonData, MichelsonData.Prim>
 
 public class MichelineMichelsonDataKeyValueBuilder internal constructor(
-    michelsonToMichelineConverter: MichelsonToMichelineConverter,
+    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     prim: MichelsonData.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =

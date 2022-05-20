@@ -1,14 +1,12 @@
 package it.airgap.tezos.michelson.micheline.dsl
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -16,19 +14,15 @@ import kotlin.test.assertEquals
 
 class MichelineMichelsonDataDslTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        every { dependencyRegistry.michelsonToMichelineConverter } returns michelsonToMichelineConverter
     }
 
     @After
@@ -40,33 +34,33 @@ class MichelineMichelsonDataDslTest {
     fun `builds Micheline Michelson Data Expression`() {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("Unit") to listOf(
-                micheline { Unit },
+                micheline(tezos) { Unit },
                 micheline(michelsonToMichelineConverter) { Unit },
-                micheline { Unit() },
+                micheline(tezos) { Unit() },
                 micheline(michelsonToMichelineConverter) { Unit() },
-                michelineData { Unit },
+                michelineData(tezos) { Unit },
                 michelineData(michelsonToMichelineConverter) { Unit },
-                michelineData { Unit() },
+                michelineData(tezos) { Unit() },
                 michelineData(michelsonToMichelineConverter) { Unit() },
             ),
             MichelinePrimitiveApplication("True") to listOf(
-                micheline { True },
+                micheline(tezos) { True },
                 micheline(michelsonToMichelineConverter) { True },
-                micheline { True() },
+                micheline(tezos) { True() },
                 micheline(michelsonToMichelineConverter) { True() },
-                michelineData { True },
+                michelineData(tezos) { True },
                 michelineData(michelsonToMichelineConverter) { True },
-                michelineData { True() },
+                michelineData(tezos) { True() },
                 michelineData(michelsonToMichelineConverter) { True() },
             ),
             MichelinePrimitiveApplication("False") to listOf(
-                micheline { False },
+                micheline(tezos) { False },
                 micheline(michelsonToMichelineConverter) { False },
-                micheline { False() },
+                micheline(tezos) { False() },
                 micheline(michelsonToMichelineConverter) { False() },
-                michelineData { False },
+                michelineData(tezos) { False },
                 michelineData(michelsonToMichelineConverter) { False },
-                michelineData { False() },
+                michelineData(tezos) { False() },
                 michelineData(michelsonToMichelineConverter) { False() },
             ),
             MichelinePrimitiveApplication(
@@ -76,7 +70,7 @@ class MichelineMichelsonDataDslTest {
                     MichelinePrimitiveApplication("False"),
                 ),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     Pair {
                         arg { True }
                         arg { False }
@@ -88,7 +82,7 @@ class MichelineMichelsonDataDslTest {
                         arg { False }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Pair {
                         arg { True }
                         arg { False }
@@ -105,7 +99,7 @@ class MichelineMichelsonDataDslTest {
                 "Left",
                 args = listOf(MichelinePrimitiveApplication("True")),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     Left {
                         arg { True }
                     }
@@ -115,7 +109,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                micheline {
+                micheline(tezos) {
                     Left {
                         arg { False }
                         arg { True }
@@ -127,7 +121,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Left {
                         arg { True }
                     }
@@ -137,7 +131,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Left {
                         arg { False }
                         arg { True }
@@ -154,7 +148,7 @@ class MichelineMichelsonDataDslTest {
                 "Right",
                 args = listOf(MichelinePrimitiveApplication("True")),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     Right {
                         arg { True }
                     }
@@ -164,7 +158,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                micheline {
+                micheline(tezos) {
                     Right {
                         arg { False }
                         arg { True }
@@ -176,7 +170,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Right {
                         arg { True }
                     }
@@ -186,7 +180,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Right {
                         arg { False }
                         arg { True }
@@ -203,7 +197,7 @@ class MichelineMichelsonDataDslTest {
                 "Some",
                 args = listOf(MichelinePrimitiveApplication("True")),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     Some {
                         arg { True }
                     }
@@ -213,7 +207,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                micheline {
+                micheline(tezos) {
                     Some {
                         arg { False }
                         arg { True }
@@ -225,7 +219,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Some {
                         arg { True }
                     }
@@ -235,7 +229,7 @@ class MichelineMichelsonDataDslTest {
                         arg { True }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Some {
                         arg { False }
                         arg { True }
@@ -249,13 +243,13 @@ class MichelineMichelsonDataDslTest {
                 },
             ),
             MichelinePrimitiveApplication("None") to listOf(
-                micheline { None },
+                micheline(tezos) { None },
                 micheline(michelsonToMichelineConverter) { None },
-                micheline { None() },
+                micheline(tezos) { None() },
                 micheline(michelsonToMichelineConverter) { None() },
-                michelineData { None },
+                michelineData(tezos) { None },
                 michelineData(michelsonToMichelineConverter) { None },
-                michelineData { None() },
+                michelineData(tezos) { None() },
                 michelineData(michelsonToMichelineConverter) { None() },
             ),
             MichelinePrimitiveApplication(
@@ -265,7 +259,7 @@ class MichelineMichelsonDataDslTest {
                     MichelinePrimitiveApplication("False"),
                 )
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     Elt {
                         key { True }
                         value { False }
@@ -277,7 +271,7 @@ class MichelineMichelsonDataDslTest {
                         value { False }
                     }
                 },
-                micheline {
+                micheline(tezos) {
                     Elt {
                         key { Unit }
                         key { True }
@@ -293,7 +287,7 @@ class MichelineMichelsonDataDslTest {
                         value { False }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Elt {
                         key { True }
                         value { False }
@@ -305,7 +299,7 @@ class MichelineMichelsonDataDslTest {
                         value { False }
                     }
                 },
-                michelineData {
+                michelineData(tezos) {
                     Elt {
                         key { Unit }
                         key { True }

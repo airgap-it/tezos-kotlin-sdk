@@ -277,228 +277,228 @@ public interface ActiveSimplifiedRpc {
     public suspend fun getDelegateDetails(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDetailsResponse
     public suspend fun getDelegateDetails(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDetailsResponse = getDelegateDetails(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getDelegateDetails(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDetailsResponse = getDelegateDetails(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getCurrentFrozenDeposits(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateCurrentFrozenDepositsResponse
     public suspend fun getCurrentFrozenDeposits(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateCurrentFrozenDepositsResponse = getCurrentFrozenDeposits(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getCurrentFrozenDeposits(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateCurrentFrozenDepositsResponse = getCurrentFrozenDeposits(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun isDeactivated(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDeactivatedStatusResponse
     public suspend fun isDeactivated(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDeactivatedStatusResponse = isDeactivated(chainId, blockId.toString(), delegateId, headers)
     public suspend fun isDeactivated(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDeactivatedStatusResponse = isDeactivated(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getDelegatedBalance(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedBalanceResponse
     public suspend fun getDelegatedBalance(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedBalanceResponse = getDelegatedBalance(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getDelegatedBalance(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedBalanceResponse = getDelegatedBalance(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getDelegatedContracts(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedContractsResponse
     public suspend fun getDelegatedContracts(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedContractsResponse = getDelegatedContracts(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getDelegatedContracts(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateDelegatedContractsResponse = getDelegatedContracts(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getFrozenDeposits(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsResponse
     public suspend fun getFrozenDeposits(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsResponse = getFrozenDeposits(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getFrozenDeposits(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsResponse = getFrozenDeposits(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getFrozenDepositsLimit(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsLimitResponse
     public suspend fun getFrozenDepositsLimit(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsLimitResponse = getFrozenDepositsLimit(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getFrozenDepositsLimit(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFrozenDepositsLimitResponse = getFrozenDepositsLimit(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getFullBalance(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFullBalanceResponse
     public suspend fun getFullBalance(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFullBalanceResponse = getFullBalance(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getFullBalance(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateFullBalanceResponse = getFullBalance(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getGracePeriod(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateGracePeriodResponse
     public suspend fun getGracePeriod(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateGracePeriodResponse = getGracePeriod(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getGracePeriod(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateGracePeriodResponse = getGracePeriod(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getParticipation(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateParticipationResponse
     public suspend fun getParticipation(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateParticipationResponse = getParticipation(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getParticipation(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateParticipationResponse = getParticipation(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getStakingBalance(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateStakingBalanceResponse
     public suspend fun getStakingBalance(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateStakingBalanceResponse = getStakingBalance(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getStakingBalance(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateStakingBalanceResponse = getStakingBalance(chainId, blockId.base58, delegateId, headers)
 
     public suspend fun getVotingPower(
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateVotingPowerResponse
     public suspend fun getVotingPower(
         chainId: String,
         blockId: Int,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateVotingPowerResponse = getVotingPower(chainId, blockId.toString(), delegateId, headers)
     public suspend fun getVotingPower(
         chainId: String,
         blockId: BlockHash,
-        delegateId: PublicKeyHashEncoded,
+        delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
     ): GetDelegateVotingPowerResponse = getVotingPower(chainId, blockId.base58, delegateId, headers)
 
