@@ -51,15 +51,15 @@ public sealed interface Entrypoint {
         }
     }
 
-    public companion object {
-        public fun fromString(value: String): Entrypoint =
-            when (value) {
-                Default.value -> Default
-                Root.value -> Root
-                Do.value -> Do
-                SetDelegate.value -> SetDelegate
-                RemoveDelegate.value -> RemoveDelegate
-                else -> Named(value)
-            }
-    }
+    public companion object {}
 }
+
+public fun Entrypoint(value: String): Entrypoint =
+    when (value) {
+        Entrypoint.Default.value -> Entrypoint.Default
+        Entrypoint.Root.value -> Entrypoint.Root
+        Entrypoint.Do.value -> Entrypoint.Do
+        Entrypoint.SetDelegate.value -> Entrypoint.SetDelegate
+        Entrypoint.RemoveDelegate.value -> Entrypoint.RemoveDelegate
+        else -> Entrypoint.Named(value)
+    }

@@ -93,7 +93,7 @@ class ContractEntrypointTest {
                         amount = Mutez(0U),
                         destination = contractAddress,
                         parameters = Parameters(
-                            Entrypoint.fromString(name),
+                            Entrypoint(name),
                             value,
                         ),
                     )
@@ -136,7 +136,7 @@ class ContractEntrypointTest {
                         amount = Mutez(0U),
                         destination = contractAddress,
                         parameters = Parameters(
-                            Entrypoint.fromString(name),
+                            Entrypoint(name),
                             value,
                         ),
                     )

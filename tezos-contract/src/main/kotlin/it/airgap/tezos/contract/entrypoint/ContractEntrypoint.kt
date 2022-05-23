@@ -63,7 +63,7 @@ public class ContractEntrypoint internal constructor(
                     amount = amount ?: Mutez(0U),
                     destination = contractAddress,
                     parameters = Parameters(
-                        Entrypoint.fromString(name),
+                        Entrypoint(name),
                         parameters,
                     ),
                 ),

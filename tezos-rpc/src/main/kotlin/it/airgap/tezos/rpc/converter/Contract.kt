@@ -20,4 +20,4 @@ public fun Parameters.asRpc(): RpcParameters = RpcParameters(entrypoint.value, v
 
 // -- RpcParameters -> Parameters --
 
-public fun RpcParameters.asParameters(): Parameters = Parameters(Entrypoint.fromString(entrypoint), value)
+public fun RpcParameters.asParameters(): Parameters = Parameters(Entrypoint(entrypoint), value)

@@ -5,14 +5,19 @@ import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
-import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.number.TezosNatural
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.operation.coder.forgeToBytes
+import it.airgap.tezos.operation.coder.forgeToString
+import it.airgap.tezos.operation.coder.unforgeFromBytes
+import it.airgap.tezos.operation.coder.unforgeFromString
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
@@ -61,6 +66,12 @@ class OperationContentBytesCoderTest {
     fun `should encode Operation to bytes`() {
         operationsWithBytes.forEach {
             assertContentEquals(it.second, operationContentBytesCoder.encode(it.first))
+            assertContentEquals(it.second, it.first.forgeToBytes(tezos))
+            assertContentEquals(it.second, it.first.forgeToBytes(operationContentBytesCoder))
+            assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false, tezos))
+            assertEquals(it.second.toHexString().asString(withPrefix = false), it.first.forgeToString(withHexPrefix = false, operationContentBytesCoder))
+            assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true, tezos))
+            assertEquals(it.second.toHexString().asString(withPrefix = true), it.first.forgeToString(withHexPrefix = true, operationContentBytesCoder))
         }
     }
 
@@ -69,6 +80,10 @@ class OperationContentBytesCoderTest {
         operationsWithBytes.forEach {
             assertEquals(it.first, operationContentBytesCoder.decode(it.second))
             assertEquals(it.first, operationContentBytesCoder.decodeConsuming(it.second.toMutableList()))
+            assertEquals(it.first, OperationContent.unforgeFromBytes(it.second, tezos))
+            assertEquals(it.first, OperationContent.unforgeFromBytes(it.second, operationContentBytesCoder))
+            assertEquals(it.first, OperationContent.unforgeFromString(it.second.toHexString().asString(), tezos))
+            assertEquals(it.first, OperationContent.unforgeFromString(it.second.toHexString().asString(), operationContentBytesCoder))
         }
     }
 
@@ -77,6 +92,10 @@ class OperationContentBytesCoderTest {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decodeConsuming(it.toMutableList()) }
+            assertFailsWith<IllegalArgumentException> { OperationContent.unforgeFromBytes(it, tezos) }
+            assertFailsWith<IllegalArgumentException> { OperationContent.unforgeFromBytes(it, operationContentBytesCoder) }
+            assertFailsWith<IllegalArgumentException> { OperationContent.unforgeFromString(it.toHexString().asString(), tezos) }
+            assertFailsWith<IllegalArgumentException> { OperationContent.unforgeFromString(it.toHexString().asString(), operationContentBytesCoder) }
         }
     }
 
