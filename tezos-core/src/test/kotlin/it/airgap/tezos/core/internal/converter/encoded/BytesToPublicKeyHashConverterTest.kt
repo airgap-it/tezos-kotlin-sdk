@@ -4,11 +4,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
-import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
 import it.airgap.tezos.core.type.encoded.Secp256K1PublicKeyHash
 import mockTezos
 import org.junit.After
@@ -17,17 +16,17 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class BytesToImplicitAddressConverterTest {
+class BytesToPublicKeyHashConverterTest {
 
     private lateinit var tezos: Tezos
-    private lateinit var bytesToImplicitAddressConverter: BytesToImplicitAddressConverter
+    private lateinit var bytesToPublicKeyHashConverter: BytesToPublicKeyHashConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
         tezos = mockTezos()
-        bytesToImplicitAddressConverter = BytesToImplicitAddressConverter(tezos.coreModule.dependencyRegistry.bytesToPublicKeyHashConverter)
+        bytesToPublicKeyHashConverter = BytesToPublicKeyHashConverter(tezos.dependencyRegistry.base58Check)
     }
 
     @After
@@ -38,22 +37,22 @@ class BytesToImplicitAddressConverterTest {
     @Test
     fun `should convert bytes to ImplicitAddress`() {
         addressesWithBytes.forEach {
-            assertEquals(it.first, bytesToImplicitAddressConverter.convert(it.second))
-            assertEquals(it.first, ImplicitAddress.fromBytes(it.second, tezos))
-            assertEquals(it.first, ImplicitAddress.fromBytes(it.second, bytesToImplicitAddressConverter))
+            assertEquals(it.first, bytesToPublicKeyHashConverter.convert(it.second))
+            assertEquals(it.first, PublicKeyHash.fromBytes(it.second, tezos))
+            assertEquals(it.first, PublicKeyHash.fromBytes(it.second, bytesToPublicKeyHashConverter))
         }
     }
 
     @Test
     fun `should fail to convert invalid bytes to ImplicitAddress`() {
         invalidBytes.forEach {
-            assertFailsWith<IllegalArgumentException> { bytesToImplicitAddressConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { ImplicitAddress.fromBytes(it, tezos) }
-            assertFailsWith<IllegalArgumentException> { ImplicitAddress.fromBytes(it, bytesToImplicitAddressConverter) }
+            assertFailsWith<IllegalArgumentException> { bytesToPublicKeyHashConverter.convert(it) }
+            assertFailsWith<IllegalArgumentException> { PublicKeyHash.fromBytes(it, tezos) }
+            assertFailsWith<IllegalArgumentException> { PublicKeyHash.fromBytes(it, bytesToPublicKeyHashConverter) }
         }
     }
 
-    private val addressesWithBytes: List<Pair<ImplicitAddress, ByteArray>>
+    private val addressesWithBytes: List<Pair<PublicKeyHash, ByteArray>>
         get() = listOf(
             Ed25519PublicKeyHash("tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk") to "06a19f8b570c01097efde52239e836dc76c790bb9d38e5".asHexString().toByteArray(),
             Ed25519PublicKeyHash("tz1YLntubWUxHSQHiB8YnUspotACx6LeCZxk") to "8b570c01097efde52239e836dc76c790bb9d38e5".asHexString().toByteArray(),

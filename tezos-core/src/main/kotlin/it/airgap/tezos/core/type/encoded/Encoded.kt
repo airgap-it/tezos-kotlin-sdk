@@ -32,9 +32,6 @@ public sealed interface MetaEncoded<out Self : MetaEncoded<Self, E>, out E : Enc
         public fun createValue(base58: String): M = createValueOrNull(base58) ?: failWithIllegalArgument("Invalid Base58 encoded data.")
         public fun createValueOrNull(base58: String): M?
 
-        public operator fun plus(string: String): String = base58Prefix + string
-        public operator fun plus(bytes: ByteArray): ByteArray = base58Bytes + bytes
-
         public fun isValid(string: String): Boolean = string.startsWith(base58Prefix) && string.length == base58Length
         public fun isValid(bytes: ByteArray): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size == bytesLength + base58Bytes.size)
         public fun isValid(bytes: List<Byte>): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size >= bytesLength + base58Bytes.size)

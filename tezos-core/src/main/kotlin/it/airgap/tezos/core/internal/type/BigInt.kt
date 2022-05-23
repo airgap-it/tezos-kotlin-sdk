@@ -3,7 +3,9 @@ package it.airgap.tezos.core.internal.type
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.core.type.HexString
+import java.math.BigDecimal
 import java.math.BigInteger
+import java.math.RoundingMode
 
 // For easy multiplatform conversion
 @InternalTezosSdkApi
@@ -94,18 +96,18 @@ internal class JvmBigInt(private val value: BigInteger) : BigInt {
 
     fun div(other: JvmBigInt, roundingMode: Number.RoundingMode): BigInt = div(other.value, roundingMode)
     fun div(other: BigInteger, roundingMode: Number.RoundingMode): BigInt {
-        val isDivisible = (value % other).toInt() == 0
-        val isPositive = (value >= BigInteger.ZERO && other > BigInteger.ZERO) || (value < BigInteger.ZERO && other < BigInteger.ZERO)
-        val result = JvmBigInt(value / other)
+        val decimal = BigDecimal(value)
+        val otherDecimal = BigDecimal(other)
 
-        return if (isDivisible) result
-        else when {
-            isPositive && roundingMode.oneOf(Number.RoundingMode.Ceiling, Number.RoundingMode.Up) -> result + 1
-            isPositive && roundingMode.oneOf(Number.RoundingMode.Floor, Number.RoundingMode.Down) -> result
-            !isPositive && roundingMode.oneOf(Number.RoundingMode.Ceiling, Number.RoundingMode.Down) -> result
-            !isPositive && roundingMode.oneOf(Number.RoundingMode.Floor, Number.RoundingMode.Up) -> result - 1
-            else -> result
+        val decimalRoundingMode = when (roundingMode) {
+            Number.RoundingMode.Up -> RoundingMode.UP
+            Number.RoundingMode.Down -> RoundingMode.DOWN
+            Number.RoundingMode.Ceiling -> RoundingMode.CEILING
+            Number.RoundingMode.Floor -> RoundingMode.FLOOR
         }
+
+        val result = decimal.divide(otherDecimal, decimalRoundingMode)
+        return JvmBigInt(result.toBigInteger())
     }
     override fun div(other: BigInt, roundingMode: Number.RoundingMode): BigInt =
         if (other is JvmBigInt) div(other, roundingMode)

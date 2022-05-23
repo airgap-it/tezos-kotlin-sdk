@@ -136,7 +136,5 @@ public interface Number<Self : Number<Self>> : Comparable<Self> {
         Down,
         Ceiling,
         Floor;
-
-        internal fun oneOf(vararg modes: RoundingMode): Boolean = modes.any { this == it }
     }
 }

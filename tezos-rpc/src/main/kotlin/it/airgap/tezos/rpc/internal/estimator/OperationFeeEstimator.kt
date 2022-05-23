@@ -63,7 +63,7 @@ internal class OperationFeeEstimator(
         )
     }
 
-    private fun OperationContent.apply(fee: Mutez = Mutez(BigInt.zero), limits: OperationLimits = OperationLimits.zero): OperationContent =
+    private fun OperationContent.apply(fee: Mutez = Mutez(0U), limits: OperationLimits = OperationLimits.zero): OperationContent =
         when (this) {
             is OperationContent.Reveal -> copy(
                 fee = fee,
@@ -149,10 +149,10 @@ internal class OperationFeeEstimator(
         }
 
     private fun fee(operationSize: Int, limits: OperationLimits): Mutez {
-        val gasFee = Nanotez(limits.gasBigInt * FEE_PER_GAS_UNIT_NANOTEZ.toInt()).toMutez()
-        val storageFee = Nanotez(operationSize.toUInt() * FEE_PER_STORAGE_BYTE_NANOTEZ).toMutez()
+        val gasFee = Nanotez(FEE_PER_GAS_UNIT_NANOTEZ) * limits.gasBigInt
+        val storageFee = Nanotez(operationSize.toUInt()) * Nanotez(FEE_PER_STORAGE_BYTE_NANOTEZ)
 
-        return Mutez(FEE_BASE_MUTEZ) + gasFee + storageFee + Mutez(FEE_SAFETY_MARGIN_MUTEZ)
+        return Mutez(FEE_BASE_MUTEZ) + gasFee.toMutez() + storageFee.toMutez() + Mutez(FEE_SAFETY_MARGIN_MUTEZ)
     }
 
     companion object {

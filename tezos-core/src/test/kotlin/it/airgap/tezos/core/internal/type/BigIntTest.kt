@@ -17,11 +17,29 @@ class BigIntTest {
     }
 
     @Test
+    fun `creates BigInt from UByte`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            assertEquals(it.toUByte(), BigInt.valueOf(it.toUByte()).toUByte())
+        }
+    }
+
+    @Test
     fun `creates BigInt from Short`() {
         val longs = (1..3).map { Random.nextLong() }
 
         longs.forEach {
             assertEquals(it.toShort(), BigInt.valueOf(it.toShort()).toShort())
+        }
+    }
+
+    @Test
+    fun `creates BigInt from UShort`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            assertEquals(it.toUShort(), BigInt.valueOf(it.toUShort()).toUShort())
         }
     }
 
@@ -35,11 +53,29 @@ class BigIntTest {
     }
 
     @Test
+    fun `creates BigInt from UInt`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            assertEquals(it.toUInt(), BigInt.valueOf(it.toUInt()).toUInt())
+        }
+    }
+
+    @Test
     fun `creates BigInt from Long`() {
         val longs = (1..3).map { Random.nextLong() }
 
         longs.forEach {
             assertEquals(it, BigInt.valueOf(it).toLong())
+        }
+    }
+
+    @Test
+    fun `creates BigInt from ULong`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            assertEquals(it.toULong(), BigInt.valueOf(it.toULong()).toULong())
         }
     }
 
@@ -72,6 +108,24 @@ class BigIntTest {
             assertEquals(it, BigInt.valueOf(it.toString(10), 10).toLong())
             assertEquals(it, BigInt.valueOf(it.toString(16), 16).toLong())
         }
+    }
+    
+    @Test
+    fun `finds max of 2 BigInts`() {
+        val a = BigInt.valueOf(2)
+        val b = BigInt.valueOf(1)
+        
+        assertEquals(a, BigInt.max(a, b))
+        assertEquals(a, BigInt.max(b, a))
+    }
+
+    @Test
+    fun `finds min of 2 BigInts`() {
+        val a = BigInt.valueOf(2)
+        val b = BigInt.valueOf(1)
+
+        assertEquals(b, BigInt.min(a, b))
+        assertEquals(b, BigInt.min(b, a))
     }
 
     @Test
@@ -1062,6 +1116,459 @@ class BigIntTest {
     }
 
     @Test
+    fun `performs arithmetical DIV with RoudingMode on JvmBigInt`() {
+        val jvmBigInt_1 = JvmBigInt(BigInteger.valueOf(1))
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toByte(), roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toByte(), roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toByte(), roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toByte(), roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toShort(), roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toShort(), roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toShort(), roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toShort(), roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toInt(), roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toInt(), roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toInt(), roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div((0).toInt(), roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(0L, roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(0L, roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(0L, roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(0L, roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(BigInteger.valueOf(0), roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(BigInteger.valueOf(0), roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(BigInteger.valueOf(0), roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(BigInteger.valueOf(0), roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)), roundingMode = Number.RoundingMode.Up)
+        }
+        
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)), roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)), roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)), roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)) as BigInt, roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)) as BigInt, roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)) as BigInt, roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(0)) as BigInt, roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(0))), roundingMode = Number.RoundingMode.Up)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(0))), roundingMode = Number.RoundingMode.Down)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(0))), roundingMode = Number.RoundingMode.Ceiling)
+        }
+
+        assertFailsWith<ArithmeticException> {
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(0))), roundingMode = Number.RoundingMode.Floor)
+        }
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div((10).toByte(), roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((10).toByte(), roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div((10).toByte(), roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((10).toByte(), roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div((10).toShort(), roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((10).toShort(), roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div((10).toShort(), roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((10).toShort(), roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div((10).toInt(), roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((10).toInt(), roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div((10).toInt(), roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((10).toInt(), roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(10L, roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(10L, roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(10L, roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(10L, roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(BigInteger.valueOf(10), Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(BigInteger.valueOf(10), Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(BigInteger.valueOf(10), Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(BigInteger.valueOf(10), Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)), Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)), Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)), Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)), Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)) as BigInt, Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)) as BigInt, Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)) as BigInt, Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(10)) as BigInt, Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(10))), Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(10))), Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            1,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(10))), Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(10))), Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div((-10).toByte(), roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((-10).toByte(), roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((-10).toByte(), roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div((-10).toByte(), roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div((-10).toShort(), roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((-10).toShort(), roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((-10).toShort(), roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div((-10).toShort(), roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div((-10).toInt(), roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((-10).toInt(), roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div((-10).toInt(), roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div((-10).toInt(), roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(-10L, roundingMode = Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(-10L, roundingMode = Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(-10L, roundingMode = Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(-10L, roundingMode = Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(BigInteger.valueOf(-10), Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(BigInteger.valueOf(-10), Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(BigInteger.valueOf(-10), Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(BigInteger.valueOf(-10), Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)), Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)), Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)), Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)), Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)) as BigInt, Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)) as BigInt, Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)) as BigInt, Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(JvmBigInt(BigInteger.valueOf(-10)) as BigInt, Number.RoundingMode.Floor).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(-10))), Number.RoundingMode.Up).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(-10))), Number.RoundingMode.Down).toInt(),
+        )
+
+        assertEquals(
+            0,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(-10))), Number.RoundingMode.Ceiling).toInt(),
+        )
+
+        assertEquals(
+            -1,
+            jvmBigInt_1.div(MockBigInt(JvmBigInt(BigInteger.valueOf(-10))), Number.RoundingMode.Floor).toInt(),
+        )
+    }
+
+    @Test
     fun `performs arithmetical REM on JvmBigInt`() {
         val bigIntsWithBigIntegers = (1..3).map {
             val bigInteger = BigInteger.valueOf(Random.nextLong())
@@ -1268,6 +1775,23 @@ class BigIntTest {
     }
 
     @Test
+    fun `converts JvmBigInt to exact UByte value or fails in case of overflow`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            val byte = it.toByte()
+
+            val jvmByteBigInt = JvmBigInt(BigInteger.valueOf(byte.toLong()))
+            val jvmLongBigInt = JvmBigInt(BigInteger.valueOf(it))
+
+            assertEquals(byte.toUByte(), jvmByteBigInt.toUByteExact())
+            assertFailsWith<ArithmeticException> {
+                jvmLongBigInt.toUByteExact()
+            }
+        }
+    }
+
+    @Test
     fun `converts JvmBigInt to Short`() {
         val longs = (1..3).map { Random.nextLong() }
 
@@ -1292,6 +1816,23 @@ class BigIntTest {
             assertEquals(short, jvmShortBigInt.toShortExact())
             assertFailsWith<ArithmeticException> {
                 jvmLongBigInt.toShortExact()
+            }
+        }
+    }
+
+    @Test
+    fun `converts JvmBigInt to exact UShort value or fails in case of overflow`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            val short = it.toShort()
+
+            val jvmShortBigInt = JvmBigInt(BigInteger.valueOf(short.toLong()))
+            val jvmLongBigInt = JvmBigInt(BigInteger.valueOf(it))
+
+            assertEquals(short.toUShort(), jvmShortBigInt.toUShortExact())
+            assertFailsWith<ArithmeticException> {
+                jvmLongBigInt.toUShortExact()
             }
         }
     }
@@ -1326,6 +1867,23 @@ class BigIntTest {
     }
 
     @Test
+    fun `converts JvmBigInt to exact UInt value or fails in case of overflow`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            val int = it.toInt()
+
+            val jvmIntBigInt = JvmBigInt(BigInteger.valueOf(int.toLong()))
+            val jvmLongBigInt = JvmBigInt(BigInteger.valueOf(it))
+
+            assertEquals(int.toUInt(), jvmIntBigInt.toUIntExact())
+            assertFailsWith<ArithmeticException> {
+                jvmLongBigInt.toUIntExact()
+            }
+        }
+    }
+
+    @Test
     fun `converts JvmBigInt to Long`() {
         val longs = (1..3).map { Random.nextLong() }
 
@@ -1347,6 +1905,21 @@ class BigIntTest {
             assertEquals(it, jvmExactBigInt.toLongExact())
             assertFailsWith<ArithmeticException> {
                 jvmOverflownBigInt.toByteExact()
+            }
+        }
+    }
+
+    @Test
+    fun `converts JvmBigInt to exact ULong value or fails in case of overflow`() {
+        val longs = (1..3).map { Random.nextLong() }
+
+        longs.forEach {
+            val jvmExactBigInt = JvmBigInt(BigInteger.valueOf(it))
+            val jvmOverflownBigInt = JvmBigInt(BigInteger.valueOf(Long.MAX_VALUE)) + 1
+
+            assertEquals(it.toULong(), jvmExactBigInt.toULongExact())
+            assertFailsWith<ArithmeticException> {
+                jvmOverflownBigInt.toULongExact()
             }
         }
     }

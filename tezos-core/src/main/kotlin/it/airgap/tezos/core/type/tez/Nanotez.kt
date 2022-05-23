@@ -6,9 +6,7 @@ import it.airgap.tezos.core.internal.type.Number
 import it.airgap.tezos.core.internal.utils.toBigInt
 
 @JvmInline
-public value class Nanotez @InternalTezosSdkApi public constructor(
-    @InternalTezosSdkApi public val bigInt: BigInt
-) : Number<Nanotez> {
+public value class Nanotez internal constructor(internal val bigInt: BigInt) : Number<Nanotez> {
 
     public val value: String
         get() = bigInt.toString(10)

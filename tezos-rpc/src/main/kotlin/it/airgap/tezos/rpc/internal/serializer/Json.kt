@@ -18,7 +18,6 @@ internal fun rpcSerializersModule(
 
     contextual(HexStringSerializer)
 
-    contextual(TezSerializer)
     contextual(MutezSerializer)
     contextual(NanotezSerializer)
 

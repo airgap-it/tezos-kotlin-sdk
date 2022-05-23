@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
@@ -19,4 +18,4 @@ internal val OperationContent.fee: Mutez
     }
 
 internal val OperationContent.hasFee: Boolean
-    get() = fee != Mutez(BigInt.zero)
+    get() = fee != Mutez(0U)
