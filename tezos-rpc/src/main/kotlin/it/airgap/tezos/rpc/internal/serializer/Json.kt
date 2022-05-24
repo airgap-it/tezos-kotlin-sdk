@@ -19,7 +19,6 @@ internal fun rpcSerializersModule(
     contextual(HexStringSerializer)
 
     contextual(MutezSerializer)
-    contextual(NanotezSerializer)
 
     contextual(TimestampSerializer)
     contextual(TimestampRfc3339Serializer)

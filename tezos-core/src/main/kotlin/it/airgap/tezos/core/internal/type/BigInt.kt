@@ -9,13 +9,111 @@ import java.math.RoundingMode
 
 // For easy multiplatform conversion
 @InternalTezosSdkApi
-public interface BigInt : Number<BigInt> {
+public interface BigInt : Comparable<BigInt> {
 
-    override fun Byte.toSelf(): BigInt = toBigInt()
-    override fun Short.toSelf(): BigInt = toBigInt()
-    override fun Int.toSelf(): BigInt = toBigInt()
-    override fun Long.toSelf(): BigInt = toBigInt()
+    // -- logical operations --
 
+    public infix fun and(other: Byte): BigInt = this and other.toBigInt()
+    public infix fun and(other: Short): BigInt = this and other.toBigInt()
+    public infix fun and(other: Int): BigInt = this and other.toBigInt()
+    public infix fun and(other: Long): BigInt = this and other.toBigInt()
+    public infix fun and(other: BigInt): BigInt
+
+    public infix fun or(other: Byte): BigInt = this or other.toBigInt()
+    public infix fun or(other: Short): BigInt = this or other.toBigInt()
+    public infix fun or(other: Int): BigInt = this or other.toBigInt()
+    public infix fun or(other: Long): BigInt = this or other.toBigInt()
+    public infix fun or(other: BigInt): BigInt
+
+    public infix fun xor(other: Byte): BigInt = this xor other.toBigInt()
+    public infix fun xor(other: Short): BigInt = this xor other.toBigInt()
+    public infix fun xor(other: Int): BigInt = this xor other.toBigInt()
+    public infix fun xor(other: Long): BigInt = this xor other.toBigInt()
+    public infix fun xor(other: BigInt): BigInt
+
+    public fun not(): BigInt
+
+    public infix fun shr(n: Int): BigInt
+    public infix fun shl(n: Int): BigInt
+
+    // -- arithmetic operations --
+
+    public operator fun plus(other: Byte): BigInt = this + other.toBigInt()
+    public operator fun plus(other: Short): BigInt = this + other.toBigInt()
+    public operator fun plus(other: Int): BigInt = this + other.toBigInt()
+    public operator fun plus(other: Long): BigInt = this + other.toBigInt()
+    public operator fun plus(other: BigInt): BigInt
+
+    public operator fun minus(other: Byte): BigInt = this - other.toBigInt()
+    public operator fun minus(other: Short): BigInt = this - other.toBigInt()
+    public operator fun minus(other: Int): BigInt = this - other.toBigInt()
+    public operator fun minus(other: Long): BigInt = this - other.toBigInt()
+    public operator fun minus(other: BigInt): BigInt
+
+    public operator fun times(other: Byte): BigInt = this * other.toBigInt()
+    public operator fun times(other: Short): BigInt = this * other.toBigInt()
+    public operator fun times(other: Int): BigInt = this * other.toBigInt()
+    public operator fun times(other: Long): BigInt = this * other.toBigInt()
+    public operator fun times(other: BigInt): BigInt
+
+    public operator fun div(other: Byte): BigInt = this / other.toBigInt()
+    public operator fun div(other: Short): BigInt = this / other.toBigInt()
+    public operator fun div(other: Int): BigInt = this / other.toBigInt()
+    public operator fun div(other: Long): BigInt = this / other.toBigInt()
+    public operator fun div(other: BigInt): BigInt
+
+    public fun div(other: Byte, roundingMode: RoundingMode): BigInt = this.div(other.toBigInt(), roundingMode)
+    public fun div(other: Short, roundingMode: RoundingMode): BigInt = this.div(other.toBigInt(), roundingMode)
+    public fun div(other: Int, roundingMode: RoundingMode): BigInt = this.div(other.toBigInt(), roundingMode)
+    public fun div(other: Long, roundingMode: RoundingMode): BigInt = this.div(other.toBigInt(), roundingMode)
+    public fun div(other: BigInt, roundingMode: RoundingMode): BigInt
+
+    public operator fun rem(other: Byte): BigInt = this % other.toBigInt()
+    public operator fun rem(other: Short): BigInt = this % other.toBigInt()
+    public operator fun rem(other: Int): BigInt = this % other.toBigInt()
+    public operator fun rem(other: Long): BigInt = this % other.toBigInt()
+    public operator fun rem(other: BigInt): BigInt
+
+    public fun abs(): BigInt
+
+    // -- equality --
+
+    override fun equals(other: Any?): Boolean
+
+    // -- converters --
+
+    public fun toByte(): Byte
+    public fun toUByte(): UByte = toByte().toUByte()
+    public fun toByteExact(): Byte
+    public fun toUByteExact(): UByte = toByteExact().toUByte()
+
+    public fun toShort(): Short
+    public fun toUShort(): UShort = toShort().toUShort()
+    public fun toShortExact(): Short
+    public fun toUShortExact(): UShort = toShortExact().toUShort()
+
+    public fun toInt(): Int
+    public fun toUInt(): UInt = toInt().toUInt()
+    public fun toIntExact(): Int
+    public fun toUIntExact(): UInt = toIntExact().toUInt()
+
+    public fun toLong(): Long
+    public fun toULong(): ULong = toLong().toULong()
+    public fun toLongExact(): Long
+    public fun toULongExact(): ULong = toLongExact().toULong()
+
+    public fun toByteArray(): ByteArray
+
+    override fun toString(): String
+    public fun toString(radix: Int): String
+
+    public enum class RoundingMode {
+        Up,
+        Down,
+        Ceiling,
+        Floor;
+    }
+    
     public companion object {
         public val zero: BigInt
             get() = valueOf(0)
@@ -94,25 +192,24 @@ internal class JvmBigInt(private val value: BigInteger) : BigInt {
         if (other is JvmBigInt) this / other
         else this / BigInteger(other.toString(10), 10)
 
-    fun div(other: JvmBigInt, roundingMode: Number.RoundingMode): BigInt = div(other.value, roundingMode)
-    fun div(other: BigInteger, roundingMode: Number.RoundingMode): BigInt {
+    fun div(other: JvmBigInt, roundingMode: BigInt.RoundingMode): BigInt = div(other.value, roundingMode)
+    fun div(other: BigInteger, roundingMode: BigInt.RoundingMode): BigInt {
         val decimal = BigDecimal(value)
         val otherDecimal = BigDecimal(other)
 
         val decimalRoundingMode = when (roundingMode) {
-            Number.RoundingMode.Up -> RoundingMode.UP
-            Number.RoundingMode.Down -> RoundingMode.DOWN
-            Number.RoundingMode.Ceiling -> RoundingMode.CEILING
-            Number.RoundingMode.Floor -> RoundingMode.FLOOR
+            BigInt.RoundingMode.Up -> RoundingMode.UP
+            BigInt.RoundingMode.Down -> RoundingMode.DOWN
+            BigInt.RoundingMode.Ceiling -> RoundingMode.CEILING
+            BigInt.RoundingMode.Floor -> RoundingMode.FLOOR
         }
 
         val result = decimal.divide(otherDecimal, decimalRoundingMode)
         return JvmBigInt(result.toBigInteger())
     }
-    override fun div(other: BigInt, roundingMode: Number.RoundingMode): BigInt =
+    override fun div(other: BigInt, roundingMode: BigInt.RoundingMode): BigInt =
         if (other is JvmBigInt) div(other, roundingMode)
         else  div(BigInteger(other.toString(10), 10), roundingMode)
-
 
     operator fun rem(other: JvmBigInt): JvmBigInt = this % other.value
     operator fun rem(other: BigInteger): JvmBigInt = JvmBigInt(value % other)

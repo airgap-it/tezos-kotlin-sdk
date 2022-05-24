@@ -8,7 +8,6 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.tez.Nanotez
 import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.KStringSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
@@ -33,12 +32,7 @@ internal object HexStringSerializer : KStringSerializer<HexString>(HexString::cl
 
 internal object MutezSerializer : KStringSerializer<Mutez>(Mutez::class) {
     override fun valueFromString(string: String): Mutez = Mutez(string)
-    override fun valueToString(value: Mutez): String = value.value
-}
-
-internal object NanotezSerializer : KStringSerializer<Nanotez>(Nanotez::class) {
-    override fun valueFromString(string: String): Nanotez = Nanotez(string)
-    override fun valueToString(value: Nanotez): String = value.value
+    override fun valueToString(value: Mutez): String = value.value.toString()
 }
 
 // -- Timestamp --

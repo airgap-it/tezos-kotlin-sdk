@@ -65,17 +65,15 @@ class MutezBytesCoderTest {
 
     private val mutezWithBytes: List<Pair<Mutez, ByteArray>>
         get() = listOf(
-            Mutez(0U) to "00".asHexString().toByteArray(),
-            Mutez(1U) to "01".asHexString().toByteArray(),
-            Mutez(10U) to "0a".asHexString().toByteArray(),
-            Mutez(42U) to "2a".asHexString().toByteArray(),
-            Mutez(64U) to "40".asHexString().toByteArray(),
-            Mutez(127U) to "7f".asHexString().toByteArray(),
-            Mutez(128U) to "8001".asHexString().toByteArray(),
-            Mutez(18756523543673U) to "f998b1bff1a104".asHexString().toByteArray(),
-            Mutez(6852352674543413768U) to "88d4ee8ebcce9c8c5f".asHexString().toByteArray(),
-            Mutez("54576326575686358562454576456764") to "bcc8a9a1f3d19ca2e0dbfdf9999bac01".asHexString().toByteArray(),
-            Mutez("41547452475632687683489977342365486797893454355756867843") to "83c2f7e7a3ade1bac2cccad7d5cf93e2c58792e0ec9aa5c8c6e306".asHexString().toByteArray(),
+            Mutez(0) to "00".asHexString().toByteArray(),
+            Mutez(1) to "01".asHexString().toByteArray(),
+            Mutez(10) to "0a".asHexString().toByteArray(),
+            Mutez(42) to "2a".asHexString().toByteArray(),
+            Mutez(64) to "40".asHexString().toByteArray(),
+            Mutez(127) to "7f".asHexString().toByteArray(),
+            Mutez(128) to "8001".asHexString().toByteArray(),
+            Mutez(18756523543673) to "f998b1bff1a104".asHexString().toByteArray(),
+            Mutez(6852352674543413768) to "88d4ee8ebcce9c8c5f".asHexString().toByteArray(),
         )
 
     private val invalidBytes: List<ByteArray>

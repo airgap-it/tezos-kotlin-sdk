@@ -56,11 +56,11 @@ public class ContractEntrypoint internal constructor(
             listOf(
                 OperationContent.Transaction(
                     source = source,
-                    fee = fee ?: Mutez(0U),
+                    fee = fee ?: Mutez(0),
                     counter = counter?.asTezosNatural() ?: TezosNatural(0U),
                     gasLimit = limits?.gas?.asTezosNatural() ?: TezosNatural(0U),
                     storageLimit = limits?.gas?.asTezosNatural() ?: TezosNatural(0U),
-                    amount = amount ?: Mutez(0U),
+                    amount = amount ?: Mutez(0),
                     destination = contractAddress,
                     parameters = Parameters(
                         Entrypoint(name),

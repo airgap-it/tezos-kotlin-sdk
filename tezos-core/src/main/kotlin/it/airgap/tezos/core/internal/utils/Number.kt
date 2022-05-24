@@ -27,7 +27,7 @@ public fun String.asTezosNaturalOrNull(): TezosNatural? = if (TezosNatural.isVal
 public fun TezosInteger.toBigInt(): BigInt = BigInt.valueOf(int)
 
 @InternalTezosSdkApi
-public fun TezosNatural.toBigInt(): BigInt = BigInt.valueOf(int)
+public fun TezosNatural.toBigInt(): BigInt = BigInt.valueOf(nat)
 
 @InternalTezosSdkApi
 public fun Byte.toBigInt(): BigInt = BigInt.valueOf(this)

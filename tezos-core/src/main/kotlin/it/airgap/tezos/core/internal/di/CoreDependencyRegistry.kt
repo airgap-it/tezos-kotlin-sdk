@@ -7,7 +7,6 @@ import it.airgap.tezos.core.internal.coder.encoded.*
 import it.airgap.tezos.core.internal.coder.number.TezosIntegerBytesCoder
 import it.airgap.tezos.core.internal.coder.number.TezosNaturalBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
-import it.airgap.tezos.core.internal.coder.tez.NanotezBytesCoder
 import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.converter.encoded.*
@@ -18,7 +17,6 @@ import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.number.TezosInteger
 import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.tez.Nanotez
 
 @InternalTezosSdkApi
 public class CoreDependencyRegistry internal constructor(global: DependencyRegistry) {
@@ -37,7 +35,6 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
     public val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger> by lazy { Static.tezosIntegerBytesCoder }
 
     public val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazy { Static.mutezBytesCoder }
-    public val nanotezBytesCoder: ConsumingBytesCoder<Nanotez> by lazy { Static.nanotezBytesCoder }
 
     public val timestampBigIntCoder: Coder<Timestamp, BigInt> by lazy { Static.timestampBigIntCoder }
 
@@ -74,7 +71,6 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
         val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger> by lazyWeak { TezosIntegerBytesCoder(tezosNaturalBytesCoder) }
 
         val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazyWeak { MutezBytesCoder(tezosNaturalBytesCoder) }
-        val nanotezBytesCoder: ConsumingBytesCoder<Nanotez> by lazyWeak { NanotezBytesCoder(tezosNaturalBytesCoder) }
 
         val timestampBigIntCoder: Coder<Timestamp, BigInt> by lazyWeak { TimestampBigIntCoder() }
 

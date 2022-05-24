@@ -57,11 +57,11 @@ class TezosRpcClientTest {
         val operation = Operation(
             OperationContent.Transaction(
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
-                fee = Mutez(0U),
+                fee = Mutez(0),
                 counter = TezosNatural(8680641U),
                 gasLimit = TezosNatural(1030000U),
                 storageLimit = TezosNatural(50000U),
-                amount = Mutez(1000U),
+                amount = Mutez(1000),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),
             branch = branch,
@@ -71,11 +71,11 @@ class TezosRpcClientTest {
             listOf(
                 RpcOperationContent.Transaction(
                     source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
-                    fee = Mutez(0U),
+                    fee = Mutez(0),
                     counter = "8680641",
                     gasLimit = "1040000",
                     storageLimit = "60000",
-                    amount = Mutez(1000U),
+                    amount = Mutez(1000),
                     destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                     metadata = RpcOperationMetadata.Transaction(
                         balanceUpdates = emptyList(),
@@ -102,7 +102,7 @@ class TezosRpcClientTest {
 
         val updatedOperation = runBlocking { operationFeeEstimator.minFee(chainId, operation) }
 
-        assertEquals(Mutez(507U), updatedOperation.fee)
+        assertEquals(Mutez(507), updatedOperation.fee)
         assertEquals(
             OperationLimits(
                 BigInt.valueOf(1521),

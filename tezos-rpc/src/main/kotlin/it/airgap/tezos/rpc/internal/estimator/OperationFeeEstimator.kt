@@ -1,12 +1,10 @@
 package it.airgap.tezos.rpc.internal.estimator
 
-import it.airgap.tezos.core.converter.tez.toMutez
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.toTezosNatural
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.tez.Nanotez
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.coder.forgeToBytes
@@ -15,6 +13,8 @@ import it.airgap.tezos.rpc.converter.asOperationContent
 import it.airgap.tezos.rpc.converter.asRunnable
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.CachedMap
+import it.airgap.tezos.rpc.internal.converter.tez.toMutez
+import it.airgap.tezos.rpc.internal.type.Nanotez
 import it.airgap.tezos.rpc.internal.utils.*
 import it.airgap.tezos.rpc.shell.chains.Chains
 import it.airgap.tezos.rpc.type.limits.Limits
@@ -63,7 +63,7 @@ internal class OperationFeeEstimator(
         )
     }
 
-    private fun OperationContent.apply(fee: Mutez = Mutez(0U), limits: OperationLimits = OperationLimits.zero): OperationContent =
+    private fun OperationContent.apply(fee: Mutez = Mutez(0), limits: OperationLimits = OperationLimits.zero): OperationContent =
         when (this) {
             is OperationContent.Reveal -> copy(
                 fee = fee,
@@ -150,17 +150,17 @@ internal class OperationFeeEstimator(
 
     private fun fee(operationSize: Int, limits: OperationLimits): Mutez {
         val gasFee = Nanotez(FEE_PER_GAS_UNIT_NANOTEZ) * limits.gasBigInt
-        val storageFee = Nanotez(operationSize.toUInt()) * Nanotez(FEE_PER_STORAGE_BYTE_NANOTEZ)
+        val storageFee = Nanotez(FEE_PER_STORAGE_BYTE_NANOTEZ) * operationSize
 
         return Mutez(FEE_BASE_MUTEZ) + gasFee.toMutez() + storageFee.toMutez() + Mutez(FEE_SAFETY_MARGIN_MUTEZ)
     }
 
     companion object {
-        private const val FEE_BASE_MUTEZ = 100U
+        private const val FEE_BASE_MUTEZ = 100
 
-        private const val FEE_PER_GAS_UNIT_NANOTEZ = 100U
-        private const val FEE_PER_STORAGE_BYTE_NANOTEZ = 1000U
+        private const val FEE_PER_GAS_UNIT_NANOTEZ = 100
+        private const val FEE_PER_STORAGE_BYTE_NANOTEZ = 1000
 
-        private const val FEE_SAFETY_MARGIN_MUTEZ = 100U
+        private const val FEE_SAFETY_MARGIN_MUTEZ = 100
     }
 }
