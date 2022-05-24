@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.active.block
+package it.airgap.tezos.rpc.active
 
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -14,10 +14,10 @@ import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
+import it.airgap.tezos.rpc.active.block.*
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
-import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
@@ -38,18 +38,15 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class BlockClientTest {
+class ActiveSimplifiedRpcClientTest {
 
     @MockK
     private lateinit var httpClientProvider : HttpClientProvider
 
     private lateinit var json: Json
-    private lateinit var httpClient: HttpClient
+    private lateinit var activeSimplifiedRpcClient: ActiveSimplifiedRpcClient
 
-    private lateinit var blockClient: BlockClient
-
-    private val nodeUrl = "https://example.com/chains/chainId/blocks"
-    private val blockId = "blockId"
+    private val nodeUrl = "https://example.com"
 
     @Before
     fun setup() {
@@ -58,9 +55,8 @@ class BlockClientTest {
         val tezos = mockTezos(httpClientProvider = httpClientProvider)
 
         json = tezos.rpcModule.dependencyRegistry.json
-        httpClient = tezos.rpcModule.dependencyRegistry.httpClient
 
-        blockClient = BlockClient(nodeUrl, blockId, httpClient)
+        activeSimplifiedRpcClient = ActiveSimplifiedRpcClient(tezos.rpcModule.dependencyRegistry.chains(nodeUrl))
     }
 
     @After
@@ -69,24 +65,27 @@ class BlockClientTest {
     }
 
     @Test
-    fun `should call GET on '_ - $block_id'`() {
+    fun `should get block`() {
         val (_, expectedResponse, _, jsonResponse) = getRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
+        val chainId = "chainId"
+        val blockId = "blockId"
+
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getBlock(chainId, blockId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - big_maps - $big_map_id'`() {
+    fun `should get big map`() {
         data class Parameters(val offset: UInt? = null, val length: UInt? = null)
 
+        val chainId = "chainId"
+        val blockId = "blockId"
         val bigMapId = "bigMapId"
         val parameters = listOf(
             Parameters(),
@@ -105,18 +104,18 @@ class BlockClientTest {
                     offset?.let { add("offset" to it.toString()) }
                     length?.let { add("length" to it.toString()) }
                 }
-                val response = runBlocking { blockClient.context.bigMaps(bigMapId).get(offset, length, headers = headers) }
+                val response = runBlocking { activeSimplifiedRpcClient.getBigMap(chainId, blockId, bigMapId, offset, length, headers = headers) }
 
                 assertEquals(expectedResponse, response)
-
-                coVerify { httpClient.get("$nodeUrl/$blockId/context/big_maps/$bigMapId", "/", headers = headers, parameters = expectedParameters) }
-                coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/big_maps/$bigMapId", "/", headers = headers, parameters = expectedParameters) }
+                coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/big_maps/$bigMapId", "/", headers = headers, parameters = expectedParameters) }
             }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - big_maps - $big_map_id - $script_expr'`() {
+    fun `should get big map value`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val bigMapId = "bigMapId"
         val scriptExpr = ScriptExprHash("exprtzaFcULaeXHPaufCkPW9BkwiajuxeboiHRzseQxfnxq1cxxeQu")
 
@@ -124,117 +123,118 @@ class BlockClientTest {
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.bigMaps(bigMapId)(scriptExpr).get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getBigMapValue(chainId, blockId, bigMapId, scriptExpr, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/big_maps/$bigMapId/${scriptExpr.base58}", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/big_maps/$bigMapId/${scriptExpr.base58}", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/big_maps/$bigMapId/${scriptExpr.base58}", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - constants'`() {
+    fun `should get constants`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+
         val (_, expectedResponse, _, jsonResponse) = contextConstantsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.constants.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getConstants(chainId, blockId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/constants", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/constants", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/constants", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id'`() {
+    fun `should get contract details`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextContractsContractGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getContractDetails(chainId, blockId, contractId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - balance'`() {
+    fun `should get contract balance`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextContractsContractBalanceGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).balance.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getBalance(chainId, blockId, contractId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/balance", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/balance", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/balance", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - counter'`() {
+    fun `should get contract counter`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextContractsContractCounterGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).counter.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getCounter(chainId, blockId, contractId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/counter", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/counter", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/counter", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - delegate'`() {
+    fun `should get contract delegate`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextContractsContractDelegateGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).delegate.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getDelegate(chainId, blockId, contractId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/delegate", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/delegate", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/delegate", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - entrypoints'`() {
+    fun `should get contract entrypoints`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
 
         val (_, expectedResponse, _, jsonResponse) = contextContractsContractEntrypointsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).entrypoints.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getEntrypoints(chainId, blockId, contractId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/entrypoints", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/entrypoints", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/entrypoints", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - entrypoints - $string'`() {
+    fun `should get contract entrypoint`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
         val entrypoint = "entrypoint"
 
@@ -242,70 +242,53 @@ class BlockClientTest {
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).entrypoints(entrypoint).get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getEntrypoint(chainId, blockId, contractId, entrypoint, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/entrypoints/entrypoint", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/entrypoints/entrypoint", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/entrypoints/entrypoint", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - manager_key'`() {
+    fun `should get contract manager key`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextContractsContractManagerKeyGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).managerKey.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getManagerKey(chainId, blockId, contractId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/manager_key", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/manager_key", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/manager_key", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - script'`() {
-        val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
-
-        val (_, expectedResponse, _, jsonResponse) = contextContractsContractScriptGetRequestConfiguration
-        coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
-
-        headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).script.get(headers = headers) }
-
-            assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/script", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/script", "/", headers = headers, parameters = emptyList()) }
-        }
-    }
-
-    @Test
-    fun `should call POST on '_ - $block_id - context - contracts - $contract_id - script - normalized'`() {
+    fun `should get contract script`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
 
         val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = contextContractsContractScriptNormalizedPostRequestConfiguration
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).script.normalized.post(expectedRequest.unparsingMode, headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getScript(chainId, blockId, contractId, expectedRequest.unparsingMode, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/script/normalized", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/script/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
+            coVerify { httpClientProvider.post("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/script/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - single_sapling_get_diff'`() {
+    fun `should get contract sapling state diff`() {
         data class Parameters(val commitmentOffset: ULong? = null, val nullifierOffset: ULong? = null)
 
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
         val parameters = listOf(
             Parameters(),
@@ -324,258 +307,241 @@ class BlockClientTest {
                     commitmentOffset?.let { add("offset_commitment" to it.toString()) }
                     nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
                 }
-                val response = runBlocking { blockClient.context.contracts(contractId).singleSaplingGetDiff.get(commitmentOffset, nullifierOffset, headers = headers) }
+                val response = runBlocking { activeSimplifiedRpcClient.getSaplingStateDiff(chainId, blockId, contractId, commitmentOffset, nullifierOffset, headers = headers) }
 
                 assertEquals(expectedResponse, response)
-
-                coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/single_sapling_get_diff", "/", headers = headers, parameters = expectedParameters) }
-                coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/single_sapling_get_diff", "/", headers = headers, parameters = expectedParameters) }
+                coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/single_sapling_get_diff", "/", headers = headers, parameters = expectedParameters) }
             }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - contracts - $contract_id - storage'`() {
-        val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
-
-        val (_, expectedResponse, _, jsonResponse) = contextContractsContractStorageGetRequestConfiguration
-        coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
-
-        headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).storage.get(headers = headers) }
-
-            assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage", "/", headers = headers, parameters = emptyList()) }
-        }
-    }
-
-    @Test
-    fun `should call POST on '_ - $block_id - context - contracts - $contract_id - storage - normalized'`() {
+    fun `should get contract storage`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val contractId = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc")
 
         val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = contextContractsContractStorageNormalizedPostRequestConfiguration
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.contracts(contractId).storage.normalized.post(expectedRequest.unparsingMode, headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getStorage(chainId, blockId, contractId, expectedRequest.unparsingMode, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.post("$nodeUrl/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
+            coVerify { httpClientProvider.post("$nodeUrl/chains/$chainId/blocks/$blockId/context/contracts/${contractId.base58}/storage/normalized", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate details`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getDelegateDetails(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - current_frozen_deposits'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate current frozen deposits`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateCurrentFrozenDepositsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).currentFrozenDeposits.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getCurrentFrozenDeposits(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/current_frozen_deposits", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/current_frozen_deposits", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/current_frozen_deposits", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - deactivated'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should check if delegate is deactivated`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateDeactivatedGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).deactivated.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.isDeactivated(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/deactivated", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/deactivated", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/deactivated", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - delegated_balance'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate delegated balance`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateDelegatedBalanceGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).delegatedBalance.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getDelegatedBalance(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/delegated_balance", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/delegated_balance", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/delegated_balance", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - delegated_contracts'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate delegated contracts`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateDelegatedContractsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).delegatedContracts.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getDelegatedContracts(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/delegated_contracts", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/delegated_contracts", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/delegated_contracts", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - frozen_deposits'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate frozen deposits`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateFrozenDepositsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).frozenDeposits.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getFrozenDeposits(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/frozen_deposits", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/frozen_deposits", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/frozen_deposits", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - frozen_deposits_limit'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate frozen deposits limit`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateFrozenDepositsLimitGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).frozenDepositsLimit.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getFrozenDepositsLimit(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/frozen_deposits_limit", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/frozen_deposits_limit", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/frozen_deposits_limit", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - full_balance'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate full balance`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateFullBalanceGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).fullBalance.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getFullBalance(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/full_balance", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/full_balance", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/full_balance", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - grace_period'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate grace period`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateGracePeriodGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).gracePeriod.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getGracePeriod(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/grace_period", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/grace_period", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/grace_period", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - participation'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate participation`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateParticipationGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).participation.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getParticipation(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/participation", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/participation", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/participation", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - staking_balance'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate staking balance`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateStakingBalanceGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).stakingBalance.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getStakingBalance(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/staking_balance", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/staking_balance", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/staking_balance", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - delegates - $pkh - voting_power'`() {
-        val pkh = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
+    fun `should get delegate voting power`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
+        val delegateId = Ed25519PublicKeyHash("tz1ZSs43ujit1oRsVn67Asz3pTMF8R6CXWPi")
 
         val (_, expectedResponse, _, jsonResponse) = contextDelegatesDelegateVotingPowerGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.delegates(pkh).votingPower.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getVotingPower(chainId, blockId, delegateId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/voting_power", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/delegates/${pkh.base58}/voting_power", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/delegates/${delegateId.base58}/voting_power", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - context - sapling - $sapling_state_id - get_diff'`() {
+    fun `should get sapling state diff`() {
         data class Parameters(val commitmentOffset: ULong? = null, val nullifierOffset: ULong? = null)
 
+        val chainId = "chainId"
+        val blockId = "blockId"
         val saplingStateId = "saplingStateId"
         val parameters = listOf(
             Parameters(),
@@ -594,73 +560,71 @@ class BlockClientTest {
                     commitmentOffset?.let { add("offset_commitment" to it.toString()) }
                     nullifierOffset?.let { add("offset_nullifier" to it.toString()) }
                 }
-                val response = runBlocking { blockClient.context.sapling(saplingStateId).getDiff.get(commitmentOffset, nullifierOffset, headers = headers) }
+                val response = runBlocking { activeSimplifiedRpcClient.getSaplingStateDiff(chainId, blockId, saplingStateId, commitmentOffset, nullifierOffset, headers = headers) }
 
                 assertEquals(expectedResponse, response)
-
-                coVerify { httpClient.get("$nodeUrl/$blockId/context/sapling/$saplingStateId/get_diff", "/", headers = headers, parameters = expectedParameters) }
-                coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/sapling/$saplingStateId/get_diff", "/", headers = headers, parameters = expectedParameters) }
+                coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/context/sapling/$saplingStateId/get_diff", "/", headers = headers, parameters = expectedParameters) }
             }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - header'`() {
+    fun `should get block header`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val (_, expectedResponse, _, jsonResponse) = headerGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.header.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getBlockHeader(chainId, blockId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/header", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/header", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/header", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
     @Test
-    fun `should call POST on '_ - $block_id - helpers - preapply - operations'`() {
+    fun `should preapply operations`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = helpersPreapplyOperationsPostRequestConfiguration
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.helpers.preapply.operations.post(expectedRequest.operations, headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.preapplyOperations(chainId, blockId, expectedRequest.operations, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.post("$nodeUrl/$blockId/helpers/preapply/operations", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.post("$nodeUrl/$blockId/helpers/preapply/operations", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
+            coVerify { httpClientProvider.post("$nodeUrl/chains/$chainId/blocks/$blockId/helpers/preapply/operations", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
     @Test
-    fun `should call POST on '_ - $block_id - helpers - scripts - run_operation'`() {
+    fun `should run operation`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val (expectedRequest, expectedResponse, jsonRequest, jsonResponse) = helpersScriptRunOperationPostRequestConfiguration
         coEvery { httpClientProvider.post(any(), any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.helpers.scripts.runOperation.post(expectedRequest.operation, headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.runOperation(chainId, blockId, expectedRequest.operation, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, request = expectedRequest) }
-            coVerify { httpClientProvider.post("$nodeUrl/$blockId/helpers/scripts/run_operation", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
+            coVerify { httpClientProvider.post("$nodeUrl/chains/$chainId/blocks/$blockId/helpers/scripts/run_operation", "/", headers = headers, parameters = emptyList(), body = jsonRequest?.normalizeWith(json)) }
         }
     }
 
     @Test
-    fun `should call GET on '_ - $block_id - operations'`() {
+    fun `should get operations`() {
+        val chainId = "chainId"
+        val blockId = "blockId"
         val (_, expectedResponse, _, jsonResponse) = operationsGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.operations.get(headers = headers) }
+            val response = runBlocking { activeSimplifiedRpcClient.getOperations(chainId, blockId, headers = headers) }
 
             assertEquals(expectedResponse, response)
-
-            coVerify { httpClient.get("$nodeUrl/$blockId/operations", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/operations", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/blocks/$blockId/operations", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
@@ -962,90 +926,6 @@ class BlockClientTest {
             """.trimIndent(),
         )
 
-    private val contextContractsContractScriptGetRequestConfiguration: RequestConfiguration<Unit, GetContractScriptResponse> =
-        RequestConfiguration(
-            response = GetContractScriptResponse(
-                RpcScript(
-                    code = MichelineSequence(
-                        MichelinePrimitiveApplication(
-                            prim = MichelsonType.Parameter,
-                            args = listOf(
-                                MichelinePrimitiveApplication(prim = MichelsonComparableType.Nat),
-                            )
-                        ),
-                        MichelinePrimitiveApplication(
-                            prim = MichelsonType.Storage,
-                            args = listOf(
-                                MichelinePrimitiveApplication(prim = MichelsonComparableType.Nat),
-                            )
-                        ),
-                        MichelinePrimitiveApplication(
-                            prim = MichelsonType.Code,
-                            args = listOf(
-                                MichelineSequence(
-                                    MichelinePrimitiveApplication(prim = MichelsonInstruction.Car),
-                                    MichelinePrimitiveApplication(
-                                        prim = MichelsonInstruction.Nil,
-                                        args = listOf(
-                                            MichelinePrimitiveApplication(prim = MichelsonType.Operation),
-                                        )
-                                    ),
-                                    MichelinePrimitiveApplication(prim = MichelsonInstruction.Pair),
-                                ),
-                            )
-                        )
-                    ),
-                    storage = MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")
-                )
-            ),
-            jsonResponse = """
-                {
-                    "code": [
-                        {
-                            "prim": "parameter",
-                            "args": [
-                                {
-                                    "prim": "nat"
-                                }
-                            ]
-                        },
-                        {
-                            "prim": "storage",
-                            "args": [
-                                {
-                                    "prim": "nat"
-                                }
-                            ]
-                        },
-                        {
-                            "prim": "code",
-                            "args": [
-                                [
-                                    {
-                                        "prim": "CAR"
-                                    },
-                                    {
-                                        "prim": "NIL",
-                                        "args": [
-                                            {
-                                                "prim": "operation"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "prim": "PAIR"
-                                    }
-                                ]
-                            ]
-                        }
-                    ],
-                    "storage": {
-                        "int": "2000000000000000000000000000000000000000000000000000000"
-                    }
-                }
-            """.trimIndent(),
-        )
-
     private val contextContractsContractScriptNormalizedPostRequestConfiguration: RequestConfiguration<GetContractNormalizedScriptRequest, GetContractNormalizedScriptResponse> =
         RequestConfiguration(
             request = GetContractNormalizedScriptRequest(unparsingMode = RpcScriptParsing.Readable),
@@ -1178,16 +1058,6 @@ class BlockClientTest {
                     "nullifiers": [
                         "4438506437b4c028170378f5c4bb9cde198d19a558f1e004c9ac0977c100a5ac"
                     ]
-                }
-            """.trimIndent(),
-        )
-
-    private val contextContractsContractStorageGetRequestConfiguration: RequestConfiguration<Unit, GetContractStorageResponse> =
-        RequestConfiguration(
-            response = GetContractStorageResponse(MichelineLiteral.Integer("2000000000000000000000000000000000000000000000000000000")),
-            jsonResponse = """
-                {
-                    "int": "2000000000000000000000000000000000000000000000000000000"
                 }
             """.trimIndent(),
         )

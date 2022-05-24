@@ -74,25 +74,25 @@ public class RpcDependencyRegistry internal constructor(
     }
 
     private val shellRpcs: MutableMap<String, WeakReference<ShellSimplifiedRpc>> = mutableMapOf()
-    private fun shellRpc(nodeUrl: String): ShellSimplifiedRpc = shellRpcs.getOrPutWeak(nodeUrl) { ShellSimplifiedRpcClient(chains(nodeUrl), injection(nodeUrl)) }
+    internal fun shellRpc(nodeUrl: String): ShellSimplifiedRpc = shellRpcs.getOrPutWeak(nodeUrl) { ShellSimplifiedRpcClient(chains(nodeUrl), injection(nodeUrl)) }
 
     private val activeRpcs: MutableMap<String, WeakReference<ActiveSimplifiedRpc>> = mutableMapOf()
-    private fun activeRpc(nodeUrl: String): ActiveSimplifiedRpc = activeRpcs.getOrPutWeak(nodeUrl) { ActiveSimplifiedRpcClient(chains(nodeUrl)) }
+    internal fun activeRpc(nodeUrl: String): ActiveSimplifiedRpc = activeRpcs.getOrPutWeak(nodeUrl) { ActiveSimplifiedRpcClient(chains(nodeUrl)) }
 
     private val chains: MutableMap<String, WeakReference<Chains>> = mutableMapOf()
-    private fun chains(nodeUrl: String): Chains = chains.getOrPutWeak(nodeUrl) { ChainsClient(nodeUrl, httpClient) }
+    internal fun chains(nodeUrl: String): Chains = chains.getOrPutWeak(nodeUrl) { ChainsClient(nodeUrl, httpClient) }
 
     private val configs: MutableMap<String, WeakReference<Config>> = mutableMapOf()
-    private fun config(nodeUrl: String): Config = configs.getOrPutWeak(nodeUrl) { ConfigClient(nodeUrl, httpClient) }
+    internal fun config(nodeUrl: String): Config = configs.getOrPutWeak(nodeUrl) { ConfigClient(nodeUrl, httpClient) }
 
     private val injections: MutableMap<String, WeakReference<Injection>> = mutableMapOf()
-    private fun injection(nodeUrl: String): Injection = injections.getOrPutWeak(nodeUrl) { InjectionClient(nodeUrl, httpClient) }
+    internal fun injection(nodeUrl: String): Injection = injections.getOrPutWeak(nodeUrl) { InjectionClient(nodeUrl, httpClient) }
 
     private val monitors: MutableMap<String, WeakReference<Monitor>> = mutableMapOf()
-    private fun monitor(nodeUrl: String): Monitor = monitors.getOrPutWeak(nodeUrl) { MonitorClient(nodeUrl, httpClient) }
+    internal fun monitor(nodeUrl: String): Monitor = monitors.getOrPutWeak(nodeUrl) { MonitorClient(nodeUrl, httpClient) }
 
     private val networks: MutableMap<String, WeakReference<Network>> = mutableMapOf()
-    private fun network(nodeUrl: String): Network = networks.getOrPutWeak(nodeUrl) { NetworkClient(nodeUrl, httpClient, json) }
+    internal fun network(nodeUrl: String): Network = networks.getOrPutWeak(nodeUrl) { NetworkClient(nodeUrl, httpClient, json) }
 
     // -- estimator --
 
