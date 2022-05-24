@@ -5,10 +5,10 @@ import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.operation.contract.Parameters
+import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.type.RpcError
 import it.airgap.tezos.rpc.type.bigmap.RpcBigMapDiff
-import it.airgap.tezos.rpc.type.contract.RpcParameters
-import it.airgap.tezos.rpc.type.contract.RpcScript
 import it.airgap.tezos.rpc.type.storage.RpcLazyStorageDiff
 import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonClassDiscriminator
@@ -384,7 +384,7 @@ public sealed class RpcInternalOperationResult {
     public open val destination: Address? = null
 
     @Transient
-    public open val parameters: RpcParameters? = null
+    public open val parameters: Parameters? = null
 
     @Transient
     public open val balance: String? = null
@@ -393,7 +393,7 @@ public sealed class RpcInternalOperationResult {
     public open val delegate: ImplicitAddress? = null
 
     @Transient
-    public open val script: RpcScript? = null
+    public open val script: Script? = null
 
     @Transient
     public open val value: MichelineNode? = null
@@ -422,7 +422,7 @@ public sealed class RpcInternalOperationResult {
         override val nonce: UShort,
         override val amount: String,
         override val destination: @Contextual Address,
-        override val parameters: RpcParameters? = null,
+        override val parameters: @Contextual Parameters? = null,
         override val result: RpcOperationResult.Transaction,
     ) : RpcInternalOperationResult() {
         public companion object {
@@ -437,7 +437,7 @@ public sealed class RpcInternalOperationResult {
         override val nonce: UShort,
         override val balance: String,
         override val delegate: @Contextual ImplicitAddress? = null,
-        override val script: RpcScript,
+        override val script: @Contextual Script,
         override val result: RpcOperationResult.Origination,
     ) : RpcInternalOperationResult() {
         public companion object {

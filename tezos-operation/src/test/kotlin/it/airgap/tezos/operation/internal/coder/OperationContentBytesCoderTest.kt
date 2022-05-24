@@ -6,7 +6,6 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.toHexString
-import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.number.TezosNatural
@@ -169,7 +168,7 @@ class OperationContentBytesCoderTest {
                     Timestamp.Rfc3339("1970-01-01T00:00:00.001Z"),
                     1U,
                     OperationListListHash("LLoaLP6mc6nVzG2Rp3fSrHFvvGpUvkbHCjLASVduN7GzQAKnPctrR"),
-                    listOf(HexString("00000001000000000100000001")),
+                    listOf("00000001000000000100000001".asHexString()),
                     ContextHash("CoWKSZnE72uMLBeh3Fmj3LSXjJmeCEmYBMxAig15g3LPjTP4rHmR"),
                     BlockPayloadHash("vh2cJrNF6FCXo1bfnM9hj66NDQSGQCBxTtqkxkMLzkTeeDnZjrvD"),
                     1,
@@ -185,7 +184,7 @@ class OperationContentBytesCoderTest {
                     Timestamp.Rfc3339("1970-01-01T00:00:00.002Z"),
                     2U,
                     OperationListListHash("LLoaNF9sd5z2SZtSmUopYNX6qs77QAUJqrnd5ei378H4bcJhQcPt5"),
-                    listOf(HexString("00000002ff000000020000000200000002"), HexString("00000002000000000200000002")),
+                    listOf("00000002ff000000020000000200000002".asHexString(), "00000002000000000200000002".asHexString()),
                     ContextHash("CoVj5HxwnPHpC1SgCC6pgqVPgw2vqFEqaC2bF5STqcbyX6giVrGn"),
                     BlockPayloadHash("vh2MHqgJtw8v7CDrZKYWtLmqGJtjzkRvs9yUeHNQqdgDJyCYm21q"),
                     2,

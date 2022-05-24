@@ -36,7 +36,7 @@ public data class BlockHeader(
     override val payloadHash: BlockPayloadHash,
     override val payloadRound: Int,
     override val proofOfWorkNonce: HexString,
-    override val seedNonceHash: NonceHash?,
+    override val seedNonceHash: NonceHash? = null,
     override val liquidityBakingEscapeVote: Boolean,
     override val signature: Signature,
 ) : ShellBlockHeader, ProtocolBlockHeader

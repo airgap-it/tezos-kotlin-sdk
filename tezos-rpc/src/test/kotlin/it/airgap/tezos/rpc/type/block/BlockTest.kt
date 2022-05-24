@@ -9,11 +9,12 @@ import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
+import it.airgap.tezos.operation.contract.Entrypoint
+import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.internal.utils.encodeToString
 import it.airgap.tezos.rpc.type.bigmap.RpcBigMapDiff
 import it.airgap.tezos.rpc.type.chain.RpcTestChainStatus
-import it.airgap.tezos.rpc.type.contract.RpcParameters
 import it.airgap.tezos.rpc.type.operation.*
 import it.airgap.tezos.rpc.type.storage.RpcLazyStorageDiff
 import it.airgap.tezos.rpc.type.storage.RpcStorageBigMapDiff
@@ -179,8 +180,8 @@ class BlockTest {
                                     storageLimit = "20",
                                     amount = Mutez("0"),
                                     destination = ContractHash("KT1LFTPiBzNWfuvvN4CaAahQMBM86wG8pBaM"),
-                                    parameters = RpcParameters(
-                                        entrypoint = "transfer",
+                                    parameters = Parameters(
+                                        entrypoint = Entrypoint("transfer"),
                                         value = MichelineSequence(
                                             MichelineSequence(
                                                 MichelineLiteral.Bytes("0x00002503436f4f750efd7592e5c66912640bdfe01f16"),

@@ -3,9 +3,9 @@ package it.airgap.tezos.rpc.type.operation
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.operation.contract.Parameters
+import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
-import it.airgap.tezos.rpc.type.contract.RpcParameters
-import it.airgap.tezos.rpc.type.contract.RpcScript
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -166,7 +166,7 @@ public sealed class RpcOperationContent {
         @SerialName("storage_limit") public val storageLimit: String,
         public val amount: @Contextual Mutez,
         public val destination: @Contextual Address,
-        public val parameters: RpcParameters? = null,
+        public val parameters: @Contextual Parameters? = null,
         public val metadata: RpcOperationMetadata.Transaction? = null,
     ) : RpcOperationContent() {
         public companion object {
@@ -184,7 +184,7 @@ public sealed class RpcOperationContent {
         @SerialName("storage_limit") public val storageLimit: String,
         public val balance: @Contextual Mutez,
         public val delegate: @Contextual ImplicitAddress? = null,
-        public val script: RpcScript,
+        public val script: @Contextual Script,
         public val metadata: RpcOperationMetadata.Origination? = null,
     ) : RpcOperationContent() {
         public companion object {

@@ -4,10 +4,10 @@ import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
 import it.airgap.tezos.rpc.type.constants.RpcConstants
-import it.airgap.tezos.rpc.type.contract.RpcScript
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.contract.RpcUnreachableEntrypoint
 import it.airgap.tezos.rpc.type.operation.*
@@ -46,7 +46,7 @@ public value class GetConstantsResponse(public val constants: RpcConstants)
 public data class GetContractDetailsResponse(
     public val balance: String,
     public val delegate: @Contextual ImplicitAddress? = null,
-    public val script: RpcScript? = null,
+    public val script: @Contextual Script? = null,
     public val counter: String? = null,
 )
 
@@ -92,7 +92,7 @@ public value class GetContractManagerKeyResponse(public val manager: @Contextual
 
 @Serializable
 @JvmInline
-public value class GetContractScriptResponse(public val script: RpcScript? = null)
+public value class GetContractScriptResponse(public val script: @Contextual Script? = null)
 
 // -- ../<block_id>/context/contracts/<contract_id>/script/normalized --
 
@@ -101,7 +101,7 @@ public data class GetContractNormalizedScriptRequest(@SerialName("unparsing_mode
 
 @Serializable
 @JvmInline
-public value class GetContractNormalizedScriptResponse(public val script: RpcScript? = null)
+public value class GetContractNormalizedScriptResponse(public val script: @Contextual Script? = null)
 
 // -- ../<block_id>/context/contracts/<contract_id>/single_sapling_get_diff --
 

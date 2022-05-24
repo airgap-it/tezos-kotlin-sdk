@@ -14,6 +14,7 @@ import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
+import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.active.block.*
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
@@ -23,7 +24,6 @@ import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
 import it.airgap.tezos.rpc.type.constants.RpcConstants
-import it.airgap.tezos.rpc.type.contract.RpcScript
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.*
 import it.airgap.tezos.rpc.type.primitive.RpcRatio
@@ -930,7 +930,7 @@ class ActiveSimplifiedRpcClientTest {
         RequestConfiguration(
             request = GetContractNormalizedScriptRequest(unparsingMode = RpcScriptParsing.Readable),
             response = GetContractNormalizedScriptResponse(
-                RpcScript(
+                Script(
                     code = MichelineSequence(
                         MichelinePrimitiveApplication(
                             prim = MichelsonType.Parameter,
