@@ -8,8 +8,6 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
-import it.airgap.tezos.rpc.internal.utils.KStringSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

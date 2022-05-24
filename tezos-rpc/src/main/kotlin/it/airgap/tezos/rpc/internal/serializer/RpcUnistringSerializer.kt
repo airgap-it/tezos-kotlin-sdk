@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import it.airgap.tezos.rpc.type.primitive.RpcUnistring
 import kotlinx.serialization.descriptors.SerialDescriptor

@@ -7,8 +7,8 @@ import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
-import it.airgap.tezos.rpc.type.RpcError
 import it.airgap.tezos.rpc.type.bigmap.RpcBigMapDiff
+import it.airgap.tezos.rpc.type.error.RpcError
 import it.airgap.tezos.rpc.type.storage.RpcLazyStorageDiff
 import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonClassDiscriminator

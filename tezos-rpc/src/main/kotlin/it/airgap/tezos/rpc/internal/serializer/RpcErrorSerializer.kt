@@ -1,7 +1,6 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
-import it.airgap.tezos.rpc.type.RpcError
+import it.airgap.tezos.rpc.type.error.RpcError
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -22,7 +21,7 @@ internal object RpcErrorSerializer : KJsonSerializer<RpcError> {
         val fields = jsonDecoder.json.decodeFromJsonElement(MapSerializer(String.serializer(), String.serializer()), jsonElement)
 
         val surrogate = jsonDecoder.json.decodeFromJsonElement(RpcErrorSurrogate.serializer(), jsonElement)
-        val details = fields.filterNot { descriptor.elementNames.contains(it.key) }
+        val details = fields.filterNot { descriptor.elementNames.contains(it.key) }.takeIf { it.isNotEmpty() }
 
         return surrogate.toTarget(details)
     }

@@ -4,7 +4,7 @@ import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.utils.toBigInt
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.rpc.type.RpcError
+import it.airgap.tezos.rpc.type.error.RpcError
 import it.airgap.tezos.rpc.type.limits.OperationLimits
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
 import it.airgap.tezos.rpc.type.operation.RpcOperationMetadata

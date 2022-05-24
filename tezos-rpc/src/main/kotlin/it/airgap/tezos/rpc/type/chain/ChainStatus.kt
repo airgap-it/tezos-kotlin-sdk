@@ -1,6 +1,7 @@
 package it.airgap.tezos.rpc.type.chain
 
 import it.airgap.tezos.core.type.Timestamp
+import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.encoded.ProtocolHash
 import kotlinx.serialization.*
@@ -26,7 +27,7 @@ public sealed class RpcTestChainStatus {
     public open val chainId: ChainId? = null
 
     @Transient
-    public open val genesis: ProtocolHash? = null
+    public open val genesis: BlockHash? = null
 
     @Transient
     public open val protocol: ProtocolHash? = null
@@ -56,7 +57,7 @@ public sealed class RpcTestChainStatus {
     @SerialName(Running.KIND)
     public data class Running(
         @SerialName("chain_id") override val chainId: @Contextual ChainId,
-        override val genesis: @Contextual ProtocolHash,
+        override val genesis: @Contextual BlockHash,
         override val protocol: @Contextual ProtocolHash,
         override val expiration: @Contextual Timestamp,
     ) : RpcTestChainStatus() {
