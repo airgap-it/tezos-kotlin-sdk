@@ -42,16 +42,16 @@ internal object TimestampSerializer : KJsonSerializer<Timestamp> {
         val jsonPrimitive = jsonElement as? JsonPrimitive ?: failWithUnexpectedJsonType(jsonElement::class)
 
         return when {
-            jsonPrimitive.isRfc3339DateString() -> Timestamp.Rfc3339(jsonPrimitive.content)
-            jsonPrimitive.isMillis() -> Timestamp.Millis(jsonPrimitive.long)
+            jsonPrimitive.isRfc3339DateString() -> jsonDecoder.json.decodeFromJsonElement(TimestampRfc3339Serializer, jsonElement)
+            jsonPrimitive.isMillis() -> jsonDecoder.json.decodeFromJsonElement(TimestampMillisSerializer, jsonElement)
             else -> failWithInvalidSerializedValue(jsonPrimitive.content)
         }
     }
 
     override fun serialize(jsonEncoder: JsonEncoder, value: Timestamp) {
         when (value) {
-            is Timestamp.Rfc3339 -> jsonEncoder.encodeString(value.dateString)
-            is Timestamp.Millis -> jsonEncoder.encodeLong(value.long)
+            is Timestamp.Rfc3339 -> jsonEncoder.encodeSerializableValue(TimestampRfc3339Serializer, value)
+            is Timestamp.Millis -> jsonEncoder.encodeSerializableValue(TimestampMillisSerializer, value)
         }
     }
 

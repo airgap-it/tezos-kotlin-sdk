@@ -54,9 +54,9 @@ public sealed class RpcStorageBigMapDiff {
     @Serializable
     @SerialName(Alloc.KIND)
     public data class Alloc(
+        override val updates: List<RpcStorageBigMapUpdate>,
         @SerialName("key_type") override val keyType: MichelineNode,
         @SerialName("value_type") override val valueType: MichelineNode,
-        override val updates: List<RpcStorageBigMapUpdate>,
     ) : RpcStorageBigMapDiff() {
         public companion object {
             internal const val KIND = "alloc"
@@ -75,7 +75,7 @@ public sealed class RpcStorageBigMapDiff {
 @JsonClassDiscriminator(RpcStorageSaplingStateDiff.CLASS_DISCRIMINATOR)
 public sealed class RpcStorageSaplingStateDiff {
     @Transient
-    public open val updates: List<RpcStorageStaplingStateUpdate>? = null
+    public open val updates: List<RpcStorageSaplingStateUpdate>? = null
 
     @Transient
     public open val source: String? = null
@@ -85,7 +85,7 @@ public sealed class RpcStorageSaplingStateDiff {
 
     @Serializable
     @SerialName(Update.KIND)
-    public data class Update(override val updates: List<RpcStorageStaplingStateUpdate>) : RpcStorageSaplingStateDiff() {
+    public data class Update(override val updates: List<RpcStorageSaplingStateUpdate>) : RpcStorageSaplingStateDiff() {
         public companion object {
             internal const val KIND = "update"
         }
@@ -101,7 +101,7 @@ public sealed class RpcStorageSaplingStateDiff {
     @SerialName(Copy.KIND)
     public data class Copy(
         override val source: String,
-        override val updates: List<RpcStorageStaplingStateUpdate>,
+        override val updates: List<RpcStorageSaplingStateUpdate>,
     ) : RpcStorageSaplingStateDiff() {
         public companion object {
             internal const val KIND = "copy"
@@ -111,8 +111,8 @@ public sealed class RpcStorageSaplingStateDiff {
     @Serializable
     @SerialName(Alloc.KIND)
     public data class Alloc(
+        override val updates: List<RpcStorageSaplingStateUpdate>,
         @SerialName("memo_size") override val memoSize: UShort,
-        override val updates: List<RpcStorageStaplingStateUpdate>,
     ) : RpcStorageSaplingStateDiff() {
         public companion object {
             internal const val KIND = "alloc"

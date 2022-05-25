@@ -35,7 +35,7 @@ private data class RpcRunnableOperationSurrogate(
     @SerialName("chain_id") val chainId: @Contextual ChainId,
 ) {
 
-    fun toTarget(): RpcRunnableOperation = RpcRunnableOperation(chainId, operation.branch, operation.contents, operation.signature)
+    fun toTarget(): RpcRunnableOperation = RpcRunnableOperation(operation.branch, operation.contents, operation.signature, chainId)
 
     @Serializable
     data class Content(

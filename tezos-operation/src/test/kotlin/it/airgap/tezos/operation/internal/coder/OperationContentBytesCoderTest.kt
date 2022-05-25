@@ -212,19 +212,19 @@ class OperationContentBytesCoderTest {
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                OperationContent.Ballot.BallotType.Yay,
+                OperationContent.Ballot.Type.Yay,
             ) to "0600cd8459db8668d3ae6a4f49cb8fe3c5bbd6c76956000000018522ef9f87cef2f745984cdbfe4a723acfbe7979c6f24ebc04a86d786b1c038500".asHexString().toByteArray(),
             OperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                OperationContent.Ballot.BallotType.Nay,
+                OperationContent.Ballot.Type.Nay,
             ) to "0600cd8459db8668d3ae6a4f49cb8fe3c5bbd6c76956000000018522ef9f87cef2f745984cdbfe4a723acfbe7979c6f24ebc04a86d786b1c038501".asHexString().toByteArray(),
             OperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                OperationContent.Ballot.BallotType.Pass,
+                OperationContent.Ballot.Type.Pass,
             ) to "0600cd8459db8668d3ae6a4f49cb8fe3c5bbd6c76956000000018522ef9f87cef2f745984cdbfe4a723acfbe7979c6f24ebc04a86d786b1c038502".asHexString().toByteArray(),
             OperationContent.DoublePreendorsementEvidence(
                 InlinedPreendorsement(
@@ -394,7 +394,7 @@ class OperationContentBytesCoderTest {
                 TezosNatural("154"),
                 TezosNatural("23675"),
                 TezosNatural("34152"),
-                TezosNatural("634"),
+                Mutez("634"),
             ) to "7000e9dcc1a4a82c49aeec327b15e9ed457dc22a1ebcfba3089a01fbb801e88a02fffa04".asHexString().toByteArray(),
         )
 

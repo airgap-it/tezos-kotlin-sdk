@@ -1550,23 +1550,23 @@ class BlockClientTest {
                         "branch": "BLVb91yM3Es88TFcrRNK36TTLnDnwbNoUVnKfUTc8KhJKJCL4SD",
                         "contents": [
                             {
-                                "kind": "endorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV"
+                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV",
+                                "kind": "endorsement"
                             },
                             {
-                                "kind": "preendorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i"
+                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i",
+                                "kind": "preendorsement"
                             },
                             {
-                                "kind": "seed_nonce_revelation",
                                 "level": 2147483647,
-                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6"
+                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6",
+                                "kind": "seed_nonce_revelation"
                             }
                         ],
                         "signature": "sigVBPQhHL3begDeF25s73Drqo381HvC6AVW1nAa5bZYGhBRjHduQtdLa11uFJoQRS8ccYGYZxPYFBdGzFxiRszzS9uV9qbk"
@@ -1723,23 +1723,23 @@ class BlockClientTest {
                         "branch": "BLVb91yM3Es88TFcrRNK36TTLnDnwbNoUVnKfUTc8KhJKJCL4SD",
                         "contents": [
                             {
-                                "kind": "endorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV"
+                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV",
+                                "kind": "endorsement"
                             },
                             {
-                                "kind": "preendorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i"
+                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i",
+                                "kind": "preendorsement"
                             },
                             {
-                                "kind": "seed_nonce_revelation",
                                 "level": 2147483647,
-                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6"
+                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6",
+                                "kind": "seed_nonce_revelation"
                             }
                         ],
                         "signature": "sigVBPQhHL3begDeF25s73Drqo381HvC6AVW1nAa5bZYGhBRjHduQtdLa11uFJoQRS8ccYGYZxPYFBdGzFxiRszzS9uV9qbk"

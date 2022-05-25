@@ -4,6 +4,7 @@ import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
@@ -378,7 +379,7 @@ public sealed class RpcInternalOperationResult {
     public open val publicKey: PublicKey? = null
 
     @Transient
-    public open val amount: String? = null
+    public open val amount: Mutez? = null
 
     @Transient
     public open val destination: Address? = null
@@ -387,7 +388,7 @@ public sealed class RpcInternalOperationResult {
     public open val parameters: Parameters? = null
 
     @Transient
-    public open val balance: String? = null
+    public open val balance: Mutez? = null
 
     @Transient
     public open val delegate: ImplicitAddress? = null
@@ -399,7 +400,7 @@ public sealed class RpcInternalOperationResult {
     public open val value: MichelineNode? = null
 
     @Transient
-    public open val limit: String? = null
+    public open val limit: Mutez? = null
 
 
     @Serializable
@@ -420,7 +421,7 @@ public sealed class RpcInternalOperationResult {
     public data class Transaction(
         override val source: @Contextual Address,
         override val nonce: UShort,
-        override val amount: String,
+        override val amount: @Contextual Mutez,
         override val destination: @Contextual Address,
         override val parameters: @Contextual Parameters? = null,
         override val result: RpcOperationResult.Transaction,
@@ -435,7 +436,7 @@ public sealed class RpcInternalOperationResult {
     public data class Origination(
         override val source: @Contextual Address,
         override val nonce: UShort,
-        override val balance: String,
+        override val balance: @Contextual Mutez,
         override val delegate: @Contextual ImplicitAddress? = null,
         override val script: @Contextual Script,
         override val result: RpcOperationResult.Origination,
@@ -450,7 +451,6 @@ public sealed class RpcInternalOperationResult {
     public data class Delegation(
         override val source: @Contextual Address,
         override val nonce: UShort,
-        override val balance: String,
         override val delegate: @Contextual ImplicitAddress? = null,
         override val result: RpcOperationResult.Delegation,
     ) : RpcInternalOperationResult() {
@@ -477,7 +477,7 @@ public sealed class RpcInternalOperationResult {
     public data class SetDepositsLimit(
         override val source: @Contextual Address,
         override val nonce: UShort,
-        override val limit: String? = null,
+        override val limit: @Contextual Mutez? = null,
         override val result: RpcOperationResult.SetDepositsLimit,
     ) : RpcInternalOperationResult() {
         public companion object {

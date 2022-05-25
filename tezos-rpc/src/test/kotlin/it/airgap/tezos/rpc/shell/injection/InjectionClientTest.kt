@@ -70,7 +70,10 @@ class InjectionClientTest {
         val data = "a8a043507783594ede53ddbee766b4a3"
         val operations = listOf(
             listOf(
-                RpcInjectableOperation(BlockHash("BKz4CFd8FhgSLJRp7muW6EwSMKMBaCmyUgzTzrSGQiwximB5dbw"), "50b8461382a4826d0162f8dc814c5a9c"),
+                RpcInjectableOperation(
+                    branch = BlockHash("BKz4CFd8FhgSLJRp7muW6EwSMKMBaCmyUgzTzrSGQiwximB5dbw"),
+                    data = "50b8461382a4826d0162f8dc814c5a9c",
+                ),
             )
         )
 

@@ -14,10 +14,10 @@ import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
 public fun Operation.asRunnable(chainId: ChainId): RpcRunnableOperation =
     RpcRunnableOperation(
-        chainId,
         branch,
         contents.map { it.asRpc() },
         signatureOrPlaceholder,
+        chainId,
     )
 
 // -- RpcRunnableOperation -> Operation --
@@ -63,7 +63,7 @@ public fun OperationContent.Delegation.asRpc(): RpcOperationContent.Delegation =
 public fun OperationContent.Origination.asRpc(): RpcOperationContent.Origination = RpcOperationContent.Origination(source, fee, counter.nat, gasLimit.nat, storageLimit.nat, balance, delegate, script)
 public fun OperationContent.RegisterGlobalConstant.asRpc(): RpcOperationContent.RegisterGlobalConstant = RpcOperationContent.RegisterGlobalConstant(source, fee, counter.nat, gasLimit.nat, storageLimit.nat, value)
 public fun OperationContent.Reveal.asRpc(): RpcOperationContent.Reveal = RpcOperationContent.Reveal(source, fee, counter.nat, gasLimit.nat, storageLimit.nat, publicKey)
-public fun OperationContent.SetDepositsLimit.asRpc(): RpcOperationContent.SetDepositsLimit = RpcOperationContent.SetDepositsLimit(source, fee, counter.nat, gasLimit.nat, storageLimit.nat, limit?.nat)
+public fun OperationContent.SetDepositsLimit.asRpc(): RpcOperationContent.SetDepositsLimit = RpcOperationContent.SetDepositsLimit(source, fee, counter.nat, gasLimit.nat, storageLimit.nat, limit)
 public fun OperationContent.Transaction.asRpc(): RpcOperationContent.Transaction = RpcOperationContent.Transaction(source, fee, counter.nat, gasLimit.nat, storageLimit.nat, amount, destination, parameters)
 public fun OperationContent.Proposals.asRpc(): RpcOperationContent.Proposals = RpcOperationContent.Proposals(source, period, proposals)
 public fun OperationContent.SeedNonceRevelation.asRpc(): RpcOperationContent.SeedNonceRevelation = RpcOperationContent.SeedNonceRevelation(level, nonce.asString())
@@ -104,23 +104,23 @@ public fun RpcOperationContent.Proposals.asProposals(): OperationContent.Proposa
 public fun RpcOperationContent.RegisterGlobalConstant.asRegisterGlobalConstant(): OperationContent.RegisterGlobalConstant = OperationContent.RegisterGlobalConstant(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), value)
 public fun RpcOperationContent.Reveal.asReveal(): OperationContent.Reveal = OperationContent.Reveal(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), publicKey)
 public fun RpcOperationContent.SeedNonceRevelation.asSeedNonceRevelation(): OperationContent.SeedNonceRevelation = OperationContent.SeedNonceRevelation(level, nonce.asHexString())
-public fun RpcOperationContent.SetDepositsLimit.asSetDepositsLimit(): OperationContent.SetDepositsLimit = OperationContent.SetDepositsLimit(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), limit?.asTezosNatural())
+public fun RpcOperationContent.SetDepositsLimit.asSetDepositsLimit(): OperationContent.SetDepositsLimit = OperationContent.SetDepositsLimit(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), limit)
 public fun RpcOperationContent.Transaction.asTransaction(): OperationContent.Transaction = OperationContent.Transaction(source, fee, counter.asTezosNatural(), gasLimit.asTezosNatural(), storageLimit.asTezosNatural(), amount, destination, parameters)
 
 // -- OperationContent.Ballot.BallotType -> RpcOperationContent.Ballot.BallotType --
 
-public fun OperationContent.Ballot.BallotType.asRpc(): RpcOperationContent.Ballot.BallotType =
+public fun OperationContent.Ballot.Type.asRpc(): RpcOperationContent.Ballot.Type =
     when (this) {
-        OperationContent.Ballot.BallotType.Yay ->  RpcOperationContent.Ballot.BallotType.Yay
-        OperationContent.Ballot.BallotType.Nay ->  RpcOperationContent.Ballot.BallotType.Nay
-        OperationContent.Ballot.BallotType.Pass ->  RpcOperationContent.Ballot.BallotType.Pass
+        OperationContent.Ballot.Type.Yay ->  RpcOperationContent.Ballot.Type.Yay
+        OperationContent.Ballot.Type.Nay ->  RpcOperationContent.Ballot.Type.Nay
+        OperationContent.Ballot.Type.Pass ->  RpcOperationContent.Ballot.Type.Pass
     }
 
 // -- RpcOperationContent.Ballot.BallotType -> OperationContent.Ballot.BallotType --
 
-public fun RpcOperationContent.Ballot.BallotType.asBallotType(): OperationContent.Ballot.BallotType =
+public fun RpcOperationContent.Ballot.Type.asBallotType(): OperationContent.Ballot.Type =
     when (this) {
-        RpcOperationContent.Ballot.BallotType.Yay -> OperationContent.Ballot.BallotType.Yay
-        RpcOperationContent.Ballot.BallotType.Nay -> OperationContent.Ballot.BallotType.Nay
-        RpcOperationContent.Ballot.BallotType.Pass -> OperationContent.Ballot.BallotType.Pass
+        RpcOperationContent.Ballot.Type.Yay -> OperationContent.Ballot.Type.Yay
+        RpcOperationContent.Ballot.Type.Nay -> OperationContent.Ballot.Type.Nay
+        RpcOperationContent.Ballot.Type.Pass -> OperationContent.Ballot.Type.Pass
     }

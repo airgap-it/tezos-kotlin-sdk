@@ -296,34 +296,34 @@ class OperationTest {
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                OperationContent.Ballot.BallotType.Yay,
+                OperationContent.Ballot.Type.Yay,
             ) to RpcOperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                RpcOperationContent.Ballot.BallotType.Yay,
+                RpcOperationContent.Ballot.Type.Yay,
             ),
             OperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                OperationContent.Ballot.BallotType.Nay,
+                OperationContent.Ballot.Type.Nay,
             ) to RpcOperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                RpcOperationContent.Ballot.BallotType.Nay,
+                RpcOperationContent.Ballot.Type.Nay,
             ),
             OperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                OperationContent.Ballot.BallotType.Pass,
+                OperationContent.Ballot.Type.Pass,
             ) to RpcOperationContent.Ballot(
                 Ed25519PublicKeyHash("tz1eNhmMTYsti2quW46a5CBJbs4Fde4KGg4F"),
                 1,
                 ProtocolHash("PsjL76mH8vo3fTfUN4qKrdkPvRfXw7KJPWf87isNAxzh1vqdFQv"),
-                RpcOperationContent.Ballot.BallotType.Pass,
+                RpcOperationContent.Ballot.Type.Pass,
             ),
             OperationContent.DoublePreendorsementEvidence(
                 InlinedPreendorsement(
@@ -542,14 +542,14 @@ class OperationTest {
                 TezosNatural("154"),
                 TezosNatural("23675"),
                 TezosNatural("34152"),
-                TezosNatural("634"),
+                Mutez("634"),
             ) to RpcOperationContent.SetDepositsLimit(
                 Ed25519PublicKeyHash("tz1gxabEuUaCKk15qUKnhASJJoXhm9A7DVLM"),
                 Mutez("135675"),
                 "154",
                 "23675",
                 "34152",
-                "634",
+                Mutez("634"),
             ),
         )
 }

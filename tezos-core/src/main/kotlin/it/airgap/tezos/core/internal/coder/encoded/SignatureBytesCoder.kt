@@ -28,8 +28,7 @@ private object SignatureTag : EncodedTag<MetaSignature.Kind<*, Signature>> {
     override val kind: MetaSignature.Kind<*, Signature> = GenericSignature
 
     private fun isValid(bytes: ByteArray): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until bytes.size))
-    private fun isValid(bytes: MutableList<Byte>): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until min(
-        value.size + kind.bytesLength, bytes.size)))
+    private fun isValid(bytes: MutableList<Byte>): Boolean = bytes.startsWith(value) && kind.isValid(bytes.slice(value.size until min(value.size + kind.bytesLength, bytes.size)))
 
     fun recognize(bytes: ByteArray): SignatureTag? =
         if (bytes.isEmpty()) null
