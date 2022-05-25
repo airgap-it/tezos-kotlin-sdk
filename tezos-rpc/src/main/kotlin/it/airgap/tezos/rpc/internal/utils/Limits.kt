@@ -23,8 +23,8 @@ internal val Operation.limits: OperationLimits
 // -- OperationContent --
 
 internal val OperationContent.limits: OperationLimits
-    get() = when (this) {
-        is OperationContent.Manager -> OperationLimits(
+    get() = when {
+        hasFee && this is OperationContent.Manager -> OperationLimits(
             gasLimit.toBigInt(),
             storageLimit.toBigInt(),
         )

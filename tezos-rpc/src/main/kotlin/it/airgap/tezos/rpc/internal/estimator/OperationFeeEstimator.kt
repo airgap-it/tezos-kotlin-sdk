@@ -64,7 +64,8 @@ internal class OperationFeeEstimator(
     }
 
     private fun OperationContent.apply(fee: Mutez = Mutez(0), limits: OperationLimits = OperationLimits.zero): OperationContent =
-        when (this) {
+        if (hasFee) this
+        else when (this) {
             is OperationContent.Reveal -> copy(
                 fee = fee,
                 gasLimit = limits.gasBigInt.toTezosNatural(),
