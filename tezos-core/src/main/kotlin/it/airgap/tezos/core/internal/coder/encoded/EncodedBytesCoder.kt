@@ -9,8 +9,7 @@ import it.airgap.tezos.core.type.encoded.Encoded
 import it.airgap.tezos.core.type.encoded.MetaEncoded
 
 @InternalTezosSdkApi
-public class EncodedBytesCoder internal constructor(private val base58Check: Base58Check) :
-    ConfigurableConsumingBytesCoder<Encoded, EncodedBytesCoder.EncoderConfiguration, Unit> {
+public class EncodedBytesCoder internal constructor(private val base58Check: Base58Check) : ConfigurableConsumingBytesCoder<Encoded, EncodedBytesCoder.EncoderConfiguration, Unit> {
 
     public fun encode(value: Encoded): ByteArray = encode(value, EncoderConfiguration(keepPrefix = false))
     override fun encode(value: Encoded, configuration: EncoderConfiguration): ByteArray =

@@ -14,6 +14,7 @@ import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
+import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
@@ -23,7 +24,6 @@ import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
 import it.airgap.tezos.rpc.type.constants.RpcConstants
-import it.airgap.tezos.rpc.type.contract.RpcScript
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.*
 import it.airgap.tezos.rpc.type.primitive.RpcRatio
@@ -85,18 +85,33 @@ class BlockClientTest {
 
     @Test
     fun `should call GET on '_ - $block_id - context - big_maps - $big_map_id'`() {
+        data class Parameters(val offset: UInt? = null, val length: UInt? = null)
+
         val bigMapId = "bigMapId"
+        val parameters = listOf(
+            Parameters(),
+            Parameters(offset = 1U),
+            Parameters(length = 2U),
+            Parameters(offset = 1U, length = 2U),
+        )
 
         val (_, expectedResponse, _, jsonResponse) = contextBigMapsBigMapGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
 
         headers.forEach { headers ->
-            val response = runBlocking { blockClient.context.bigMaps(bigMapId).get(headers = headers) }
+            parameters.forEach {  parameters ->
+                val (offset, length) = parameters
+                val expectedParameters = buildList<HttpParameter> {
+                    offset?.let { add("offset" to it.toString()) }
+                    length?.let { add("length" to it.toString()) }
+                }
+                val response = runBlocking { blockClient.context.bigMaps(bigMapId).get(offset, length, headers = headers) }
 
-            assertEquals(expectedResponse, response)
+                assertEquals(expectedResponse, response)
 
-            coVerify { httpClient.get("$nodeUrl/$blockId/context/big_maps/$bigMapId", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/big_maps/$bigMapId", "/", headers = headers, parameters = emptyList()) }
+                coVerify { httpClient.get("$nodeUrl/$blockId/context/big_maps/$bigMapId", "/", headers = headers, parameters = expectedParameters) }
+                coVerify { httpClientProvider.get("$nodeUrl/$blockId/context/big_maps/$bigMapId", "/", headers = headers, parameters = expectedParameters) }
+            }
         }
     }
 
@@ -950,7 +965,7 @@ class BlockClientTest {
     private val contextContractsContractScriptGetRequestConfiguration: RequestConfiguration<Unit, GetContractScriptResponse> =
         RequestConfiguration(
             response = GetContractScriptResponse(
-                RpcScript(
+                Script(
                     code = MichelineSequence(
                         MichelinePrimitiveApplication(
                             prim = MichelsonType.Parameter,
@@ -1035,7 +1050,7 @@ class BlockClientTest {
         RequestConfiguration(
             request = GetContractNormalizedScriptRequest(unparsingMode = RpcScriptParsing.Readable),
             response = GetContractNormalizedScriptResponse(
-                RpcScript(
+                Script(
                     code = MichelineSequence(
                         MichelinePrimitiveApplication(
                             prim = MichelsonType.Parameter,
@@ -1535,23 +1550,23 @@ class BlockClientTest {
                         "branch": "BLVb91yM3Es88TFcrRNK36TTLnDnwbNoUVnKfUTc8KhJKJCL4SD",
                         "contents": [
                             {
-                                "kind": "endorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV"
+                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV",
+                                "kind": "endorsement"
                             },
                             {
-                                "kind": "preendorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i"
+                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i",
+                                "kind": "preendorsement"
                             },
                             {
-                                "kind": "seed_nonce_revelation",
                                 "level": 2147483647,
-                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6"
+                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6",
+                                "kind": "seed_nonce_revelation"
                             }
                         ],
                         "signature": "sigVBPQhHL3begDeF25s73Drqo381HvC6AVW1nAa5bZYGhBRjHduQtdLa11uFJoQRS8ccYGYZxPYFBdGzFxiRszzS9uV9qbk"
@@ -1708,23 +1723,23 @@ class BlockClientTest {
                         "branch": "BLVb91yM3Es88TFcrRNK36TTLnDnwbNoUVnKfUTc8KhJKJCL4SD",
                         "contents": [
                             {
-                                "kind": "endorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV"
+                                "block_payload_hash": "vh3cmyyrTLesEpcyUFgn2oqwE66dFq5TSFpvLPvhQudzEXUNe1CV",
+                                "kind": "endorsement"
                             },
                             {
-                                "kind": "preendorsement",
                                 "slot": 65535,
                                 "level": 2147483647,
                                 "round": 2147483647,
-                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i"
+                                "block_payload_hash": "vh25yX2HXJ5nWggDDuBfrmUmGkWFK5KFVetErTAmR8mXpfd2vJ1i",
+                                "kind": "preendorsement"
                             },
                             {
-                                "kind": "seed_nonce_revelation",
                                 "level": 2147483647,
-                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6"
+                                "nonce": "IoSOM8gceb8UyOtuGAcYpo9U4ZIEPDxZ6jtSwCxoWWk6",
+                                "kind": "seed_nonce_revelation"
                             }
                         ],
                         "signature": "sigVBPQhHL3begDeF25s73Drqo381HvC6AVW1nAa5bZYGhBRjHduQtdLa11uFJoQRS8ccYGYZxPYFBdGzFxiRszzS9uV9qbk"

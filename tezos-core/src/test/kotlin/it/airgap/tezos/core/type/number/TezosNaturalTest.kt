@@ -60,7 +60,7 @@ class TezosNaturalTest {
         )
 
         valid.forEach {
-            assertEquals(it, TezosNatural(it).int)
+            assertEquals(it, TezosNatural(it).nat)
         }
     }
 
@@ -78,19 +78,19 @@ class TezosNaturalTest {
 
         valid.forEach {
             if (it.inRange(UByte.MIN_VALUE..UByte.MAX_VALUE)) {
-                assertEquals(it, TezosNatural(it.toUByte()).int)
+                assertEquals(it, TezosNatural(it.toUByte()).nat)
             }
 
             if (it.inRange(UShort.MIN_VALUE..UShort.MAX_VALUE)) {
-                assertEquals(it, TezosNatural(it.toUShort()).int)
+                assertEquals(it, TezosNatural(it.toUShort()).nat)
             }
 
             if (it.inRange(UInt.MIN_VALUE..UInt.MAX_VALUE)) {
-                assertEquals(it, TezosNatural(it.toUInt()).int)
+                assertEquals(it, TezosNatural(it.toUInt()).nat)
             }
 
             if (it.inRange(ULong.MIN_VALUE..ULong.MAX_VALUE)) {
-                assertEquals(it, TezosNatural(it.toULong()).int)
+                assertEquals(it, TezosNatural(it.toULong()).nat)
             }
         }
     }

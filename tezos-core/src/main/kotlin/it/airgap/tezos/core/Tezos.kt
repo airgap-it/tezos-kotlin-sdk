@@ -26,7 +26,7 @@ public class Tezos internal constructor(
     }
 
     public class Builder {
-        public var default: Boolean = false
+        public var isDefault: Boolean = false
         public var cryptoProvider: CryptoProvider by default { Static.defaultCryptoProvider }
 
         private val moduleBuilders: MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>> = mutableMapOf()
@@ -43,7 +43,7 @@ public class Tezos internal constructor(
             val moduleRegistry = ModuleRegistry(builders = moduleBuilders)
 
             return Tezos(dependencyRegistry, moduleRegistry).also {
-                if (default) {
+                if (isDefault) {
                     Static.defaultTezos = it
                 }
             }

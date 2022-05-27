@@ -152,6 +152,10 @@ class EncodedBytesCoderTest {
         assertContentEquals(saplingSpendingKey.second, saplingSpendingKey.first.encodeToBytes(tezos))
         assertContentEquals(saplingSpendingKey.second, saplingSpendingKey.first.encodeToBytes(encodedBytesCoder))
 
+        assertContentEquals(scriptExprHash.second, encodedBytesCoder.encode(scriptExprHash.first))
+        assertContentEquals(scriptExprHash.second, scriptExprHash.first.encodeToBytes(tezos))
+        assertContentEquals(scriptExprHash.second, scriptExprHash.first.encodeToBytes(encodedBytesCoder))
+
         assertContentEquals(secp256K1Element.second, encodedBytesCoder.encode(secp256K1Element.first))
         assertContentEquals(secp256K1Element.second, secp256K1Element.first.encodeToBytes(tezos))
         assertContentEquals(secp256K1Element.second, secp256K1Element.first.encodeToBytes(encodedBytesCoder))

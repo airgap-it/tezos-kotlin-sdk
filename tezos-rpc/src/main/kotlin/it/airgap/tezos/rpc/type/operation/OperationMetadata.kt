@@ -186,7 +186,6 @@ public sealed class RpcBalanceUpdate {
     @Serializable
     public data class Deposits(
         override val delegate: @Contextual PublicKeyHash,
-        override val cycle: Int,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: Origin,
     ) : RpcBalanceUpdate() {

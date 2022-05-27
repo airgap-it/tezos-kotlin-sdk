@@ -4,7 +4,6 @@ import it.airgap.tezos.rpc.internal.serializer.LongSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcConstantsSerializer
 import it.airgap.tezos.rpc.type.delegate.RpcDelegateSelection
 import it.airgap.tezos.rpc.type.primitive.RpcRatio
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -124,7 +123,7 @@ public sealed class RpcConstants {
         @SerialName("max_micheline_node_count") override val maxMichelineNodeCount: Int,
         @SerialName("max_micheline_bytes_limit") override val maxMichelineBytesLimit: Int,
         @SerialName("max_allowed_global_constants_depth") override val maxAllowedGlobalConstantsDepth: Int,
-        @SerialName("cache_layout") override val cacheLayout: List<@Contextual Long>,
+        @SerialName("cache_layout") override val cacheLayout: List<@Serializable(with = LongSerializer::class) Long>,
         @SerialName("michelson_maximum_type_size") override val michelsonMaximumTypeSize: UShort,
         @SerialName("preserved_cycles") override val preservedCycles: UByte,
         @SerialName("blocks_per_cycle") override val blocksPerCycle: Int,

@@ -73,17 +73,21 @@ private sealed class RpcBalanceUpdateSurrogate {
     data class Freezer(
         val category: Category,
         override val delegate: @Contextual PublicKeyHash,
-        override val cycle: Int,
+        override val cycle: Int? = null,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
 
-        override fun toTarget(): RpcBalanceUpdate = when (category) {
-            Category.LegacyRewards -> RpcBalanceUpdate.LegacyRewards(delegate, cycle, change, origin)
-            Category.LegacyDeposits -> RpcBalanceUpdate.LegacyDeposits(delegate, cycle, change, origin)
-            Category.Deposits -> RpcBalanceUpdate.Deposits(delegate, cycle, change, origin)
-            Category.LegacyFees -> RpcBalanceUpdate.LegacyFees(delegate, cycle, change, origin)
+        override fun toTarget(): RpcBalanceUpdate = when {
+            category == Category.LegacyRewards && cycle != null -> RpcBalanceUpdate.LegacyRewards(delegate, cycle, change, origin)
+            category == Category.LegacyDeposits && cycle != null -> RpcBalanceUpdate.LegacyDeposits(delegate, cycle, change, origin)
+            category == Category.Deposits -> RpcBalanceUpdate.Deposits(delegate, change, origin)
+            category == Category.LegacyFees && cycle != null -> RpcBalanceUpdate.LegacyFees(delegate, cycle, change, origin)
+            else -> failWithInvalidSerializedValue(this)
         }
+
+        private fun failWithInvalidSerializedValue(value: Freezer): Nothing =
+            throw SerializationException("Could not deserialize, `$value` is not a valid BalanceUpdate.Freezer value.")
 
         @Serializable
         enum class Category {
@@ -201,7 +205,7 @@ private sealed class RpcBalanceUpdateSurrogate {
     @SerialName(Commitment.KIND)
     data class Commitment(
         val category: Category,
-        override val committer: BlindedPublicKeyHash,
+        override val committer: @Contextual BlindedPublicKeyHash,
         @Serializable(with = LongSerializer::class) override val change: Long,
         override val origin: RpcBalanceUpdate.Origin,
     ) : RpcBalanceUpdateSurrogate() {
@@ -231,7 +235,7 @@ private fun RpcBalanceUpdateSurrogate(balanceUpdate: RpcBalanceUpdate): RpcBalan
         is RpcBalanceUpdate.LegacyRewards -> RpcBalanceUpdateSurrogate.Freezer(RpcBalanceUpdateSurrogate.Freezer.Category.LegacyRewards, delegate, cycle, change, origin)
         is RpcBalanceUpdate.BlockFees -> RpcBalanceUpdateSurrogate.Accumulator(RpcBalanceUpdateSurrogate.Accumulator.Category.BlockFees, change, origin)
         is RpcBalanceUpdate.LegacyDeposits -> RpcBalanceUpdateSurrogate.Freezer(RpcBalanceUpdateSurrogate.Freezer.Category.LegacyDeposits, delegate, cycle, change, origin)
-        is RpcBalanceUpdate.Deposits -> RpcBalanceUpdateSurrogate.Freezer(RpcBalanceUpdateSurrogate.Freezer.Category.Deposits, delegate, cycle, change, origin)
+        is RpcBalanceUpdate.Deposits -> RpcBalanceUpdateSurrogate.Freezer(RpcBalanceUpdateSurrogate.Freezer.Category.Deposits, delegate, null, change, origin)
         is RpcBalanceUpdate.NonceRevelationRewards -> RpcBalanceUpdateSurrogate.Minted(RpcBalanceUpdateSurrogate.Minted.Category.NonceRevelationRewards, change, origin)
         is RpcBalanceUpdate.DoubleSigningEvidenceRewards -> RpcBalanceUpdateSurrogate.Minted(RpcBalanceUpdateSurrogate.Minted.Category.DoubleSigningEvidenceRewards, change, origin)
         is RpcBalanceUpdate.EndorsingRewards -> RpcBalanceUpdateSurrogate.Minted(RpcBalanceUpdateSurrogate.Minted.Category.EndorsingRewards, change, origin)

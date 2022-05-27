@@ -1,7 +1,7 @@
 package it.airgap.tezos.core.type.number
 
 @JvmInline
-public value class TezosNatural(public val int: String) {
+public value class TezosNatural(public val nat: String) {
 
     public constructor(value: UByte) : this(value.toString())
     public constructor(value: UShort) : this(value.toString())
@@ -9,13 +9,13 @@ public value class TezosNatural(public val int: String) {
     public constructor(value: ULong) : this(value.toString())
 
     init {
-        require(isValid(int)) { "Invalid Tezos natural number." }
+        require(isValid(nat)) { "Invalid Tezos natural number." }
     }
 
-    public fun toUByte(): UByte = int.toUByte()
-    public fun toUShort(): UShort = int.toUShort()
-    public fun toUInt(): UInt = int.toUInt()
-    public fun toULong(): ULong = int.toULong()
+    public fun toUByte(): UByte = nat.toUByte()
+    public fun toUShort(): UShort = nat.toUShort()
+    public fun toUInt(): UInt = nat.toUInt()
+    public fun toULong(): ULong = nat.toULong()
 
     public companion object {
         public fun isValid(value: String): Boolean = value.matches(Regex("^[0-9]+$"))

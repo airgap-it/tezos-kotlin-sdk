@@ -6,8 +6,7 @@ import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.core.type.encoded.Encoded
 import it.airgap.tezos.core.type.encoded.MetaEncoded
 
-internal abstract class BytesToEncodedGroupedConverter<out E : Encoded, out M : MetaEncoded<M, E>>(private val base58Check: Base58Check) :
-    Converter<ByteArray, E> {
+internal abstract class BytesToEncodedGroupedConverter<out E : Encoded, out M : MetaEncoded<M, E>>(private val base58Check: Base58Check) : Converter<ByteArray, E> {
     protected abstract val kinds: List<MetaEncoded.Kind<M, E>>
     protected abstract fun failWithInvalidValue(value: ByteArray): Nothing
 

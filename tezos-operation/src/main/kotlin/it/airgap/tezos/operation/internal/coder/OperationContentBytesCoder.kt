@@ -204,7 +204,7 @@ internal class OperationContentBytesCoder(
         }
 
     private fun encodeSetDepositsLimit(content: OperationContent.SetDepositsLimit): ByteArray = with(content) {
-        val limitBytes = limit?.encodeToBytes(tezosNaturalBytesCoder) ?: byteArrayOf()
+        val limitBytes = limit?.encodeToBytes(mutezBytesCoder) ?: byteArrayOf()
         val limitPresence = encodeBooleanToBytes(limitBytes.isNotEmpty())
 
         OperationContent.SetDepositsLimit.tag + encodeManagerOperation(this) + limitPresence + limitBytes
@@ -393,7 +393,7 @@ internal class OperationContentBytesCoder(
         val source = ImplicitAddress.decodeConsumingFromBytes(bytes, implicitAddressBytesCoder)
         val period = decodeConsumingInt32FromBytes(bytes)
         val proposal = ProtocolHash.decodeConsumingFromBytes(bytes, encodedBytesCoder)
-        val ballot = OperationContent.Ballot.BallotType.recognizeConsuming(bytes) ?: failWithInvalidEncodedOperationContent()
+        val ballot = OperationContent.Ballot.Type.recognizeConsuming(bytes) ?: failWithInvalidEncodedOperationContent()
 
         return OperationContent.Ballot(source, period, proposal, ballot)
     }
@@ -539,7 +539,7 @@ internal class OperationContentBytesCoder(
 
         return decodeManagerOperation(value) { source, fee, counter, gasLimit, storageLimit, bytes ->
             val limitPresence = decodeBoolean(bytes)
-            val limit = if (limitPresence) TezosNatural.decodeConsumingFromBytes(bytes, tezosNaturalBytesCoder) else null
+            val limit = if (limitPresence) Mutez.decodeConsumingFromBytes(bytes, mutezBytesCoder) else null
 
             OperationContent.SetDepositsLimit(
                 source,
@@ -700,9 +700,9 @@ internal class OperationContentBytesCoder(
         if (bytes.isEmpty()) null
         else values.find { bytes.startsWith(it.tag) }?.also { bytes.consumeUntil(it.tag.size) }
 
-    private fun OperationContent.Ballot.BallotType.Companion.recognizeConsuming(bytes: MutableList<Byte>): OperationContent.Ballot.BallotType? =
+    private fun OperationContent.Ballot.Type.Companion.recognizeConsuming(bytes: MutableList<Byte>): OperationContent.Ballot.Type? =
         if (bytes.isEmpty()) null
-        else OperationContent.Ballot.BallotType.values().find { bytes.startsWith(it.value) }?.also { bytes.consumeUntil(it.value.size) }
+        else OperationContent.Ballot.Type.values().find { bytes.startsWith(it.value) }?.also { bytes.consumeUntil(it.value.size) }
 
     private fun failWithInvalidEncodedOperationContent(): Nothing = failWithIllegalArgument("Invalid encoded OperationContent value.")
     private fun failWithInvalidTag(expected: OperationContent.Kind): Nothing =

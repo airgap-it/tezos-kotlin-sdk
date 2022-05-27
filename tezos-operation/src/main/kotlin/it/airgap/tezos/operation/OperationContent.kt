@@ -3,8 +3,8 @@ package it.airgap.tezos.operation
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
-import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.core.type.number.TezosNatural
+import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
@@ -89,9 +89,9 @@ public sealed interface OperationContent {
         public val source: ImplicitAddress,
         public val period: Int,
         public val proposal: ProtocolHash,
-        public val ballot: BallotType,
+        public val ballot: Type,
     ) : OperationContent {
-        public enum class BallotType(override val value: ByteArray) : BytesTag {
+        public enum class Type(override val value: ByteArray) : BytesTag {
             Yay(byteArrayOf(0)),
             Nay(byteArrayOf(1)),
             Pass(byteArrayOf(2));
@@ -237,7 +237,7 @@ public sealed interface OperationContent {
         override val counter: TezosNatural,
         override val gasLimit: TezosNatural,
         override val storageLimit: TezosNatural,
-        public val limit: TezosNatural? = null,
+        public val limit: Mutez? = null,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 112U

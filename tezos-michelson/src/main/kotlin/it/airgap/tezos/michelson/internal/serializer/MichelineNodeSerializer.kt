@@ -60,10 +60,6 @@ internal sealed interface MichelineNodeSurrogate {
 
         private fun failWithInvalidSerializedValue(): Nothing = throw SerializationException("Could not deserialize, invalid Micheline Node.")
     }
-
-    companion object {
-        fun serializer(): KSerializer<MichelineNodeSurrogate> = MichelineNodeSurrogateSerializer
-    }
 }
 
 internal fun MichelineNodeSurrogate(node: MichelineNode): MichelineNodeSurrogate = with(node) {

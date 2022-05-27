@@ -364,23 +364,23 @@ class NetworkClientTest {
                     "incoming": true,
                     "peer_id": "idrY8gjTHV4HUVtEmZtypyC64nG1C4",
                     "id_point": {
-                      "addr": "127.0.0.1",
-                      "port": 65535
+                        "addr": "127.0.0.1",
+                        "port": 65535
                     },
                     "remote_socket_port": 65535,
                     "announced_version": {
-                      "chain_name": "chain",
-                      "distributed_db_version": 65535,
-                      "p2p_version": 65535
+                        "chain_name": "chain",
+                        "distributed_db_version": 65535,
+                        "p2p_version": 65535
                     },
                     "private": true,
                     "local_metadata": {
-                      "disable_mempool": true,
-                      "private_node": true
+                        "disable_mempool": true,
+                        "private_node": true
                     },
                     "remote_metadata": {
-                      "disable_mempool": true,
-                      "private_node": true
+                        "disable_mempool": true,
+                        "private_node": true
                     }
                 }
             """.trimIndent(),
@@ -440,6 +440,205 @@ class NetworkClientTest {
 
     private val peersGetRequestConfiguration: RequestConfiguration<Unit, GetPeersResponse>
         get() = RequestConfiguration(
+            jsonResponse = """
+                [
+                    [
+                        "idrY8gjTHV4HUVtEmZtypyC64nG1C4",
+                        {
+                            "score": 0,
+                            "trusted": true,
+                            "conn_metadata": {
+                                "disable_mempool": true,
+                                "private_node": true
+                            },
+                            "peer_metadata": {
+                                "responses": {
+                                    "sent": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    },
+                                    "failed": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    },
+                                    "received": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    },
+                                    "unexpected": "1073741823",
+                                    "outdated": "1073741823"
+                                },
+                                "requests": {
+                                    "sent": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    },
+                                    "received": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    },
+                                    "failed": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    },
+                                    "scheduled": {
+                                        "branch": "1073741823",
+                                        "head": "1073741823",
+                                        "block_header": "1073741823",
+                                        "operations": "1073741823",
+                                        "protocols": "1073741823",
+                                        "operation_hashes_for_block": "1073741823",
+                                        "operations_for_block": "1073741823",
+                                        "checkpoint": "1073741823",
+                                        "protocol_branch": "1073741823",
+                                        "predecessor_header": "1073741823",
+                                        "other": "1073741823"
+                                    }
+                                },
+                                "valid_blocks": "1073741823",
+                                "old_heads": "1073741823",
+                                "prevalidator_results": {
+                                    "cannot_download": "1073741823",
+                                    "cannot_parse": "1073741823",
+                                    "refused_by_prefilter": "1073741823",
+                                    "refused_by_postfilter": "1073741823",
+                                    "applied": "1073741823",
+                                    "branch_delayed": "1073741823",
+                                    "branch_refused": "1073741823",
+                                    "refused": "1073741823",
+                                    "duplicate": "1073741823",
+                                    "outdated": "1073741823"
+                                },
+                                "unactivated_chains": "1073741823",
+                                "inactive_chains": "1073741823",
+                                "future_blocks_advertised": "1073741823",
+                                "unadvertised": {
+                                    "block": "1073741823",
+                                    "operations": "1073741823",
+                                    "protocol": "1073741823"
+                                },
+                                "advertisements": {
+                                    "sent": {
+                                        "head": "1073741823",
+                                        "branch": "1073741823"
+                                    },
+                                    "received": {
+                                        "head": "1073741823",
+                                        "branch": "1073741823"
+                                    }
+                                }
+                            },
+                            "state": "running",
+                            "reachable_at": {
+                                "addr": "127.0.0.1",
+                                "port": 65535
+                            },
+                            "stat": {
+                                "total_sent": "9223372036854775807",
+                                "total_recv": "9223372036854775807",
+                                "current_inflow": 1073741823,
+                                "current_outflow": 1073741823
+                            },
+                            "last_failed_connection": [
+                                {
+                                    "addr": "127.0.0.1",
+                                    "port": 65535
+                                },
+                                "2022-04-12T13:07:00Z"
+                            ],
+                            "last_rejected_connection": [
+                                {
+                                    "addr": "127.0.0.1",
+                                    "port": 65535
+                                },
+                                "2022-04-12T13:07:00Z"
+                            ],
+                            "last_established_connection": [
+                                {
+                                    "addr": "127.0.0.1",
+                                    "port": 65535
+                                },
+                                "2022-04-12T13:07:00Z"
+                            ],
+                            "last_disconnection": [
+                                {
+                                    "addr": "127.0.0.1",
+                                    "port": 65535
+                                },
+                                "2022-04-12T13:07:00Z"
+                            ],
+                            "last_seen": [
+                                {
+                                    "addr": "127.0.0.1",
+                                    "port": 65535
+                                },
+                                "2022-04-12T13:07:00Z"
+                            ],
+                            "last_miss": [
+                                {
+                                    "addr": "127.0.0.1",
+                                    "port": 65535
+                                },
+                                "2022-04-12T13:07:00Z"
+                            ]
+                        }
+                    ]
+                ]
+            """.trimIndent(),
             response = GetPeersResponse(
                 listOf(
                     CryptoboxPublicKeyHash("idrY8gjTHV4HUVtEmZtypyC64nG1C4") to RpcPeer(
@@ -635,206 +834,7 @@ class NetworkClientTest {
                         ),
                     )
                 )
-            ),
-            jsonResponse = """
-                [
-                    [
-                        "idrY8gjTHV4HUVtEmZtypyC64nG1C4",
-                        {
-                            "score": 0,
-                            "trusted": true,
-                            "conn_metadata": {
-                                "disable_mempool": true,
-                                "private_node": true
-                            },
-                            "peer_metadata": {
-                                "responses": {
-                                    "sent": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    },
-                                    "failed": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    },
-                                    "received": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    },
-                                    "unexpected": "1073741823",
-                                    "outdated": "1073741823"
-                                },
-                                "requests": {
-                                    "sent": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    },
-                                    "received": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    },
-                                    "failed": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    },
-                                    "scheduled": {
-                                        "branch": "1073741823",
-                                        "head": "1073741823",
-                                        "block_header": "1073741823",
-                                        "operations": "1073741823",
-                                        "protocols": "1073741823",
-                                        "operation_hashes_for_block": "1073741823",
-                                        "operations_for_block": "1073741823",
-                                        "checkpoint": "1073741823",
-                                        "protocol_branch": "1073741823",
-                                        "predecessor_header": "1073741823",
-                                        "other": "1073741823"
-                                    }
-                                },
-                                "valid_blocks": "1073741823",
-                                "old_heads": "1073741823",
-                                "prevalidator_results": {
-                                    "cannot_download": "1073741823",
-                                    "cannot_parse": "1073741823",
-                                    "refused_by_prefilter": "1073741823",
-                                    "refused_by_postfilter": "1073741823",
-                                    "applied": "1073741823",
-                                    "branch_delayed": "1073741823",
-                                    "branch_refused": "1073741823",
-                                    "refused": "1073741823",
-                                    "duplicate": "1073741823",
-                                    "outdated": "1073741823"
-                                },
-                                "unactivated_chains": "1073741823",
-                                "inactive_chains": "1073741823",
-                                "future_blocks_advertised": "1073741823",
-                                "unadvertised": {
-                                    "block": "1073741823",
-                                    "operations": "1073741823",
-                                    "protocol": "1073741823"
-                                },
-                                "advertisements": {
-                                    "sent": {
-                                        "head": "1073741823",
-                                        "branch": "1073741823"
-                                    },
-                                    "received": {
-                                        "head": "1073741823",
-                                        "branch": "1073741823"
-                                    }
-                                }
-                            },
-                            "state": "running",
-                            "reachable_at": {
-                                "addr": "127.0.0.1",
-                                "port": 65535
-                            },
-                            "stat": {
-                                "total_sent": 9223372036854775807,
-                                "total_recv": 9223372036854775807,
-                                "current_inflow": 1073741823,
-                                "current_outflow": 1073741823
-                            },
-                            "last_failed_connection": [
-                                {
-                                    "addr": "127.0.0.1",
-                                    "port": 65535
-                                },
-                                "2022-04-12T13:07:00Z"
-                            ],
-                            "last_rejected_connection": [
-                                {
-                                    "addr": "127.0.0.1",
-                                    "port": 65535
-                                },
-                                "2022-04-12T13:07:00Z"
-                            ],
-                            "last_established_connection": [
-                                {
-                                    "addr": "127.0.0.1",
-                                    "port": 65535
-                                },
-                                "2022-04-12T13:07:00Z"
-                            ],
-                            "last_disconnection": [
-                                {
-                                    "addr": "127.0.0.1",
-                                    "port": 65535
-                                },
-                                "2022-04-12T13:07:00Z"
-                            ],
-                            "last_seen": [
-                                {
-                                    "addr": "127.0.0.1",
-                                    "port": 65535
-                                },
-                                "2022-04-12T13:07:00Z"
-                            ],
-                            "last_miss": [
-                                {
-                                    "addr": "127.0.0.1",
-                                    "port": 65535
-                                },
-                                "2022-04-12T13:07:00Z"
-                            ]
-                        }
-                    ]
-                ]
-            """.trimIndent()
+            )
         )
 
     private val peersPeerGetRequestConfiguration: RequestConfiguration<Unit, GetPeerResponse>
@@ -1178,8 +1178,8 @@ class NetworkClientTest {
                         "port": 65535
                     },
                     "stat": {
-                        "total_sent": 9223372036854775807,
-                        "total_recv": 9223372036854775807,
+                        "total_sent": "9223372036854775807",
+                        "total_recv": "9223372036854775807",
                         "current_inflow": 1073741823,
                         "current_outflow": 1073741823
                     },
@@ -1583,8 +1583,8 @@ class NetworkClientTest {
                         "port": 65535
                     },
                     "stat": {
-                        "total_sent": 9223372036854775807,
-                        "total_recv": 9223372036854775807,
+                        "total_sent": "9223372036854775807",
+                        "total_recv": "9223372036854775807",
                         "current_inflow": 1073741823,
                         "current_outflow": 1073741823
                     },

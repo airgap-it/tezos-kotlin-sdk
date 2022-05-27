@@ -1,19 +1,7 @@
 package it.airgap.tezos.rpc.internal.utils
 
-import it.airgap.tezos.core.internal.type.BigInt
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonDecoder
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.serializer
-import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
 
 @PublishedApi
@@ -21,89 +9,4 @@ import kotlin.reflect.full.createType
 internal inline fun <reified T : Any> serializer(): KSerializer<T> {
     val type = T::class.createType()
     return serializer(type) as KSerializer<T>
-}
-
-// -- JSON --
-
-internal interface KJsonSerializer<T> : KSerializer<T> {
-    override fun deserialize(decoder: Decoder): T {
-        val jsonDecoder = decoder as? JsonDecoder ?: failWithExpectedJsonDecoder(decoder::class)
-        val jsonElement = jsonDecoder.decodeJsonElement()
-
-        return deserialize(jsonDecoder, jsonElement)
-    }
-
-    fun deserialize(jsonDecoder: JsonDecoder, jsonElement: JsonElement): T
-
-    override fun serialize(encoder: Encoder, value: T) {
-        val jsonEncoder = encoder as? JsonEncoder ?: failWithExpectedJsonEncoder(encoder::class)
-
-        serialize(jsonEncoder, value)
-    }
-
-    fun serialize(jsonEncoder: JsonEncoder, value: T)
-
-    private fun failWithExpectedJsonDecoder(actual: KClass<out Decoder>): Nothing =
-        throw SerializationException("Expected Json decoder, got $actual.")
-
-    private fun failWithExpectedJsonEncoder(actual: KClass<out Encoder>): Nothing =
-        throw SerializationException("Expected Json encoder, got $actual.")
-}
-
-// -- String --
-
-internal abstract class KStringSerializer<T : Any>(targetClass: KClass<T>) : KSerializer<T> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(targetClass.toString(), PrimitiveKind.STRING)
-
-    protected abstract fun valueFromString(string: String): T
-    protected abstract fun valueToString(value: T): String
-
-    override fun deserialize(decoder: Decoder): T {
-        val string = decoder.decodeString()
-        return valueFromString(string)
-    }
-
-    override fun serialize(encoder: Encoder, value: T) {
-        val string = valueToString(value)
-        encoder.encodeString(string)
-    }
-}
-
-// -- BigInt --
-
-internal abstract class KBigIntSerializer<T : Any>(targetClass: KClass<T>) : KSerializer<T> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(targetClass.toString(), PrimitiveKind.STRING)
-
-    protected abstract fun valueFromBigInt(string: BigInt): T
-    protected abstract fun valueToBigInt(value: T): BigInt
-
-    override fun deserialize(decoder: Decoder): T {
-        val string = decoder.decodeString()
-        return valueFromBigInt(BigInt.valueOf(string, radix = 10))
-    }
-
-    override fun serialize(encoder: Encoder, value: T) {
-        val bigInt = valueToBigInt(value)
-        encoder.encodeString(bigInt.toString(radix = 10))
-    }
-}
-
-// -- List<List<T>> --
-
-internal abstract class KListListSerializer<T, S>(elementSerializer: KSerializer<S>) : KSerializer<T> {
-    protected val delegateSerializer: KSerializer<List<List<S>>> = ListSerializer(ListSerializer(elementSerializer))
-    override val descriptor: SerialDescriptor = delegateSerializer.descriptor
-
-    protected abstract fun valueFromListList(list: List<List<S>>): T
-    protected abstract fun valueToListList(value: T): List<List<S>>
-
-    override fun deserialize(decoder: Decoder): T {
-        val list = delegateSerializer.deserialize(decoder)
-        return valueFromListList(list)
-    }
-
-    override fun serialize(encoder: Encoder, value: T) {
-        val list = valueToListList(value)
-        encoder.encodeSerializableValue(delegateSerializer, list)
-    }
 }

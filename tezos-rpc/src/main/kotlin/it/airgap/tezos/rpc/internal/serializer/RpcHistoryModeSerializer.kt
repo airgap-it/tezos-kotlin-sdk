@@ -1,6 +1,5 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import it.airgap.tezos.rpc.type.history.RpcAdditionalCycles
 import it.airgap.tezos.rpc.type.history.RpcHistoryMode
@@ -63,10 +62,6 @@ private sealed interface RpcHistoryModeSurrogate {
 
         private fun failWithInvalidSerializedValue(value: RpcHistoryModeSurrogate): Nothing =
             throw SerializationException("Could not deserialize, `$value` is not a valid HistoryMode value.")
-    }
-
-    companion object {
-        fun serializer(): KSerializer<RpcHistoryModeSurrogate> = RpcHistoryModeSurrogateSerializer
     }
 }
 

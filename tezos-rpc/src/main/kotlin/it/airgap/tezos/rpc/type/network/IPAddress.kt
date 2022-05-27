@@ -34,7 +34,9 @@ public value class RpcIPv4Address(public val string: String) : RpcIPAddress {
     }
 
     public companion object {
-        public fun isValid(string: String): Boolean = runCatching { InetAddress.getByName(string) }.getOrNull()?.takeIf { it is Inet4Address } != null
+        public fun isValid(string: String): Boolean =
+            if (string.isBlank()) false
+            else runCatching { InetAddress.getByName(string) }.getOrNull()?.takeIf { it is Inet4Address } != null
     }
 }
 
@@ -46,6 +48,8 @@ public value class RpcIPv6Address(public val string: String) : RpcIPAddress {
     }
 
     public companion object {
-        public fun isValid(string: String): Boolean = runCatching { InetAddress.getByName(string) }.getOrNull()?.takeIf { it is Inet6Address } != null
+        public fun isValid(string: String): Boolean =
+            if (string.isBlank()) false
+            else runCatching { InetAddress.getByName(string) }.getOrNull()?.takeIf { it is Inet6Address } != null
     }
 }

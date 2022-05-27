@@ -5,7 +5,6 @@ import it.airgap.tezos.rpc.internal.serializer.RpcDelegateSelectionSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcRandomDelegateSelectionSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcRoundRobinOverDelegateSelectionSerializer
 import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 // -- RpcDelegateSelection --
@@ -17,5 +16,5 @@ public sealed class RpcDelegateSelection {
     public object Random : RpcDelegateSelection()
 
     @Serializable(with = RpcRoundRobinOverDelegateSelectionSerializer::class)
-    public data class RoundRobinOver(@SerialName("public_keys") public val publicKeys: List<List<@Contextual PublicKey>>) : RpcDelegateSelection()
+    public data class RoundRobinOver(public val publicKeys: List<List<@Contextual PublicKey>>) : RpcDelegateSelection()
 }

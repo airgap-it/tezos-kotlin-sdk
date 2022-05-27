@@ -7,8 +7,6 @@ import it.airgap.tezos.core.internal.coder.encoded.*
 import it.airgap.tezos.core.internal.coder.number.TezosIntegerBytesCoder
 import it.airgap.tezos.core.internal.coder.number.TezosNaturalBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
-import it.airgap.tezos.core.internal.coder.tez.NanotezBytesCoder
-import it.airgap.tezos.core.internal.coder.tez.TezBytesCoder
 import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.converter.encoded.*
@@ -19,8 +17,6 @@ import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.number.TezosInteger
 import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.tez.Nanotez
-import it.airgap.tezos.core.type.tez.Tez
 
 @InternalTezosSdkApi
 public class CoreDependencyRegistry internal constructor(global: DependencyRegistry) {
@@ -38,9 +34,7 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
     public val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural> by lazy { Static.tezosNaturalBytesCoder }
     public val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger> by lazy { Static.tezosIntegerBytesCoder }
 
-    public val tezBytesCoder: ConsumingBytesCoder<Tez> by lazy { Static.tezBytesCoder }
     public val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazy { Static.mutezBytesCoder }
-    public val nanotezBytesCoder: ConsumingBytesCoder<Nanotez> by lazy { Static.nanotezBytesCoder }
 
     public val timestampBigIntCoder: Coder<Timestamp, BigInt> by lazy { Static.timestampBigIntCoder }
 
@@ -49,7 +43,7 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
     public val bytesToAddressConverter: Converter<ByteArray, Address> by lazy { BytesToAddressConverter(global.base58Check) }
     public val stringToAddressConverter: Converter<String, Address> by lazy { Static.stringToAddressConverter }
 
-    public val bytesToImplicitAddressConverter: Converter<ByteArray, ImplicitAddress> by lazy { BytesToImplicitAddressConverter(global.base58Check) }
+    public val bytesToImplicitAddressConverter: Converter<ByteArray, ImplicitAddress> by lazy { BytesToImplicitAddressConverter(bytesToPublicKeyHashConverter) }
     public val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazy { Static.stringToImplicitAddressConverter }
 
     public val bytesToPublicKeyConverter: Converter<ByteArray, PublicKey> by lazy { BytesToPublicKeyConverter(global.base58Check) }
@@ -76,16 +70,14 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
         val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural> by lazyWeak { TezosNaturalBytesCoder() }
         val tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger> by lazyWeak { TezosIntegerBytesCoder(tezosNaturalBytesCoder) }
 
-        val tezBytesCoder: ConsumingBytesCoder<Tez> by lazyWeak { TezBytesCoder(tezosNaturalBytesCoder) }
         val mutezBytesCoder: ConsumingBytesCoder<Mutez> by lazyWeak { MutezBytesCoder(tezosNaturalBytesCoder) }
-        val nanotezBytesCoder: ConsumingBytesCoder<Nanotez> by lazyWeak { NanotezBytesCoder(tezosNaturalBytesCoder) }
 
         val timestampBigIntCoder: Coder<Timestamp, BigInt> by lazyWeak { TimestampBigIntCoder() }
 
         // -- converter --
 
         val stringToAddressConverter: Converter<String, Address> by lazyWeak { StringToAddressConverter() }
-        val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazyWeak { StringToImplicitAddressConverter() }
+        val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazyWeak { StringToImplicitAddressConverter(stringToPublicKeyHashConverter) }
         val stringToPublicKeyConverter: Converter<String, PublicKey> by lazyWeak { StringToPublicKeyConverter() }
         val stringToPublicKeyHashConverter: Converter<String, PublicKeyHash> by lazyWeak { StringToPublicKeyHashConverter() }
         val stringToBlindedPublicKeyHashConverter: Converter<String, BlindedPublicKeyHash> by lazyWeak { StringToBlindedPublicKeyHashConverter() }

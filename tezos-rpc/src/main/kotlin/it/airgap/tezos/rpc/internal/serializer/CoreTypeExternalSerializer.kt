@@ -4,16 +4,10 @@ package it.airgap.tezos.rpc.internal.serializer
 
 import it.airgap.tezos.core.converter.encoded.fromString
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.core.type.tez.Nanotez
-import it.airgap.tezos.core.type.tez.Tez
-import it.airgap.tezos.rpc.internal.utils.KBigIntSerializer
-import it.airgap.tezos.rpc.internal.utils.KJsonSerializer
-import it.airgap.tezos.rpc.internal.utils.KStringSerializer
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -34,21 +28,9 @@ internal object HexStringSerializer : KStringSerializer<HexString>(HexString::cl
     override fun valueToString(value: HexString): String = value.asString()
 }
 
-// -- Tez --
-
-internal object TezSerializer : KBigIntSerializer<Tez>(Tez::class) {
-    override fun valueFromBigInt(string: BigInt): Tez = Tez(string)
-    override fun valueToBigInt(value: Tez): BigInt = value.bigInt
-}
-
-internal object MutezSerializer : KBigIntSerializer<Mutez>(Mutez::class) {
-    override fun valueFromBigInt(string: BigInt): Mutez = Mutez(string)
-    override fun valueToBigInt(value: Mutez): BigInt = value.bigInt
-}
-
-internal object NanotezSerializer : KBigIntSerializer<Nanotez>(Nanotez::class) {
-    override fun valueFromBigInt(string: BigInt): Nanotez = Nanotez(string)
-    override fun valueToBigInt(value: Nanotez): BigInt = value.bigInt
+internal object MutezSerializer : KStringSerializer<Mutez>(Mutez::class) {
+    override fun valueFromString(string: String): Mutez = Mutez(string)
+    override fun valueToString(value: Mutez): String = value.value.toString()
 }
 
 // -- Timestamp --
@@ -60,16 +42,16 @@ internal object TimestampSerializer : KJsonSerializer<Timestamp> {
         val jsonPrimitive = jsonElement as? JsonPrimitive ?: failWithUnexpectedJsonType(jsonElement::class)
 
         return when {
-            jsonPrimitive.isRfc3339DateString() -> Timestamp.Rfc3339(jsonPrimitive.content)
-            jsonPrimitive.isMillis() -> Timestamp.Millis(jsonPrimitive.long)
+            jsonPrimitive.isRfc3339DateString() -> jsonDecoder.json.decodeFromJsonElement(TimestampRfc3339Serializer, jsonElement)
+            jsonPrimitive.isMillis() -> jsonDecoder.json.decodeFromJsonElement(TimestampMillisSerializer, jsonElement)
             else -> failWithInvalidSerializedValue(jsonPrimitive.content)
         }
     }
 
     override fun serialize(jsonEncoder: JsonEncoder, value: Timestamp) {
         when (value) {
-            is Timestamp.Rfc3339 -> jsonEncoder.encodeString(value.dateString)
-            is Timestamp.Millis -> jsonEncoder.encodeLong(value.long)
+            is Timestamp.Rfc3339 -> jsonEncoder.encodeSerializableValue(TimestampRfc3339Serializer, value)
+            is Timestamp.Millis -> jsonEncoder.encodeSerializableValue(TimestampMillisSerializer, value)
         }
     }
 

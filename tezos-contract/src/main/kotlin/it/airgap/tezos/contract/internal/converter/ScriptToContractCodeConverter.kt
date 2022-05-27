@@ -7,11 +7,11 @@ import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.rpc.type.contract.RpcScript
+import it.airgap.tezos.operation.contract.Script
 import kotlin.reflect.KClass
 
-internal class RpcScriptToContractCodeConverter : Converter<RpcScript, ContractCode> {
-    override fun convert(value: RpcScript): ContractCode {
+internal class ScriptToContractCodeConverter : Converter<Script, ContractCode> {
+    override fun convert(value: Script): ContractCode {
         val contractCode = value.code as? MichelineSequence ?: failWithInvalidMichelineType(MichelineSequence::class, value.code::class)
         if (contractCode.nodes.size != 3) failWithUnknownCodeType()
 

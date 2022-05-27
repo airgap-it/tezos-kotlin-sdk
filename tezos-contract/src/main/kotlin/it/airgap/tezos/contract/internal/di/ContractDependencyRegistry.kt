@@ -5,7 +5,7 @@ import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
 import it.airgap.tezos.contract.internal.converter.EntrypointParameterToMichelineConverter
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
-import it.airgap.tezos.contract.internal.converter.RpcScriptToContractCodeConverter
+import it.airgap.tezos.contract.internal.converter.ScriptToContractCodeConverter
 import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
@@ -20,10 +20,10 @@ import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.Operation
+import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
 import it.airgap.tezos.rpc.internal.estimator.FeeEstimator
-import it.airgap.tezos.rpc.type.contract.RpcScript
 import java.lang.ref.WeakReference
 
 @InternalTezosSdkApi
@@ -48,7 +48,7 @@ public class ContractDependencyRegistry internal constructor(
             contract,
             contractStorageFactory(block, contract),
             contractEntrypointFactory(address, block, contract, operationFeeEstimator),
-            rpcStrictToContractCodeConverter,
+            scriptToContractCodeConverter,
         )
     }
 
@@ -101,5 +101,5 @@ public class ContractDependencyRegistry internal constructor(
         )
     }
 
-    private val rpcStrictToContractCodeConverter: Converter<RpcScript, ContractCode> by lazy { RpcScriptToContractCodeConverter() }
+    private val scriptToContractCodeConverter: Converter<Script, ContractCode> by lazy { ScriptToContractCodeConverter() }
 }

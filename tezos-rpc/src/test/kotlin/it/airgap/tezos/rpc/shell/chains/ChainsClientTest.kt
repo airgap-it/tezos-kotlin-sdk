@@ -13,11 +13,11 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
 import it.airgap.tezos.rpc.internal.http.HttpClient
 import it.airgap.tezos.rpc.internal.rpcModule
-import it.airgap.tezos.rpc.type.RpcError
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcInvalidBlock
 import it.airgap.tezos.rpc.type.chain.RpcChainStatus
+import it.airgap.tezos.rpc.type.error.RpcError
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import mockTezos
