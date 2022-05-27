@@ -3,6 +3,7 @@ package it.airgap.tezos.core.internal.utils
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CollectionTest {
@@ -23,6 +24,18 @@ class CollectionTest {
         assertTrue(listOf("1", 2, "3").anyIsInstance<Int>())
         assertTrue(listOf("1", "2", 3).anyIsInstance<Int>())
         assertTrue(listOf(1, 2, 3).anyIsInstance<Int>())
+    }
+
+    @Test
+    fun `returns first element of specified type or null`() {
+        assertNull(listOf(1, 2, 3).firstInstanceOfOrNull<String>())
+        assertEquals(2, listOf("1", 2, 3, 4, "5").firstInstanceOfOrNull<Int>())
+    }
+
+    @Test
+    fun `returns second element of specified type or null`() {
+        assertNull(listOf(1, 2, 3).secondInstanceOfOrNull<String>())
+        assertEquals(3, listOf("1", 2, 3, 4, "5").secondInstanceOfOrNull<Int>())
     }
 
     @Test
@@ -86,6 +99,52 @@ class CollectionTest {
         assertEquals(
             mutableListOf(1, 2, 3),
             mutableListOf(1, 2, 3).apply { consumeAt(3) },
+        )
+    }
+
+    @Test
+    fun `consumes first element from MutableList that fulfills predicate`() {
+        assertEquals(
+            mutableListOf(),
+            mutableListOf(1).apply { consume { it > 0 } },
+        )
+
+        assertEquals(
+            mutableListOf(2, 3),
+            mutableListOf(1, 2, 3).apply { consume { it == 1 } },
+        )
+
+        assertEquals(
+            mutableListOf(1, 3),
+            mutableListOf(1, 2, 3).apply { consume { it == 2 } },
+        )
+
+        assertEquals(
+            mutableListOf(1, 2),
+            mutableListOf(1, 2, 3).apply { consume { it == 3 } },
+        )
+    }
+
+    @Test
+    fun `consumes all elements from MutableList that fulfill predicate`() {
+        assertEquals(
+            mutableListOf(),
+            mutableListOf(1).apply { consumeAll { it > 0 } },
+        )
+
+        assertEquals(
+            mutableListOf(2, 3),
+            mutableListOf(1, 2, 1, 3, 1).apply { consumeAll { it == 1 } },
+        )
+
+        assertEquals(
+            mutableListOf(1, 3),
+            mutableListOf(1, 2, 2, 3).apply { consumeAll { it == 2 } },
+        )
+
+        assertEquals(
+            mutableListOf(1, 2),
+            mutableListOf(1, 3, 2, 3, 3).apply { consumeAll { it == 3 } },
         )
     }
 
@@ -169,5 +228,46 @@ class CollectionTest {
         assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1, 2)))
         assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1, 2, 3)))
         assertFalse(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(2, 3)))
+    }
+
+    @Test
+    fun `flattens list of maps`() {
+        assertEquals(
+            mapOf(
+                "a" to 1,
+                "b" to 2,
+                "c" to 3,
+            ),
+            listOf(
+                mapOf("a" to 1),
+                mapOf("b" to 2),
+                mapOf("c" to 3),
+            ).flatten()
+        )
+
+        assertEquals(
+            mapOf(
+                "a" to 1,
+                "b" to 2,
+                "c" to 4,
+            ),
+            listOf(
+                mapOf("a" to 1),
+                mapOf("b" to 2),
+                mapOf("c" to 3),
+                mapOf("c" to 4),
+            ).flatten()
+        )
+    }
+
+    @Test
+    fun `checks if set contains any element of other set`() {
+        assertTrue(setOf(1, 2, 3).containsAny(setOf(1)))
+        assertTrue(setOf(1, 2, 3).containsAny(setOf(2)))
+        assertTrue(setOf(1, 2, 3).containsAny(setOf(3)))
+        assertTrue(setOf(1, 2, 3).containsAny(setOf(2, 3)))
+        assertTrue(setOf(1, 2, 3).containsAny(setOf(3, 4)))
+        assertFalse(setOf(1, 2, 3).containsAny(setOf(4)))
+        assertFalse(setOf(1, 2, 3).containsAny(setOf(4, 5)))
     }
 }

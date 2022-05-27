@@ -4,7 +4,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.normalizer.normalized
@@ -64,6 +63,7 @@ class MichelineNormalizerTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineNormalizer.normalize(it.second))
+            assertEquals(it.first, michelinePrimitiveApplicationNormalizer.normalize(it.second))
             assertEquals(it.first, it.second.normalized(tezos))
             assertEquals(it.first, it.second.normalized(michelineNormalizer))
         }
@@ -80,6 +80,7 @@ class MichelineNormalizerTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineNormalizer.normalize(it.second))
+            assertEquals(it.first, michelineSequenceNormalizer.normalize(it.second))
             assertEquals(it.first, it.second.normalized(tezos))
             assertEquals(it.first, it.second.normalized(michelineNormalizer))
         }
@@ -182,7 +183,7 @@ class MichelineNormalizerTest {
         ),
     )
 
-    private val expectedWithNestedPairs: List<Pair<MichelineNode, MichelineNode>>
+    private val expectedWithNestedPairs: List<Pair<MichelinePrimitiveApplication, MichelinePrimitiveApplication>>
         get() = expectedWithMichelinePairs.map {
             MichelinePrimitiveApplication(
                 prim = "Some",

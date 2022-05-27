@@ -6,6 +6,7 @@ import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.rpc.active.block.*
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.shell.chains.Chains
+import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
@@ -106,9 +107,10 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
         chainId: String,
         blockId: String,
         contractId: Address,
+        unparsingMode: RpcScriptParsing,
         headers: List<HttpHeader>,
-    ): GetContractScriptResponse =
-        chains(chainId).blocks(blockId).context.contracts(contractId).script.get(headers) // TODO: handle error when resource is missing
+    ): GetContractNormalizedScriptResponse =
+        chains(chainId).blocks(blockId).context.contracts(contractId).script.normalized.post(unparsingMode, headers) // TODO: handle error when resource is missing
 
     override suspend fun getSaplingStateDiff(
         chainId: String,
@@ -124,9 +126,10 @@ internal class ActiveSimplifiedRpcClient(private val chains: Chains) : ActiveSim
         chainId: String,
         blockId: String,
         contractId: Address,
+        unparsingMode: RpcScriptParsing,
         headers: List<HttpHeader>,
-    ): GetContractStorageResponse =
-        chains(chainId).blocks(blockId).context.contracts(contractId).storage.get(headers)
+    ): GetContractNormalizedStorageResponse =
+        chains(chainId).blocks(blockId).context.contracts(contractId).storage.normalized.post(unparsingMode, headers)
 
     // -- ../<block_id>/context/delegates --
 

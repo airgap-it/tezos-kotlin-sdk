@@ -86,14 +86,14 @@ class ContractEntrypointTest {
                 listOf(
                     OperationContent.Transaction(
                         source = source,
-                        fee = Mutez(0U),
+                        fee = Mutez(0),
                         counter = TezosNatural(counter),
                         gasLimit = TezosNatural(0U),
                         storageLimit = TezosNatural(0U),
-                        amount = Mutez(0U),
+                        amount = Mutez(0),
                         destination = contractAddress,
                         parameters = Parameters(
-                            Entrypoint.fromString(name),
+                            Entrypoint(name),
                             value,
                         ),
                     )
@@ -129,14 +129,14 @@ class ContractEntrypointTest {
                 listOf(
                     OperationContent.Transaction(
                         source = source,
-                        fee = Mutez(0U),
+                        fee = Mutez(0),
                         counter = TezosNatural(counter),
                         gasLimit = TezosNatural(0U),
                         storageLimit = TezosNatural(0U),
-                        amount = Mutez(0U),
+                        amount = Mutez(0),
                         destination = contractAddress,
                         parameters = Parameters(
-                            Entrypoint.fromString(name),
+                            Entrypoint(name),
                             value,
                         ),
                     )

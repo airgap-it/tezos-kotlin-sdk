@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
@@ -25,7 +26,7 @@ class StringToImplicitAddressConverterTest {
         MockKAnnotations.init(this)
 
         tezos = mockTezos()
-        stringToImplicitAddressConverter = StringToImplicitAddressConverter()
+        stringToImplicitAddressConverter = StringToImplicitAddressConverter(tezos.coreModule.dependencyRegistry.stringToPublicKeyHashConverter)
     }
 
     @After

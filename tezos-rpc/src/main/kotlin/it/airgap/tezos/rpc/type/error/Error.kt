@@ -1,4 +1,4 @@
-package it.airgap.tezos.rpc.type
+package it.airgap.tezos.rpc.type.error
 
 import it.airgap.tezos.rpc.internal.serializer.RpcErrorKindSerializer
 import it.airgap.tezos.rpc.internal.serializer.RpcErrorSerializer

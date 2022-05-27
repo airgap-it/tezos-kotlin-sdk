@@ -4,6 +4,7 @@ import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.rpc.active.block.*
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.utils.Constants
+import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.RpcApplicableOperation
 import it.airgap.tezos.rpc.type.operation.RpcRunnableOperation
 
@@ -213,20 +214,23 @@ public interface ActiveSimplifiedRpc {
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
+        unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
-    ): GetContractScriptResponse
+    ): GetContractNormalizedScriptResponse
     public suspend fun getScript(
         chainId: String,
         blockId: Int,
         contractId: Address,
+        unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
-    ): GetContractScriptResponse = getScript(chainId, blockId.toString(), contractId, headers)
+    ): GetContractNormalizedScriptResponse = getScript(chainId, blockId.toString(), contractId, unparsingMode, headers)
     public suspend fun getScript(
         chainId: String,
         blockId: BlockHash,
         contractId: Address,
+        unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
-    ): GetContractScriptResponse = getScript(chainId, blockId.base58, contractId, headers)
+    ): GetContractNormalizedScriptResponse = getScript(chainId, blockId.base58, contractId, unparsingMode, headers)
 
     public suspend fun getSaplingStateDiff(
         chainId: String = Constants.Chain.MAIN,
@@ -257,20 +261,23 @@ public interface ActiveSimplifiedRpc {
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
+        unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
-    ): GetContractStorageResponse
+    ): GetContractNormalizedStorageResponse
     public suspend fun getStorage(
         chainId: String,
         blockId: Int,
         contractId: Address,
+        unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
-    ): GetContractStorageResponse = getStorage(chainId, blockId.toString(), contractId, headers)
+    ): GetContractNormalizedStorageResponse = getStorage(chainId, blockId.toString(), contractId, unparsingMode, headers)
     public suspend fun getStorage(
         chainId: String,
         blockId: BlockHash,
         contractId: Address,
+        unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
-    ): GetContractStorageResponse = getStorage(chainId, blockId.base58, contractId, headers)
+    ): GetContractNormalizedStorageResponse = getStorage(chainId, blockId.base58, contractId, unparsingMode, headers)
 
     // -- ../<block_id>/context/delegates --
 

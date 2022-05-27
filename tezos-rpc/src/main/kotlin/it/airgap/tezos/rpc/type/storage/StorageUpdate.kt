@@ -20,7 +20,7 @@ public data class RpcStorageBigMapUpdate(
 // -- RpcStorageStaplingStateUpdate --
 
 @Serializable
-public data class RpcStorageStaplingStateUpdate(
+public data class RpcStorageSaplingStateUpdate(
     @SerialName("commitments_and_ciphertexts") public val commitmentsAndCiphertexts: List<@Contextual Pair<@Contextual HexString, RpcSaplingCiphertext>>,
     public val nullifiers: List<@Contextual HexString>,
 )

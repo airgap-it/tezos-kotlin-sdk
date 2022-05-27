@@ -18,9 +18,7 @@ internal fun rpcSerializersModule(
 
     contextual(HexStringSerializer)
 
-    contextual(TezSerializer)
     contextual(MutezSerializer)
-    contextual(NanotezSerializer)
 
     contextual(TimestampSerializer)
     contextual(TimestampRfc3339Serializer)
@@ -52,6 +50,10 @@ internal fun rpcSerializersModule(
     contextual(ScriptExprHashSerializer)
     contextual(Secp256K1PublicKeyHashSerializer)
     contextual(Secp256K1SignatureSerializer)
+
+    contextual(ScriptSerializer)
+    contextual(ParametersSerializer)
+    contextual(EntrypointSerializer)
 }
 
 internal fun rpcJson(
