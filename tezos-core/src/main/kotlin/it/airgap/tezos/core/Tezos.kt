@@ -31,11 +31,12 @@ public class Tezos internal constructor(
 
         private val moduleBuilders: MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>> = mutableMapOf()
 
-        public inline fun <reified T : TezosModule> install(builder: TezosModule.Builder<T>): Builder = apply { install(builder, T::class) }
+        public inline fun <reified T : TezosModule, B : TezosModule.Builder<T>> install(builder: B, noinline builderConfiguration: B.() -> Unit = {}): Builder =
+            apply { install(T::class, builder, builderConfiguration) }
 
         @PublishedApi
-        internal fun <T : TezosModule> install(builder: TezosModule.Builder<T>, moduleClass: KClass<T>) {
-            moduleBuilders[moduleClass] = builder
+        internal fun <T : TezosModule, B : TezosModule.Builder<T>> install(moduleClass: KClass<T>, builder: B, builderConfiguration: B.() -> Unit) {
+            moduleBuilders[moduleClass] = builder.apply(builderConfiguration)
         }
 
         public fun build(): Tezos {

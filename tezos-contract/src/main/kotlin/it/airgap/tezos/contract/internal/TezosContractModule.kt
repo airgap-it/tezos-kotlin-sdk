@@ -10,10 +10,13 @@ import it.airgap.tezos.core.internal.module.TezosModule
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.rpc.internal.rpcModule
 
-@InternalTezosSdkApi
+public val ContractModule: TezosContractModule.Builder
+    get() = TezosContractModule.Builder()
+
 public class TezosContractModule private constructor(public val dependencyRegistry: ContractDependencyRegistry) : TezosModule {
 
-    public class Builder : TezosModule.Builder<TezosContractModule> {
+    public class Builder internal constructor() : TezosModule.Builder<TezosContractModule> {
+
         @InternalTezosSdkApi
         override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosContractModule {
             val core = moduleRegistry.coreModule(dependencyRegistry)

@@ -3,6 +3,7 @@ import io.mockk.mockk
 import io.mockk.mockkClass
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.crypto.CryptoProvider
+import it.airgap.tezos.core.internal.CoreModule
 import it.airgap.tezos.core.internal.TezosCoreModule
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
@@ -10,7 +11,9 @@ import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.internal.utils.padStartEven
 import it.airgap.tezos.core.internal.utils.splitAt
 import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.michelson.internal.MichelsonModule
 import it.airgap.tezos.michelson.internal.TezosMichelsonModule
+import it.airgap.tezos.operation.internal.OperationModule
 import it.airgap.tezos.operation.internal.TezosOperationModule
 import org.bouncycastle.crypto.digests.Blake2bDigest
 import org.bouncycastle.crypto.digests.SHA256Digest
@@ -155,9 +158,9 @@ internal fun mockTezos(cryptoProvider: CryptoProvider? = null): Tezos =
         val dependencyRegistry = DependencyRegistry(cryptoProvider)
         val moduleRegistry = ModuleRegistry(
             builders = mapOf(
-                TezosCoreModule::class to TezosCoreModule.Builder(),
-                TezosMichelsonModule::class to TezosMichelsonModule.Builder(),
-                TezosOperationModule::class to TezosOperationModule.Builder(),
+                TezosCoreModule::class to CoreModule,
+                TezosMichelsonModule::class to MichelsonModule,
+                TezosOperationModule::class to OperationModule,
             ),
         )
 

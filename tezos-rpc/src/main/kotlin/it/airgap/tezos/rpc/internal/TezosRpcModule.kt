@@ -13,6 +13,9 @@ import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
 import java.util.*
 
+public val RpcModule: TezosRpcModule.Builder
+    get() = TezosRpcModule.Builder()
+
 public class TezosRpcModule private constructor(public val dependencyRegistry: RpcDependencyRegistry) : TezosModule {
 
     private object Static {
@@ -24,7 +27,7 @@ public class TezosRpcModule private constructor(public val dependencyRegistry: R
         }
     }
 
-    public class Builder : TezosModule.Builder<TezosRpcModule> {
+    public class Builder internal constructor() : TezosModule.Builder<TezosRpcModule> {
         public var httpClientProvider: HttpClientProvider by default { Static.defaultHttpClientProvider }
 
         @InternalTezosSdkApi
@@ -42,9 +45,6 @@ public class TezosRpcModule private constructor(public val dependencyRegistry: R
         }
     }
 }
-
-public inline fun Tezos.Builder.installRpc(builder: TezosRpcModule.Builder.() -> Unit): Tezos.Builder =
-    install(TezosRpcModule.Builder().apply(builder))
 
 @InternalTezosSdkApi
 public val Tezos.rpcModule: TezosRpcModule

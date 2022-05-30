@@ -7,9 +7,13 @@ import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.module.TezosModule
 
+public val CoreModule: TezosCoreModule.Builder
+    get() = TezosCoreModule.Builder()
+
 public class TezosCoreModule private constructor(public val dependencyRegistry: CoreDependencyRegistry) : TezosModule {
 
-    public class Builder : TezosModule.Builder<TezosCoreModule> {
+    public class Builder internal constructor() : TezosModule.Builder<TezosCoreModule> {
+
         @InternalTezosSdkApi
         override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosCoreModule =
             TezosCoreModule(CoreDependencyRegistry(dependencyRegistry))
