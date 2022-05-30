@@ -1,4 +1,4 @@
-package it.airgap.tezos.crypto.default.internal.utils
+package it.airgap.tezos.crypto.bouncycastle.internal.utils
 
 import org.bouncycastle.crypto.signers.Ed25519Signer
 

@@ -1,10 +1,10 @@
-package it.airgap.tezos.crypto.default
+package it.airgap.tezos.crypto.bouncycastle
 
 import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.crypto.default.internal.utils.generateSignature
-import it.airgap.tezos.crypto.default.internal.utils.hash
-import it.airgap.tezos.crypto.default.internal.utils.verifySignature
+import it.airgap.tezos.crypto.bouncycastle.internal.utils.generateSignature
+import it.airgap.tezos.crypto.bouncycastle.internal.utils.hash
+import it.airgap.tezos.crypto.bouncycastle.internal.utils.verifySignature
 import org.bouncycastle.crypto.digests.Blake2bDigest
 import org.bouncycastle.crypto.digests.SHA256Digest
 import org.bouncycastle.crypto.params.*
@@ -15,7 +15,7 @@ import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import java.math.BigInteger
 
-public class DefaultCryptoProvider : CryptoProvider {
+public class BouncyCastleCryptoProvider : CryptoProvider {
     override fun sha256(message: ByteArray): ByteArray {
         val shA256Digest = SHA256Digest()
         return shA256Digest.hash(message)

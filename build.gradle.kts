@@ -49,7 +49,9 @@ subprojects {
 
     publishing {
         publications {
-            create<MavenPublication>("maven")
+            create<MavenPublication>("maven") {
+                from(components.getByName("java"))
+            }
         }
     }
 }

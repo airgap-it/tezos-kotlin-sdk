@@ -1,17 +1,17 @@
 import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.crypto.default.DefaultCryptoProvider
+import it.airgap.tezos.crypto.bouncycastle.BouncyCastleCryptoProvider
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class DefaultCryptoProviderTest {
+class BouncyCastleCryptoProviderTest {
 
-    private lateinit var cryptoProvider: DefaultCryptoProvider
+    private lateinit var cryptoProvider: BouncyCastleCryptoProvider
 
     @Before
     fun setup() {
-        cryptoProvider = DefaultCryptoProvider()
+        cryptoProvider = BouncyCastleCryptoProvider()
     }
 
     @Test

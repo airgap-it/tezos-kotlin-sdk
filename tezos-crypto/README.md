@@ -6,6 +6,6 @@ Instead, it is left to the developer to decide what best fits their needs and re
 
 The submodules of `tezos-crypto` come with their own implementations that satisfy the cryptographic requirements and can be used to easily set up the SDK if there is no need for too much customization.
 
-| Module                  | Description                                                                                                                                                                                 | Module Dependencies |
-|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
-| `:tezos-crypto:default` | Provides default and recommended implementations of cryptographic algorithms required in the SDK. Uses [BouncyCastle](https://www.bouncycastle.org/) to satisfy the interface requirements. | `:tezos-core`       |
+| Module                       | Description                                                                                                                    | Module Dependencies |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| `:tezos-crypto:bouncycastle` | Uses [BouncyCastle](https://www.bouncycastle.org/) to provide implementations of cryptographic algorithms required in the SDK. | `:tezos-core`       |
