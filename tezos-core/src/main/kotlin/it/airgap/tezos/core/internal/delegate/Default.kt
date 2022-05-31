@@ -19,4 +19,7 @@ public class Default<V : Any>(initValue: V? = null, lock: Any? = null, private v
 }
 
 @InternalTezosSdkApi
-public fun <V : Any> default(initValue: V? = null, lock: Any? = null, defaultValue: () -> V): Default<V> = Default(initValue, lock, defaultValue)
+public interface DefaultDelegateContext {
+    public fun <V : Any> default(initValue: V? = null, lock: Any? = null, defaultValue: () -> V): Default<V> =
+        Default(initValue, lock, defaultValue)
+}

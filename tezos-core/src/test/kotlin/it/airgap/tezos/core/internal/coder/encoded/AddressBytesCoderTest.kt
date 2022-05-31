@@ -3,11 +3,11 @@ package it.airgap.tezos.core.internal.coder.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -39,7 +39,7 @@ class AddressBytesCoderTest {
     }
 
     @Test
-    fun `should encode Address to bytes`() {
+    fun `should encode Address to bytes`() = withTezosContext {
         addressesWithBytes.forEach {
             assertContentEquals(it.second, addressBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))
@@ -48,7 +48,7 @@ class AddressBytesCoderTest {
     }
 
     @Test
-    fun `should decode Address from bytes`() {
+    fun `should decode Address from bytes`() = withTezosContext {
         addressesWithBytes.forEach {
             assertEquals(it.first, addressBytesCoder.decode(it.second))
             assertEquals(it.first, addressBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -59,7 +59,7 @@ class AddressBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Address from invalid bytes`() {
+    fun `should fail to decode Address from invalid bytes`() = withTezosContext {
         listOf(
             invalidBytes,
             listOf(

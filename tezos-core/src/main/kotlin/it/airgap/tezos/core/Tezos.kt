@@ -2,11 +2,11 @@ package it.airgap.tezos.core
 
 import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.delegate.default
+import it.airgap.tezos.core.internal.context.TezosCoreContext.default
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithDependencyNotFound
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.module.TezosModule
-import it.airgap.tezos.core.internal.utils.failWithDependencyNotFound
 import java.util.*
 import kotlin.reflect.KClass
 

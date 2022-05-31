@@ -3,11 +3,11 @@ package it.airgap.tezos.core.internal.coder.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -36,7 +36,7 @@ class SignatureBytesCoderTest {
     }
 
     @Test
-    fun `should encode SignatureEncoded to bytes`() {
+    fun `should encode SignatureEncoded to bytes`() = withTezosContext {
         signaturesWithBytes.forEach {
             assertContentEquals(it.second, signatureBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))
@@ -45,7 +45,7 @@ class SignatureBytesCoderTest {
     }
 
     @Test
-    fun `should decode SignatureEncoded from bytes`() {
+    fun `should decode SignatureEncoded from bytes`() = withTezosContext {
         bytesWithSignatures.forEach {
             assertEquals(it.second, signatureBytesCoder.decode(it.first))
             assertEquals(it.second, signatureBytesCoder.decodeConsuming(it.first.toMutableList()))
@@ -56,7 +56,7 @@ class SignatureBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode SignatureEncoded from invalid bytes`() {
+    fun `should fail to decode SignatureEncoded from invalid bytes`() = withTezosContext {
         listOf(
             invalidBytes,
             listOf(

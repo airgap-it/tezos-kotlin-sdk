@@ -3,6 +3,7 @@ package it.airgap.tezos.michelson.micheline.dsl
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
@@ -31,7 +32,7 @@ class MichelineMichelsonComparableTypeDslTest {
     }
 
     @Test
-    fun `builds Micheline Michelson Comparable Type Expression`() {
+    fun `builds Micheline Michelson Comparable Type Expression`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("unit") to listOf(
                 micheline(tezos) { unit },

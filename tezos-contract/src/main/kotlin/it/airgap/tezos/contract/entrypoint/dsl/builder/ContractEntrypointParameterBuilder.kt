@@ -2,7 +2,7 @@ package it.airgap.tezos.contract.entrypoint.dsl.builder
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
 import it.airgap.tezos.contract.entrypoint.dsl.ContractEntrypointParameterDslMaker
-import it.airgap.tezos.core.internal.utils.allIsInstance
+import it.airgap.tezos.contract.internal.utils.allIsInstance
 import it.airgap.tezos.michelson.micheline.MichelineNode
 
 public interface ContractEntrypointParameterBuilder {

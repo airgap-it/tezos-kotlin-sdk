@@ -3,13 +3,13 @@ package it.airgap.tezos.rpc.internal
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.delegate.default
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.core.internal.module.TezosModule
-import it.airgap.tezos.core.internal.utils.failWithDependencyNotFound
 import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.rpc.http.HttpClientProvider
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.default
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.failWithDependencyNotFound
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
 import java.util.*
 

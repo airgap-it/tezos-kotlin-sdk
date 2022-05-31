@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.converter
 
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 
 // -- BlockHeader -> RpcBlockHeader --

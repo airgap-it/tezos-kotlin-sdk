@@ -2,10 +2,10 @@ package it.airgap.tezos.core.internal.coder.number
 
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.number.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.number.decodeFromBytes
 import it.airgap.tezos.core.coder.number.encodeToBytes
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.number.TezosNatural
 import mockTezos
 import org.junit.After
@@ -32,7 +32,7 @@ class TezosNaturalBytesCoderTest {
     }
 
     @Test
-    fun `should encode TezosNatural to bytes`() {
+    fun `should encode TezosNatural to bytes`() = withTezosContext {
         naturalsWithBytes.forEach {
             assertContentEquals(it.second, tezosNaturalBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))
@@ -41,7 +41,7 @@ class TezosNaturalBytesCoderTest {
     }
 
     @Test
-    fun `should decode TezosNatural from bytes`() {
+    fun `should decode TezosNatural from bytes`() = withTezosContext {
         naturalsWithBytes.forEach {
             assertEquals(it.first, tezosNaturalBytesCoder.decode(it.second))
             assertEquals(it.first, tezosNaturalBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -52,7 +52,7 @@ class TezosNaturalBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Tezos natural number from invalid bytes`() {
+    fun `should fail to decode Tezos natural number from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { tezosNaturalBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { TezosNatural.decodeFromBytes(it, tezos) }

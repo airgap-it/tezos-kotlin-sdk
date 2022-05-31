@@ -1,9 +1,9 @@
 package it.airgap.tezos.core.internal.base58
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.splitAt
 import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.splitAt
 
 @InternalTezosSdkApi
 public class Base58Check internal constructor(private val base58: Base58, private val crypto: Crypto) {

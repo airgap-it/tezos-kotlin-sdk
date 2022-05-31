@@ -1,5 +1,6 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.getOrPutWeak
 import org.junit.Test
 import java.lang.ref.WeakReference
 import kotlin.test.assertEquals

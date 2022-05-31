@@ -8,9 +8,9 @@ import it.airgap.tezos.core.internal.coder.number.TezosIntegerBytesCoder
 import it.airgap.tezos.core.internal.coder.number.TezosNaturalBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
 import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.context.TezosCoreContext.lazyWeak
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.converter.encoded.*
-import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*

@@ -3,11 +3,11 @@ package it.airgap.tezos.core.internal.coder.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
 import it.airgap.tezos.core.type.encoded.PublicKey
@@ -39,7 +39,7 @@ class PublicKeyBytesCoderTest {
     }
 
     @Test
-    fun `should encode PublicKeyEncoded to bytes`() {
+    fun `should encode PublicKeyEncoded to bytes`() = withTezosContext {
         keysWithBytes.forEach {
             assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))
@@ -48,7 +48,7 @@ class PublicKeyBytesCoderTest {
     }
 
     @Test
-    fun `should decode PublicKeyEncoded from bytes`() {
+    fun `should decode PublicKeyEncoded from bytes`() = withTezosContext {
         keysWithBytes.forEach {
             assertEquals(it.first, publicKeyBytesCoder.decode(it.second))
             assertEquals(it.first, publicKeyBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -59,7 +59,7 @@ class PublicKeyBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode PublicKeyEncoded from invalid bytes`() {
+    fun `should fail to decode PublicKeyEncoded from invalid bytes`() = withTezosContext {
         listOf(
             invalidBytes,
             listOf(

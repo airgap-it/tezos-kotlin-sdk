@@ -1,9 +1,9 @@
 package it.airgap.tezos.rpc.converter
 
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import org.junit.Test
 import kotlin.test.assertEquals

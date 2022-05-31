@@ -1,6 +1,5 @@
 package it.airgap.tezos.michelson.internal.serializer
 
-import it.airgap.tezos.michelson.internal.utils.KListSerializer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 

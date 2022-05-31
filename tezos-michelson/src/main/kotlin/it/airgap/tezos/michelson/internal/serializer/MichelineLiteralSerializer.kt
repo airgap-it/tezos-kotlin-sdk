@@ -1,6 +1,6 @@
 package it.airgap.tezos.michelson.internal.serializer
 
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

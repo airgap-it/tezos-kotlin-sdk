@@ -1,12 +1,12 @@
 package it.airgap.tezos.operation.internal.coder
 
-import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
-import it.airgap.tezos.core.coder.encoded.encodeToBytes
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.decodeConsumingFromBytes
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.encodeToBytes
 
 internal class OperationBytesCoder(
     private val operationContentsBytesCoder: ConsumingBytesCoder<OperationContent>,

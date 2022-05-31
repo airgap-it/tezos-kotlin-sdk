@@ -1,8 +1,8 @@
 package it.airgap.tezos.core.internal.converter.encoded
 
 import it.airgap.tezos.core.internal.base58.Base58Check
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.core.type.encoded.Encoded
 import it.airgap.tezos.core.type.encoded.MetaEncoded
 

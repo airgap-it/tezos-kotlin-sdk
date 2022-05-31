@@ -1,7 +1,7 @@
 package it.airgap.tezos.core.type
 
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.asHexStringOrNull
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexStringOrNull
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -26,7 +26,7 @@ class HexStringTest {
 
     @Test
     fun `creates HexString from valid string`() {
-        val hexStrings = validHexStrings.map(String::asHexString)
+        val hexStrings = validHexStrings.map { it.asHexString() }
 
         assertEquals(validHexStrings.map(this::withoutHexPrefix),
             hexStrings.map(HexString::asString))
@@ -34,7 +34,7 @@ class HexStringTest {
 
     @Test
     fun `returns null when creating HexString from invalid string and asked to`() {
-        val hexStrings = invalidHexStrings.mapNotNull(String::asHexStringOrNull)
+        val hexStrings = invalidHexStrings.mapNotNull { it.asHexStringOrNull() }
 
         assertEquals(0, hexStrings.size)
     }

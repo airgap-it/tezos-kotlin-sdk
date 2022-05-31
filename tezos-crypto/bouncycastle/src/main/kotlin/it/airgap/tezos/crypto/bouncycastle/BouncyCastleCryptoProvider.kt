@@ -1,7 +1,7 @@
 package it.airgap.tezos.crypto.bouncycastle
 
 import it.airgap.tezos.core.crypto.CryptoProvider
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.failWithIllegalArgument
 import it.airgap.tezos.crypto.bouncycastle.internal.utils.generateSignature
 import it.airgap.tezos.crypto.bouncycastle.internal.utils.hash
 import it.airgap.tezos.crypto.bouncycastle.internal.utils.verifySignature

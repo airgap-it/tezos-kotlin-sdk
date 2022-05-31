@@ -1,5 +1,7 @@
 package it.airgap.tezos.contract.entrypoint
 
+import it.airgap.tezos.contract.internal.context.TezosContractContext.asTezosNatural
+import it.airgap.tezos.contract.internal.context.TezosContractContext.normalized
 import it.airgap.tezos.contract.internal.entrypoint.LazyMetaContractEntrypoint
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.estimator.withMinFee
@@ -7,7 +9,6 @@ import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.contract.type.LazyContractCode
 import it.airgap.tezos.core.internal.normalizer.Normalizer
-import it.airgap.tezos.core.internal.utils.asTezosNatural
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -16,7 +17,6 @@ import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
 import it.airgap.tezos.michelson.micheline.MichelineNode
-import it.airgap.tezos.michelson.normalizer.normalized
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint

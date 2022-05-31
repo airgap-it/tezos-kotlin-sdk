@@ -1,7 +1,7 @@
 package it.airgap.tezos.core.type
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.isHex
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.isHex
 
 @JvmInline
 public value class HexString(private val value: String) {

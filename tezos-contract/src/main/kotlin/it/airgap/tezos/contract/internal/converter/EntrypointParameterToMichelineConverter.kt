@@ -1,20 +1,20 @@
 package it.airgap.tezos.contract.internal.converter
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
+import it.airgap.tezos.contract.internal.context.TezosContractContext.consume
+import it.airgap.tezos.contract.internal.context.TezosContractContext.consumeAll
+import it.airgap.tezos.contract.internal.context.TezosContractContext.consumeAt
+import it.airgap.tezos.contract.internal.context.TezosContractContext.failWithIllegalArgument
+import it.airgap.tezos.contract.internal.context.TezosContractContext.fromStringOrNull
+import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypointArgument
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.consume
-import it.airgap.tezos.core.internal.utils.consumeAll
-import it.airgap.tezos.core.internal.utils.consumeAt
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.converter.fromStringOrNull
-import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence

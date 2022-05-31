@@ -1,8 +1,8 @@
 package it.airgap.tezos.crypto.bouncycastle.internal.utils
 
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.splitAt
-import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.asHexString
+import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.splitAt
+import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.toHexString
 import org.bouncycastle.crypto.signers.ECDSASigner
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import java.math.BigInteger

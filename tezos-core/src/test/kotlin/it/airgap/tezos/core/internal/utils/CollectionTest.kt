@@ -1,5 +1,17 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.allIsInstance
+import it.airgap.tezos.core.internal.context.TezosCoreContext.anyIsInstance
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consume
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeAll
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeAt
+import it.airgap.tezos.core.internal.context.TezosCoreContext.containsAny
+import it.airgap.tezos.core.internal.context.TezosCoreContext.firstInstanceOfOrNull
+import it.airgap.tezos.core.internal.context.TezosCoreContext.flatten
+import it.airgap.tezos.core.internal.context.TezosCoreContext.replaceOrAdd
+import it.airgap.tezos.core.internal.context.TezosCoreContext.replacingAt
+import it.airgap.tezos.core.internal.context.TezosCoreContext.secondInstanceOfOrNull
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -10,32 +22,32 @@ class CollectionTest {
 
     @Test
     fun `checks if all elements are of specified instance`() {
-        assertTrue(listOf("1", "2", "3").allIsInstance<String>())
-        assertFalse(listOf(1, "2", "3").allIsInstance<String>())
-        assertFalse(listOf("1", 2, "3").allIsInstance<String>())
-        assertFalse(listOf("1", "2", 3).allIsInstance<String>())
-        assertFalse(listOf(1, 2, 3).allIsInstance<String>())
+        assertTrue(listOf("1", "2", "3").allIsInstance(String::class))
+        assertFalse(listOf(1, "2", "3").allIsInstance(String::class))
+        assertFalse(listOf("1", 2, "3").allIsInstance(String::class))
+        assertFalse(listOf("1", "2", 3).allIsInstance(String::class))
+        assertFalse(listOf(1, 2, 3).allIsInstance(String::class))
     }
 
     @Test
     fun `checks if any element is of specified instance`() {
-        assertFalse(listOf("1", "2", "3").anyIsInstance<Int>())
-        assertTrue(listOf(1, "2", "3").anyIsInstance<Int>())
-        assertTrue(listOf("1", 2, "3").anyIsInstance<Int>())
-        assertTrue(listOf("1", "2", 3).anyIsInstance<Int>())
-        assertTrue(listOf(1, 2, 3).anyIsInstance<Int>())
+        assertFalse(listOf("1", "2", "3").anyIsInstance(Int::class))
+        assertTrue(listOf(1, "2", "3").anyIsInstance(Int::class))
+        assertTrue(listOf("1", 2, "3").anyIsInstance(Int::class))
+        assertTrue(listOf("1", "2", 3).anyIsInstance(Int::class))
+        assertTrue(listOf(1, 2, 3).anyIsInstance(Int::class))
     }
 
     @Test
     fun `returns first element of specified type or null`() {
-        assertNull(listOf(1, 2, 3).firstInstanceOfOrNull<String>())
-        assertEquals(2, listOf("1", 2, 3, 4, "5").firstInstanceOfOrNull<Int>())
+        assertNull(listOf(1, 2, 3).firstInstanceOfOrNull(String::class))
+        assertEquals(2, listOf("1", 2, 3, 4, "5").firstInstanceOfOrNull(Int::class))
     }
 
     @Test
     fun `returns second element of specified type or null`() {
-        assertNull(listOf(1, 2, 3).secondInstanceOfOrNull<String>())
-        assertEquals(3, listOf("1", 2, 3, 4, "5").secondInstanceOfOrNull<Int>())
+        assertNull(listOf(1, 2, 3).secondInstanceOfOrNull(String::class))
+        assertEquals(3, listOf("1", 2, 3, 4, "5").secondInstanceOfOrNull(Int::class))
     }
 
     @Test

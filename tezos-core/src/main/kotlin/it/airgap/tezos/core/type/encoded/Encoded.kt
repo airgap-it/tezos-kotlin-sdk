@@ -1,8 +1,8 @@
 package it.airgap.tezos.core.type.encoded
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.startsWith
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 
 // -- Encoded --
 

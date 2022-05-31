@@ -2,11 +2,11 @@ package it.airgap.tezos.core.internal.coder.tez
 
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.tez.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.tez.decodeFromBytes
 import it.airgap.tezos.core.coder.tez.encodeToBytes
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.tez.Mutez
 import mockTezos
 import org.junit.After
@@ -33,7 +33,7 @@ class MutezBytesCoderTest {
     }
 
     @Test
-    fun `should encode Mutez to bytes`() {
+    fun `should encode Mutez to bytes`() = withTezosContext {
         mutezWithBytes.forEach {
             assertContentEquals(it.second, mutezBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))
@@ -42,7 +42,7 @@ class MutezBytesCoderTest {
     }
 
     @Test
-    fun `should decode Mutez from bytes`() {
+    fun `should decode Mutez from bytes`() = withTezosContext {
         mutezWithBytes.forEach {
             assertEquals(it.first, mutezBytesCoder.decode(it.second))
             assertEquals(it.first, mutezBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -53,7 +53,7 @@ class MutezBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Mutez from invalid bytes`() {
+    fun `should fail to decode Mutez from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { mutezBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { Mutez.decodeFromBytes(it, tezos) }

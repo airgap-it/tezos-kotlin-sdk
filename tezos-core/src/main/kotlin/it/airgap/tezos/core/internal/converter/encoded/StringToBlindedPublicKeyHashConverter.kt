@@ -1,6 +1,6 @@
 package it.airgap.tezos.core.internal.converter.encoded
 
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
 import it.airgap.tezos.core.type.encoded.Ed25519BlindedPublicKeyHash
 import it.airgap.tezos.core.type.encoded.MetaBlindedPublicKeyHash

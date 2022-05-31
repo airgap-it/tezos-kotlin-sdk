@@ -1,7 +1,5 @@
 package it.airgap.tezos.operation.internal.signer
 
-import it.airgap.tezos.core.coder.encoded.decodeFromBytes
-import it.airgap.tezos.core.coder.encoded.encodeToBytes
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.crypto.Crypto
@@ -9,7 +7,9 @@ import it.airgap.tezos.core.internal.signer.Signer
 import it.airgap.tezos.core.type.Watermark
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.Operation
-import it.airgap.tezos.operation.coder.forgeToBytes
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.decodeFromBytes
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.encodeToBytes
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.forgeToBytes
 
 internal class OperationSigner(
     private val operationEd25519Signer: Signer<Operation, Ed25519SecretKey, Ed25519PublicKey, Ed25519Signature>,

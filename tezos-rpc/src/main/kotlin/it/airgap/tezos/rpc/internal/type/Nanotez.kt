@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.internal.type
 
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.toBigInt
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.toBigInt
 
 @JvmInline
 internal value class Nanotez(val bigInt: BigInt) {

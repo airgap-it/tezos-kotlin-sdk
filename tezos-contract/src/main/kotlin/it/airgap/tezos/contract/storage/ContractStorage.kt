@@ -1,5 +1,6 @@
 package it.airgap.tezos.contract.storage
 
+import it.airgap.tezos.contract.internal.context.TezosContractContext.normalized
 import it.airgap.tezos.contract.internal.storage.LazyMetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
@@ -9,7 +10,6 @@ import it.airgap.tezos.contract.type.LazyContractCode
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
-import it.airgap.tezos.michelson.normalizer.normalized
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing

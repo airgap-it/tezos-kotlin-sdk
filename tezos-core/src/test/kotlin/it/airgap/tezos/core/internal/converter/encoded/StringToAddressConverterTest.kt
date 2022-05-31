@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -31,7 +32,7 @@ class StringToAddressConverterTest {
     }
 
     @Test
-    fun `should convert string to Address`() {
+    fun `should convert string to Address`() = withTezosContext {
         addressesWithStrings.forEach {
             assertEquals(it.first, stringToAddressConverter.convert(it.second))
             assertEquals(it.first, Address.fromString(it.second, tezos))
@@ -40,7 +41,7 @@ class StringToAddressConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid string to Address`() {
+    fun `should fail to convert invalid string to Address`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToAddressConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { Address.fromString(it, tezos) }

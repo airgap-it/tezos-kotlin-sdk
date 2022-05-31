@@ -3,8 +3,8 @@ package it.airgap.tezos.core.internal.base58
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
 import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.utils.asHexString
 import org.junit.Before
 import org.junit.Test
 import java.security.MessageDigest

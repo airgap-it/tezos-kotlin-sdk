@@ -1,4 +1,4 @@
-package it.airgap.tezos.michelson.internal.utils
+package it.airgap.tezos.michelson.internal.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException

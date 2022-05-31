@@ -4,7 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
 import it.airgap.tezos.core.type.encoded.Ed25519BlindedPublicKeyHash
 import mockTezos
@@ -33,7 +34,7 @@ class BytesToBlindedPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should convert bytes to PublicKeyEncoded`() {
+    fun `should convert bytes to PublicKeyEncoded`() = withTezosContext {
         publicKeysWithBytes.forEach {
             assertEquals(it.first, bytesToBlindedPublicKeyHashConverter.convert(it.second))
             assertEquals(it.first, BlindedPublicKeyHash.fromBytes(it.second, tezos))
@@ -42,7 +43,7 @@ class BytesToBlindedPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid bytes to PublicKeyEncoded`() {
+    fun `should fail to convert invalid bytes to PublicKeyEncoded`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToBlindedPublicKeyHashConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { BlindedPublicKeyHash.fromBytes(it, tezos) }

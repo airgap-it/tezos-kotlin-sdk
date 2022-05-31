@@ -3,6 +3,7 @@ package it.airgap.tezos.michelson.micheline.dsl
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -33,7 +34,7 @@ class MichelineMichelsonInstructionDslTest {
     }
 
     @Test
-    fun `builds Micheline Michelson Instruction Expression`() {
+    fun `builds Micheline Michelson Instruction Expression`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("DROP") to listOf(
                 micheline(tezos) { DROP },
@@ -2158,7 +2159,7 @@ class MichelineMichelsonInstructionDslTest {
                 ),
             ) to listOf(
                 micheline(tezos) {
-                    LAMBDA { 
+                    LAMBDA {
                         parameter { unit }
                         returnType { unit }
                         body { UNIT }

@@ -4,7 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
 import it.airgap.tezos.core.type.encoded.PublicKeyHash
@@ -35,7 +36,7 @@ class BytesToPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should convert bytes to ImplicitAddress`() {
+    fun `should convert bytes to ImplicitAddress`() = withTezosContext {
         addressesWithBytes.forEach {
             assertEquals(it.first, bytesToPublicKeyHashConverter.convert(it.second))
             assertEquals(it.first, PublicKeyHash.fromBytes(it.second, tezos))
@@ -44,7 +45,7 @@ class BytesToPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid bytes to ImplicitAddress`() {
+    fun `should fail to convert invalid bytes to ImplicitAddress`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToPublicKeyHashConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { PublicKeyHash.fromBytes(it, tezos) }

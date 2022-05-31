@@ -1,6 +1,6 @@
 package it.airgap.tezos.core.type
 
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
@@ -53,5 +53,4 @@ public sealed interface Timestamp {
     }
 }
 
-private fun failWithInvalidRfc3339(string: String): Nothing =
-    failWithIllegalArgument("$string is not a valid RFC 3339 date string.")
+private fun failWithInvalidRfc3339(string: String): Nothing = failWithIllegalArgument("$string is not a valid RFC 3339 date string.")

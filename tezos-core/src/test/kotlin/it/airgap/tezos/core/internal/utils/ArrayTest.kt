@@ -1,5 +1,12 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt16Encoded
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt32Encoded
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt64Encoded
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt8Encoded
+import it.airgap.tezos.core.internal.context.TezosCoreContext.padStart
+import it.airgap.tezos.core.internal.context.TezosCoreContext.splitAt
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith

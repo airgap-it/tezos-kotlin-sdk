@@ -1,9 +1,9 @@
 package it.airgap.tezos.michelson
 
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.isHex
-import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.HexString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.isHex
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toHexString
 
 // https://tezos.gitlab.io/active/michelson.html#full-grammar
 public sealed interface MichelsonData : Michelson {

@@ -1,19 +1,19 @@
 package it.airgap.tezos.contract.internal.storage
 
+import it.airgap.tezos.contract.internal.context.TezosContractContext.decodeFromBytes
+import it.airgap.tezos.contract.internal.context.TezosContractContext.failWithIllegalArgument
+import it.airgap.tezos.contract.internal.context.TezosContractContext.packToBytes
+import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
 import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.converter.toStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
-import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
-import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
-import it.airgap.tezos.michelson.packer.packToBytes
 import it.airgap.tezos.rpc.internal.cache.Cached
 
 // -- MetaContractStorage --

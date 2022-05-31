@@ -4,8 +4,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.operation.Operation
@@ -14,6 +12,8 @@ import it.airgap.tezos.operation.coder.forgeToBytes
 import it.airgap.tezos.operation.coder.forgeToString
 import it.airgap.tezos.operation.coder.unforgeFromBytes
 import it.airgap.tezos.operation.coder.unforgeFromString
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.asHexString
+import it.airgap.tezos.operation.internal.context.withTezosContext
 import it.airgap.tezos.operation.internal.operationModule
 import mockTezos
 import org.junit.After
@@ -45,7 +45,7 @@ class OperationBytesCoderTest {
     }
 
     @Test
-    fun `should encode Operation to bytes`() {
+    fun `should encode Operation to bytes`() = withTezosContext {
         listOf(
             operationsWithBytes,
             listOf(
@@ -67,7 +67,7 @@ class OperationBytesCoderTest {
     }
 
     @Test
-    fun `should decode Operation from bytes`() {
+    fun `should decode Operation from bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertEquals(it.first, operationBytesCoder.decode(it.second))
             assertEquals(it.first, operationBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -79,7 +79,7 @@ class OperationBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Operation from invalid bytes`() {
+    fun `should fail to decode Operation from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { operationBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { operationBytesCoder.decodeConsuming(it.toMutableList()) }

@@ -1,10 +1,10 @@
 package it.airgap.tezos.core.internal.coder.encoded
 
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeUntil
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import it.airgap.tezos.core.internal.type.BytesTag
-import it.airgap.tezos.core.internal.utils.consumeUntil
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -55,11 +55,11 @@ private enum class AddressTag(override val value: ByteArray) : BytesTag {
     companion object {
         fun recognize(bytes: ByteArray): AddressTag? =
             if (bytes.isEmpty()) null
-            else find(bytes::startsWith)
+            else find { bytes.startsWith(it) }
 
         fun recognize(bytes: List<Byte>): AddressTag? =
             if (bytes.isEmpty()) null
-            else find(bytes::startsWith)
+            else find { bytes.startsWith(it) }
 
         private fun find(startsWith: (ByteArray) -> Boolean): AddressTag? =
             values().find { startsWith(it.value) }

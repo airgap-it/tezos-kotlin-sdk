@@ -1,6 +1,6 @@
 package it.airgap.tezos.core.internal.base58
 
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertContentEquals

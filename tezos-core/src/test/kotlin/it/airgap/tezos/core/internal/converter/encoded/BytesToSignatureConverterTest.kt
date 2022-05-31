@@ -4,7 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -32,7 +33,7 @@ class BytesToSignatureConverterTest {
     }
 
     @Test
-    fun `should convert bytes to SignatureEncoded`() {
+    fun `should convert bytes to SignatureEncoded`() = withTezosContext {
         signaturesWithBytes.forEach {
             assertEquals(it.first, bytesToSignatureConverter.convert(it.second))
             assertEquals(it.first, Signature.fromBytes(it.second, tezos))
@@ -41,7 +42,7 @@ class BytesToSignatureConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid bytes to SignatureEncoded`() {
+    fun `should fail to convert invalid bytes to SignatureEncoded`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToSignatureConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { Signature.fromBytes(it, tezos) }

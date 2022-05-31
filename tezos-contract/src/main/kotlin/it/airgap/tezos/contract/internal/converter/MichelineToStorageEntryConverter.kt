@@ -1,14 +1,14 @@
 package it.airgap.tezos.contract.internal.converter
 
+import it.airgap.tezos.contract.internal.context.TezosContractContext.failWithIllegalArgument
+import it.airgap.tezos.contract.internal.context.TezosContractContext.fromStringOrNull
+import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonType
-import it.airgap.tezos.michelson.converter.fromStringOrNull
-import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode

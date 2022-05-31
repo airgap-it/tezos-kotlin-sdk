@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -31,7 +32,7 @@ class StringToPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should convert string to ImplicitAddress`() {
+    fun `should convert string to ImplicitAddress`() = withTezosContext {
         addressesWithStrings.forEach {
             assertEquals(it.first, stringToPublicKeyHashConverter.convert(it.second))
             assertEquals(it.first, PublicKeyHash.fromString(it.second, tezos))
@@ -40,7 +41,7 @@ class StringToPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid string to ImplicitAddress`() {
+    fun `should fail to convert invalid string to ImplicitAddress`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToPublicKeyHashConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { PublicKeyHash.fromString(it, tezos) }

@@ -1,10 +1,10 @@
 package it.airgap.tezos.contract.internal.entrypoint
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
+import it.airgap.tezos.contract.internal.context.TezosContractContext.flatten
 import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.converter.toMicheline
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
-import it.airgap.tezos.core.internal.utils.flatten
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.rpc.internal.cache.Cached

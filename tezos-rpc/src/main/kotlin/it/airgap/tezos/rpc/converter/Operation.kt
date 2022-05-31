@@ -1,10 +1,10 @@
 package it.airgap.tezos.rpc.converter
 
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.asTezosNatural
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asTezosNatural
 import it.airgap.tezos.rpc.internal.utils.isSigned
 import it.airgap.tezos.rpc.internal.utils.signatureOrPlaceholder
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent

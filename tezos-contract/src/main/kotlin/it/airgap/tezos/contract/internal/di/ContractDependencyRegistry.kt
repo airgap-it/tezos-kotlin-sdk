@@ -3,6 +3,7 @@ package it.airgap.tezos.contract.internal.di
 import it.airgap.tezos.contract.Contract
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
+import it.airgap.tezos.contract.internal.context.TezosContractContext.getOrPutWeak
 import it.airgap.tezos.contract.internal.converter.EntrypointParameterToMichelineConverter
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
 import it.airgap.tezos.contract.internal.converter.ScriptToContractCodeConverter
@@ -15,7 +16,6 @@ import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
-import it.airgap.tezos.core.internal.utils.getOrPutWeak
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineNode

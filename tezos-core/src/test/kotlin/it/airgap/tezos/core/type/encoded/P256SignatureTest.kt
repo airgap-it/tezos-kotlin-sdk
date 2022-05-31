@@ -1,7 +1,7 @@
 package it.airgap.tezos.core.type.encoded
 
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toHexString
 import org.junit.Test
 import kotlin.test.*
 

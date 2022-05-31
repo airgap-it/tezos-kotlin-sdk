@@ -3,9 +3,9 @@
 package it.airgap.tezos.michelson.micheline.dsl.builder.expression
 
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.replaceOrAdd
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonData
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replaceOrAdd
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelineNodeBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.MichelinePrimitiveApplicationBuilder

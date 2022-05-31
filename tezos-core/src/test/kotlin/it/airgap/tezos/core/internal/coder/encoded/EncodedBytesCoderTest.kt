@@ -3,10 +3,10 @@ package it.airgap.tezos.core.internal.coder.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -35,7 +35,7 @@ class EncodedBytesCoderTest {
     }
 
     @Test
-    fun `should encode Encoded to bytes`() {
+    fun `should encode Encoded to bytes`() = withTezosContext {
         assertContentEquals(blockHash.second, encodedBytesCoder.encode(blockHash.first))
         assertContentEquals(blockHash.second, blockHash.first.encodeToBytes(tezos))
         assertContentEquals(blockHash.second, blockHash.first.encodeToBytes(encodedBytesCoder))
@@ -190,7 +190,7 @@ class EncodedBytesCoderTest {
     }
 
     @Test
-    fun `should decode Encoded from bytes`() {
+    fun `should decode Encoded from bytes`() = withTezosContext {
         assertEquals(blockHash.first, encodedBytesCoder.decode(blockHash.first.kind.base58Bytes + blockHash.second))
         assertEquals(blockHash.first, encodedBytesCoder.decodeConsuming((blockHash.first.kind.base58Bytes + blockHash.second).toMutableList()))
         assertEquals(blockHash.first, encodedBytesCoder.decode(blockHash.second, blockHash.first.kind))
@@ -506,628 +506,630 @@ class EncodedBytesCoderTest {
 
     @Test
     fun `should fail to decode Encoded from invalid bytes`() {
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(blockHash.second.sliceArray(1 until blockHash.second.size), blockHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(blockHash.second.sliceArray(1 until blockHash.second.size).toMutableList(), blockHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockHash.decodeFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockHash.decodeFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockHash.decodeConsumingFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+        withTezosContext {
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(blockHash.second.sliceArray(1 until blockHash.second.size), blockHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(blockHash.second.sliceArray(1 until blockHash.second.size).toMutableList(), blockHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockHash.decodeFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockHash.decodeFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockHash.decodeConsumingFromBytes(blockHash.second.sliceArray(1 until blockHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), blockPayloadHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size).toMutableList(), blockPayloadHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockPayloadHash.decodeFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockPayloadHash.decodeFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockPayloadHash.decodeConsumingFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), blockPayloadHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size).toMutableList(), blockPayloadHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockPayloadHash.decodeFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockPayloadHash.decodeFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockPayloadHash.decodeConsumingFromBytes(blockPayloadHash.second.sliceArray(1 until blockPayloadHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), blockMetadataHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size).toMutableList(), blockMetadataHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockMetadataHash.decodeFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockMetadataHash.decodeFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            BlockMetadataHash.decodeConsumingFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), blockMetadataHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size).toMutableList(), blockMetadataHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockMetadataHash.decodeFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockMetadataHash.decodeFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                BlockMetadataHash.decodeConsumingFromBytes(blockMetadataHash.second.sliceArray(1 until blockMetadataHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(chainId.second.sliceArray(1 until chainId.second.size), chainId.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(chainId.second.sliceArray(1 until chainId.second.size).toMutableList(), chainId.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ChainId.decodeFromBytes(chainId.second.sliceArray(1 until chainId.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ChainId.decodeFromBytes(chainId.second.sliceArray(1 until chainId.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ChainId.decodeConsumingFromBytes(chainId.second.sliceArray(1 until chainId.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(chainId.second.sliceArray(1 until chainId.second.size), chainId.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(chainId.second.sliceArray(1 until chainId.second.size).toMutableList(), chainId.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ChainId.decodeFromBytes(chainId.second.sliceArray(1 until chainId.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ChainId.decodeFromBytes(chainId.second.sliceArray(1 until chainId.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ChainId.decodeConsumingFromBytes(chainId.second.sliceArray(1 until chainId.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(contextHash.second.sliceArray(1 until contextHash.second.size), contextHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(contextHash.second.sliceArray(1 until contextHash.second.size).toMutableList(), contextHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ContextHash.decodeFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ContextHash.decodeFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ContextHash.decodeConsumingFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(contextHash.second.sliceArray(1 until contextHash.second.size), contextHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(contextHash.second.sliceArray(1 until contextHash.second.size).toMutableList(), contextHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ContextHash.decodeFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ContextHash.decodeFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ContextHash.decodeConsumingFromBytes(contextHash.second.sliceArray(1 until contextHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(contractHash.second.sliceArray(1 until contractHash.second.size), contractHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(contractHash.second.sliceArray(1 until contractHash.second.size).toMutableList(), contractHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ContractHash.decodeFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ContractHash.decodeFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ContractHash.decodeConsumingFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(contractHash.second.sliceArray(1 until contractHash.second.size), contractHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(contractHash.second.sliceArray(1 until contractHash.second.size).toMutableList(), contractHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ContractHash.decodeFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ContractHash.decodeFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ContractHash.decodeConsumingFromBytes(contractHash.second.sliceArray(1 until contractHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), cryptoboxPublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size).toMutableList(), cryptoboxPublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            CryptoboxPublicKeyHash.decodeConsumingFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), cryptoboxPublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size).toMutableList(), cryptoboxPublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                CryptoboxPublicKeyHash.decodeFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                CryptoboxPublicKeyHash.decodeConsumingFromBytes(cryptoboxPublicKeyHash.second.sliceArray(1 until cryptoboxPublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), ed25519BlindedPublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), ed25519BlindedPublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeConsumingFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), ed25519BlindedPublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), ed25519BlindedPublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeConsumingFromBytes(ed25519BlindedPublicKeyHash.second.sliceArray(1 until ed25519BlindedPublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), ed25519EncryptedSeed.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size).toMutableList(), ed25519EncryptedSeed.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeConsumingFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), ed25519EncryptedSeed.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size).toMutableList(), ed25519EncryptedSeed.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeConsumingFromBytes(ed25519EncryptedSeed.second.sliceArray(1 until ed25519EncryptedSeed.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), ed25519PublicKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size).toMutableList(), ed25519PublicKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519PublicKey.decodeConsumingFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), ed25519PublicKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size).toMutableList(), ed25519PublicKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519PublicKey.decodeFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519PublicKey.decodeConsumingFromBytes(ed25519PublicKey.second.sliceArray(1 until ed25519PublicKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), ed25519PublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size).toMutableList(), ed25519PublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519PublicKeyHash.decodeConsumingFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), ed25519PublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size).toMutableList(), ed25519PublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519PublicKeyHash.decodeFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519PublicKeyHash.decodeConsumingFromBytes(ed25519PublicKeyHash.second.sliceArray(1 until ed25519PublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), ed25519SecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size).toMutableList(), ed25519SecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519SecretKey.decodeConsumingFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), ed25519SecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size).toMutableList(), ed25519SecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519SecretKey.decodeFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519SecretKey.decodeConsumingFromBytes(ed25519SecretKey.second.sliceArray(1 until ed25519SecretKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), ed25519Seed.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size).toMutableList(), ed25519Seed.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519Seed.decodeFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519Seed.decodeFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519Seed.decodeConsumingFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), ed25519Seed.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size).toMutableList(), ed25519Seed.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519Seed.decodeFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519Seed.decodeFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519Seed.decodeConsumingFromBytes(ed25519Seed.second.sliceArray(1 until ed25519Seed.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), ed25519Signature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size).toMutableList(), ed25519Signature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519Signature.decodeFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519Signature.decodeFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519Signature.decodeConsumingFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), ed25519Signature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size).toMutableList(), ed25519Signature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519Signature.decodeFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519Signature.decodeFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519Signature.decodeConsumingFromBytes(ed25519Signature.second.sliceArray(1 until ed25519Signature.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(genericSignature.second.sliceArray(1 until genericSignature.second.size), genericSignature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(genericSignature.second.sliceArray(1 until genericSignature.second.size).toMutableList(), genericSignature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            GenericSignature.decodeFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            GenericSignature.decodeFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            GenericSignature.decodeConsumingFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(genericSignature.second.sliceArray(1 until genericSignature.second.size), genericSignature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(genericSignature.second.sliceArray(1 until genericSignature.second.size).toMutableList(), genericSignature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                GenericSignature.decodeFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                GenericSignature.decodeFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                GenericSignature.decodeConsumingFromBytes(genericSignature.second.sliceArray(1 until genericSignature.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(nonceHash.second.sliceArray(1 until nonceHash.second.size), nonceHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(nonceHash.second.sliceArray(1 until nonceHash.second.size).toMutableList(), nonceHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NonceHash.decodeFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NonceHash.decodeFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NonceHash.decodeConsumingFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(nonceHash.second.sliceArray(1 until nonceHash.second.size), nonceHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(nonceHash.second.sliceArray(1 until nonceHash.second.size).toMutableList(), nonceHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                NonceHash.decodeFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                NonceHash.decodeFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                NonceHash.decodeConsumingFromBytes(nonceHash.second.sliceArray(1 until nonceHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(operationHash.second.sliceArray(1 until operationHash.second.size), operationHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(operationHash.second.sliceArray(1 until operationHash.second.size).toMutableList(), operationHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationHash.decodeFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationHash.decodeFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationHash.decodeConsumingFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(operationHash.second.sliceArray(1 until operationHash.second.size), operationHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(operationHash.second.sliceArray(1 until operationHash.second.size).toMutableList(), operationHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationHash.decodeFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationHash.decodeFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationHash.decodeConsumingFromBytes(operationHash.second.sliceArray(1 until operationHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(operationListHash.second.sliceArray(1 until operationListHash.second.size), operationListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(operationListHash.second.sliceArray(1 until operationListHash.second.size).toMutableList(), operationListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationListHash.decodeFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationListHash.decodeFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationListHash.decodeConsumingFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(operationListHash.second.sliceArray(1 until operationListHash.second.size), operationListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(operationListHash.second.sliceArray(1 until operationListHash.second.size).toMutableList(), operationListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationListHash.decodeFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationListHash.decodeFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationListHash.decodeConsumingFromBytes(operationListHash.second.sliceArray(1 until operationListHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), operationListListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(operationListListHash.second.sliceArray(1 until operationListListHash.second.size).toMutableList(), operationListListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationListListHash.decodeFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationListListHash.decodeFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationListListHash.decodeConsumingFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), operationListListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(operationListListHash.second.sliceArray(1 until operationListListHash.second.size).toMutableList(), operationListListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationListListHash.decodeFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationListListHash.decodeFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationListListHash.decodeConsumingFromBytes(operationListListHash.second.sliceArray(1 until operationListListHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), operationMetadataHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size).toMutableList(), operationMetadataHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataHash.decodeFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataHash.decodeFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataHash.decodeConsumingFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), operationMetadataHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size).toMutableList(), operationMetadataHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataHash.decodeFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataHash.decodeFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataHash.decodeConsumingFromBytes(operationMetadataHash.second.sliceArray(1 until operationMetadataHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), operationMetadataListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size).toMutableList(), operationMetadataListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataListHash.decodeConsumingFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), operationMetadataListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size).toMutableList(), operationMetadataListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataListHash.decodeFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataListHash.decodeConsumingFromBytes(operationMetadataListHash.second.sliceArray(1 until operationMetadataListHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), operationMetadataListListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size).toMutableList(), operationMetadataListListHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            OperationMetadataListListHash.decodeConsumingFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), operationMetadataListListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size).toMutableList(), operationMetadataListListHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataListListHash.decodeFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                OperationMetadataListListHash.decodeConsumingFromBytes(operationMetadataListListHash.second.sliceArray(1 until operationMetadataListListHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), p256EncryptedSecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size).toMutableList(), p256EncryptedSecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256EncryptedSecretKey.decodeConsumingFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), p256EncryptedSecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size).toMutableList(), p256EncryptedSecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256EncryptedSecretKey.decodeFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256EncryptedSecretKey.decodeConsumingFromBytes(p256EncryptedSecretKey.second.sliceArray(1 until p256EncryptedSecretKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), p256PublicKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size).toMutableList(), p256PublicKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256PublicKey.decodeFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256PublicKey.decodeFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256PublicKey.decodeConsumingFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), p256PublicKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size).toMutableList(), p256PublicKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256PublicKey.decodeFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256PublicKey.decodeFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256PublicKey.decodeConsumingFromBytes(p256PublicKey.second.sliceArray(1 until p256PublicKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), p256PublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size).toMutableList(), p256PublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256PublicKeyHash.decodeConsumingFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), p256PublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size).toMutableList(), p256PublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256PublicKeyHash.decodeFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256PublicKeyHash.decodeConsumingFromBytes(p256PublicKeyHash.second.sliceArray(1 until p256PublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), p256SecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size).toMutableList(), p256SecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256SecretKey.decodeFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256SecretKey.decodeFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256SecretKey.decodeConsumingFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), p256SecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size).toMutableList(), p256SecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256SecretKey.decodeFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256SecretKey.decodeFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256SecretKey.decodeConsumingFromBytes(p256SecretKey.second.sliceArray(1 until p256SecretKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(p256Signature.second.sliceArray(1 until p256Signature.second.size), p256Signature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(p256Signature.second.sliceArray(1 until p256Signature.second.size).toMutableList(), p256Signature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256Signature.decodeFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256Signature.decodeFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            P256Signature.decodeConsumingFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(p256Signature.second.sliceArray(1 until p256Signature.second.size), p256Signature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(p256Signature.second.sliceArray(1 until p256Signature.second.size).toMutableList(), p256Signature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256Signature.decodeFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256Signature.decodeFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                P256Signature.decodeConsumingFromBytes(p256Signature.second.sliceArray(1 until p256Signature.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(protocolHash.second.sliceArray(1 until protocolHash.second.size), protocolHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(protocolHash.second.sliceArray(1 until protocolHash.second.size).toMutableList(), protocolHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ProtocolHash.decodeFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ProtocolHash.decodeFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            ProtocolHash.decodeConsumingFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(protocolHash.second.sliceArray(1 until protocolHash.second.size), protocolHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(protocolHash.second.sliceArray(1 until protocolHash.second.size).toMutableList(), protocolHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ProtocolHash.decodeFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ProtocolHash.decodeFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                ProtocolHash.decodeConsumingFromBytes(protocolHash.second.sliceArray(1 until protocolHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), saplingAddress.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(saplingAddress.second.sliceArray(1 until saplingAddress.second.size).toMutableList(), saplingAddress.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            SaplingAddress.decodeFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            SaplingAddress.decodeFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            SaplingAddress.decodeConsumingFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), saplingAddress.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(saplingAddress.second.sliceArray(1 until saplingAddress.second.size).toMutableList(), saplingAddress.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                SaplingAddress.decodeFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                SaplingAddress.decodeFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                SaplingAddress.decodeConsumingFromBytes(saplingAddress.second.sliceArray(1 until saplingAddress.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), saplingSpendingKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size).toMutableList(), saplingSpendingKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            SaplingSpendingKey.decodeConsumingFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), saplingSpendingKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size).toMutableList(), saplingSpendingKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                SaplingSpendingKey.decodeFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                SaplingSpendingKey.decodeConsumingFromBytes(saplingSpendingKey.second.sliceArray(1 until saplingSpendingKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), scriptExprHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), scriptExprHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Ed25519EncryptedSeed.decodeConsumingFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), scriptExprHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), scriptExprHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Ed25519EncryptedSeed.decodeConsumingFromBytes(scriptExprHash.second.sliceArray(1 until scriptExprHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), secp256K1Element.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size).toMutableList(), secp256K1Element.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Element.decodeFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Element.decodeFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Element.decodeConsumingFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), secp256K1Element.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size).toMutableList(), secp256K1Element.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Element.decodeFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Element.decodeFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Element.decodeConsumingFromBytes(secp256K1Element.second.sliceArray(1 until secp256K1Element.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), secp256K1EncryptedScalar.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size).toMutableList(), secp256K1EncryptedScalar.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1EncryptedScalar.decodeConsumingFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), secp256K1EncryptedScalar.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size).toMutableList(), secp256K1EncryptedScalar.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1EncryptedScalar.decodeFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1EncryptedScalar.decodeConsumingFromBytes(secp256K1EncryptedScalar.second.sliceArray(1 until secp256K1EncryptedScalar.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), secp256K1EncryptedSecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size).toMutableList(), secp256K1EncryptedSecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1EncryptedSecretKey.decodeConsumingFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), secp256K1EncryptedSecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size).toMutableList(), secp256K1EncryptedSecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1EncryptedSecretKey.decodeFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1EncryptedSecretKey.decodeConsumingFromBytes(secp256K1EncryptedSecretKey.second.sliceArray(1 until secp256K1EncryptedSecretKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), secp256K1PublicKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size).toMutableList(), secp256K1PublicKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1PublicKey.decodeConsumingFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), secp256K1PublicKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size).toMutableList(), secp256K1PublicKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1PublicKey.decodeFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1PublicKey.decodeConsumingFromBytes(secp256K1PublicKey.second.sliceArray(1 until secp256K1PublicKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), secp256K1PublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size).toMutableList(), secp256K1PublicKeyHash.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1PublicKeyHash.decodeConsumingFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), secp256K1PublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size).toMutableList(), secp256K1PublicKeyHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1PublicKeyHash.decodeFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1PublicKeyHash.decodeConsumingFromBytes(secp256K1PublicKeyHash.second.sliceArray(1 until secp256K1PublicKeyHash.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), secp256K1Scalar.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size).toMutableList(), secp256K1Scalar.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Scalar.decodeConsumingFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), secp256K1Scalar.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size).toMutableList(), secp256K1Scalar.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Scalar.decodeFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Scalar.decodeConsumingFromBytes(secp256K1Scalar.second.sliceArray(1 until secp256K1Scalar.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), secp256K1SecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size).toMutableList(), secp256K1SecretKey.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1SecretKey.decodeConsumingFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size).toMutableList(), encodedBytesCoder)
-        }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), secp256K1SecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size).toMutableList(), secp256K1SecretKey.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1SecretKey.decodeFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1SecretKey.decodeConsumingFromBytes(secp256K1SecretKey.second.sliceArray(1 until secp256K1SecretKey.second.size).toMutableList(), encodedBytesCoder)
+            }
 
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decode(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), secp256K1Signature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            encodedBytesCoder.decodeConsuming(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size).toMutableList(), secp256K1Signature.first.kind)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Signature.decodeFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), tezos)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Signature.decodeFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), encodedBytesCoder)
-        }
-        assertFailsWith<IllegalArgumentException> {
-            Secp256K1Signature.decodeConsumingFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size).toMutableList(), encodedBytesCoder)
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), secp256K1Signature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size).toMutableList(), secp256K1Signature.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Signature.decodeFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Signature.decodeFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                Secp256K1Signature.decodeConsumingFromBytes(secp256K1Signature.second.sliceArray(1 until secp256K1Signature.second.size).toMutableList(), encodedBytesCoder)
+            }
         }
     }
 

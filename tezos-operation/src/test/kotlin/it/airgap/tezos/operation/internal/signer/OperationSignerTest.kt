@@ -4,10 +4,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.asHexString
+import it.airgap.tezos.operation.internal.context.withTezosContext
 import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.operation.signer.sign
 import it.airgap.tezos.operation.signer.verify
@@ -62,7 +63,7 @@ class OperationSignerTest {
     }
 
     @Test
-    fun `should sign Operation`() {
+    fun `should sign Operation`() = withTezosContext {
         operationsWithEd25519Signatures.forEach {
             val key = ed25519KeyPair.first
 
@@ -131,7 +132,7 @@ class OperationSignerTest {
     }
 
     @Test
-    fun `should verify Operation signature`() {
+    fun `should verify Operation signature`() = withTezosContext {
         operationsWithEd25519Signatures.forEach {
             val key = ed25519KeyPair.second
 

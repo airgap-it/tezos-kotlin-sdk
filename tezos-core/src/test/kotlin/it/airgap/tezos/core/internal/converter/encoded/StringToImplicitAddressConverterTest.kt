@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
@@ -35,7 +36,7 @@ class StringToImplicitAddressConverterTest {
     }
 
     @Test
-    fun `should convert string to ImplicitAddress`() {
+    fun `should convert string to ImplicitAddress`() = withTezosContext {
         addressesWithStrings.forEach {
             assertEquals(it.first, stringToImplicitAddressConverter.convert(it.second))
             assertEquals(it.first, ImplicitAddress.fromString(it.second, tezos))
@@ -44,7 +45,7 @@ class StringToImplicitAddressConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid string to ImplicitAddress`() {
+    fun `should fail to convert invalid string to ImplicitAddress`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToImplicitAddressConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { ImplicitAddress.fromString(it, tezos) }

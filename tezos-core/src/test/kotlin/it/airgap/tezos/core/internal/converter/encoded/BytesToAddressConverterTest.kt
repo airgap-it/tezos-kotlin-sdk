@@ -4,7 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromBytes
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -32,7 +33,7 @@ class BytesToAddressConverterTest {
     }
 
     @Test
-    fun `should convert bytes to Address`() {
+    fun `should convert bytes to Address`() = withTezosContext {
         addressesWithBytes.forEach {
             assertEquals(it.first, bytesToAddressConverter.convert(it.second))
             assertEquals(it.first, Address.fromBytes(it.second, tezos))
@@ -41,7 +42,7 @@ class BytesToAddressConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid bytes to Address`() {
+    fun `should fail to convert invalid bytes to Address`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { bytesToAddressConverter.convert(it) }
             assertFailsWith<IllegalArgumentException> { Address.fromBytes(it, tezos) }

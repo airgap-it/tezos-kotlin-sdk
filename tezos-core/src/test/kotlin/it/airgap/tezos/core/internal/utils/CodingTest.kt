@@ -1,5 +1,15 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingBoolean
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingInt32
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingInt64
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingList
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingUInt16
+import it.airgap.tezos.core.internal.context.TezosCoreContext.decodeConsumingUInt8
+import it.airgap.tezos.core.internal.context.TezosCoreContext.encodeToBytes
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -21,7 +31,7 @@ class CodingTest {
             val string = it.first
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeStringToBytes(string))
+            assertContentEquals(bytes, string.encodeToBytes())
         }
     }
 
@@ -47,7 +57,7 @@ class CodingTest {
             val bytes = it.first.first.asHexString().toByteArray()
             val size = it.first.second
 
-            assertEquals(string, decodeConsumingStringFromBytes(bytes.toMutableList(), size))
+            assertEquals(string, bytes.toMutableList().decodeConsumingString(size))
         }
     }
 
@@ -66,7 +76,7 @@ class CodingTest {
             val string = it.first.asHexString()
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeHexStringToBytes(string))
+            assertContentEquals(bytes, string.encodeToBytes())
         }
     }
 
@@ -92,7 +102,7 @@ class CodingTest {
             val bytes = it.first.first.asHexString().toByteArray()
             val size = it.first.second
 
-            assertEquals(string, decodeConsumingHexStringFromBytes(bytes.toMutableList(), size))
+            assertEquals(string, bytes.toMutableList().decodeConsumingHexString(size))
         }
     }
 
@@ -111,7 +121,7 @@ class CodingTest {
             val uint8 = it.first.toUByte()
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeUInt8ToBytes(uint8))
+            assertContentEquals(bytes, uint8.encodeToBytes())
         }
     }
 
@@ -136,7 +146,7 @@ class CodingTest {
             val uint8 = it.second.toUByte()
             val bytes = it.first.asHexString().toByteArray()
 
-            assertEquals(uint8, decodeConsumingUInt8FromBytes(bytes.toMutableList()))
+            assertEquals(uint8, bytes.toMutableList().decodeConsumingUInt8())
         }
     }
 
@@ -157,7 +167,7 @@ class CodingTest {
             val uint16 = it.first.toUShort()
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeUInt16ToBytes(uint16))
+            assertContentEquals(bytes, uint16.encodeToBytes())
         }
     }
 
@@ -186,7 +196,7 @@ class CodingTest {
             val uint16 = it.second.toUShort()
             val bytes = it.first.asHexString().toByteArray()
 
-            assertEquals(uint16, decodeConsumingUInt16FromBytes(bytes.toMutableList()))
+            assertEquals(uint16, bytes.toMutableList().decodeConsumingUInt16())
         }
     }
 
@@ -220,7 +230,7 @@ class CodingTest {
             val int32 = it.first
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeInt32ToBytes(int32))
+            assertContentEquals(bytes, int32.encodeToBytes())
         }
     }
 
@@ -275,7 +285,7 @@ class CodingTest {
             val int32 = it.second
             val bytes = it.first.asHexString().toByteArray()
 
-            assertEquals(int32, decodeConsumingInt32FromBytes(bytes.toMutableList()))
+            assertEquals(int32, bytes.toMutableList().decodeConsumingInt32())
         }
     }
 
@@ -313,7 +323,7 @@ class CodingTest {
             val int64 = it.first.toLong()
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeInt64ToBytes(int64))
+            assertContentEquals(bytes, int64.encodeToBytes())
         }
     }
 
@@ -376,7 +386,7 @@ class CodingTest {
             val int64 = it.second.toLong()
             val bytes = it.first.asHexString().toByteArray()
 
-            assertEquals(int64, decodeConsumingInt64FromBytes(bytes.toMutableList()))
+            assertEquals(int64, bytes.toMutableList().decodeConsumingInt64())
         }
     }
 
@@ -391,7 +401,7 @@ class CodingTest {
             val boolean = it.first
             val bytes = it.second.asHexString().toByteArray()
 
-            assertContentEquals(bytes, encodeBooleanToBytes(boolean))
+            assertContentEquals(bytes, boolean.encodeToBytes())
         }
     }
 
@@ -409,7 +419,7 @@ class CodingTest {
             val boolean = it.second
             val bytes = it.first.asHexString().toByteArray()
 
-            assertEquals(boolean, decodeConsumingBooleanFromBytes(bytes.toMutableList()))
+            assertEquals(boolean, bytes.toMutableList().decodeConsumingBoolean())
         }
     }
 
@@ -417,12 +427,12 @@ class CodingTest {
     fun `should encode List to bytes`() {
         assertContentEquals(
             "ffff00".asHexString().toByteArray(),
-            encodeListToBytes(listOf(true, true, false), ::encodeBooleanToBytes)
+            listOf(true, true, false).encodeToBytes { it.encodeToBytes() }
         )
 
         assertContentEquals(
             "00010203".asHexString().toByteArray(),
-            encodeListToBytes(listOf(0, 1, 2, 3).map { it.toUByte() }, ::encodeUInt8ToBytes)
+            listOf(0, 1, 2, 3).map { it.toUByte() }.encodeToBytes { it.encodeToBytes() }
         )
     }
 
@@ -430,12 +440,12 @@ class CodingTest {
     fun `should decode consuming List from bytes`() {
         assertEquals(
             listOf(true, true, false),
-            decodeConsumingListFromBytes("ffff00".asHexString().toByteArray().toMutableList(), decoder = ::decodeConsumingBooleanFromBytes)
+            "ffff00".asHexString().toByteArray().toMutableList().decodeConsumingList { it.decodeConsumingBoolean() }
         )
 
         assertEquals(
             listOf(0, 1, 2, 3).map { it.toUByte() },
-            decodeConsumingListFromBytes("00010203".asHexString().toByteArray().toMutableList(), decoder = ::decodeConsumingUInt8FromBytes)
+            "00010203".asHexString().toByteArray().toMutableList().decodeConsumingList { it.decodeConsumingUInt8() }
         )
     }
 }
