@@ -8,21 +8,47 @@ public sealed interface Address : Encoded {
     @InternalTezosSdkApi
     override val meta: MetaAddress<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaAddress.Kind<*, *>>
+            get() = listOf(
+                Ed25519PublicKeyHash,
+                Secp256K1PublicKeyHash,
+                P256PublicKeyHash,
+                ContractHash,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface ImplicitAddress : Address {
     @InternalTezosSdkApi
     override val meta: MetaImplicitAddress<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaImplicitAddress.Kind<*, *>>
+            get() = listOf(
+                Ed25519PublicKeyHash,
+                Secp256K1PublicKeyHash,
+                P256PublicKeyHash,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface OriginatedAddress : Address {
     @InternalTezosSdkApi
     override val meta: MetaOriginatedAddress<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaOriginatedAddress.Kind<*, *>>
+            get() = listOf(
+                ContractHash,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- MetaAddress --

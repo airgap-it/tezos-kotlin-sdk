@@ -15,42 +15,47 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
-    apply(plugin = "maven-publish")
-    apply(plugin = "jacoco")
 
-    group = Project.group
-    version = Project.version
+    if (isBuildable) {
+        apply(plugin = "maven-publish")
+        apply(plugin = "jacoco")
 
-    java {
-        sourceCompatibility = Build.Java.compatibility
-        targetCompatibility = Build.Java.compatibility
-    }
+        group = Project.group
+        version = Project.version
 
-    kotlin {
-        explicitApiWarning()
-    }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = Build.Kotlin.jvmTarget
-            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-opt-in=it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi"
+        java {
+            sourceCompatibility = Build.Java.compatibility
+            targetCompatibility = Build.Java.compatibility
         }
-    }
 
-    tasks.jacocoTestReport {
-        dependsOn(tasks.test)
-
-        reports {
-            xml.required.set(true)
-            csv.required.set(true)
-            html.required.set(true)
+        kotlin {
+            explicitApiWarning()
         }
-    }
 
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                from(components.getByName("java"))
+        tasks.withType<KotlinCompile>().configureEach {
+            kotlinOptions {
+                jvmTarget = Build.Kotlin.jvmTarget
+                freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn" + "-opt-in=it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi"
+            }
+        }
+
+        tasks.jacocoTestReport {
+            dependsOn(tasks.test)
+
+            reports {
+                xml.required.set(true)
+                csv.required.set(true)
+                html.required.set(true)
+            }
+        }
+
+        publishing {
+            publications {
+                create<MavenPublication>("maven") {
+                    from(components.getByName("java"))
+
+                    artifactId = fullName
+                }
             }
         }
     }
@@ -129,7 +134,10 @@ tasks.register<Zip>("zipTestReports") {
     }
 }
 
-fun MutableSet<org.gradle.api.Project>.filterBuildable(): List<org.gradle.api.Project> = filter { it.childProjects.isEmpty() }
+fun MutableSet<org.gradle.api.Project>.filterBuildable(): List<org.gradle.api.Project> = filter { it.isBuildable }
+
+val org.gradle.api.Project.isBuildable: Boolean
+    get() = childProjects.isEmpty() && !name.contains("samples")
 
 val org.gradle.api.Project.fullName: String
     get() = path.removePrefix(":").replace(":", "-")
