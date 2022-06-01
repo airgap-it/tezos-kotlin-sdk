@@ -1110,7 +1110,7 @@ private class MichelineSequenceToMichelsonConverter(
             return when {
                 isEmpty() -> MichelsonData.Sequence(emptyList())
                 allIsInstance<MichelsonInstruction>() -> MichelsonInstruction.Sequence(this as List<MichelsonInstruction>)
-                allIsInstance<MichelsonData.Elt>() -> MichelsonData.EltSequence(this as List<MichelsonData.Elt>)
+                allIsInstance<MichelsonData.Elt>() -> MichelsonData.Map(this as List<MichelsonData.Elt>)
                 anyIsInstance<MichelsonData.Elt>() /* any but not all */ -> failWithInvalidSequence(value)
                 allIsInstance<MichelsonData>() -> MichelsonData.Sequence(this as List<MichelsonData>)
                 else -> failWithUnknownSequence(value)

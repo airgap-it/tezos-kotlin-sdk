@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
 
 /**
- * Encodes a [P256PublicKeyHash] to bytes.
+ * Encodes a [P256PublicKeyHash] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/P256PublicKeyHash/P256PublicKeyHashSamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun P256PublicKeyHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteAr
 }
 
 /**
- * Decodes a [P256PublicKeyHash] from [bytes].
+ * Decodes a [P256PublicKeyHash] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/P256PublicKeyHash/P256PublicKeyHashSamples.Coding#fromBytes` for a sample usage.

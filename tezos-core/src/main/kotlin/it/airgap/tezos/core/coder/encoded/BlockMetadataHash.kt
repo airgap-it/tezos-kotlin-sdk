@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.BlockMetadataHash
 
 /**
- * Encodes a [BlockMetadataHash] to bytes.
+ * Encodes a [BlockMetadataHash] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/BlockMetadataHash/BlockMetadataHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun BlockMetadataHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteAr
 }
 
 /**
- * Decodes a [BlockMetadataHash] from [bytes].
+ * Decodes a [BlockMetadataHash] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/BlockMetadataHash/BlockMetadataHashSamples.Coding#fromBytes` for a sample usage.

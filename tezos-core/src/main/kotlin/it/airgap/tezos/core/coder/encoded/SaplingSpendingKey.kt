@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.SaplingSpendingKey
 
 /**
- * Encodes a [SaplingSpendingKey] to bytes.
+ * Encodes a [SaplingSpendingKey] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/SaplingSpendingKey/SaplingSpendingKeySamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun SaplingSpendingKey.encodeToBytes(tezos: Tezos = Tezos.Default): ByteA
 }
 
 /**
- * Decodes a [SaplingSpendingKey] from [bytes].
+ * Decodes a [SaplingSpendingKey] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/SaplingSpendingKey/SaplingSpendingKeySamples.Coding#fromBytes` for a sample usage.

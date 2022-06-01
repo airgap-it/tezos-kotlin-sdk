@@ -1,6 +1,10 @@
 package it.airgap.tezos.michelson
 
-// https://tezos.gitlab.io/active/michelson.html#full-grammar
+/**
+ * Tezos Michelson types as defined in [the documentation](https://tezos.gitlab.io/active/michelson.html#full-grammar).
+ *
+ * See also: [Michelson Reference](https://tezos.gitlab.io/michelson-reference/).
+ */
 public sealed interface Michelson {
     public val annotations: List<Annotation>
         get() = emptyList()
@@ -15,6 +19,9 @@ public sealed interface Michelson {
         }
     }
 
+    /**
+     * Michelson annotations as defined in [the documentation](https://tezos.gitlab.io/active/michelson.html#annotations).
+     */
     public sealed interface Annotation {
         public val value: String
         public fun matches(string: String): Boolean

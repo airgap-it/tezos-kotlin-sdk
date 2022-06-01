@@ -9,22 +9,42 @@ import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 
-// -- Micheline <-> ByteArray --
-
+/**
+ * Packs [MichelineNode] to [ByteArray] using an optional [schema].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#pack` for a sample usage.
+ */
 public fun <T : MichelineNode> T.packToBytes(schema: MichelineNode? = null, tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     packToBytes(schema, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
+/**
+ * Unpacks [MichelineNode] from [ByteArray][bytes] using an optional [schema].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#unpack` for a sample usage.
+ */
 public fun MichelineNode.Companion.unpackFromBytes(bytes: ByteArray, schema: MichelineNode? = null, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     unpackFromBytes(bytes, schema, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
-// -- Micheline <-> String --
-
+/**
+ * Packs [MichelineNode] to hexadecimal [String] representation [with or without hex prefix][withHexPrefix] using an optional [schema].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#pack` for a sample usage.
+ */
 public fun <T : MichelineNode> T.packToString(schema: MichelineNode? = null, withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String = withTezosContext {
     packToString(schema, withHexPrefix, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
+/**
+ * Unpacks [MichelineNode] from [String][string] using an optional [schema].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#unpack` for a sample usage.
+ */
 public fun MichelineNode.Companion.unpackFromString(string: String, schema: MichelineNode? = null, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     unpackFromString(string, schema, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }

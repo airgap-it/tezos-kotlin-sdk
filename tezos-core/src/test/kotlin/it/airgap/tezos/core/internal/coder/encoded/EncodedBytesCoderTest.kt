@@ -35,7 +35,7 @@ class EncodedBytesCoderTest {
     }
 
     @Test
-    fun `should encode Encoded to bytes`() = withTezosContext {
+    fun `should encode Encoded to [ByteArray]`() = withTezosContext {
         assertContentEquals(blockHash.second, encodedBytesCoder.encode(blockHash.first))
         assertContentEquals(blockHash.second, blockHash.first.encodeToBytes(tezos))
         assertContentEquals(blockHash.second, blockHash.first.encodeToBytes(encodedBytesCoder))

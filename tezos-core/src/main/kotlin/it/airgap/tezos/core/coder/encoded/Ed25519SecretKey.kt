@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519SecretKey
 
 /**
- * Encodes an [Ed25519SecretKey] to bytes.
+ * Encodes an [Ed25519SecretKey] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519SecretKey/Ed25519SecretKeySamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun Ed25519SecretKey.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArr
 }
 
 /**
- * Decodes an [Ed25519SecretKey] from [bytes].
+ * Decodes an [Ed25519SecretKey] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519SecretKey/Ed25519SecretKeySamples.Coding#fromBytes` for a sample usage.

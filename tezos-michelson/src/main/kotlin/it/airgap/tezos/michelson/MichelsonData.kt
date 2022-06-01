@@ -5,7 +5,11 @@ import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexStr
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.isHex
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toHexString
 
-// https://tezos.gitlab.io/active/michelson.html#full-grammar
+/**
+ * Tezos Michelson data types as defined in [the documentation](https://tezos.gitlab.io/active/michelson.html#full-grammar).
+ *
+ * See also: [Michelson Reference](https://tezos.gitlab.io/michelson-reference/).
+ */
 public sealed interface MichelsonData : Michelson {
     @JvmInline public value class IntConstant(public val value: String) : MichelsonData {
 
@@ -131,7 +135,7 @@ public sealed interface MichelsonData : Michelson {
         public companion object {}
     }
 
-    public data class EltSequence(public val values: List<Elt>) : MichelsonData {
+    public data class Map(public val values: List<Elt>) : MichelsonData {
         public companion object {}
     }
 
@@ -162,6 +166,6 @@ public sealed interface MichelsonData : Michelson {
     public companion object {
         public fun Pair(vararg values: MichelsonData): Pair = Pair(values.toList())
         public fun Sequence(vararg values: MichelsonData): Sequence = Sequence(values.toList())
-        public fun EltSequence(vararg values: Elt): EltSequence = EltSequence(values.toList())
+        public fun Map(vararg values: Elt): Map = Map(values.toList())
     }
 }

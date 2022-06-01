@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519Signature
 
 /**
- * Encodes an [Ed25519Signature] to bytes.
+ * Encodes an [Ed25519Signature] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519Signature/Ed25519SignatureSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun Ed25519Signature.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArr
 }
 
 /**
- * Decodes an [Ed25519Signature] from [bytes].
+ * Decodes an [Ed25519Signature] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519Signature/Ed25519SignatureSamples.Coding#fromBytes` for a sample usage.

@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.Secp256K1Element
 
 /**
- * Encodes an [Secp256K1Element] to bytes.
+ * Encodes an [Secp256K1Element] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Secp256K1Element/Secp256K1ElementSamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun Secp256K1Element.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArr
 }
 
 /**
- * Decodes an [Secp256K1Element] from [bytes].
+ * Decodes an [Secp256K1Element] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Secp256K1Element/Secp256K1ElementSamples.Coding#fromBytes` for a sample usage.

@@ -63,7 +63,7 @@ val michelsonDataMichelinePairs: List<Pair<MichelsonData, MichelineNode>>
             MichelinePrimitiveApplication("UNIT"),
             MichelinePrimitiveApplication("Unit"),
         ),
-        MichelsonData.EltSequence(
+        MichelsonData.Map(
             MichelsonData.Elt(MichelsonData.Unit, MichelsonData.Unit)
         ) to MichelineSequence(
             MichelinePrimitiveApplication(

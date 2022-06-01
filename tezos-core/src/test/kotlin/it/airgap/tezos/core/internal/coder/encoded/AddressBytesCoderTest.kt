@@ -39,7 +39,7 @@ class AddressBytesCoderTest {
     }
 
     @Test
-    fun `should encode Address to bytes`() = withTezosContext {
+    fun `should encode Address to [ByteArray]`() = withTezosContext {
         addressesWithBytes.forEach {
             assertContentEquals(it.second, addressBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))

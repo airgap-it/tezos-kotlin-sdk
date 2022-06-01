@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.OperationHash
 
 /**
- * Encodes an [OperationHash] to bytes.
+ * Encodes an [OperationHash] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/OperationHash/OperationHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun OperationHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray 
 }
 
 /**
- * Decodes an [OperationHash] from [bytes].
+ * Decodes an [OperationHash] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/OperationHash/OperationHashSamples.Coding#fromBytes` for a sample usage.

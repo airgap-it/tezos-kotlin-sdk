@@ -3,7 +3,9 @@ package it.airgap.tezos.michelson.micheline
 import it.airgap.tezos.michelson.Michelson
 import kotlinx.serialization.Serializable
 
-// https://tezos.gitlab.io/shell/micheline.html#bnf-grammar
+/**
+ * Micheline primitive application as defined in [the documentation](https://tezos.gitlab.io/shell/micheline.html#bnf-grammar).
+ */
 @Serializable
 public data class MichelinePrimitiveApplication internal constructor(
     public val prim: Primitive,

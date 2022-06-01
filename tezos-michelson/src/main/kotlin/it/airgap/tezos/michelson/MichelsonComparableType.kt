@@ -1,6 +1,10 @@
 package it.airgap.tezos.michelson
 
-// https://tezos.gitlab.io/active/michelson.html#full-grammar
+/**
+ * Tezos Michelson comparable types as defined in [the documentation](https://tezos.gitlab.io/active/michelson.html#full-grammar).
+ *
+ * See also: [Michelson Reference](https://tezos.gitlab.io/michelson-reference/).
+ */
 public sealed interface MichelsonComparableType : MichelsonType {
     public data class Unit(override val metadata: MichelsonType.Metadata = MichelsonType.Metadata()) : MichelsonComparableType {
         public companion object : Prim {

@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.OperationMetadataListHash
 
 /**
- * Encodes an [OperationMetadataListHash] to bytes.
+ * Encodes an [OperationMetadataListHash] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/OperationMetadataListHash/OperationMetadataListHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun OperationMetadataListHash.encodeToBytes(tezos: Tezos = Tezos.Default)
 }
 
 /**
- * Decodes an [OperationMetadataListHash] from [bytes].
+ * Decodes an [OperationMetadataListHash] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/OperationMetadataListHash/OperationMetadataListHashSamples.Coding#fromBytes` for a sample usage.

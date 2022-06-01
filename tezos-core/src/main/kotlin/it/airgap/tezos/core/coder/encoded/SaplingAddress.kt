@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.SaplingAddress
 
 /**
- * Encodes a [SaplingAddress] to bytes.
+ * Encodes a [SaplingAddress] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/SaplingAddress/SaplingAddressSamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun SaplingAddress.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray
 }
 
 /**
- * Decodes a [SaplingAddress] from [bytes].
+ * Decodes a [SaplingAddress] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/SaplingAddress/SaplingAddressSamples.Coding#fromBytes` for a sample usage.

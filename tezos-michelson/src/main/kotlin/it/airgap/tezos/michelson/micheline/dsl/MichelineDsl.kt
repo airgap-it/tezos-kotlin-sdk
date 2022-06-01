@@ -9,24 +9,15 @@ import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 
+/**
+ * Creates [MichelineNode] using Micheline DSL.
+ *
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineDsl.Usage` for a sample usage.
+ */
 public fun micheline(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
     micheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
-}
-
-public fun michelineType(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
-    michelineType(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
-}
-
-public fun michelineComparableType(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
-    michelineComparableType(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
-}
-
-public fun michelineData(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
-    michelineData(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
-}
-
-public fun michelineInstruction(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
-    michelineInstruction(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
 }
 
 @InternalTezosSdkApi

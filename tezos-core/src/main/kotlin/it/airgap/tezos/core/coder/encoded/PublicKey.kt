@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.PublicKey
 
 /**
- * Encodes a [PublicKey] to bytes.
+ * Encodes a [PublicKey] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/PublicKey/PublicKeySamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun PublicKey.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = wi
 }
 
 /**
- * Decodes a [PublicKey] from [bytes].
+ * Decodes a [PublicKey] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/PublicKey/PublicKeySamples.Coding#fromBytes` for a sample usage.

@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.ChainId
 
 /**
- * Encodes a [ChainId] to bytes.
+ * Encodes a [ChainId] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ChainId/ChainIdSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun ChainId.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = with
 }
 
 /**
- * Decodes a [ChainId] from [bytes].
+ * Decodes a [ChainId] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ChainId/ChainIdSamples.Coding#fromBytes` for a sample usage.

@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 
 /**
- * Encodes an [Address] to bytes.
+ * Encodes an [Address] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun Address.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = with
 }
 
 /**
- * Decodes an [Address] from [bytes].
+ * Decodes an [Address] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#fromBytes` for a sample usage.
@@ -41,7 +41,7 @@ public interface AddressCoderContext {
 }
 
 /**
- * Encodes an [ImplicitAddress] to bytes.
+ * Encodes an [ImplicitAddress] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Address/ImplicitAddressSamples.Coding#toBytes` for a sample usage.
@@ -51,7 +51,7 @@ public fun ImplicitAddress.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArra
 }
 
 /**
- * Decodes an [ImplicitAddress] from [bytes].
+ * Decodes an [ImplicitAddress] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Address/ImplicitAddressSamples.Coding#fromBytes` for a sample usage.

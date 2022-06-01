@@ -86,7 +86,7 @@ class Base58CheckTest {
     }
 
     @Test
-    fun `decodes Base58Check string to bytes`() {
+    fun `decodes Base58Check string to [ByteArray]`() {
         val encodedWithExpected = bytesWithEncodings.map { it.second to it.first.asHexString().toByteArray() }
 
         encodedWithExpected

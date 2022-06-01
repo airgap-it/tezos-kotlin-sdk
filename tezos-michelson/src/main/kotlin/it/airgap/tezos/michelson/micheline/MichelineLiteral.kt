@@ -8,7 +8,9 @@ import it.airgap.tezos.michelson.internal.serializer.MichelineLiteralBytesSerial
 import it.airgap.tezos.michelson.internal.serializer.MichelineLiteralSerializer
 import kotlinx.serialization.Serializable
 
-// https://tezos.gitlab.io/shell/micheline.html#bnf-grammar
+/**
+ * Micheline literals as defined in [the documentation](https://tezos.gitlab.io/shell/micheline.html#bnf-grammar).
+ */
 @Serializable(with = MichelineLiteralSerializer::class)
 public sealed class MichelineLiteral : MichelineNode() {
 

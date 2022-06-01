@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519BlindedPublicKeyHash
 
 /**
- * Encodes an [Ed25519BlindedPublicKeyHash] to bytes.
+ * Encodes an [Ed25519BlindedPublicKeyHash] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519BlindedPublicKeyHash/Ed25519BlindedPublicKeyHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun Ed25519BlindedPublicKeyHash.encodeToBytes(tezos: Tezos = Tezos.Defaul
 }
 
 /**
- * Decodes an [Ed25519BlindedPublicKeyHash] from [bytes].
+ * Decodes an [Ed25519BlindedPublicKeyHash] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519BlindedPublicKeyHash/Ed25519BlindedPublicKeyHashSamples.Coding#fromBytes` for a sample usage.

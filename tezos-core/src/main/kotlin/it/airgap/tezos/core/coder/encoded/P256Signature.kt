@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.P256Signature
 
 /**
- * Encodes a [P256Signature] to bytes.
+ * Encodes a [P256Signature] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/P256Signature/P256SignatureSamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun P256Signature.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray 
 }
 
 /**
- * Decodes a [P256Signature] from [bytes].
+ * Decodes a [P256Signature] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/P256Signature/P256SignatureSamples.Coding#fromBytes` for a sample usage.

@@ -12,36 +12,62 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
-// -- Micheline <-> JSON --
-
+/**
+ * Encodes this [MichelineNode] to a JSON [String].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#toJson` for a sample usage.
+ */
 public fun <T : MichelineNode> T.toJsonString(tezos: Tezos = Tezos.Default): String = withTezosContext {
     toJsonString(tezos.michelsonModule.dependencyRegistry.michelineJsonCoder)
 }
 
+/**
+ * Decodes a [MichelineNode] from a JSON [String].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#fromJson` for a sample usage.
+ */
 public fun MichelineNode.Companion.fromJsonString(json: String, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     fromJsonString(json, tezos.michelsonModule.dependencyRegistry.michelineJsonCoder)
 }
 
-// -- Micheline <-> ByteArray --
-
+/**
+ * Encodes this [MichelineNode] to [ByteArray].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#toBytes` for a sample usage.
+ */
 public fun <T : MichelineNode> T.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     encodeToBytes(tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 }
 
+/**
+ * Decodes this [MichelineNode] from [ByteArray][bytes].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#fromBytes` for a sample usage.
+ */
 public fun MichelineNode.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     decodeFromBytes(bytes, tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 }
 
-public fun MichelineNode.Companion.decodeConsumingFromBytes(bytes: MutableList<Byte>, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
-    decodeConsumingFromBytes(bytes, tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
-}
-
-// -- Micheline <-> String --
-
+/**
+ * Encodes this [MichelineNode] to a hexadecimal [String] representation [with or without prefix][withHexPrefix].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#toHexString` for a sample usage.
+ */
 public fun <T : MichelineNode> T.encodeToString(withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String = withTezosContext {
     encodeToString(tezos.michelsonModule.dependencyRegistry.michelineBytesCoder, withHexPrefix)
 }
 
+/**
+ * Decodes this [MichelineNode] from [a hexadecimal String][string].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#fromHexString` for a sample usage.
+ */
 public fun MichelineNode.Companion.decodeFromString(string: String, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     decodeFromString(string, tezos.michelsonModule.dependencyRegistry.michelineBytesCoder)
 }

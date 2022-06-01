@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519EncryptedSeed
 
 /**
- * Encodes an [Ed25519EncryptedSeed] to bytes.
+ * Encodes an [Ed25519EncryptedSeed] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519BlindedPublicKeyHash/Ed25519BlindedPublicKeyHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun Ed25519EncryptedSeed.encodeToBytes(tezos: Tezos = Tezos.Default): Byt
 }
 
 /**
- * Decodes an [Ed25519EncryptedSeed] from [bytes].
+ * Decodes an [Ed25519EncryptedSeed] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519BlindedPublicKeyHash/Ed25519BlindedPublicKeyHashSamples.Coding#fromBytes` for a sample usage.

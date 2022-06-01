@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.NonceHash
 
 /**
- * Encodes a [NonceHash] to bytes.
+ * Encodes a [NonceHash] to [ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/NonceHash/NonceHashSamples.Coding#toBytes` for a sample usage.
@@ -19,7 +19,7 @@ public fun NonceHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = wi
 }
 
 /**
- * Decodes a [NonceHash] from [bytes].
+ * Decodes a [NonceHash] from [ByteArray][bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/NonceHash/NonceHashSamples.Coding#fromBytes` for a sample usage.
