@@ -17,7 +17,7 @@ public sealed interface Key : Encoded {
             get() = SecretKey.kinds + PublicKey.kinds
 
         /**
-         * Checks if the [string] is a valid Tezos [Key]
+         * Checks if [string] is a valid Tezos [Key]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -43,7 +43,7 @@ public sealed interface SecretKey : Key {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [SecretKey]
+         * Checks if [string] is a valid Tezos [SecretKey]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -69,7 +69,7 @@ public sealed interface PublicKey : Key {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [PublicKey]
+         * Checks if [string] is a valid Tezos [PublicKey]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -89,7 +89,7 @@ public sealed interface EncryptedKey : Encoded {
             get() = EncryptedSecretKey.kinds
 
         /**
-         * Checks if the [string] is a valid Tezos [EncryptedKey]
+         * Checks if [string] is a valid Tezos [EncryptedKey]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -113,7 +113,7 @@ public sealed interface EncryptedSecretKey : EncryptedKey {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [EncryptedSecretKey]
+         * Checks if [string] is a valid Tezos [EncryptedSecretKey]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }

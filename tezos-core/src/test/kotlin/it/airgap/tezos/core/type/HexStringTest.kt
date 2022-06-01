@@ -65,22 +65,6 @@ class HexStringTest {
     }
 
     @Test
-    fun `slices HexString`() {
-        val string = validHexStrings.first()
-        val hexString = string.asHexString()
-
-        val sliceRange = 0 until (string.length / 2)
-        val sliceIndex = string.length / 2
-
-        val sliceWithRange = hexString.slice(sliceRange)
-        val sliceWithIndex = hexString.slice(sliceIndex)
-
-        assertEquals(withoutHexPrefix(string).slice(sliceRange), sliceWithRange.asString())
-        assertEquals(withoutHexPrefix(string).substring(sliceIndex),
-            sliceWithIndex.asString())
-    }
-
-    @Test
     fun `creates byte array from HexString`() {
         val hexStringsWithExpected: List<Pair<String, ByteArray>> = listOf(
             "9434dc98" to byteArrayOf(-108, 52, -36, -104),

@@ -18,7 +18,7 @@ public sealed interface Scalar : Encoded {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [Scalar]
+         * Checks if [string] is a valid Tezos [Scalar]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -40,7 +40,7 @@ public sealed interface EncryptedScalar : Encoded {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [EncryptedScalar]
+         * Checks if [string] is a valid Tezos [EncryptedScalar]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }

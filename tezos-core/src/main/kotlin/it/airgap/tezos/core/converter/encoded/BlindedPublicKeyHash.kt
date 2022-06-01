@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
 
 /**
- * Creates a [BlindedPublicKeyHash] from [string].
+ * Creates [BlindedPublicKeyHash] from [string].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/BlindedPublicKeyHash/BlindedPublicKeyHashSamples.Usage#create` for a sample usage.

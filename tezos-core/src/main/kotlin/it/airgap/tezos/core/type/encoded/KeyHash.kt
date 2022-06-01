@@ -16,7 +16,7 @@ public sealed interface KeyHash : Encoded {
             get() = PublicKeyHash.kinds
 
         /**
-         * Checks if the [string] is a valid Tezos [KeyHash]
+         * Checks if [string] is a valid Tezos [KeyHash]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -42,7 +42,7 @@ public sealed interface PublicKeyHash : KeyHash, ImplicitAddress {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [PublicKeyHash]
+         * Checks if [string] is a valid Tezos [PublicKeyHash]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -62,7 +62,7 @@ public sealed interface BlindedKeyHash : Encoded {
             get() = BlindedPublicKeyHash.kinds
 
         /**
-         * Checks if the [string] is a valid Tezos [BlindedKeyHash]
+         * Checks if [string] is a valid Tezos [BlindedKeyHash]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -84,7 +84,7 @@ public sealed interface BlindedPublicKeyHash : BlindedKeyHash {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [BlindedPublicKeyHash]
+         * Checks if [string] is a valid Tezos [BlindedPublicKeyHash]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }

@@ -19,7 +19,7 @@ public sealed interface Address : Encoded {
             get() = ImplicitAddress.kinds + OriginatedAddress.kinds
 
         /**
-         * Checks if the [string] is a valid Tezos [Address]
+         * Checks if [string] is a valid Tezos [Address]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -41,7 +41,7 @@ public sealed interface ImplicitAddress : Address {
             get() = PublicKeyHash.kinds
 
         /**
-         * Checks if the [string] is a valid Tezos [ImplicitAddress]
+         * Checks if [string] is a valid Tezos [ImplicitAddress]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -65,7 +65,7 @@ public sealed interface OriginatedAddress : Address {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [OriginatedAddress]
+         * Checks if [string] is a valid Tezos [OriginatedAddress]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }

@@ -10,7 +10,7 @@ import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.P256Signature
 
 /**
- * Creates an [P256Signature] from [genericSignature].
+ * Creates [P256Signature] from [genericSignature].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/P256Signature/P256SignatureSamples.Usage#fromGeneric` for a sample usage.

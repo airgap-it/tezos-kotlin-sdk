@@ -10,7 +10,7 @@ import it.airgap.tezos.core.type.encoded.Ed25519Signature
 import it.airgap.tezos.core.type.encoded.GenericSignature
 
 /**
- * Creates an [Ed25519Signature] from [genericSignature].
+ * Creates [Ed25519Signature] from [genericSignature].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519Signature/Ed25519SignatureSamples.Usage#fromGeneric` for a sample usage.

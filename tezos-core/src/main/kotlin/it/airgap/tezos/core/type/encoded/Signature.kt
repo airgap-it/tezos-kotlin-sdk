@@ -24,7 +24,7 @@ public sealed interface Signature : Encoded {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [Signature]
+         * Checks if [string] is a valid Tezos [Signature]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }

@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.Secp256K1Signature
 
 /**
- * Creates an [Secp256K1Signature] from [genericSignature].
+ * Creates [Secp256K1Signature] from [genericSignature].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Secp256K1Signature/Secp256K1SignatureSamples.Usage#fromGeneric` for a sample usage.

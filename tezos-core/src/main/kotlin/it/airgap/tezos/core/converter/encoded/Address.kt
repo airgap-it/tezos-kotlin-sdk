@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 
 /**
- * Creates an [Address] from [string].
+ * Creates [Address] from [string].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Address/AddressSamples.Usage#create` for a sample usage.
@@ -19,7 +19,7 @@ public fun Address(string: String, tezos: Tezos = Tezos.Default): Address = with
 }
 
 /**
- * Creates an [ImplicitAddress] from [string].
+ * Creates [ImplicitAddress] from [string].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Address/ImplicitAddressSamples.Usage#create` for a sample usage.

@@ -18,7 +18,7 @@ public sealed interface Seed : Encoded {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [Seed]
+         * Checks if [string] is a valid Tezos [Seed]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -40,7 +40,7 @@ public sealed interface EncryptedSeed : Encoded {
             )
 
         /**
-         * Checks if the [string] is a valid Tezos [EncryptedSeed]
+         * Checks if [string] is a valid Tezos [EncryptedSeed]
          */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
