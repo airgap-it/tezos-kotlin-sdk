@@ -1,9 +1,8 @@
 package it.airgap.tezos.core.type
 
 /**
- * Signature watermarks supported in Tezos.
- *
- * See https://gitlab.com/tezos/tezos/-/blob/master/src/lib_crypto/signature.ml#L44
+ * Signature watermarks supported in Tezos,
+ * as defined in the [Tezos source code](https://gitlab.com/tezos/tezos/-/blob/master/src/lib_crypto/signature.ml#L44).
  */
 public sealed interface Watermark {
     public val bytes: ByteArray

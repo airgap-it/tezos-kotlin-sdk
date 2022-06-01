@@ -15,12 +15,23 @@ import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import java.math.BigInteger
 
+/**
+ * [CryptoProvider] implementation that uses the [Bouncy Castle](https://www.bouncycastle.org/) library
+ * to satisfy the interface requirements.
+ */
 public class BouncyCastleCryptoProvider : CryptoProvider {
+
+    /**
+     * Hashes the [message] using the SHA-256 hash function.
+     */
     override fun sha256(message: ByteArray): ByteArray {
         val shA256Digest = SHA256Digest()
         return shA256Digest.hash(message)
     }
 
+    /**
+     * Hashes the [message] using the BLAKE2b hash function.
+     */
     override fun blake2b(message: ByteArray, size: Int): ByteArray {
         if (size !in 1..64) failWithInvalidHashSize(size)
 
@@ -29,6 +40,9 @@ public class BouncyCastleCryptoProvider : CryptoProvider {
         return blake2bDigest.hash(message, size)
     }
 
+    /**
+     * Signs the [message] with the EdDSA [secretKey].
+     */
     override fun signEd25519(message: ByteArray, secretKey: ByteArray): ByteArray {
         val signer = Ed25519Signer().apply {
             init(true, Ed25519PrivateKeyParameters(secretKey.sliceArray(0 until 32)))
@@ -37,6 +51,9 @@ public class BouncyCastleCryptoProvider : CryptoProvider {
         return signer.generateSignature(message)
     }
 
+    /**
+     * Verifies that the EdDSA [signature] is a valid signature for the [message] using the signer's [publicKey].
+     */
     override fun verifyEd25519(message: ByteArray, signature: ByteArray, publicKey: ByteArray): Boolean {
         val signer = Ed25519Signer().apply {
             init(false, Ed25519PublicKeyParameters(publicKey))
@@ -45,15 +62,27 @@ public class BouncyCastleCryptoProvider : CryptoProvider {
         return signer.verifySignature(message, signature)
     }
 
+    /**
+     * Signs the [message] with the secp256k1 [secretKey].
+     */
     override fun signSecp256K1(message: ByteArray, secretKey: ByteArray): ByteArray =
         signEC(message, secretKey, ECCurve.Secp256K1)
 
+    /**
+     * Verifies that the secp256k1 [signature] is a valid signature for the [message] using the signer's [publicKey].
+     */
     override fun verifySecp256K1(message: ByteArray, signature: ByteArray, publicKey: ByteArray): Boolean =
         verifyEC(message, signature, publicKey, ECCurve.Secp256K1)
 
+    /**
+     * Signs the [message] with the P-256 [secretKey].
+     */
     override fun signP256(message: ByteArray, secretKey: ByteArray): ByteArray =
         signEC(message, secretKey, ECCurve.Secp256R1)
 
+    /**
+     * Verifies that the P-256 [signature] is a valid signature for the [message] using the signer's [publicKey].
+     */
     override fun verifyP256(message: ByteArray, signature: ByteArray, publicKey: ByteArray): Boolean =
         verifyEC(message, signature, publicKey, ECCurve.Secp256R1)
 
