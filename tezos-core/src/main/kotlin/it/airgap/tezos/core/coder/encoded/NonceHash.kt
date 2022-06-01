@@ -9,20 +9,20 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.NonceHash
 
 /**
- * Encodes a [NonceHash] to [ByteArray].
+ * Encodes a [NonceHash] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#toBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/NonceHash/NonceHashSamples.Coding#toBytes` for a sample usage.
  */
 public fun NonceHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     encodeToBytes(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
 }
 
 /**
- * Decodes a [NonceHash] from [ByteArray].
+ * Decodes a [NonceHash] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#fromBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/NonceHash/NonceHashSamples.Coding#fromBytes` for a sample usage.
  */
 public fun NonceHash.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): NonceHash = withTezosContext {
     decodeFromBytes(bytes, tezos.coreModule.dependencyRegistry.encodedBytesCoder)

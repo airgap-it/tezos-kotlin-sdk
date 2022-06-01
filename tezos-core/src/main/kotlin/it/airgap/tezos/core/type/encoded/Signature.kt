@@ -7,7 +7,17 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public sealed interface Signature : Encoded {
     override val meta: MetaSignature<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaSignature.Kind<*, *>>
+            get() = listOf(
+                Ed25519Signature,
+                Secp256K1Signature,
+                P256Signature,
+                GenericSignature,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- MetaSignature --

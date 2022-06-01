@@ -7,15 +7,13 @@ import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
 
-// -- BlindedPublicKeyHash <- ByteArray --
-
-public fun BlindedPublicKeyHash.Companion.fromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): BlindedPublicKeyHash = withTezosContext {
-    BlindedPublicKeyHash.fromBytes(bytes, tezos.coreModule.dependencyRegistry.bytesToBlindedPublicKeyHashConverter)
-}
-
-// -- BlindedPublicKeyHash <- String --
-
-public fun BlindedPublicKeyHash.Companion.fromString(string: String, tezos: Tezos = Tezos.Default): BlindedPublicKeyHash = withTezosContext {
+/**
+ * Creates a [BlindedPublicKeyHash] from [string].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/type/BlindedPublicKeyHash/BlindedPublicKeyHashSamples.Usage#create` for a sample usage.
+ */
+public fun BlindedPublicKeyHash(string: String, tezos: Tezos = Tezos.Default): BlindedPublicKeyHash = withTezosContext {
     BlindedPublicKeyHash.fromString(string, tezos.coreModule.dependencyRegistry.stringToBlindedPublicKeyHashConverter)
 }
 

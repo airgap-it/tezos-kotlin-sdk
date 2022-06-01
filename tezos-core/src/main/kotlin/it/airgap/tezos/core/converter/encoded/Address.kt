@@ -8,27 +8,23 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 
-// -- Address <- ByteArray --
-
-public fun Address.Companion.fromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): Address = withTezosContext {
-    Address.fromBytes(bytes, tezos.coreModule.dependencyRegistry.bytesToAddressConverter)
-}
-
-// -- Address <- String --
-
-public fun Address.Companion.fromString(string: String, tezos: Tezos = Tezos.Default): Address = withTezosContext {
+/**
+ * Creates an [Address] from [string].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/type/Address/AddressSamples.Usage#create` for a sample usage.
+ */
+public fun Address(string: String, tezos: Tezos = Tezos.Default): Address = withTezosContext {
     Address.fromString(string, tezos.coreModule.dependencyRegistry.stringToAddressConverter)
 }
 
-// -- ImplicitAddress <- ByteArray --
-
-public fun ImplicitAddress.Companion.fromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): ImplicitAddress = withTezosContext {
-    ImplicitAddress.fromBytes(bytes, tezos.coreModule.dependencyRegistry.bytesToImplicitAddressConverter)
-}
-
-// -- ImplicitAddress <- String --
-
-public fun ImplicitAddress.Companion.fromString(string: String, tezos: Tezos = Tezos.Default): ImplicitAddress = withTezosContext {
+/**
+ * Creates an [ImplicitAddress] from [string].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/type/Address/ImplicitAddressSamples.Usage#create` for a sample usage.
+ */
+public fun ImplicitAddress(string: String, tezos: Tezos = Tezos.Default): ImplicitAddress = withTezosContext {
     ImplicitAddress.fromString(string, tezos.coreModule.dependencyRegistry.stringToImplicitAddressConverter)
 }
 

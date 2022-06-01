@@ -21,10 +21,10 @@ class BlockPayloadHashSamples {
 
         @Test
         fun isValid() {
-            val blockPayloadHash = "vh2rvgiNNmaBn3tW62KVqNLphShiC8X8Ao1GxC1gPfmTDz5SWWQG"
+            val blockPayloadHash = "vh1gFjfx5rV2WyrgXZCv5UrToDEgcVvfjjwuocbmFJm6h75kDfCm"
             assertTrue(BlockPayloadHash.isValid(blockPayloadHash))
 
-            val unknownHash = "2rvgiNNmaBn3tW62KVqNLphShiC8X8Ao1GxC1gPfmTDz5SWWQG"
+            val unknownHash = "1gFjfx5rV2WyrgXZCv5UrToDEgcVvfjjwuocbmFJm6h75kDfCm"
             assertFalse(BlockPayloadHash.isValid(unknownHash))
         }
     }
@@ -33,26 +33,25 @@ class BlockPayloadHashSamples {
 
         @Test
         fun toBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val blockPayloadHash = BlockPayloadHash("vh2rvgiNNmaBn3tW62KVqNLphShiC8X8Ao1GxC1gPfmTDz5SWWQG")
-            assertContentEquals(hexToBytes("9c39bccfb8b3fc02c94ee78f7c0d372def7a956a3e9bec3aec7906f2d07b7d90"), blockPayloadHash.encodeToBytes())
-            assertContentEquals(hexToBytes("9c39bccfb8b3fc02c94ee78f7c0d372def7a956a3e9bec3aec7906f2d07b7d90"), blockPayloadHash.encodeToBytes(tezos))
+            val blockPayloadHash = BlockPayloadHash("vh1gFjfx5rV2WyrgXZCv5UrToDEgcVvfjjwuocbmFJm6h75kDfCm")
+            assertContentEquals(hexToBytes("004c65194060da5531f8b7b0e966eee2481ae0ad17f729edaf6310b6c53d8cc7"), blockPayloadHash.encodeToBytes())
         }
 
         @Test
         fun fromBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val blockPayloadHash = hexToBytes("9c39bccfb8b3fc02c94ee78f7c0d372def7a956a3e9bec3aec7906f2d07b7d90")
-            assertEquals(BlockPayloadHash("vh2rvgiNNmaBn3tW62KVqNLphShiC8X8Ao1GxC1gPfmTDz5SWWQG"), BlockPayloadHash.decodeFromBytes(blockPayloadHash))
-            assertEquals(BlockPayloadHash("vh2rvgiNNmaBn3tW62KVqNLphShiC8X8Ao1GxC1gPfmTDz5SWWQG"), BlockPayloadHash.decodeFromBytes(blockPayloadHash, tezos))
+            val blockPayloadHash = hexToBytes("004c65194060da5531f8b7b0e966eee2481ae0ad17f729edaf6310b6c53d8cc7")
+            assertEquals(BlockPayloadHash("vh1gFjfx5rV2WyrgXZCv5UrToDEgcVvfjjwuocbmFJm6h75kDfCm"), BlockPayloadHash.decodeFromBytes(blockPayloadHash))
         }
     }
 }
+            

@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.ContractHash
 
 /**
- * Encodes a [ContractHash] to [ByteArray].
+ * Encodes a [ContractHash] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ContractHash/ContractHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun ContractHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray =
 }
 
 /**
- * Decodes a [ContractHash] from [ByteArray].
+ * Decodes a [ContractHash] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ContractHash/ContractHashSamples.Coding#fromBytes` for a sample usage.

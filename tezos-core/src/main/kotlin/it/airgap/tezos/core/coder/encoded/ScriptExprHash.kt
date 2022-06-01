@@ -9,20 +9,20 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 
 /**
- * Encodes a [ScriptExprHash] to [ByteArray].
+ * Encodes a [ScriptExprHash] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#toBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/ScriptExprHash/ScriptExprHashSamples.Coding#toBytes` for a sample usage.
  */
 public fun ScriptExprHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     encodeToBytes(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
 }
 
 /**
- * Decodes a [ScriptExprHash] from [ByteArray].
+ * Decodes a [ScriptExprHash] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#fromBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/ScriptExprHash/ScriptExprHashSamples.Coding#fromBytes` for a sample usage.
  */
 public fun ScriptExprHash.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): ScriptExprHash = withTezosContext {
     decodeFromBytes(bytes, tezos.coreModule.dependencyRegistry.encodedBytesCoder)

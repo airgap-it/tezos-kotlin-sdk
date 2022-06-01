@@ -5,24 +5,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.Secp256K1EncryptedScalar
 
 /**
- * Encodes a [Secp256K1EncryptedScalar] to [ByteArray].
+ * Encodes an [Secp256K1EncryptedScalar] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#toBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/Secp256K1EncryptedScalar/Secp256K1EncryptedScalarSamples.Coding#toBytes` for a sample usage.
  */
 public fun Secp256K1EncryptedScalar.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     encodeToBytes(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
 }
 
 /**
- * Decodes a [Secp256K1EncryptedScalar] from [ByteArray].
+ * Decodes an [Secp256K1EncryptedScalar] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#fromBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/Secp256K1EncryptedScalar/Secp256K1EncryptedScalarSamples.Coding#fromBytes` for a sample usage.
  */
 public fun Secp256K1EncryptedScalar.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): Secp256K1EncryptedScalar = withTezosContext {
     decodeFromBytes(bytes, tezos.coreModule.dependencyRegistry.encodedBytesCoder)

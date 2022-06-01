@@ -10,12 +10,7 @@ public sealed interface Address : Encoded {
 
     public companion object {
         internal val kinds: List<MetaAddress.Kind<*, *>>
-            get() = listOf(
-                Ed25519PublicKeyHash,
-                Secp256K1PublicKeyHash,
-                P256PublicKeyHash,
-                ContractHash,
-            )
+            get() = ImplicitAddress.kinds + OriginatedAddress.kinds
 
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
@@ -27,11 +22,7 @@ public sealed interface ImplicitAddress : Address {
 
     public companion object {
         internal val kinds: List<MetaImplicitAddress.Kind<*, *>>
-            get() = listOf(
-                Ed25519PublicKeyHash,
-                Secp256K1PublicKeyHash,
-                P256PublicKeyHash,
-            )
+            get() = PublicKeyHash.kinds
 
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }

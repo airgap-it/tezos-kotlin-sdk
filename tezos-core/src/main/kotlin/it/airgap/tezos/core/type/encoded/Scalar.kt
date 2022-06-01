@@ -7,7 +7,14 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public sealed interface Scalar : Encoded {
     override val meta: MetaScalar<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaScalar.Kind<*, *>>
+            get() = listOf(
+                Secp256K1Scalar,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- EncryptedScalar --
@@ -15,7 +22,14 @@ public sealed interface Scalar : Encoded {
 public sealed interface EncryptedScalar : Encoded {
     override val meta: MetaEncryptedScalar<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaEncryptedScalar.Kind<*, *>>
+            get() = listOf(
+                Secp256K1EncryptedScalar,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- MetaScalar --

@@ -21,10 +21,10 @@ class ChainIdSamples {
 
         @Test
         fun isValid() {
-            val chainId = "NetXNy1E383jSrX"
+            val chainId = "NetXPduhFKtb9SG"
             assertTrue(ChainId.isValid(chainId))
 
-            val unknownId = "XNy1E383jSrX"
+            val unknownId = "XPduhFKtb9SG"
             assertFalse(ChainId.isValid(unknownId))
         }
     }
@@ -33,26 +33,25 @@ class ChainIdSamples {
 
         @Test
         fun toBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val chainId = ChainId("NetXNy1E383jSrX")
-            assertContentEquals(hexToBytes("23a9f05a"), chainId.encodeToBytes())
-            assertContentEquals(hexToBytes("23a9f05a"), chainId.encodeToBytes(tezos))
+            val chainId = ChainId("NetXPduhFKtb9SG")
+            assertContentEquals(hexToBytes("27ac9165"), chainId.encodeToBytes())
         }
 
         @Test
         fun fromBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val chainId = hexToBytes("23a9f05a")
-            assertEquals(ChainId("NetXNy1E383jSrX"), ChainId.decodeFromBytes(chainId))
-            assertEquals(ChainId("NetXNy1E383jSrX"), ChainId.decodeFromBytes(chainId, tezos))
+            val chainId = hexToBytes("27ac9165")
+            assertEquals(ChainId("NetXPduhFKtb9SG"), ChainId.decodeFromBytes(chainId))
         }
     }
 }
+            

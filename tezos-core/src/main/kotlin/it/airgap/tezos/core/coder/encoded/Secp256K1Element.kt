@@ -9,20 +9,20 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.Secp256K1Element
 
 /**
- * Encodes a [Secp256K1Element] to [ByteArray].
+ * Encodes an [Secp256K1Element] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#toBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/Secp256K1Element/Secp256K1ElementSamples.Coding#toBytes` for a sample usage.
  */
 public fun Secp256K1Element.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     encodeToBytes(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
 }
 
 /**
- * Decodes a [Secp256K1Element] from [ByteArray].
+ * Decodes an [Secp256K1Element] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#fromBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/Secp256K1Element/Secp256K1ElementSamples.Coding#fromBytes` for a sample usage.
  */
 public fun Secp256K1Element.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): Secp256K1Element = withTezosContext {
     decodeFromBytes(bytes, tezos.coreModule.dependencyRegistry.encodedBytesCoder)

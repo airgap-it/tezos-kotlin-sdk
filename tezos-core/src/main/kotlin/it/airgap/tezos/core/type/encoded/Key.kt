@@ -7,19 +7,42 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public sealed interface Key : Encoded {
     override val meta: MetaKey<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaKey.Kind<*, *>>
+            get() = SecretKey.kinds + PublicKey.kinds
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface SecretKey : Key {
     override val meta: MetaSecretKey<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaSecretKey.Kind<*, *>>
+            get() = listOf(
+                Ed25519SecretKey,
+                Secp256K1SecretKey,
+                P256SecretKey,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface PublicKey : Key {
     override val meta: MetaPublicKey<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaPublicKey.Kind<*, *>>
+            get() = listOf(
+                Ed25519PublicKey,
+                Secp256K1PublicKey,
+                P256PublicKey,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- EncryptedKey --
@@ -27,13 +50,26 @@ public sealed interface PublicKey : Key {
 public sealed interface EncryptedKey : Encoded {
     override val meta: MetaEncryptedKey<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaEncryptedKey.Kind<*, *>>
+            get() = EncryptedSecretKey.kinds
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface EncryptedSecretKey : EncryptedKey {
     override val meta: MetaEncryptedSecretKey<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaEncryptedSecretKey.Kind<*, *>>
+            get() = listOf(
+                Secp256K1EncryptedSecretKey,
+                P256EncryptedSecretKey,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- MetaKey --

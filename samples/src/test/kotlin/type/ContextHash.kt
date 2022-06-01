@@ -21,10 +21,10 @@ class ContextHashSamples {
 
         @Test
         fun isValid() {
-            val contextHash = "CoVd2vUg9onub8w2ooJR7PyinX7sfxYk8YWBzg77yvY2T64E4eKM"
+            val contextHash = "CoVfW92gHqxyY5m5vMFR79mrBYmsyK3swKurvFafasqHHWzhmX4Q"
             assertTrue(ContextHash.isValid(contextHash))
 
-            val unknownHash = "Vd2vUg9onub8w2ooJR7PyinX7sfxYk8YWBzg77yvY2T64E4eKM"
+            val unknownHash = "VfW92gHqxyY5m5vMFR79mrBYmsyK3swKurvFafasqHHWzhmX4Q"
             assertFalse(ContextHash.isValid(unknownHash))
         }
     }
@@ -33,26 +33,25 @@ class ContextHashSamples {
 
         @Test
         fun toBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val contextHash = ContextHash("CoVd2vUg9onub8w2ooJR7PyinX7sfxYk8YWBzg77yvY2T64E4eKM")
-            assertContentEquals(hexToBytes("80cd3c83957a801c336209c2418b476906fab82de4cd199252b2d5693146c166"), contextHash.encodeToBytes())
-            assertContentEquals(hexToBytes("80cd3c83957a801c336209c2418b476906fab82de4cd199252b2d5693146c166"), contextHash.encodeToBytes(tezos))
+            val contextHash = ContextHash("CoVfW92gHqxyY5m5vMFR79mrBYmsyK3swKurvFafasqHHWzhmX4Q")
+            assertContentEquals(hexToBytes("86688f36f6ba4b3907829802776b49f69d3b023061464ff1ee1785fcb256db7a"), contextHash.encodeToBytes())
         }
 
         @Test
         fun fromBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val contextHash = hexToBytes("80cd3c83957a801c336209c2418b476906fab82de4cd199252b2d5693146c166")
-            assertEquals(ContextHash("CoVd2vUg9onub8w2ooJR7PyinX7sfxYk8YWBzg77yvY2T64E4eKM"), ContextHash.decodeFromBytes(contextHash))
-            assertEquals(ContextHash("CoVd2vUg9onub8w2ooJR7PyinX7sfxYk8YWBzg77yvY2T64E4eKM"), ContextHash.decodeFromBytes(contextHash, tezos))
+            val contextHash = hexToBytes("86688f36f6ba4b3907829802776b49f69d3b023061464ff1ee1785fcb256db7a")
+            assertEquals(ContextHash("CoVfW92gHqxyY5m5vMFR79mrBYmsyK3swKurvFafasqHHWzhmX4Q"), ContextHash.decodeFromBytes(contextHash))
         }
     }
 }
+            

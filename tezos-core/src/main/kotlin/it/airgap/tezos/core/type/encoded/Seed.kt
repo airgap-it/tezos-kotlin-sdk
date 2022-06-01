@@ -7,7 +7,14 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public sealed interface Seed : Encoded {
     override val meta: MetaSeed<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaSeed.Kind<*, *>>
+            get() = listOf(
+                Ed25519Seed,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- EncryptedSeed --
@@ -15,7 +22,14 @@ public sealed interface Seed : Encoded {
 public sealed interface EncryptedSeed : Encoded {
     override val meta: MetaEncryptedSeed<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaEncryptedSeed.Kind<*, *>>
+            get() = listOf(
+                Ed25519EncryptedSeed,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- MetaSeed --

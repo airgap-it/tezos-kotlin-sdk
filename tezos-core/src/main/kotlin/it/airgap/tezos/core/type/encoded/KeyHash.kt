@@ -8,14 +8,28 @@ public sealed interface KeyHash : Encoded {
     @InternalTezosSdkApi
     override val meta: MetaKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaKeyHash.Kind<*, *>>
+            get() = PublicKeyHash.kinds
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface PublicKeyHash : KeyHash, ImplicitAddress {
     @InternalTezosSdkApi
     override val meta: MetaPublicKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaPublicKeyHash.Kind<*, *>>
+            get() = listOf(
+                Ed25519PublicKeyHash,
+                Secp256K1PublicKeyHash,
+                P256PublicKeyHash,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- BlindedKeyHash --
@@ -24,14 +38,26 @@ public sealed interface BlindedKeyHash : Encoded {
     @InternalTezosSdkApi
     override val meta: MetaBlindedKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaBlindedKeyHash.Kind<*, *>>
+            get() = BlindedPublicKeyHash.kinds
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 public sealed interface BlindedPublicKeyHash : BlindedKeyHash {
     @InternalTezosSdkApi
     override val meta: MetaBlindedPublicKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaBlindedPublicKeyHash.Kind<*, *>>
+            get() = listOf(
+                Ed25519BlindedPublicKeyHash,
+            )
+
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
 // -- MetaKeyHash --

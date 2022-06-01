@@ -5,24 +5,23 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.OperationListListHash
 
 /**
- * Encodes a [OperationListListHash] to [ByteArray].
+ * Encodes an [OperationListListHash] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#toBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/OperationListListHash/OperationListListHashSamples.Coding#toBytes` for a sample usage.
  */
 public fun OperationListListHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     encodeToBytes(tezos.coreModule.dependencyRegistry.encodedBytesCoder)
 }
 
 /**
- * Decodes a [OperationListListHash] from [ByteArray].
+ * Decodes an [OperationListListHash] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/type/Address/AddressSamples.Coding#fromBytes` for a sample usage.
+ * See `samples/src/test/kotlin/type/OperationListListHash/OperationListListHashSamples.Coding#fromBytes` for a sample usage.
  */
 public fun OperationListListHash.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): OperationListListHash = withTezosContext {
     decodeFromBytes(bytes, tezos.coreModule.dependencyRegistry.encodedBytesCoder)

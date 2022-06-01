@@ -7,15 +7,13 @@ import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.PublicKeyHash
 
-// -- PublicKeyHash <- ByteArray --
-
-public fun PublicKeyHash.Companion.fromBytes(bytes: ByteArray, tezos: Tezos = Tezos.Default): PublicKeyHash = withTezosContext {
-    PublicKeyHash.fromBytes(bytes, tezos.coreModule.dependencyRegistry.bytesToPublicKeyHashConverter)
-}
-
-// -- PublicKeyHash <- String --
-
-public fun PublicKeyHash.Companion.fromString(string: String, tezos: Tezos = Tezos.Default): PublicKeyHash = withTezosContext {
+/**
+ * Creates a [PublicKeyHash] from [string].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ *
+ * See `samples/src/test/kotlin/type/PublicKeyHash/PublicKeyHashSamples.Usage#create` for a sample usage.
+ */
+public fun PublicKeyHash(string: String, tezos: Tezos = Tezos.Default): PublicKeyHash = withTezosContext {
     PublicKeyHash.fromString(string, tezos.coreModule.dependencyRegistry.stringToPublicKeyHashConverter)
 }
 

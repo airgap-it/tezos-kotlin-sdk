@@ -1,6 +1,7 @@
 package it.airgap.tezos.core.type
 
 import it.airgap.tezos.core.internal.context.TezosCoreContext.isHex
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toHexString
 import it.airgap.tezos.core.internal.type.BigInt
 
 @JvmInline
@@ -37,5 +38,6 @@ public value class HexString(private val value: String) {
 
         public fun isValid(string: String): Boolean = string.isHex()
     }
-
 }
+
+public fun HexString(bytes: ByteArray): HexString = bytes.toHexString()

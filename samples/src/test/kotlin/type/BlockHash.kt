@@ -21,10 +21,10 @@ class BlockHashSamples {
 
         @Test
         fun isValid() {
-            val blockHash = "BLxhnhJ8yRu5BjcK8STwLtDmSpWz2q5R5HRYir8kdexFjMVZiZ5"
+            val blockHash = "BLrUSnmhoWczorTYG8utWTLcD8yup6MX1MCehXG8f8QWew8t1N8"
             assertTrue(BlockHash.isValid(blockHash))
 
-            val unknownHash = "LxhnhJ8yRu5BjcK8STwLtDmSpWz2q5R5HRYir8kdexFjMVZiZ5"
+            val unknownHash = "LrUSnmhoWczorTYG8utWTLcD8yup6MX1MCehXG8f8QWew8t1N8"
             assertFalse(BlockHash.isValid(unknownHash))
         }
     }
@@ -33,26 +33,25 @@ class BlockHashSamples {
 
         @Test
         fun toBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val blockHash = BlockHash("BLxhnhJ8yRu5BjcK8STwLtDmSpWz2q5R5HRYir8kdexFjMVZiZ5")
-            assertContentEquals(hexToBytes("a4712e4241cd45194876e5e3637afd5eb0de95d43909ee8a0300004bb54697f4"), blockHash.encodeToBytes())
-            assertContentEquals(hexToBytes("a4712e4241cd45194876e5e3637afd5eb0de95d43909ee8a0300004bb54697f4"), blockHash.encodeToBytes(tezos))
+            val blockHash = BlockHash("BLrUSnmhoWczorTYG8utWTLcD8yup6MX1MCehXG8f8QWew8t1N8")
+            assertContentEquals(hexToBytes("964bc74a926eaa6c1ef858f526beb7b107c9bb28e38c9d8e4e11e41314699868"), blockHash.encodeToBytes())
         }
 
         @Test
         fun fromBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val blockHash = hexToBytes("a4712e4241cd45194876e5e3637afd5eb0de95d43909ee8a0300004bb54697f4")
-            assertEquals(BlockHash("BLxhnhJ8yRu5BjcK8STwLtDmSpWz2q5R5HRYir8kdexFjMVZiZ5"), BlockHash.decodeFromBytes(blockHash))
-            assertEquals(BlockHash("BLxhnhJ8yRu5BjcK8STwLtDmSpWz2q5R5HRYir8kdexFjMVZiZ5"), BlockHash.decodeFromBytes(blockHash, tezos))
+            val blockHash = hexToBytes("964bc74a926eaa6c1ef858f526beb7b107c9bb28e38c9d8e4e11e41314699868")
+            assertEquals(BlockHash("BLrUSnmhoWczorTYG8utWTLcD8yup6MX1MCehXG8f8QWew8t1N8"), BlockHash.decodeFromBytes(blockHash))
         }
     }
 }
+            

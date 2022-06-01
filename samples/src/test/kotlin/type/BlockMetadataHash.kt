@@ -21,10 +21,10 @@ class BlockMetadataHashSamples {
 
         @Test
         fun isValid() {
-            val blockMetadataHash = "bm3LV5fYgzx7P7V9E2nuJeGKzeonnu1FbRB2Bk5SMwvWmzUcQZpc"
+            val blockMetadataHash = "bm2uGR9MDRyRbyDnEbz98QepwrFG8mh2GAMfVokRynvmhHoxRUTY"
             assertTrue(BlockMetadataHash.isValid(blockMetadataHash))
 
-            val unknownHash = "3LV5fYgzx7P7V9E2nuJeGKzeonnu1FbRB2Bk5SMwvWmzUcQZpc"
+            val unknownHash = "2uGR9MDRyRbyDnEbz98QepwrFG8mh2GAMfVokRynvmhHoxRUTY"
             assertFalse(BlockMetadataHash.isValid(unknownHash))
         }
     }
@@ -33,26 +33,25 @@ class BlockMetadataHashSamples {
 
         @Test
         fun toBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val blockMetadataHash = BlockMetadataHash("bm3LV5fYgzx7P7V9E2nuJeGKzeonnu1FbRB2Bk5SMwvWmzUcQZpc")
-            assertContentEquals(hexToBytes("64aa9d9b3acf43f64a1c975b6298cf47f5aa557c86bd8a07645f49f486f64398"), blockMetadataHash.encodeToBytes())
-            assertContentEquals(hexToBytes("64aa9d9b3acf43f64a1c975b6298cf47f5aa557c86bd8a07645f49f486f64398"), blockMetadataHash.encodeToBytes(tezos))
+            val blockMetadataHash = BlockMetadataHash("bm2uGR9MDRyRbyDnEbz98QepwrFG8mh2GAMfVokRynvmhHoxRUTY")
+            assertContentEquals(hexToBytes("2b67b63e7cf806ced7410e04f8d6102a06bb7da3aac39a4a5244318e357e9f69"), blockMetadataHash.encodeToBytes())
         }
 
         @Test
         fun fromBytes() {
-            val tezos = Tezos {
+            Tezos {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
             }
 
-            val blockMetadataHash = hexToBytes("64aa9d9b3acf43f64a1c975b6298cf47f5aa557c86bd8a07645f49f486f64398")
-            assertEquals(BlockMetadataHash("bm3LV5fYgzx7P7V9E2nuJeGKzeonnu1FbRB2Bk5SMwvWmzUcQZpc"), BlockMetadataHash.decodeFromBytes(blockMetadataHash))
-            assertEquals(BlockMetadataHash("bm3LV5fYgzx7P7V9E2nuJeGKzeonnu1FbRB2Bk5SMwvWmzUcQZpc"), BlockMetadataHash.decodeFromBytes(blockMetadataHash, tezos))
+            val blockMetadataHash = hexToBytes("2b67b63e7cf806ced7410e04f8d6102a06bb7da3aac39a4a5244318e357e9f69")
+            assertEquals(BlockMetadataHash("bm2uGR9MDRyRbyDnEbz98QepwrFG8mh2GAMfVokRynvmhHoxRUTY"), BlockMetadataHash.decodeFromBytes(blockMetadataHash))
         }
     }
 }
+            

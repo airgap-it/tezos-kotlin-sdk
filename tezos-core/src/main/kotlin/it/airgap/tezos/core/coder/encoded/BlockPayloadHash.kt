@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.BlockPayloadHash
 
 /**
- * Encodes a [BlockPayloadHash] to [ByteArray].
+ * Encodes a [BlockPayloadHash] to bytes.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/BlockPayloadHash/BlockPayloadHashSamples.Coding#toBytes` for a sample usage.
@@ -18,7 +18,7 @@ public fun BlockPayloadHash.encodeToBytes(tezos: Tezos = Tezos.Default): ByteArr
 }
 
 /**
- * Decodes a [BlockPayloadHash] from [ByteArray].
+ * Decodes a [BlockPayloadHash] from [bytes].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/BlockPayloadHash/BlockPayloadHashSamples.Coding#fromBytes` for a sample usage.
