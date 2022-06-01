@@ -18,7 +18,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
 public class KtorHttpClientProvider(
-    private val engineFactory: HttpClientEngineFactory<*> = CIO,
+    private val engineFactory: HttpClientEngineFactory<*>,
+    private val logger: KtorLogger? = null,
 ) : HttpClientProvider {
     private val json: Json by lazy { Json.Default }
     private val ktor: HttpClient by lazy {
@@ -29,13 +30,21 @@ public class KtorHttpClientProvider(
                 json(json)
             }
 
-            install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        println(message)
+            logger?.let {
+                install(Logging) {
+                    logger = object : Logger {
+                        override fun log(message: String) {
+                            it.log(message)
+                        }
+                    }
+                    level = when (it.level) {
+                        KtorLogger.LogLevel.All -> LogLevel.ALL
+                        KtorLogger.LogLevel.Headers -> LogLevel.HEADERS
+                        KtorLogger.LogLevel.Body -> LogLevel.BODY
+                        KtorLogger.LogLevel.Info -> LogLevel.INFO
+                        KtorLogger.LogLevel.None -> LogLevel.NONE
                     }
                 }
-                level = LogLevel.ALL
             }
         }
     }
@@ -124,3 +133,5 @@ public class KtorHttpClientProvider(
 
     private fun List<String>.combineToUrl(): String = joinToString("/") { it.trimStart('/') }.trimEnd('/')
 }
+
+public fun KtorHttpClientProvider(logger: KtorLogger? = null): KtorHttpClientProvider = KtorHttpClientProvider(CIO, logger)

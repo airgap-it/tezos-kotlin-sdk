@@ -30,18 +30,12 @@ public fun ImplicitAddress(string: String, tezos: Tezos = Tezos.Default): Implic
 
 @InternalTezosSdkApi
 public interface AddressConverterContext {
-    public fun Address.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, Address>): Address =
-        converter.convert(bytes)
-
     public fun Address.Companion.fromString(string: String, converter: Converter<String, Address>): Address =
         converter.convert(string)
 }
 
 @InternalTezosSdkApi
 public interface ImplicitAddressConverterContext {
-    public fun ImplicitAddress.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, ImplicitAddress>): ImplicitAddress =
-        converter.convert(bytes)
-
     public fun ImplicitAddress.Companion.fromString(string: String, converter: Converter<String, ImplicitAddress>): ImplicitAddress =
         converter.convert(string)
 }

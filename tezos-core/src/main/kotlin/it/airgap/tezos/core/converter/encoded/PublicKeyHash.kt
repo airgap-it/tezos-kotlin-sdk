@@ -19,9 +19,6 @@ public fun PublicKeyHash(string: String, tezos: Tezos = Tezos.Default): PublicKe
 
 @InternalTezosSdkApi
 public interface PublicKeyHashConverterContext {
-    public fun PublicKeyHash.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, PublicKeyHash>): PublicKeyHash =
-        converter.convert(bytes)
-
     public fun PublicKeyHash.Companion.fromString(string: String, converter: Converter<String, PublicKeyHash>): PublicKeyHash =
         converter.convert(string)
 }

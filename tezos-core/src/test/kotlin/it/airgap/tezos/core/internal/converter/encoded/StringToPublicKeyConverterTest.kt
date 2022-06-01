@@ -3,7 +3,7 @@ package it.airgap.tezos.core.internal.converter.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.converter.encoded.PublicKey
 import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKey
 import it.airgap.tezos.core.type.encoded.P256PublicKey
@@ -38,7 +38,7 @@ class StringToPublicKeyConverterTest {
     fun `should convert string to PublicKeyEncoded`() = withTezosContext {
         publicKeysWithStrings.forEach {
             assertEquals(it.first, stringToPublicKeyConverter.convert(it.second))
-            assertEquals(it.first, PublicKey.fromString(it.second, tezos))
+            assertEquals(it.first, PublicKey(it.second, tezos))
             assertEquals(it.first, PublicKey.fromString(it.second, stringToPublicKeyConverter))
         }
     }
@@ -47,7 +47,7 @@ class StringToPublicKeyConverterTest {
     fun `should fail to convert invalid string to PublicKeyEncoded`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToPublicKeyConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it, tezos) }
+            assertFailsWith<IllegalArgumentException> { PublicKey(it, tezos) }
             assertFailsWith<IllegalArgumentException> { PublicKey.fromString(it, stringToPublicKeyConverter) }
         }
     }

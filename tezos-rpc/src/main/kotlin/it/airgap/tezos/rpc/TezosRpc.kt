@@ -21,4 +21,4 @@ public interface TezosRpc : ShellSimplifiedRpc, ActiveSimplifiedRpc, FeeEstimato
 }
 
 public fun TezosRpc(nodeUrl: String, tezos: Tezos = Tezos.Default): TezosRpc =
-    tezos.rpcModule.dependencyRegistry.tezosRpc(nodeUrl)
+    tezos.rpcModule.dependencyRegistry.tezosRpc(nodeUrl.trimEnd('/'))

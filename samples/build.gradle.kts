@@ -10,6 +10,8 @@ dependencies {
     implementation(project(":tezos-crypto:bouncycastle"))
     implementation(project(":tezos-http:ktor"))
 
+    implementation(Dependencies.kotlinxCoroutines)
+
     testImplementation(Dependencies.kotlinTest)
     testImplementation(Dependencies.junit)
 }

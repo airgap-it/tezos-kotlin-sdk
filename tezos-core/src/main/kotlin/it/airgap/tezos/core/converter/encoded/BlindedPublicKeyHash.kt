@@ -19,9 +19,6 @@ public fun BlindedPublicKeyHash(string: String, tezos: Tezos = Tezos.Default): B
 
 @InternalTezosSdkApi
 public interface BlindedPublicKeyHashConverterContext {
-    public fun BlindedPublicKeyHash.Companion.fromBytes(bytes: ByteArray, converter: Converter<ByteArray, BlindedPublicKeyHash>): BlindedPublicKeyHash =
-        converter.convert(bytes)
-
     public fun BlindedPublicKeyHash.Companion.fromString(string: String, converter: Converter<String, BlindedPublicKeyHash>): BlindedPublicKeyHash =
         converter.convert(string)
 }

@@ -3,7 +3,7 @@ package it.airgap.tezos.core.internal.converter.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.converter.encoded.BlindedPublicKeyHash
 import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.BlindedPublicKeyHash
 import it.airgap.tezos.core.type.encoded.Ed25519BlindedPublicKeyHash
@@ -36,7 +36,7 @@ class StringToBlindedPublicKeyHashConverterTest {
     fun `should convert string to ImplicitAddress`() = withTezosContext {
         addressesWithStrings.forEach {
             assertEquals(it.first, stringToBlindedPublicKeyHashConverter.convert(it.second))
-            assertEquals(it.first, BlindedPublicKeyHash.fromString(it.second, tezos))
+            assertEquals(it.first, BlindedPublicKeyHash(it.second, tezos))
             assertEquals(it.first, BlindedPublicKeyHash.fromString(it.second, stringToBlindedPublicKeyHashConverter))
         }
     }
@@ -45,7 +45,7 @@ class StringToBlindedPublicKeyHashConverterTest {
     fun `should fail to convert invalid string to ImplicitAddress`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToBlindedPublicKeyHashConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { BlindedPublicKeyHash.fromString(it, tezos) }
+            assertFailsWith<IllegalArgumentException> { BlindedPublicKeyHash(it, tezos) }
             assertFailsWith<IllegalArgumentException> { BlindedPublicKeyHash.fromString(it, stringToBlindedPublicKeyHashConverter) }
         }
     }
