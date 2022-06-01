@@ -2,9 +2,13 @@ package it.airgap.tezos.core.type.encoded
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 
-// -- Scalar --
-
+/**
+ * Group of base58 encoded scalars.
+ *
+ * @see [Secp256K1Scalar]
+ */
 public sealed interface Scalar : Encoded {
+    @InternalTezosSdkApi
     override val meta: MetaScalar<*, *>
 
     public companion object {
@@ -13,13 +17,20 @@ public sealed interface Scalar : Encoded {
                 Secp256K1Scalar,
             )
 
+        /**
+         * Checks if the [string] is a valid Tezos [Scalar]
+         */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
 }
 
-// -- EncryptedScalar --
-
+/**
+ * Group of base58 encoded encrypted scalars.
+ *
+ * @see [Secp256K1EncryptedScalar]
+ */
 public sealed interface EncryptedScalar : Encoded {
+    @InternalTezosSdkApi
     override val meta: MetaEncryptedScalar<*, *>
 
     public companion object {
@@ -28,11 +39,14 @@ public sealed interface EncryptedScalar : Encoded {
                 Secp256K1EncryptedScalar,
             )
 
+        /**
+         * Checks if the [string] is a valid Tezos [EncryptedScalar]
+         */
         public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
     }
 }
 
-// -- MetaScalar --
+// -- meta --
 
 @InternalTezosSdkApi
 public sealed interface MetaScalar<out Self : MetaScalar<Self, S>, out S : Scalar> : MetaEncoded<Self, S> {
@@ -41,8 +55,6 @@ public sealed interface MetaScalar<out Self : MetaScalar<Self, S>, out S : Scala
     @InternalTezosSdkApi
     public sealed interface Kind<out M : MetaScalar<M, S>, out S : Scalar> : MetaEncoded.Kind<M, S>
 }
-
-// -- MetaEncryptedScalar --
 
 @InternalTezosSdkApi
 public sealed interface MetaEncryptedScalar<out Self : MetaEncryptedScalar<Self, ES>, out ES : EncryptedScalar> : MetaEncoded<Self, ES> {
