@@ -17,6 +17,12 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
+/**
+ * [HttpClientProvider] implementation that uses [Ktor](https://ktor.io/) to satisfy the interface requirements.
+ *
+ * @property engineFactory [Ktor HttpClientEngineFactory][HttpClientEngineFactory] that the underlying [Ktor HttpClient][HttpClient] should be configured with.
+ * @property logger An optional logging configuration.
+ */
 public class KtorHttpClientProvider(
     private val engineFactory: HttpClientEngineFactory<*>,
     private val logger: KtorLogger? = null,
@@ -49,6 +55,11 @@ public class KtorHttpClientProvider(
         }
     }
 
+    /**
+     * Call DELETE HTTP method on specified [baseUrl] and [endpoint] with [headers] and [parameters].
+     *
+     * The method returns a JSON response encoded as [String].
+     */
     override suspend fun delete(
         baseUrl: String,
         endpoint: String,
@@ -56,6 +67,11 @@ public class KtorHttpClientProvider(
         parameters: List<HttpParameter>,
     ): String = request(HttpMethod.Delete, baseUrl, endpoint, headers, parameters)
 
+    /**
+     * Call GET HTTP method on specified [baseUrl] and [endpoint] with [headers] and [parameters].
+     *
+     * The method returns a JSON response encoded as [String].
+     */
     override suspend fun get(
         baseUrl: String,
         endpoint: String,
@@ -63,6 +79,12 @@ public class KtorHttpClientProvider(
         parameters: List<HttpParameter>,
     ): String = request(HttpMethod.Get, baseUrl, endpoint, headers, parameters)
 
+    /**
+     * Call PATCH HTTP method on specified [baseUrl] and [endpoint] with [headers], [parameters] and [body].
+     *
+     * The [body] is a serialized JSON in [String] representation.
+     * The method returns a JSON response encoded as [String].
+     */
     override suspend fun patch(
         baseUrl: String,
         endpoint: String,
@@ -73,6 +95,12 @@ public class KtorHttpClientProvider(
         body?.let { setBodyAsText(it) }
     }
 
+    /**
+     * Call POST HTTP method on specified [baseUrl] and [endpoint] with [headers], [parameters] and [body].
+     *
+     * The [body] is a serialized JSON in [String] representation.
+     * The method returns a JSON response encoded as [String].
+     */
     override suspend fun post(
         baseUrl: String,
         endpoint: String,
@@ -83,6 +111,12 @@ public class KtorHttpClientProvider(
         body?.let { setBodyAsText(it) }
     }
 
+    /**
+     * Call PUT HTTP method on specified [baseUrl] and [endpoint] with [headers], [parameters] and [body].
+     *
+     * The [body] is a serialized JSON in [String] representation.
+     * The method returns a JSON response encoded as [String].
+     */
     override suspend fun put(
         baseUrl: String,
         endpoint: String,
@@ -134,4 +168,7 @@ public class KtorHttpClientProvider(
     private fun List<String>.combineToUrl(): String = joinToString("/") { it.trimStart('/') }.trimEnd('/')
 }
 
+/**
+ * Creates a new [KtorHttpClientProvider] instance with a default [CIO HttpClientEngineFactory][CIO] and optional [logger].
+ */
 public fun KtorHttpClientProvider(logger: KtorLogger? = null): KtorHttpClientProvider = KtorHttpClientProvider(CIO, logger)
