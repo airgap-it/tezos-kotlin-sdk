@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.ChainId
 
 /**
- * Encodes a [ChainId] to [ByteArray].
+ * Encodes a [ChainId] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ChainId/ChainIdSamples.Coding#toBytes` for a sample usage.

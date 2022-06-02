@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ProtocolHash
 
 /**
- * Encodes a [ProtocolHash] to [ByteArray].
+ * Encodes a [ProtocolHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ProtocolHash/ProtocolHashSamples.Coding#toBytes` for a sample usage.

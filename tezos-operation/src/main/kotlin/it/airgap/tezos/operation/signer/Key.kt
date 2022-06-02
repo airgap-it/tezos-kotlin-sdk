@@ -8,32 +8,41 @@ import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.internal.context.withTezosContext
 import it.airgap.tezos.operation.internal.operationModule
 
-// -- SecretKeyEncoded --
-
+/**
+ * Signs the [operation] with this [key][SecretKey].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun SecretKey.sign(operation: Operation, tezos: Tezos = Tezos.Default): Signature = withTezosContext {
     sign(operation, tezos.operationModule.dependencyRegistry.operationSigner)
 }
 
-// -- PublicKeyEncoded --
-
+/**
+ * Verifies the [operation] with this [key][PublicKey].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun <T : PublicKey> T.verify(operation: Operation.Signed, tezos: Tezos = Tezos.Default): Boolean = withTezosContext {
     verify(operation, tezos.operationModule.dependencyRegistry.operationSigner)
 }
 
-// -- Ed25519SecretKey --
-
+/**
+ * Signs the [operation] with this [key][Ed25519SecretKey].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun Ed25519SecretKey.sign(operation: Operation, tezos: Tezos = Tezos.Default): Ed25519Signature = withTezosContext {
     sign(operation, tezos.operationModule.dependencyRegistry.operationEd25519Signer)
 }
 
-// -- Secp256K1SecretKey --
-
+/**
+ * Signs the [operation] with this [key][Secp256K1SecretKey].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun Secp256K1SecretKey.sign(operation: Operation, tezos: Tezos = Tezos.Default): Secp256K1Signature = withTezosContext {
     sign(operation, tezos.operationModule.dependencyRegistry.operationSecp256K1Signer)
 }
-
-// -- Ed25519SecretKey --
-
+/**
+ * Signs the [operation] with this [key][P256SecretKey].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun P256SecretKey.sign(operation: Operation, tezos: Tezos = Tezos.Default): P256Signature = withTezosContext {
     sign(operation, tezos.operationModule.dependencyRegistry.operationP256Signer)
 }

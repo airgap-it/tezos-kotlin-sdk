@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.BlockHash
 
 /**
- * Encodes a [BlockHash] to [ByteArray].
+ * Encodes a [BlockHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/BlockHash/BlockHashSamples.Coding#toBytes` for a sample usage.

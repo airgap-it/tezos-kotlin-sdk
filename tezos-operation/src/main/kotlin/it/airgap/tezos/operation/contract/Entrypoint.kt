@@ -1,5 +1,10 @@
 package it.airgap.tezos.operation.contract
 
+/**
+ * Entrypoint types defined in Tezos.
+ *
+ * See [P2P message format](https://tezos.gitlab.io/shell/p2p_api.html#alpha-entrypoint-determined-from-data-8-bit-tag) for more details.
+ */
 public sealed interface Entrypoint {
     public val value: String
 
@@ -54,6 +59,9 @@ public sealed interface Entrypoint {
     public companion object {}
 }
 
+/**
+ * Creates an [entrypoint][Entrypoint] from an arbitrary [String][value].
+ */
 public fun Entrypoint(value: String): Entrypoint =
     when (value) {
         Entrypoint.Default.value -> Entrypoint.Default

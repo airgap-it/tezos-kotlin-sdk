@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.Secp256K1Signature
 
 /**
- * Encodes an [Secp256K1Signature] to [ByteArray].
+ * Encodes an [Secp256K1Signature] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Secp256K1Signature/Secp256K1SignatureSamples.Coding#toBytes` for a sample usage.

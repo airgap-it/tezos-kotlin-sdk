@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.OperationHash
 
 /**
- * Encodes an [OperationHash] to [ByteArray].
+ * Encodes an [OperationHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/OperationHash/OperationHashSamples.Coding#toBytes` for a sample usage.

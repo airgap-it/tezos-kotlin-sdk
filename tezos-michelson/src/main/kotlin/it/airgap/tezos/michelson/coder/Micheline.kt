@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
 /**
- * Encodes this [MichelineNode] to a JSON [String].
+ * Encodes this [MichelineNode] to a JSON[String].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#toJson` for a sample usage.
@@ -23,7 +23,7 @@ public fun <T : MichelineNode> T.toJsonString(tezos: Tezos = Tezos.Default): Str
 }
 
 /**
- * Decodes a [MichelineNode] from a JSON [String].
+ * Decodes a [MichelineNode] from a JSON[String].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#fromJson` for a sample usage.
@@ -33,7 +33,7 @@ public fun MichelineNode.Companion.fromJsonString(json: String, tezos: Tezos = T
 }
 
 /**
- * Encodes this [MichelineNode] to [ByteArray].
+ * Encodes this [MichelineNode] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#toBytes` for a sample usage.
@@ -53,7 +53,7 @@ public fun MichelineNode.Companion.decodeFromBytes(bytes: ByteArray, tezos: Tezo
 }
 
 /**
- * Encodes this [MichelineNode] to a hexadecimal [String] representation [with or without prefix][withHexPrefix].
+ * Encodes this [MichelineNode] to a hexadecimal [String] representation [with or without hex prefix][withHexPrefix].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Coding#toHexString` for a sample usage.

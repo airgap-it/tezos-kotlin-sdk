@@ -35,7 +35,7 @@ public value class HexString(private val value: String) {
     }
 
     /**
-     * Converts this [HexString] to [ByteArray].
+     * Converts this [HexString] to [bytes][ByteArray].
      */
     public fun toByteArray(): ByteArray = asString().chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 

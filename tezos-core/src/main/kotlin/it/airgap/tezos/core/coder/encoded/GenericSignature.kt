@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.GenericSignature
 
 /**
- * Encodes a [GenericSignature] to [ByteArray].
+ * Encodes a [GenericSignature] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/GenericSignature/GenericSignatureSamples.Coding#toBytes` for a sample usage.

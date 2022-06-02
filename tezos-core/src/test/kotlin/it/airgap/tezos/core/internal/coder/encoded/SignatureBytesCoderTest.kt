@@ -36,7 +36,7 @@ class SignatureBytesCoderTest {
     }
 
     @Test
-    fun `should encode SignatureEncoded to [ByteArray]`() = withTezosContext {
+    fun `should encode SignatureEncoded to ByteArray`() = withTezosContext {
         signaturesWithBytes.forEach {
             assertContentEquals(it.second, signatureBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))

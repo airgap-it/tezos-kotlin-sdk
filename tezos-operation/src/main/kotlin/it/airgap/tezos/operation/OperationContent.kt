@@ -12,6 +12,12 @@ import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 
+/**
+ * Tezos operation content.
+ *
+ * See [P2P message format](https://tezos.gitlab.io/shell/p2p_api.html#alpha-operation-alpha-contents-determined-from-data-8-bit-tag)
+ * for more details.
+ */
 public sealed interface OperationContent {
     public sealed interface Kind {
         public val tag: UByte

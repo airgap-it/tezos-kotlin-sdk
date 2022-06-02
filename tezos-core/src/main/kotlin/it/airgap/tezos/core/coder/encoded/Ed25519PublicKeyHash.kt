@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 
 /**
- * Encodes an [Ed25519PublicKeyHash] to [ByteArray].
+ * Encodes an [Ed25519PublicKeyHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Ed25519PublicKeyHash/Ed25519PublicKeyHashSamples.Coding#toBytes` for a sample usage.

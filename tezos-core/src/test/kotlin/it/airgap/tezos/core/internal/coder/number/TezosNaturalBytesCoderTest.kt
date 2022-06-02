@@ -30,7 +30,7 @@ class TezosNaturalBytesCoderTest {
     }
 
     @Test
-    fun `should encode TezosNatural to [ByteArray]`() = withTezosContext {
+    fun `should encode TezosNatural to ByteArray`() = withTezosContext {
         naturalsWithBytes.forEach {
             assertContentEquals(it.second, tezosNaturalBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezosNaturalBytesCoder))

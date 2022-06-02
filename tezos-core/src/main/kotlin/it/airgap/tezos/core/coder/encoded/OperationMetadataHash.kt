@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.OperationMetadataHash
 
 /**
- * Encodes an [OperationMetadataHash] to [ByteArray].
+ * Encodes an [OperationMetadataHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/OperationMetadataHash/OperationMetadataHashSamples.Coding#toBytes` for a sample usage.

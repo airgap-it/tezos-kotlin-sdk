@@ -10,7 +10,7 @@ import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.MichelineNode
 
 /**
- * Packs [MichelineNode] to [ByteArray] using an optional [schema].
+ * Packs [MichelineNode] to [bytes][ByteArray] using an optional [schema].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#pack` for a sample usage.

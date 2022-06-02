@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.PublicKey
 
 /**
- * Encodes a [PublicKey] to [ByteArray].
+ * Encodes a [PublicKey] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/PublicKey/PublicKeySamples.Coding#toBytes` for a sample usage.

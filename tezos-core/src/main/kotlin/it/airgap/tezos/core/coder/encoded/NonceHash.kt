@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.NonceHash
 
 /**
- * Encodes a [NonceHash] to [ByteArray].
+ * Encodes a [NonceHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/NonceHash/NonceHashSamples.Coding#toBytes` for a sample usage.

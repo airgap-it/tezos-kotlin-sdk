@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.BlockHash
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 
 /**
- * Encodes a [ScriptExprHash] to [ByteArray].
+ * Encodes a [ScriptExprHash] to [bytes][ByteArray].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/ScriptExprHash/ScriptExprHashSamples.Coding#toBytes` for a sample usage.
