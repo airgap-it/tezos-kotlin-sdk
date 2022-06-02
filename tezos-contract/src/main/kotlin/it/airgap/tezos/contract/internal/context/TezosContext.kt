@@ -1,5 +1,6 @@
 package it.airgap.tezos.contract.internal.context
 
+import it.airgap.tezos.contract.entrypoint.dsl.ContractEntrypointParameterDslContext
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 
 private typealias TezosCoreContext = it.airgap.tezos.core.internal.context.TezosContext
@@ -12,8 +13,11 @@ public interface TezosContext :
     TezosCoreContext,
     TezosMichelsonContext,
     TezosOperationContext,
-    TezosRpcContext
+    TezosRpcContext,
+    ContractEntrypointParameterDslContext
 
+@PublishedApi
 internal object TezosContractContext : TezosContext
 
+@PublishedApi
 internal inline fun <T> withTezosContext(block: TezosContext.() -> T): T = block(TezosContractContext)

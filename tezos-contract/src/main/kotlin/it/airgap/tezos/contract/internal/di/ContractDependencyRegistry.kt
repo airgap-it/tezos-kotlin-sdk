@@ -79,6 +79,7 @@ public class ContractDependencyRegistry internal constructor(
             contract,
             operationFeeEstimator,
             michelson.michelineNormalizer,
+            michelson.michelsonToMichelineConverter,
         )
 
     private val metaContractEntrypointFactory: MetaContractEntrypoint.Factory by lazy { MetaContractEntrypoint.Factory(entrypointParameterToMichelineConverter) }

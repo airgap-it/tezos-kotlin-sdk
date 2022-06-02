@@ -10,40 +10,39 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 
 /**
- * Creates [MichelineNode] using Micheline DSL.
- *
+ * Creates [MichelineNode] using the [expression builder configuration][createExpression].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/michelson/Micheline/MichelineDsl.Usage` for a sample usage.
  */
-public fun micheline(tezos: Tezos = Tezos.Default, builderAction: MichelineMichelsonExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
-    micheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, builderAction)
+public fun micheline(tezos: Tezos = Tezos.Default, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
+    micheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, createExpression)
 }
 
 @InternalTezosSdkApi
 public interface MichelineDslContext {
     public fun micheline(
         michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
-        builderAction: MichelineMichelsonExpressionBuilder.() -> Unit = {},
-    ): MichelineNode = MichelineMichelsonExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).build()
+        createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {},
+    ): MichelineNode = MichelineMichelsonExpressionBuilder(michelsonToMichelineConverter).apply(createExpression).build()
 
     public fun michelineType(
         michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
-        builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit = {},
-    ): MichelineNode = MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).build()
+        createExpression: MichelineMichelsonTypeExpressionBuilder.() -> Unit = {},
+    ): MichelineNode = MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(createExpression).build()
 
     public fun michelineComparableType(
         michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
-        builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit = {},
-    ): MichelineNode = MichelineMichelsonComparableTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).build()
+        createExpression: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit = {},
+    ): MichelineNode = MichelineMichelsonComparableTypeExpressionBuilder(michelsonToMichelineConverter).apply(createExpression).build()
 
     public fun michelineData(
         michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
-        builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit = {},
-    ): MichelineNode = MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).build()
+        createExpression: MichelineMichelsonDataExpressionBuilder.() -> Unit = {},
+    ): MichelineNode = MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(createExpression).build()
 
     public fun michelineInstruction(
         michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
-        builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit = {},
-    ): MichelineNode = MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).build()
+        createExpression: MichelineMichelsonInstructionExpressionBuilder.() -> Unit = {},
+    ): MichelineNode = MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(createExpression).build()
 }

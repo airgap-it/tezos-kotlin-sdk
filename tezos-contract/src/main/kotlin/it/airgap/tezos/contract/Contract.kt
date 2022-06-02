@@ -16,6 +16,16 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.Cached
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 
+/**
+ * The main entry point to interact with Tezos contracts.
+ *
+ * See
+ *  - `samples/src/test/kotlin/contract/Contract/ContractSamples.Usage`
+ *  - `samples/src/test/kotlin/Rpc/RpcSamples`
+ * for a sample usage.
+ *
+ * @property address The contract's address.
+ */
 public class Contract internal constructor(
     public val address: ContractHash,
     private val contract: Block.Context.Contracts.Contract,
@@ -25,9 +35,20 @@ public class Contract internal constructor(
 ) {
     private val codeCached: Cached<ContractCode> = Cached { headers -> contract.script.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).toContractCode() }
 
+    /**
+     * The contract's storage handler.
+     */
     public val storage: ContractStorage by lazy { contractStorageFactory.create(codeCached) }
-    public fun entrypoint(name: String = Entrypoint.Default.value): ContractEntrypoint = contractEntrypointFactory.create(codeCached, name)
 
+    /**
+     * Creates the contract's entrypoint handler specified by its [name].
+     */
+    public fun entrypoint(name: String = Entrypoint.Default.value): ContractEntrypoint =
+        contractEntrypointFactory.create(codeCached, name)
+
+    /**
+     * Fetches the contract's code from the node. Can be configured with optional [HTTP headers][headers] to customize the request.
+     */
     public suspend fun code(headers: List<HttpHeader> = emptyList()): ContractCode = codeCached.get(headers)
 
     private fun GetContractNormalizedScriptResponse.toContractCode(): ContractCode {
@@ -38,5 +59,9 @@ public class Contract internal constructor(
     private fun failWithScriptNotFound(): Nothing = failWithContractException("Script not found for contract ${address.base58}.")
 }
 
+/**
+ * Creates a new [Contract] instance for the contract with the given [address] on the node specified by the [nodeUrl].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun Contract(nodeUrl: String, address: ContractHash, tezos: Tezos = Tezos.Default): Contract =
     tezos.contractModule.dependencyRegistry.contract(nodeUrl, address)

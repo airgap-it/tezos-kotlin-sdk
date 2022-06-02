@@ -14,12 +14,19 @@ import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 
-// -- ContractStorage --
-
+/**
+ * Contract storage handler.
+ * Its main purpose is to fetch content of the contract storage.
+ */
 public class ContractStorage internal constructor(
     private val meta: LazyMetaContractStorage,
     private val contract: Block.Context.Contracts.Contract,
 ) {
+
+    /**
+     * Fetches the storage content from the node.
+     * Can be configured with optional [HTTP headers][headers] to customize the request.
+     */
     public suspend fun get(headers: List<HttpHeader> = emptyList()): ContractStorageEntry? {
         val value = contract.storage.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).storage ?: return null
         val meta = meta.get(headers)
@@ -48,26 +55,44 @@ public class ContractStorage internal constructor(
     }
 }
 
-// -- ContractStorageEntry --
-
+/**
+ * Types of contract storage entries that represent the content of the storage.
+ */
 public sealed interface ContractStorageEntry {
+
+    /**
+     * The Micheline value of the entry.
+     */
     public val value: MichelineNode
+
+    /**
+     * The entry's type definition.
+     */
     public val type: MichelineNode
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 
+    /**
+     * All known annotations of the entry.
+     */
     public val names: Set<String>
         get() {
             val type = type as? MichelinePrimitiveApplication ?: return emptySet()
             return type.annots.map { it.value }.toSet()
         }
 
+    /**
+     * Entry that represents a [MichelineNode] value.
+     */
     public class Value internal constructor(
         override val value: MichelineNode,
         internal val meta: MetaContractStorageEntry.Basic,
     ) : ContractStorageEntry {
 
+        /**
+         * The entry's type definition.
+         */
         override val type: MichelineNode
             get() = meta.type
 
@@ -77,16 +102,21 @@ public sealed interface ContractStorageEntry {
                 other is Value -> value == other.value && type == other.type
                 else -> false
             }
-
         override fun hashCode(): Int = listOf(value, type).fold(0) { acc, v -> (31 * acc) + v.hashCode() }
     }
 
+    /**
+     * Group of entries aggregated in the form of an object.
+     */
     public class Object internal constructor(
         override val value: MichelineNode,
         internal val meta: MetaContractStorageEntry.Basic,
         internal val elements: List<ContractStorageEntry>,
     ) : ContractStorageEntry, kotlin.collections.Map<String, ContractStorageEntry> {
 
+        /**
+         * The entry's type definition.
+         */
         override val type: MichelineNode
             get() = meta.type
 
@@ -126,11 +156,18 @@ public sealed interface ContractStorageEntry {
         override fun hashCode(): Int = listOf(value, type, elements).fold(0) { acc, v -> (31 * acc) + v.hashCode() }
     }
 
+    /**
+     * Group of entries aggregated in the form of a list.
+     */
     public class Sequence internal constructor(
         override val value: MichelineNode,
         internal val meta: MetaContractStorageEntry.Basic,
         internal val elements: List<ContractStorageEntry>,
     ) : ContractStorageEntry, List<ContractStorageEntry> by elements {
+
+        /**
+         * The entry's type definition.
+         */
         override val type: MichelineNode
             get() = meta.type
 
@@ -144,15 +181,24 @@ public sealed interface ContractStorageEntry {
         override fun hashCode(): Int = listOf(value, type, elements).fold(0) { acc, v -> (31 * acc) + v.hashCode() }
     }
 
+    /**
+     * Group of entries aggregated in the form of a map.
+     */
     public class Map internal constructor(
         override val value: MichelineNode,
         internal val meta: MetaContractStorageEntry,
         internal val map: kotlin.collections.Map<ContractStorageEntry, ContractStorageEntry>,
     ) : ContractStorageEntry, kotlin.collections.Map<ContractStorageEntry, ContractStorageEntry> by map {
 
+        /**
+         * The entry's type definition.
+         */
         override val type: MichelineNode
             get() = meta.type
 
+        /**
+         * Returns the value corresponding to the given [key,] or null if such a key is not present in the map.
+         */
         public operator fun get(key: MichelineNode): ContractStorageEntry? =
             entries.find { entry -> entry.key.value == key }?.value
 
@@ -166,6 +212,10 @@ public sealed interface ContractStorageEntry {
         override fun hashCode(): Int = listOf(value, type, map).fold(0) { acc, v -> (31 * acc) + v.hashCode() }
     }
 
+    /**
+     * Big map handler.
+     * Should be used to fetch a big map values.
+     */
     public class BigMap internal constructor(
         public val id: String,
         override val value: MichelineNode,
@@ -173,9 +223,16 @@ public sealed interface ContractStorageEntry {
         internal val rpc: Block.Context.BigMaps,
     ) : ContractStorageEntry {
 
+        /**
+         * The entry's type definition.
+         */
         override val type: MichelineNode
             get() = meta.type
 
+        /**
+         * Fetches the value corresponding to the given [key], or null if such a key is not present in the map.
+         * Can be configured with optional [HTTP headers][headers] to customize the request.
+         */
         public suspend fun get(key: MichelineNode, headers: List<HttpHeader> = emptyList()): ContractStorageEntry? {
             val scriptExpr = meta.scriptExpr(key)
             val value = rpc(id)(scriptExpr).get(headers).value

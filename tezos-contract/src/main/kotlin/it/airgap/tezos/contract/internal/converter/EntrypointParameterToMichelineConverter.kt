@@ -58,7 +58,7 @@ internal class EntrypointParameterToMichelineConverter(
         when (value) {
             is ContractEntrypointParameter.Value -> value.sequenceOrNull() ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
-                val named = meta.findValue(value) ?: failWithValueMetaMismatch(value, meta)
+                val named = meta.findValue(value) ?: meta.findFirstInstance<ContractEntrypointParameter.Sequence>(value) ?: failWithValueMetaMismatch(value, meta)
                 createMicheline(named, meta)
             }
             is ContractEntrypointParameter.Sequence -> {
@@ -73,7 +73,7 @@ internal class EntrypointParameterToMichelineConverter(
         when (value) {
             is ContractEntrypointParameter.Value -> value.sequenceOrNull(MichelsonData.Elt) ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
-                val named = meta.findValue(value) ?: failWithValueMetaMismatch(value, meta)
+                val named = meta.findValue(value) ?: meta.findFirstInstance<ContractEntrypointParameter.Map>(value) ?: failWithValueMetaMismatch(value, meta)
                 createMicheline(named, meta)
             }
             is ContractEntrypointParameter.Map -> {
@@ -270,6 +270,10 @@ internal class EntrypointParameterToMichelineConverter(
 
     private fun MetaContractEntrypointArgument.findValue(value: ContractEntrypointParameter.Object): ContractEntrypointParameter? =
         value.elements.consume { names.contains(it.name) }
+
+    private inline fun <reified T : ContractEntrypointParameter> MetaContractEntrypointArgument.findFirstInstance(
+        value: ContractEntrypointParameter.Object
+    ): ContractEntrypointParameter? = value.elements.consume { it is T }
 
     private fun MetaContractEntrypointArgument.Object.extract(value: ContractEntrypointParameter.Object): MetaContractEntrypointArgument? {
         val direction = flattenTraces.entries

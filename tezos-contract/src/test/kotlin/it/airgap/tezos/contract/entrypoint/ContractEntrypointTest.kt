@@ -13,11 +13,9 @@ import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
-import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 import it.airgap.tezos.michelson.micheline.dsl.micheline
 import it.airgap.tezos.operation.Operation
@@ -77,6 +75,7 @@ class ContractEntrypointTest {
                 contractAddress,
                 blockRpc,
                 tezosRpc,
+                tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter,
                 Cached { MetaContractEntrypoint(type, entrypointParameterToMichelineConverter) },
             )
 
@@ -120,6 +119,7 @@ class ContractEntrypointTest {
                 contractAddress,
                 blockRpc,
                 tezosRpc,
+                tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter,
                 Cached { MetaContractEntrypoint(type, entrypointParameterToMichelineConverter) },
             )
 
@@ -390,18 +390,127 @@ class ContractEntrypointTest {
                         }
                     }
                 },
-                namedValue = entrypointParameters {
-                    value("%address", MichelineLiteral.String("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"))
+                namedValue = entrypointParameters(tezos) {
+                    value("%address") { string("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb") }
                     map("%data") {
-                        key(MichelineLiteral.String("key1")) pointsTo value("%bool", MichelinePrimitiveApplication(MichelsonData.True))
-                        key(MichelineLiteral.String("key2")) pointsTo value("%nat", MichelineLiteral.Integer(1))
+                        key { string("key1") } pointsTo value("%bool") { True }
+                        key { string("key2") } pointsTo value("%nat") { int(1) }
                     }
-                    value("%label", MichelineLiteral.Bytes("0x0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c"))
-                    value("%owner", MichelineLiteral.String("tz1b6wRXMA2PxATL6aoVGy9j7kSqXijW7VPq"))
-                    value("%parent", MichelineLiteral.Bytes("0x0b51b8ae90e19a079c9db469c4881871a5ba7778acf9773ac00c7dfcda0b1c87"))
-                    value("%ttl", MichelineLiteral.Integer(2))
+                    value("%label") { bytes("0x0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c") }
+                    value("%owner") { string("tz1b6wRXMA2PxATL6aoVGy9j7kSqXijW7VPq") }
+                    value("%parent") { bytes("0x0b51b8ae90e19a079c9db469c4881871a5ba7778acf9773ac00c7dfcda0b1c87") }
+                    value("%ttl") { int(2) }
                 }
-            )
+            ),
+            EntrypointTestCase(
+                name = "test_entrypoint3",
+                contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
+                type = micheline(tezos) { nat annots "%current_version" },
+                value = micheline(tezos) { int(1) },
+                namedValue = entrypointParameters(tezos) {
+                    value("%current_version") { int(1) }
+                }
+            ),
+            EntrypointTestCase(
+                name = "test_entrypoint4",
+                contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
+                type = micheline(tezos) {
+                    pair {
+                        arg { nat annots "%value" }
+                        arg {
+                            pair {
+                                arg { nat }
+                                arg { nat }
+                                annots("%data")
+                            }
+                        }
+                    }
+                },
+                value = micheline(tezos) {
+                     Pair {
+                         arg { int(1) }
+                         arg {
+                             Pair {
+                                 arg { int(2) }
+                                 arg { int(3) }
+                             }
+                         }
+                     }
+                },
+                namedValue = entrypointParameters(tezos) {
+                    value("%value") { int(1) }
+                    `object`("%data") {
+                        value { int(2) }
+                        value { int(3) }
+                    }
+                }
+            ),
+            EntrypointTestCase(
+                name = "test_entrypoint5",
+                contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
+                type = micheline(tezos) {
+                    list {
+                        arg {
+                            pair {
+                                arg { nat annots "%first" }
+                                arg { nat annots "%second" }
+                            }
+                        }
+                    }
+                },
+                value = micheline(tezos) {
+                    sequence {
+                        Pair {
+                            arg { int(1) }
+                            arg { int(2) }
+                        }
+                        Pair {
+                            arg { int(3) }
+                            arg { int(4) }
+                        }
+                    }
+                },
+                namedValue = entrypointParameters(tezos) {
+                    sequence {
+                        `object` {
+                            value("%first") { int(1) }
+                            value("%second") { int(2) }
+                        }
+                        `object` {
+                            value("%first") { int(3) }
+                            value("%second") { int(4) }
+                        }
+                    }
+                }
+            ),
+            EntrypointTestCase(
+                name = "test_entrypoint6",
+                contractAddress = ContractHash("KT1ScmSVNZoC73zdn8Vevkit6wzbTr4aXYtc"),
+                type = micheline(tezos) {
+                    map {
+                        key { string }
+                        value { nat }
+                    }
+                },
+                value = micheline(tezos) {
+                     sequence {
+                         Elt {
+                             key { string("first") }
+                             value { int(1) }
+                         }
+                         Elt {
+                             key { string("second") }
+                             value { int(2) }
+                         }
+                     }
+                },
+                namedValue = entrypointParameters(tezos) {
+                    map {
+                        key { string("first") } pointsTo value { int(1) }
+                        key { string("second") } pointsTo value { int(2) }
+                    }
+                }
+            ),
         )
 
     private data class EntrypointTestCase(
