@@ -95,6 +95,8 @@ public sealed interface MichelsonData : Michelson {
     }
 
     public data class Pair(public val values: List<MichelsonData>) : MichelsonData {
+        public constructor(vararg values: MichelsonData) : this(values.toList())
+
         init {
             require(values.size >= 2)
         }
@@ -132,10 +134,14 @@ public sealed interface MichelsonData : Michelson {
     }
 
     public data class Sequence(public val values: List<MichelsonData>) : MichelsonData {
+        public constructor(vararg values: MichelsonData) : this(values.toList())
+
         public companion object {}
     }
 
     public data class Map(public val values: List<Elt>) : MichelsonData {
+        public constructor(vararg values: Elt) : this(values.toList())
+
         public companion object {}
     }
 
@@ -163,9 +169,5 @@ public sealed interface MichelsonData : Michelson {
         }
     }
 
-    public companion object {
-        public fun Pair(vararg values: MichelsonData): Pair = Pair(values.toList())
-        public fun Sequence(vararg values: MichelsonData): Sequence = Sequence(values.toList())
-        public fun Map(vararg values: Elt): Map = Map(values.toList())
-    }
+    public companion object {}
 }

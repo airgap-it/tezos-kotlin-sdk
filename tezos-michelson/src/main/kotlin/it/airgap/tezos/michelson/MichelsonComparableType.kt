@@ -127,6 +127,8 @@ public sealed interface MichelsonComparableType : MichelsonType {
     }
 
     public data class Pair(public val types: List<MichelsonComparableType>, override val metadata: MichelsonType.Metadata = MichelsonType.Metadata()) : MichelsonComparableType {
+        public constructor(vararg types: MichelsonComparableType, metadata: MichelsonType.Metadata = MichelsonType.Metadata()) : this(types.toList(), metadata)
+
         init {
             require(types.size >= 2) { "Pair requires at least 2 arguments." }
         }
@@ -164,8 +166,5 @@ public sealed interface MichelsonComparableType : MichelsonType {
         }
     }
 
-    public companion object {
-        public fun Pair(vararg types: MichelsonComparableType, metadata: MichelsonType.Metadata = MichelsonType.Metadata()): Pair =
-            Pair(types.toList(), metadata)
-    }
+    public companion object {}
 }
