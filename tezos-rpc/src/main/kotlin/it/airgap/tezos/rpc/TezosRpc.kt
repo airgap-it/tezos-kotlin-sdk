@@ -12,6 +12,31 @@ import it.airgap.tezos.rpc.shell.injection.Injection
 import it.airgap.tezos.rpc.shell.monitor.Monitor
 import it.airgap.tezos.rpc.shell.network.Network
 
+/**
+ * Tezos RPCs, its main purpose is to interact with a Tezos node.
+ * It combines the [shell](https://tezos.gitlab.io/shell/rpc.html) and [active](https://tezos.gitlab.io/active/rpc.html) interfaces.
+ *
+ * Examples:
+ * ```kotlin
+ * // get a contract's balance
+ *
+ * val tezosRpc = TezosRpc("...")
+ * val address = Address("tz1...")
+ *
+ * val balance = runBlocking {
+ *     tezosRpc.getBalance(contractId = address)
+ * }
+ * ```
+ *
+ * @property chains The `/chains` endpoint service.
+ * @property config The `/config` endpoint service.
+ * @property injection The `/injection` endpoint service.
+ * @property monitor The `/monitor` endpoint service.
+ * @property network The `/network` endpoint service.
+ *
+ * @see ShellSimplifiedRpc
+ * @see ActiveSimplifiedRpc
+ */
 public interface TezosRpc : ShellSimplifiedRpc, ActiveSimplifiedRpc, FeeEstimator<Operation> {
     public val chains: Chains
     public val config: Config
@@ -20,5 +45,9 @@ public interface TezosRpc : ShellSimplifiedRpc, ActiveSimplifiedRpc, FeeEstimato
     public val network: Network
 }
 
+/**
+ * Creates a [Tezos RPC client][TezosRpc] that will connect with the node specified with the [nodeUrl].
+ * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
+ */
 public fun TezosRpc(nodeUrl: String, tezos: Tezos = Tezos.Default): TezosRpc =
     tezos.rpcModule.dependencyRegistry.tezosRpc(nodeUrl.trimEnd('/'))

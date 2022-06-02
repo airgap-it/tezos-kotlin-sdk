@@ -4,8 +4,9 @@ import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 
-// -- BlockHeader -> RpcBlockHeader --
-
+/**
+ * Converts this [block header][BlockHeader] to [its RPC equivalent][RpcBlockHeader].
+ */
 public fun BlockHeader.asRpc(): RpcBlockHeader =
     RpcBlockHeader(
         level,
@@ -24,8 +25,9 @@ public fun BlockHeader.asRpc(): RpcBlockHeader =
         signature,
     )
 
-// -- RpcBlockHeader -> BlockHeader --
-
+/**
+ * Converts this [RPC block header][RpcBlockHeader] to [its non-RPC equivalent][BlockHeader].
+ */
 public fun RpcBlockHeader.asBlockHeader(): BlockHeader =
     BlockHeader(
         level,
