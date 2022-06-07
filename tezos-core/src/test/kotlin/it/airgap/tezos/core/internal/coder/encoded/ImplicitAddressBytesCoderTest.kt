@@ -39,7 +39,7 @@ class ImplicitAddressBytesCoderTest {
     }
 
     @Test
-    fun `should encode ImplicitAddress to [ByteArray]`() = withTezosContext {
+    fun `should encode ImplicitAddress to bytes`() = withTezosContext {
         keyHashesWithBytes.forEach {
             assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))

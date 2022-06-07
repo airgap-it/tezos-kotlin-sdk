@@ -31,7 +31,7 @@ class MutezBytesCoderTest {
     }
 
     @Test
-    fun `should encode Mutez to [ByteArray]`() = withTezosContext {
+    fun `should encode Mutez to bytes`() = withTezosContext {
         mutezWithBytes.forEach {
             assertContentEquals(it.second, mutezBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(mutezBytesCoder))

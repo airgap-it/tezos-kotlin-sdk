@@ -1,13 +1,13 @@
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkClass
+import it.airgap.tezos.core.CoreModule
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.crypto.CryptoProvider
-import it.airgap.tezos.core.internal.CoreModule
 import it.airgap.tezos.core.internal.TezosCoreModule
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
-import it.airgap.tezos.michelson.internal.MichelsonModule
+import it.airgap.tezos.michelson.MichelsonModule
 import it.airgap.tezos.michelson.internal.TezosMichelsonModule
 import java.security.MessageDigest
 

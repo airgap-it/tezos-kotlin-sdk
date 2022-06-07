@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 class CodingTest {
 
     @Test
-    fun `should encode string to [ByteArray]`() {
+    fun `should encode string to bytes`() {
         val stringsWithExpected = listOf(
             "LG" to "4c47",
             "LMU28" to "4c4d553238",
@@ -62,7 +62,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode HexString to [ByteArray]`() {
+    fun `should encode HexString to bytes`() {
         val stringsWithExpected = listOf(
             "4c47",
             "4c4d553238",
@@ -107,7 +107,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode UInt8 to [ByteArray]`() {
+    fun `should encode UInt8 to bytes`() {
         val uint8sWithExpected = listOf(
             0 to "00",
             1 to "01",
@@ -151,7 +151,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode UInt16 to [ByteArray]`() {
+    fun `should encode UInt16 to bytes`() {
         val uint16sWithExpected = listOf(
             0 to "0000",
             1 to "0001",
@@ -201,7 +201,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode Int32 to [ByteArray]`() {
+    fun `should encode Int32 to bytes`() {
         val int32sWithExpected = listOf(
             -2147483648 to "80000000",
             -72406251 to "fbaf2b15",
@@ -290,7 +290,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode Int64 to [ByteArray]`() {
+    fun `should encode Int64 to bytes`() {
         val int32sWithExpected = listOf(
             (-9223372036854775807 - 1) to "8000000000000000",
             -4294967254 to "ffffffff0000002a",
@@ -391,7 +391,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode Boolean to [ByteArray]`() {
+    fun `should encode Boolean to bytes`() {
         val booleansWithExpected = listOf(
             true to "ff",
             false to "00",
@@ -424,7 +424,7 @@ class CodingTest {
     }
 
     @Test
-    fun `should encode List to [ByteArray]`() {
+    fun `should encode List to bytes`() {
         assertContentEquals(
             "ffff00".asHexString().toByteArray(),
             listOf(true, true, false).encodeToBytes { it.encodeToBytes() }

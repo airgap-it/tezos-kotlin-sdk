@@ -39,7 +39,7 @@ class PublicKeyBytesCoderTest {
     }
 
     @Test
-    fun `should encode PublicKeyEncoded to [ByteArray]`() = withTezosContext {
+    fun `should encode PublicKeyEncoded to bytes`() = withTezosContext {
         keysWithBytes.forEach {
             assertContentEquals(it.second, publicKeyBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))

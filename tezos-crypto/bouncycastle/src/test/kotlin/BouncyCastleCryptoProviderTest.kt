@@ -1,5 +1,5 @@
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.crypto.bouncycastle.BouncyCastleCryptoProvider
+import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.asHexString
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertContentEquals

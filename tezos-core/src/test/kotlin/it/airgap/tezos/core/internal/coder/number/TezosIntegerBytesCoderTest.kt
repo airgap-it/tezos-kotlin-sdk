@@ -31,7 +31,7 @@ class TezosIntegerBytesCoderTest {
     }
 
     @Test
-    fun `should encode TezosInteger to [ByteArray]`() = withTezosContext {
+    fun `should encode TezosInteger to bytes`() = withTezosContext {
         integersWithBytes.forEach {
             assertContentEquals(it.second, tezosIntegerBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezosIntegerBytesCoder))
