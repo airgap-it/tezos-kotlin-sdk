@@ -1,17 +1,19 @@
 package it.airgap.tezos.contract
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypoint
+import it.airgap.tezos.contract.internal.context.TezosContractContext.normalized
 import it.airgap.tezos.contract.internal.contractModule
 import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.storage.ContractStorage
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.converter.Converter
+import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.type.encoded.ContractHash
+import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.active.block.Block
-import it.airgap.tezos.rpc.active.block.GetContractNormalizedScriptResponse
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.Cached
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
@@ -32,8 +34,9 @@ public class Contract internal constructor(
     private val contractStorageFactory: ContractStorage.Factory,
     private val contractEntrypointFactory: ContractEntrypoint.Factory,
     private val scriptToContractCodeConverter: Converter<Script, ContractCode>,
+    private val michelineNormalizer: Normalizer<MichelineNode>,
 ) {
-    private val codeCached: Cached<ContractCode> = Cached { headers -> contract.script.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).toContractCode() }
+    private val codeCached: Cached<ContractCode> = Cached { headers -> contract.script.getNormalized(headers).toContractCode() }
 
     /**
      * The contract's storage handler.
@@ -51,9 +54,21 @@ public class Contract internal constructor(
      */
     public suspend fun code(headers: List<HttpHeader> = emptyList()): ContractCode = codeCached.get(headers)
 
-    private fun GetContractNormalizedScriptResponse.toContractCode(): ContractCode {
-        val script = script ?: failWithScriptNotFound()
-        return scriptToContractCodeConverter.convert(script)
+    private suspend fun Block.Context.Contracts.Contract.Script.getNormalized(headers: List<HttpHeader>): Script =
+        try {
+            normalized.post(RpcScriptParsing.OptimizedLegacy, headers).script
+        } catch (e: Exception) {
+            get(headers).script?.normalized()
+        } ?: failWithScriptNotFound()
+
+    private fun Script.normalized(): Script =
+        Script(
+            code.normalized(michelineNormalizer),
+            storage.normalized(michelineNormalizer),
+        )
+
+    private fun Script.toContractCode(): ContractCode {
+        return scriptToContractCodeConverter.convert(this)
     }
 
     private fun failWithScriptNotFound(): Nothing = failWithContractException("Script not found for contract ${address.base58}.")

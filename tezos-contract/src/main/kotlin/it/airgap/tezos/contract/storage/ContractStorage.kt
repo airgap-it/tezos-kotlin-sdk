@@ -1,5 +1,6 @@
 package it.airgap.tezos.contract.storage
 
+import it.airgap.tezos.contract.internal.context.TezosContractContext.micheline
 import it.airgap.tezos.contract.internal.context.TezosContractContext.normalized
 import it.airgap.tezos.contract.internal.storage.LazyMetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
@@ -7,9 +8,12 @@ import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.contract.internal.utils.failWithContractException
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.contract.type.LazyContractCode
+import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.normalizer.Normalizer
+import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
+import it.airgap.tezos.michelson.micheline.dsl.builder.expression.MichelineMichelsonExpressionBuilder
 import it.airgap.tezos.rpc.active.block.Block
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
@@ -21,6 +25,7 @@ import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 public class ContractStorage internal constructor(
     private val meta: LazyMetaContractStorage,
     private val contract: Block.Context.Contracts.Contract,
+    private val michelineNormalizer: Normalizer<MichelineNode>,
 ) {
 
     /**
@@ -28,11 +33,18 @@ public class ContractStorage internal constructor(
      * Can be configured with optional [HTTP headers][headers] to customize the request.
      */
     public suspend fun get(headers: List<HttpHeader> = emptyList()): ContractStorageEntry? {
-        val value = contract.storage.normalized.post(RpcScriptParsing.OptimizedLegacy, headers).storage ?: return null
+        val value = contract.storage.getNormalized(headers) ?: return null
         val meta = meta.get(headers)
 
         return meta.entryFrom(value)
     }
+
+    private suspend fun Block.Context.Contracts.Contract.Storage.getNormalized(headers: List<HttpHeader>): MichelineNode? =
+        try {
+            normalized.post(RpcScriptParsing.OptimizedLegacy, headers).storage
+        } catch (e: Exception) {
+            get(headers).storage?.normalized(michelineNormalizer)
+        }
 
     internal class Factory(
         private val metaFactory: MetaContractStorage.Factory,
@@ -41,7 +53,7 @@ public class ContractStorage internal constructor(
     ) {
         fun create(code: LazyContractCode): ContractStorage {
             val meta = code.map { it.toMetaContractStorage() }
-            return ContractStorage(meta, contract)
+            return ContractStorage(meta, contract, michelineNormalizer)
         }
 
         private fun ContractCode.toMetaContractStorage(): MetaContractStorage {
@@ -221,6 +233,7 @@ public sealed interface ContractStorageEntry {
         override val value: MichelineNode,
         internal val meta: MetaContractStorageEntry.BigMap,
         internal val rpc: Block.Context.BigMaps,
+        private val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
     ) : ContractStorageEntry {
 
         /**
@@ -238,6 +251,15 @@ public sealed interface ContractStorageEntry {
             val value = rpc(id)(scriptExpr).get(headers).value
 
             return value?.let { meta.entryFrom(it) }
+        }
+
+        /**
+         * Fetches the value corresponding to the [created key][createKeyExpression], or null if such a key is not present in the map.
+         * Can be configured with optional [HTTP headers][headers] to customize the request.
+         */
+        public suspend fun get(headers: List<HttpHeader> = emptyList(), createKeyExpression: MichelineMichelsonExpressionBuilder.() -> Unit): ContractStorageEntry? {
+            val key = micheline(michelsonToMichelineConverter, createKeyExpression)
+            return get(key, headers)
         }
 
         override fun equals(other: Any?): Boolean =

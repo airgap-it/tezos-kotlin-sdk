@@ -24,12 +24,14 @@ import kotlinx.serialization.json.JsonElement
  * @property logger An optional logging configuration.
  */
 public class KtorHttpClientProvider(
-    private val engineFactory: HttpClientEngineFactory<*>,
+    private val engineFactory: HttpClientEngineFactory<*> = CIO,
     private val logger: KtorLogger? = null,
 ) : HttpClientProvider {
     private val json: Json by lazy { Json.Default }
     private val ktor: HttpClient by lazy {
         HttpClient(engineFactory) {
+            expectSuccess = true
+
             install(HttpTimeout)
 
             install(ContentNegotiation) {

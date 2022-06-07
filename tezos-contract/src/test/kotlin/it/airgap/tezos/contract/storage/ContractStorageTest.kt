@@ -39,11 +39,14 @@ class ContractStorageTest {
 
         tezos = mockTezos()
         michelineToStorageEntryConverter = MichelineToStorageEntryConverter(
+            tezos.dependencyRegistry.crypto,
             blockRpc,
             tezos.coreModule.dependencyRegistry.encodedBytesCoder,
             tezos.michelsonModule.dependencyRegistry.michelinePacker,
             tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
             tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
+            tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter,
+            tezos.michelsonModule.dependencyRegistry.michelineNormalizer,
         )
     }
 
@@ -62,6 +65,7 @@ class ContractStorageTest {
             val contractStorage = ContractStorage(
                 Cached { MetaContractStorage(type, michelineToStorageEntryConverter) },
                 contractRpc,
+                tezos.michelsonModule.dependencyRegistry.michelineNormalizer,
             )
 
             val actual = runBlocking { contractStorage.get() }
@@ -149,8 +153,11 @@ class ContractStorageTest {
                                 mockk(),
                                 mockk(),
                                 mockk(),
+                                mockk(),
+                                mockk(),
                             ),
                             mockk(),
+                            mockk()
                         ),
                         ContractStorageEntry.BigMap(
                             "51297",
@@ -161,7 +168,10 @@ class ContractStorageTest {
                                 mockk(),
                                 mockk(),
                                 mockk(),
+                                mockk(),
+                                mockk(),
                             ),
+                            mockk(),
                             mockk(),
                         ),
                         ContractStorageEntry.Object(

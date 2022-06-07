@@ -25,6 +25,7 @@ public class TezosContractModule private constructor(public val dependencyRegist
 
             return TezosContractModule(
                 ContractDependencyRegistry(
+                    dependencyRegistry,
                     core.dependencyRegistry,
                     michelson.dependencyRegistry,
                     rpc.dependencyRegistry,

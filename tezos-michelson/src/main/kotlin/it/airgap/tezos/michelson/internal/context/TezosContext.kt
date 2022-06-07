@@ -18,6 +18,8 @@ public interface TezosContext :
     NormalizerContext,
     PackerContext
 
+@PublishedApi
 internal object TezosMichelsonContext : TezosContext
 
+@PublishedApi
 internal inline fun <T> withTezosContext(block: TezosContext.() -> T): T = block(TezosMichelsonContext)

@@ -49,6 +49,8 @@ public class ContractEntrypoint internal constructor(
      * Creates an unsigned contract entrypoint call from the [source] address.
      * Configures the resulting [Operation.Unsigned] with [parameters] and optional [branch], [fee], [counter],
      * [operation limits][limits], [amount], [HTTP headers][headers].
+     *
+     * If [fee] and [limits] are not provided, the handler will estimate the minimum fee and limits for the resulting operation.
      */
     public suspend fun call(
         parameters: MichelineNode,
@@ -71,7 +73,7 @@ public class ContractEntrypoint internal constructor(
                     fee = fee ?: Mutez(0),
                     counter = counter?.asTezosNatural() ?: TezosNatural(0U),
                     gasLimit = limits?.gas?.asTezosNatural() ?: TezosNatural(0U),
-                    storageLimit = limits?.gas?.asTezosNatural() ?: TezosNatural(0U),
+                    storageLimit = limits?.storage?.asTezosNatural() ?: TezosNatural(0U),
                     amount = amount ?: Mutez(0),
                     destination = contractAddress,
                     parameters = Parameters(

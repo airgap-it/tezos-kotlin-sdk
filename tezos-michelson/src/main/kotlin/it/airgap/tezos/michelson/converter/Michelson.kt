@@ -18,6 +18,15 @@ public fun <T : Michelson> T.toMicheline(tezos: Tezos = Tezos.Default): Michelin
 }
 
 /**
+ * Convenience method to get the current [Michelson] value as [T].
+ *
+ * @throws IllegalArgumentException if the current value is not [T].
+ */
+public inline fun <reified T : Michelson> Michelson?.asInstance(): T = withTezosContext {
+    this@asInstance as? T ?: failWithIllegalArgument("Michelson value ${this@asInstance?.let { it::class } ?: "null" } is not ${T::class}")
+}
+
+/**
  * Creates [Michelson.Prim] from [String][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *

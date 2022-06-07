@@ -57,9 +57,7 @@ internal sealed interface MetaContractEntrypointArgument {
         override val trace: MichelineTrace,
         val elements: List<MetaContractEntrypointArgument>,
     ) : MetaContractEntrypointArgument {
-        val namedTraces: kotlin.collections.Map<String, MichelineTrace> = elements.map { it.flattenTraces }.flatten()
-
-        override fun trace(name: String): MichelineTrace? = namedTraces[name]
+        override fun trace(name: String): MichelineTrace? = null
     }
 
     class Map(
@@ -68,9 +66,7 @@ internal sealed interface MetaContractEntrypointArgument {
         val key: MetaContractEntrypointArgument,
         val value: MetaContractEntrypointArgument,
     ) : MetaContractEntrypointArgument {
-        val namedTraces: kotlin.collections.Map<String, MichelineTrace> = key.flattenTraces + value.flattenTraces
-
-        override fun trace(name: String): MichelineTrace? = namedTraces[name]
+        override fun trace(name: String): MichelineTrace? = null
     }
 
     val MetaContractEntrypointArgument.flattenTraces: kotlin.collections.Map<String, MichelineTrace>
