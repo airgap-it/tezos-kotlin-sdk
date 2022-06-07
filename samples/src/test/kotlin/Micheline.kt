@@ -152,7 +152,7 @@ class MichelineSamples {
                     }
                 ]
             """.trimIndent().toJson(),
-                bytesLiteral.toJsonString().toJson(),
+                sequence.toJsonString().toJson(),
             )
         }
 
