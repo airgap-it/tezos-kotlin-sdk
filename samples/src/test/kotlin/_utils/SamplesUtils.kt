@@ -6,7 +6,7 @@ import kotlinx.serialization.json.JsonElement
 
 // -- constants --
 
-internal val TEZOS_NODE = "https://tezos-ithacanet-node.prod.gke.papers.tech"
+internal val TEZOS_NODE = "https://testnet-tezos.giganode.io"
 
 // -- util functions --
 

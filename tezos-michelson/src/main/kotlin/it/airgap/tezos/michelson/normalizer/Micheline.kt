@@ -54,8 +54,6 @@ import it.airgap.tezos.michelson.micheline.MichelineSequence
  *      ]
  * }
  * ```
- *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#normalize` for a sample usage.
  */
 public fun <T : MichelineNode> T.normalized(tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     normalized(tezos.michelsonModule.dependencyRegistry.michelineNormalizer)
@@ -64,8 +62,6 @@ public fun <T : MichelineNode> T.normalized(tezos: Tezos = Tezos.Default): Miche
 /**
  * Normalizes [MichelinePrimitiveApplication] to a uniform form.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#normalize` for a sample usage.
  *
  * @see [MichelineNode.normalized]
  */
@@ -76,8 +72,6 @@ public fun MichelinePrimitiveApplication.normalized(tezos: Tezos = Tezos.Default
 /**
  * Normalizes [MichelineSequence] to a uniform form.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#normalize` for a sample usage.
  *
  * @see [MichelineNode.normalized]
  */

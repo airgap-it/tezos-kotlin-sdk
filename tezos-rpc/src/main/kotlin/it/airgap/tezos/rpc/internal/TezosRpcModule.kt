@@ -13,9 +13,6 @@ import it.airgap.tezos.rpc.internal.context.TezosRpcContext.failWithDependencyNo
 import it.airgap.tezos.rpc.internal.di.RpcDependencyRegistry
 import java.util.*
 
-public val RpcModule: TezosRpcModule.Builder
-    get() = TezosRpcModule.Builder()
-
 public class TezosRpcModule private constructor(public val dependencyRegistry: RpcDependencyRegistry) : TezosModule {
 
     private object Static {

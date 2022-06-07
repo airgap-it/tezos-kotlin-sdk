@@ -1,15 +1,15 @@
-# Tezos Kotlin SDK: Operation
+# Tezos Kotlin SDK: Contract
 
 [![stable](https://img.shields.io/github/v/tag/airgap-it/tezos-kotlin-sdk?label=stable&sort=semver)](https://github.com/airgap-it/tezos-kotlin-sdk/releases)
 [![latest](https://img.shields.io/github/v/tag/airgap-it/tezos-kotlin-sdk?color=orange&include_prereleases&label=latest)](https://github.com/airgap-it/tezos-kotlin-sdk/releases)
 [![release](https://img.shields.io/jitpack/v/github/airgap-it/tezos-kotlin-sdk)](https://jitpack.io/#airgap-it/tezos-kotlin-sdk)
 [![license](https://img.shields.io/github/license/airgap-it/tezos-kotlin-sdk)](https://github.com/airgap-it/tezos-kotlin-sdk/blob/master/LICENSE)
 
-`:tezos-operation` provides Tezos Operation structures as defined in [the P2P message format](https://tezos.gitlab.io/shell/p2p_api.html) and actions that can be performed on them, e.g. `forge`/`unforge` and `sign`/`verify`.
+`:tezos-contract` provides the main entry point to interact with Tezos contracts.
 
 ## Setup
 
-To add `:tezos-operation` into your project:
+To add `:tezos-contract` into your project:
 
 1. Make sure the [JitPack](https://jitpack.io/) repository is included in your root `build.gradle` file:
 
@@ -40,11 +40,13 @@ To add `:tezos-operation` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos:tezos-operation:$tezos_version"
+    implementation "com.github.airgap-it.tezos:tezos-contract:$tezos_version"
 
     // dependencies
     implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
     implementation "com.github.airgap-it.tezos:tezos-michelson:$tezos_version"
+    implementation "com.github.airgap-it.tezos:tezos-operation:$tezos_version"
+    implementation "com.github.airgap-it.tezos:tezos-rpc:$tezos_version"
   }
   ```
 
@@ -54,20 +56,24 @@ To add `:tezos-operation` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
 
-    implementation("com.github.airgap-it.tezos:tezos-operation:$tezosVersion")
+    implementation("com.github.airgap-it.tezos:tezos-contract:$tezosVersion")
 
     // dependencies
     implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
     implementation("com.github.airgap-it.tezos:tezos-michelson:$tezosVersion")
+    implementation("com.github.airgap-it.tezos:tezos-operation:$tezosVersion")
+    implementation("com.github.airgap-it.tezos:tezos-rpc:$tezosVersion")
 }
   ```
 
 ### ProGuard and R8
 
-Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules. 
+Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules.
 This module does not require additional setup, but some of its dependencies may:
 
 - [`:tezos-michelson`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson#proguard-and-r8)
+- [`:tezos-operation`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-operation#proguard-and-r8)
+- [`:tezos-rpc`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-rpc#proguard-and-r8)
 
 ## Usage
 

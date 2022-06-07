@@ -19,8 +19,8 @@ import it.airgap.tezos.operation.signer.sign
 import it.airgap.tezos.operation.signer.signWith
 import it.airgap.tezos.operation.signer.verify
 import it.airgap.tezos.operation.signer.verifyWith
+import it.airgap.tezos.rpc.RpcModule
 import it.airgap.tezos.rpc.TezosRpc
-import it.airgap.tezos.rpc.internal.RpcModule
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals

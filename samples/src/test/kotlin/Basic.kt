@@ -12,11 +12,11 @@ import it.airgap.tezos.http.ktor.KtorHttpClientProvider
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.signer.signWith
 import it.airgap.tezos.operation.signer.verifyWith
+import it.airgap.tezos.rpc.RpcModule
 import it.airgap.tezos.rpc.TezosRpc
 import it.airgap.tezos.rpc.http.HttpClientProvider
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.http.HttpParameter
-import it.airgap.tezos.rpc.internal.RpcModule
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 

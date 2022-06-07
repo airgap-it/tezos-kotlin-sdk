@@ -69,7 +69,7 @@ public sealed interface MichelsonData : Michelson {
         public constructor(value: ByteArray) : this(value.toHexString().asString(withPrefix = true))
 
         init {
-            require(isValid(value))
+            require(isValid(value)) { "Invalid Byte sequence." }
         }
 
         public fun toByteArray(): ByteArray = value.asHexString().toByteArray()

@@ -11,7 +11,7 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
  * Converts [Michelson] to [MichelineNode].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonSamples.Usage#toMicheline` for a sample usage.
+ * See `samples/src/test/kotlin/Michelson/MichelsonSamples.Usage#toMicheline` for a sample usage.
  */
 public fun <T : Michelson> T.toMicheline(tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
     toMicheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter)
@@ -29,8 +29,6 @@ public inline fun <reified T : Michelson> Michelson?.asInstance(): T = withTezos
 /**
  * Creates [Michelson.Prim] from [String][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromString` for a sample usage.
  */
 public fun Michelson.Prim.Companion.fromStringOrNull(value: String, tezos: Tezos = Tezos.Default): Michelson.Prim? = withTezosContext {
     fromStringOrNull(value, tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter)
@@ -39,8 +37,6 @@ public fun Michelson.Prim.Companion.fromStringOrNull(value: String, tezos: Tezos
 /**
  * Creates [MichelsonData.Prim] from [String][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromString` for a sample usage.
  */
 public fun MichelsonData.Prim.Companion.fromStringOrNull(value: String, tezos: Tezos = Tezos.Default): MichelsonData.Prim? = withTezosContext {
     fromStringOrNull(value, tezos.michelsonModule.dependencyRegistry.stringToMichelsonDataPrimConverter)
@@ -49,8 +45,6 @@ public fun MichelsonData.Prim.Companion.fromStringOrNull(value: String, tezos: T
 /**
  * Creates [MichelsonInstruction.Prim] from [String][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromString` for a sample usage.
  */
 public fun MichelsonInstruction.Prim.Companion.fromStringOrNull(value: String, tezos: Tezos = Tezos.Default): MichelsonInstruction.Prim? = withTezosContext {
     fromStringOrNull(value, tezos.michelsonModule.dependencyRegistry.stringToMichelsonInstructionPrimConverter)
@@ -59,8 +53,6 @@ public fun MichelsonInstruction.Prim.Companion.fromStringOrNull(value: String, t
 /**
  * Creates [MichelsonType.Prim] from [String][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromString` for a sample usage.
  */
 public fun MichelsonType.Prim.Companion.fromStringOrNull(value: String, tezos: Tezos = Tezos.Default): MichelsonType.Prim? = withTezosContext {
     fromStringOrNull(value, tezos.michelsonModule.dependencyRegistry.stringToMichelsonTypePrimConverter)
@@ -69,8 +61,6 @@ public fun MichelsonType.Prim.Companion.fromStringOrNull(value: String, tezos: T
 /**
  * Creates [MichelsonComparableType.Prim] from [String][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromString` for a sample usage.
  */
 public fun MichelsonComparableType.Prim.Companion.fromStringOrNull(value: String, tezos: Tezos = Tezos.Default): MichelsonComparableType.Prim? = withTezosContext {
     fromStringOrNull(value, tezos.michelsonModule.dependencyRegistry.stringToMichelsonComparableTypePrimConverter)
@@ -79,8 +69,6 @@ public fun MichelsonComparableType.Prim.Companion.fromStringOrNull(value: String
 /**
  * Creates [Michelson.Prim] from [ByteArray][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromTag` for a sample usage.
  */
 public fun Michelson.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: Tezos = Tezos.Default): Michelson.Prim? = withTezosContext {
     fromTagOrNull(value, tezos.michelsonModule.dependencyRegistry.tagToMichelsonPrimConverter)
@@ -89,8 +77,6 @@ public fun Michelson.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: Tezos
 /**
  * Creates [MichelsonData.Prim] from [ByteArray][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromTag` for a sample usage.
  */
 public fun MichelsonData.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: Tezos = Tezos.Default): MichelsonData.Prim? = withTezosContext {
     fromTagOrNull(value, tezos.michelsonModule.dependencyRegistry.tagToMichelsonDataPrimConverter)
@@ -99,8 +85,6 @@ public fun MichelsonData.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: T
 /**
  * Creates [MichelsonInstruction.Prim] from [ByteArray][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromTag` for a sample usage.
  */
 public fun MichelsonInstruction.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: Tezos = Tezos.Default): MichelsonInstruction.Prim? = withTezosContext {
     fromTagOrNull(value, tezos.michelsonModule.dependencyRegistry.tagToMichelsonInstructionPrimConverter)
@@ -109,8 +93,6 @@ public fun MichelsonInstruction.Prim.Companion.fromTagOrNull(value: ByteArray, t
 /**
  * Creates [MichelsonType.Prim] from [ByteArray][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromTag` for a sample usage.
  */
 public fun MichelsonType.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: Tezos = Tezos.Default): MichelsonType.Prim? = withTezosContext {
     fromTagOrNull(value, tezos.michelsonModule.dependencyRegistry.tagToMichelsonTypePrimConverter)
@@ -119,8 +101,6 @@ public fun MichelsonType.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: T
 /**
  * Creates [MichelsonComparableType.Prim] from [ByteArray][value] or returns `null` if the [value] is invalid.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
- *
- * See `samples/src/test/kotlin/michelson/Michelson/MichelsonPrimSamples.Usage#fromTag` for a sample usage.
  */
 public fun MichelsonComparableType.Prim.Companion.fromTagOrNull(value: ByteArray, tezos: Tezos = Tezos.Default): MichelsonComparableType.Prim? = withTezosContext {
     fromTagOrNull(value, tezos.michelsonModule.dependencyRegistry.tagToMichelsonComparableTypePrimConverter)

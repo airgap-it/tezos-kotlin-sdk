@@ -9,9 +9,6 @@ import it.airgap.tezos.core.internal.module.TezosModule
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.operation.internal.di.OperationDependencyRegistry
 
-public val OperationModule: TezosOperationModule.Builder
-    get() = TezosOperationModule.Builder()
-
 public class TezosOperationModule private constructor(public val dependencyRegistry: OperationDependencyRegistry) : TezosModule {
 
     public class Builder internal constructor() : TezosModule.Builder<TezosOperationModule> {

@@ -12,7 +12,7 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
  * Converts [MichelineNode] to [Michelson]
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#toMichelson` for a sample usage.
+ * See `samples/src/test/kotlin/Micheline/MichelineSamples.Usage#toMichelson` for a sample usage.
  */
 public fun <T : MichelineNode> T.toMichelson(tezos: Tezos = Tezos.Default): Michelson = withTezosContext {
     toMichelson(tezos.michelsonModule.dependencyRegistry.michelineToMichelsonConverter)
@@ -22,7 +22,7 @@ public fun <T : MichelineNode> T.toMichelson(tezos: Tezos = Tezos.Default): Mich
  * Converts [MichelineNode] to a [String] expression as specified in [the documentation](https://tezos.gitlab.io/shell/micheline.html).
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#toExpression` for a sample usage.
+ * See `samples/src/test/kotlin/Micheline/MichelineSamples.Usage#toExpression` for a sample usage.
  */
 public fun <T : MichelineNode> T.toExpression(tezos: Tezos = Tezos.Default): String = withTezosContext {
     toExpression(tezos.michelsonModule.dependencyRegistry.michelineToStringConverter)
@@ -32,7 +32,7 @@ public fun <T : MichelineNode> T.toExpression(tezos: Tezos = Tezos.Default): Str
  * Converts [MichelineNode] to a shortened [String] expression.
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineSamples.Usage#toCompactExpression` for a sample usage.
+ * See `samples/src/test/kotlin/Micheline/MichelineSamples.Usage#toCompactExpression` for a sample usage.
  * 
  * @see [MichelineNode.toExpression]
  */

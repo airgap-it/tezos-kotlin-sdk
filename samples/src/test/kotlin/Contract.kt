@@ -23,8 +23,8 @@ import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
+import it.airgap.tezos.rpc.RpcModule
 import it.airgap.tezos.rpc.TezosRpc
-import it.airgap.tezos.rpc.internal.RpcModule
 import it.airgap.tezos.rpc.type.limits.OperationLimits
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

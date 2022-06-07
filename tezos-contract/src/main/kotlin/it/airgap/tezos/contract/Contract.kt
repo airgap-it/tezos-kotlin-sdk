@@ -21,10 +21,9 @@ import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 /**
  * The main entry point to interact with Tezos contracts.
  *
- * See
- *  - `samples/src/test/kotlin/contract/Contract/ContractSamples.Usage`
- *  - `samples/src/test/kotlin/Rpc/RpcSamples`
- * for a sample usage.
+ * Fo a sample usage, see:
+ *  * `samples/src/test/kotlin/contract/Contract/ContractSamples.Usage`
+ *  * `samples/src/test/kotlin/Rpc/RpcSamples`
  *
  * @property address The contract's address.
  */

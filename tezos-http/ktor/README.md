@@ -1,15 +1,15 @@
-# Tezos Kotlin SDK: Operation
+# Tezos Kotlin SDK: HTTP Ktor
 
 [![stable](https://img.shields.io/github/v/tag/airgap-it/tezos-kotlin-sdk?label=stable&sort=semver)](https://github.com/airgap-it/tezos-kotlin-sdk/releases)
 [![latest](https://img.shields.io/github/v/tag/airgap-it/tezos-kotlin-sdk?color=orange&include_prereleases&label=latest)](https://github.com/airgap-it/tezos-kotlin-sdk/releases)
 [![release](https://img.shields.io/jitpack/v/github/airgap-it/tezos-kotlin-sdk)](https://jitpack.io/#airgap-it/tezos-kotlin-sdk)
 [![license](https://img.shields.io/github/license/airgap-it/tezos-kotlin-sdk)](https://github.com/airgap-it/tezos-kotlin-sdk/blob/master/LICENSE)
 
-`:tezos-operation` provides Tezos Operation structures as defined in [the P2P message format](https://tezos.gitlab.io/shell/p2p_api.html) and actions that can be performed on them, e.g. `forge`/`unforge` and `sign`/`verify`.
+`:tezos-http:ktor` provides an implementation of `HttpClientProvider` (`:tezos-rpc`) which uses [Ktor](https://ktor.io/) to satisfy the interface requirements.
 
 ## Setup
 
-To add `:tezos-operation` into your project:
+To add `:tezos-http-ktor` into your project:
 
 1. Make sure the [JitPack](https://jitpack.io/) repository is included in your root `build.gradle` file:
 
@@ -40,11 +40,10 @@ To add `:tezos-operation` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos:tezos-operation:$tezos_version"
+    implementation "com.github.airgap-it.tezos:tezos-http-ktor:$tezos_version"
 
     // dependencies
     implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
-    implementation "com.github.airgap-it.tezos:tezos-michelson:$tezos_version"
   }
   ```
 
@@ -54,21 +53,30 @@ To add `:tezos-operation` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
 
-    implementation("com.github.airgap-it.tezos:tezos-operation:$tezosVersion")
-
+    implementation("com.github.airgap-it.tezos:tezos-http-ktor:$tezosVersion")
+    
     // dependencies
     implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
-    implementation("com.github.airgap-it.tezos:tezos-michelson:$tezosVersion")
 }
   ```
 
 ### ProGuard and R8
+Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules. If you are using ProGuard or R8, please follow the guides listed below to make sure your project works correctly after obfuscation:
 
-Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules. 
-This module does not require additional setup, but some of its dependencies may:
-
-- [`:tezos-michelson`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson#proguard-and-r8)
+- [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android)
+- [`:tezos-rpc`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-rpc#proguard-and-r8)
 
 ## Usage
 
-See `samples` to learn how to use the library.
+To use `KtorHttpClientProvider` in your `Tezos` context, register it while creating an instance:
+
+```kotlin
+import it.airgap.tezos.http.ktor.KtorHttpClientProvider
+import it.airgap.tezos.rpc.RpcModule
+
+val tezos = Tezos {
+    install(RpcModule) {
+        httpClientProvider = KtorHttpClientProvider()
+    }
+}
+```

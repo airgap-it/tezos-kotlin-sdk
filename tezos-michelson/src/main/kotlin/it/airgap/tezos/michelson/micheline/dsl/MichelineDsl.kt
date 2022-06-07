@@ -13,7 +13,7 @@ import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
  * Creates [MichelineNode] using the [expression builder configuration][createExpression].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
- * See `samples/src/test/kotlin/michelson/Micheline/MichelineDsl.Usage` for a sample usage.
+ * See `samples/src/test/kotlin/Micheline/Micheline.Usage#create` for a sample usage.
  */
 public fun micheline(tezos: Tezos = Tezos.Default, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): MichelineNode = withTezosContext {
     micheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter, createExpression)

@@ -9,7 +9,7 @@ import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.Signature
 
 /**
- * Creates [Signature] from [string].
+ * Creates [Signature] from [string][String].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/type/Signature/SignatureSamples.Usage#create` for a sample usage.

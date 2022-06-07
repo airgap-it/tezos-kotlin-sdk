@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import _utils.SamplesBase
 import _utils.toJson
 import it.airgap.tezos.core.Tezos
