@@ -170,10 +170,10 @@ public sealed interface OperationContent {
 
     public data class Reveal(
         override val source: ImplicitAddress,
-        override val fee: Mutez,
+        override val fee: Mutez = Mutez(0),
         override val counter: TezosNatural,
-        override val gasLimit: TezosNatural,
-        override val storageLimit: TezosNatural,
+        override val gasLimit: TezosNatural = TezosNatural(0U),
+        override val storageLimit: TezosNatural = TezosNatural(0U),
         public val publicKey: PublicKey,
     ) : Manager {
         public companion object : Kind {
@@ -183,10 +183,10 @@ public sealed interface OperationContent {
 
     public data class Transaction(
         override val source: ImplicitAddress,
-        override val fee: Mutez,
+        override val fee: Mutez = Mutez(0),
         override val counter: TezosNatural,
-        override val gasLimit: TezosNatural,
-        override val storageLimit: TezosNatural,
+        override val gasLimit: TezosNatural = TezosNatural(0U),
+        override val storageLimit: TezosNatural = TezosNatural(0U),
         public val amount: Mutez,
         public val destination: Address,
         public val parameters: Parameters? = null,
@@ -198,10 +198,10 @@ public sealed interface OperationContent {
 
     public data class Origination(
         override val source: ImplicitAddress,
-        override val fee: Mutez,
+        override val fee: Mutez = Mutez(0),
         override val counter: TezosNatural,
-        override val gasLimit: TezosNatural,
-        override val storageLimit: TezosNatural,
+        override val gasLimit: TezosNatural = TezosNatural(0U),
+        override val storageLimit: TezosNatural = TezosNatural(0U),
         public val balance: Mutez,
         public val delegate: ImplicitAddress? = null,
         public val script: Script,
@@ -213,10 +213,10 @@ public sealed interface OperationContent {
 
     public data class Delegation(
         override val source: ImplicitAddress,
-        override val fee: Mutez,
+        override val fee: Mutez = Mutez(0),
         override val counter: TezosNatural,
-        override val gasLimit: TezosNatural,
-        override val storageLimit: TezosNatural,
+        override val gasLimit: TezosNatural = TezosNatural(0U),
+        override val storageLimit: TezosNatural = TezosNatural(0U),
         public val delegate: ImplicitAddress? = null,
     ) : Manager {
         public companion object : Kind {
@@ -226,10 +226,10 @@ public sealed interface OperationContent {
 
     public data class RegisterGlobalConstant(
         override val source: ImplicitAddress,
-        override val fee: Mutez,
+        override val fee: Mutez = Mutez(0),
         override val counter: TezosNatural,
-        override val gasLimit: TezosNatural,
-        override val storageLimit: TezosNatural,
+        override val gasLimit: TezosNatural = TezosNatural(0U),
+        override val storageLimit: TezosNatural = TezosNatural(0U),
         public val value: MichelineNode,
     ) : Manager {
         public companion object : Kind {
@@ -239,10 +239,10 @@ public sealed interface OperationContent {
 
     public data class SetDepositsLimit(
         override val source: ImplicitAddress,
-        override val fee: Mutez,
+        override val fee: Mutez = Mutez(0),
         override val counter: TezosNatural,
-        override val gasLimit: TezosNatural,
-        override val storageLimit: TezosNatural,
+        override val gasLimit: TezosNatural = TezosNatural(0U),
+        override val storageLimit: TezosNatural = TezosNatural(0U),
         public val limit: Mutez? = null,
     ) : Manager {
         public companion object : Kind {

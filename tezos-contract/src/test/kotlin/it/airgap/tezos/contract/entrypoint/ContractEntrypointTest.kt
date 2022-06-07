@@ -79,7 +79,7 @@ class ContractEntrypointTest {
                 Cached { MetaContractEntrypoint(type, entrypointParameterToMichelineConverter) },
             )
 
-            val actual = runBlocking { contractEntrypoint.call(value, source) }
+            val actual = runBlocking { contractEntrypoint.invoke(value, source) }
             val expected = Operation.Unsigned(
                 branch,
                 listOf(
@@ -123,7 +123,7 @@ class ContractEntrypointTest {
                 Cached { MetaContractEntrypoint(type, entrypointParameterToMichelineConverter) },
             )
 
-            val actual = runBlocking { contractEntrypoint.call(namedValue, source) }
+            val actual = runBlocking { contractEntrypoint(namedValue, source) }
             val expected = Operation.Unsigned(
                 branch,
                 listOf(

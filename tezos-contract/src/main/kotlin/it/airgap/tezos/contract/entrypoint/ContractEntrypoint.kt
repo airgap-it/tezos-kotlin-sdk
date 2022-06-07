@@ -1,7 +1,9 @@
 package it.airgap.tezos.contract.entrypoint
 
+import it.airgap.tezos.contract.entrypoint.dsl.builder.ContractEntrypointObjectParameterBuilder
 import it.airgap.tezos.contract.internal.context.TezosContractContext.asTezosNatural
 import it.airgap.tezos.contract.internal.context.TezosContractContext.normalized
+import it.airgap.tezos.contract.internal.context.withTezosContext
 import it.airgap.tezos.contract.internal.entrypoint.LazyMetaContractEntrypoint
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypoint
 import it.airgap.tezos.contract.internal.estimator.withMinFee
@@ -52,7 +54,7 @@ public class ContractEntrypoint internal constructor(
      *
      * If [fee] and [limits] are not provided, the handler will estimate the minimum fee and limits for the resulting operation.
      */
-    public suspend fun call(
+    public suspend operator fun invoke(
         parameters: MichelineNode,
         source: ImplicitAddress,
         branch: BlockHash? = null,
@@ -93,7 +95,7 @@ public class ContractEntrypoint internal constructor(
      * Configures the resulting [Operation.Unsigned] with [parameters] and optional [branch], [fee], [counter],
      * [operation limits][limits], [amount], [HTTP headers][headers].
      */
-    public suspend fun call(
+    public suspend operator fun invoke(
         parameters: ContractEntrypointParameter,
         source: ImplicitAddress,
         branch: BlockHash? = null,
@@ -106,7 +108,26 @@ public class ContractEntrypoint internal constructor(
         val meta = meta.get(headers)
         val value = meta.valueFrom(parameters)
 
-        return call(value, source, branch, fee, counter, limits, amount, headers)
+        return invoke(value, source, branch, fee, counter, limits, amount, headers)
+    }
+
+    /**
+     * Creates an unsigned contract entrypoint call from the [source] address.
+     * Configures the resulting [Operation.Unsigned] with optional [branch], [fee], [counter], [operation limits][limits],
+     * [amount], [HTTP headers][headers] and [parameters][setParameters].
+     */
+    public suspend operator fun invoke(
+        source: ImplicitAddress,
+        branch: BlockHash? = null,
+        fee: Mutez? = null,
+        counter: String? = null,
+        limits: OperationLimits? = null,
+        amount: Mutez? = null,
+        headers: List<HttpHeader> = emptyList(),
+        setParameters: ContractEntrypointObjectParameterBuilder.() -> Unit = {},
+    ): Operation.Unsigned = withTezosContext {
+        val parameters = entrypointParameters(michelsonToMichelineConverter, setParameters)
+        return invoke(parameters, source, branch, fee, counter, limits, amount, headers)
     }
 
     internal class Factory(

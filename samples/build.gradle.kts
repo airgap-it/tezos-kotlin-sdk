@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":tezos-http:ktor"))
 
     implementation(Dependencies.kotlinxCoroutines)
+    implementation(Dependencies.kotlinxSerialization)
 
     testImplementation(Dependencies.kotlinTest)
     testImplementation(Dependencies.junit)
