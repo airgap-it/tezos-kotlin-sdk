@@ -5,6 +5,7 @@ import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.converter.toExpression
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
@@ -35,7 +36,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Literal to string`() {
+    fun `should convert Micheline Literal to string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "1" to MichelineLiteral.Integer(1),
             "string" to MichelineLiteral.String("string"),
@@ -50,7 +51,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Literal to compact string`() {
+    fun `should convert Micheline Literal to compact string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "1" to MichelineLiteral.Integer(1),
             "string" to MichelineLiteral.String("string"),
@@ -65,7 +66,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Primitive Application to string`() {
+    fun `should convert Micheline Primitive Application to string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "prim" to MichelinePrimitiveApplication("prim"),
             "prim arg1 arg2" to MichelinePrimitiveApplication(
@@ -119,7 +120,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Primitive Application to compact string`() {
+    fun `should convert Micheline Primitive Application to compact string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "prim" to MichelinePrimitiveApplication("prim"),
             "prim arg1 arg2" to MichelinePrimitiveApplication(
@@ -212,7 +213,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Sequence to string`() {
+    fun `should convert Micheline Sequence to string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "{ expr1 ; expr2 ; expr3 ; expr4 }" to MichelineSequence(
                 MichelineLiteral.String("expr1"),
@@ -271,7 +272,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Sequence to compact string`() {
+    fun `should convert Micheline Sequence to compact string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "{ }" to MichelineSequence(),
             "{ expr1 ; expr2 }" to MichelineSequence(

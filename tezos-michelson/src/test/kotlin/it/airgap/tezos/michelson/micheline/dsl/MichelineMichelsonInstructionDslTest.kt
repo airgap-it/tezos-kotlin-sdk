@@ -1,8 +1,11 @@
+@file:Suppress("RedundantUnitExpression")
+
 package it.airgap.tezos.michelson.micheline.dsl
 
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -33,20 +36,16 @@ class MichelineMichelsonInstructionDslTest {
     }
 
     @Test
-    fun `builds Micheline Michelson Instruction Expression`() {
+    fun `builds Micheline Michelson Instruction Expression`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("DROP") to listOf(
                 micheline(tezos) { DROP },
                 micheline(michelsonToMichelineConverter) { DROP },
                 micheline(tezos) { DROP() },
                 micheline(michelsonToMichelineConverter) { DROP() },
-                michelineData(tezos) { DROP },
                 michelineData(michelsonToMichelineConverter) { DROP },
-                michelineData(tezos) { DROP() },
                 michelineData(michelsonToMichelineConverter) { DROP() },
-                michelineInstruction(tezos) { DROP },
                 michelineInstruction(michelsonToMichelineConverter) { DROP },
-                michelineInstruction(tezos) { DROP() },
                 michelineInstruction(michelsonToMichelineConverter) { DROP() },
             ),
             MichelinePrimitiveApplication(
@@ -93,82 +92,42 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) {
                     DROP { arg(1UL) }
                 },
-                michelineData(tezos) { DROP("1") },
                 michelineData(michelsonToMichelineConverter) { DROP("1") },
-                michelineData(tezos) { DROP((1).toUByte()) },
                 michelineData(michelsonToMichelineConverter) { DROP((1).toUByte()) },
-                michelineData(tezos) { DROP((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { DROP((1).toUShort()) },
-                michelineData(tezos) { DROP(1U) },
                 michelineData(michelsonToMichelineConverter) { DROP(1U) },
-                michelineData(tezos) { DROP(1UL) },
                 michelineData(michelsonToMichelineConverter) { DROP(1UL) },
-                michelineData(tezos) {
-                    DROP { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DROP { arg("1") }
-                },
-                michelineData(tezos) {
-                    DROP { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DROP { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    DROP { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DROP { arg((1).toUShort()) }
-                },
-                michelineData(tezos) {
-                    DROP { arg(1U) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DROP { arg(1U) }
                 },
-                michelineData(tezos) {
-                    DROP { arg(1UL) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DROP { arg(1UL) }
                 },
-                michelineInstruction(tezos) { DROP("1") },
                 michelineInstruction(michelsonToMichelineConverter) { DROP("1") },
-                michelineInstruction(tezos) { DROP((1).toUByte()) },
                 michelineInstruction(michelsonToMichelineConverter) { DROP((1).toUByte()) },
-                michelineInstruction(tezos) { DROP((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { DROP((1).toUShort()) },
-                michelineInstruction(tezos) { DROP(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { DROP(1U) },
-                michelineInstruction(tezos) { DROP(1UL) },
                 michelineInstruction(michelsonToMichelineConverter) { DROP(1UL) },
-                michelineInstruction(tezos) {
-                    DROP { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DROP { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    DROP { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DROP { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    DROP { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DROP { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    DROP { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DROP { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    DROP { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DROP { arg(1UL) }
@@ -179,13 +138,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { DUP },
                 micheline(tezos) { DUP() },
                 micheline(michelsonToMichelineConverter) { DUP() },
-                michelineData(tezos) { DUP },
                 michelineData(michelsonToMichelineConverter) { DUP },
-                michelineData(tezos) { DUP() },
                 michelineData(michelsonToMichelineConverter) { DUP() },
-                michelineInstruction(tezos) { DUP },
                 michelineInstruction(michelsonToMichelineConverter) { DUP },
-                michelineInstruction(tezos) { DUP() },
                 michelineInstruction(michelsonToMichelineConverter) { DUP() },
             ),
             MichelinePrimitiveApplication(
@@ -232,82 +187,42 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) {
                     DUP { arg(1UL) }
                 },
-                michelineData(tezos) { DUP("1") },
                 michelineData(michelsonToMichelineConverter) { DUP("1") },
-                michelineData(tezos) { DUP((1).toUByte()) },
                 michelineData(michelsonToMichelineConverter) { DUP((1).toUByte()) },
-                michelineData(tezos) { DUP((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { DUP((1).toUShort()) },
-                michelineData(tezos) { DUP(1U) },
                 michelineData(michelsonToMichelineConverter) { DUP(1U) },
-                michelineData(tezos) { DUP(1UL) },
                 michelineData(michelsonToMichelineConverter) { DUP(1UL) },
-                michelineData(tezos) {
-                    DUP { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DUP { arg("1") }
-                },
-                michelineData(tezos) {
-                    DUP { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DUP { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    DUP { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DUP { arg((1).toUShort()) }
-                },
-                michelineData(tezos) {
-                    DUP { arg(1U) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DUP { arg(1U) }
                 },
-                michelineData(tezos) {
-                    DUP { arg(1UL) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DUP { arg(1UL) }
                 },
-                michelineInstruction(tezos) { DUP("1") },
                 michelineInstruction(michelsonToMichelineConverter) { DUP("1") },
-                michelineInstruction(tezos) { DUP((1).toUByte()) },
                 michelineInstruction(michelsonToMichelineConverter) { DUP((1).toUByte()) },
-                michelineInstruction(tezos) { DUP((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { DUP((1).toUShort()) },
-                michelineInstruction(tezos) { DUP(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { DUP(1U) },
-                michelineInstruction(tezos) { DUP(1UL) },
                 michelineInstruction(michelsonToMichelineConverter) { DUP(1UL) },
-                michelineInstruction(tezos) {
-                    DUP { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUP { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    DUP { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUP { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    DUP { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUP { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    DUP { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUP { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    DUP { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUP { arg(1UL) }
@@ -318,13 +233,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SWAP },
                 micheline(tezos) { SWAP() },
                 micheline(michelsonToMichelineConverter) { SWAP() },
-                michelineData(tezos) { SWAP },
                 michelineData(michelsonToMichelineConverter) { SWAP },
-                michelineData(tezos) { SWAP() },
                 michelineData(michelsonToMichelineConverter) { SWAP() },
-                michelineInstruction(tezos) { SWAP },
                 michelineInstruction(michelsonToMichelineConverter) { SWAP },
-                michelineInstruction(tezos) { SWAP() },
                 michelineInstruction(michelsonToMichelineConverter) { SWAP() },
             ),
             MichelinePrimitiveApplication("DIG") to listOf(
@@ -332,13 +243,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { DIG },
                 micheline(tezos) { DIG() },
                 micheline(michelsonToMichelineConverter) { DIG() },
-                michelineData(tezos) { DIG },
                 michelineData(michelsonToMichelineConverter) { DIG },
-                michelineData(tezos) { DIG() },
                 michelineData(michelsonToMichelineConverter) { DIG() },
-                michelineInstruction(tezos) { DIG },
                 michelineInstruction(michelsonToMichelineConverter) { DIG },
-                michelineInstruction(tezos) { DIG() },
                 michelineInstruction(michelsonToMichelineConverter) { DIG() },
             ),
             MichelinePrimitiveApplication(
@@ -390,32 +297,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) { DIG((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { DIG(1U) },
                 michelineData(michelsonToMichelineConverter) { DIG(1UL) },
-                michelineData(tezos) {
-                    DIG { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DIG { arg("1") }
-                },
-                michelineData(tezos) {
-                    DIG { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DIG { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    DIG { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DIG { arg((1).toUShort()) }
                 },
-                michelineData(tezos) {
-                    DIG { arg(1U) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DIG { arg(1U) }
-                },
-                michelineData(tezos) {
-                    DIG { arg(1UL) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DIG { arg(1UL) }
@@ -425,32 +317,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineInstruction(michelsonToMichelineConverter) { DIG((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { DIG(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { DIG(1UL) },
-                michelineInstruction(tezos) {
-                    DIG { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIG { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    DIG { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIG { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    DIG { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIG { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    DIG { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIG { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    DIG { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIG { arg(1UL) }
@@ -508,32 +385,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) { DUG((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { DUG(1U) },
                 michelineData(michelsonToMichelineConverter) { DUG(1UL) },
-                michelineData(tezos) {
-                    DUG { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DUG { arg("1") }
-                },
-                michelineData(tezos) {
-                    DUG { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DUG { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    DUG { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DUG { arg((1).toUShort()) }
                 },
-                michelineData(tezos) {
-                    DUG { arg(1U) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DUG { arg(1U) }
-                },
-                michelineData(tezos) {
-                    DUG { arg(1UL) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DUG { arg(1UL) }
@@ -543,32 +405,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineInstruction(michelsonToMichelineConverter) { DUG((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { DUG(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { DUG(1UL) },
-                michelineInstruction(tezos) {
-                    DUG { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUG { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    DUG { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUG { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    DUG { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUG { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    DUG { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUG { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    DUG { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DUG { arg(1UL) }
@@ -590,19 +437,7 @@ class MichelineMichelsonInstructionDslTest {
                         value { Unit }
                     }
                 },
-                michelineData(tezos) {
-                    PUSH {
-                        type { unit }
-                        value { Unit }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    PUSH {
-                        type { unit }
-                        value { Unit }
-                    }
-                },
-                michelineInstruction(tezos) {
                     PUSH {
                         type { unit }
                         value { Unit }
@@ -649,7 +484,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     NONE {
                         arg { UNIT }
                     }
@@ -657,33 +492,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     NONE {
                         arg { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    NONE {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    NONE {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    NONE {
                         arg { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     NONE {
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    NONE {
-                        arg { UNIT }
                         arg { UNIT }
                     }
                 },
@@ -726,19 +539,7 @@ class MichelineMichelsonInstructionDslTest {
                         elseBranch { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    IF_NONE {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    IF_NONE {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     IF_NONE {
                         ifBranch { UNIT }
                         elseBranch { UNIT }
@@ -770,19 +571,7 @@ class MichelineMichelsonInstructionDslTest {
                         elseBranch { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    IF_NONE {
-                        ifBranch { UNIT; UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    IF_NONE {
-                        ifBranch { UNIT; UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     IF_NONE {
                         ifBranch { UNIT; UNIT }
                         elseBranch { UNIT }
@@ -847,32 +636,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) { PAIR((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { PAIR(1U) },
                 michelineData(michelsonToMichelineConverter) { PAIR(1UL) },
-                michelineData(tezos) {
-                    PAIR { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     PAIR { arg("1") }
-                },
-                michelineData(tezos) {
-                    PAIR { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     PAIR { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    PAIR { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     PAIR { arg((1).toUShort()) }
                 },
-                michelineData(tezos) {
-                    PAIR { arg(1U) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     PAIR { arg(1U) }
-                },
-                michelineData(tezos) {
-                    PAIR { arg(1UL) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     PAIR { arg(1UL) }
@@ -882,32 +656,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineInstruction(michelsonToMichelineConverter) { PAIR((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { PAIR(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { PAIR(1UL) },
-                michelineInstruction(tezos) {
-                    PAIR { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     PAIR { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    PAIR { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     PAIR { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    PAIR { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     PAIR { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    PAIR { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     PAIR { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    PAIR { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     PAIR { arg(1UL) }
@@ -981,32 +740,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) { UNPAIR((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { UNPAIR(1U) },
                 michelineData(michelsonToMichelineConverter) { UNPAIR(1UL) },
-                michelineData(tezos) {
-                    UNPAIR { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     UNPAIR { arg("1") }
-                },
-                michelineData(tezos) {
-                    UNPAIR { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     UNPAIR { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    UNPAIR { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     UNPAIR { arg((1).toUShort()) }
                 },
-                michelineData(tezos) {
-                    UNPAIR { arg(1U) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     UNPAIR { arg(1U) }
-                },
-                michelineData(tezos) {
-                    UNPAIR { arg(1UL) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     UNPAIR { arg(1UL) }
@@ -1016,32 +760,17 @@ class MichelineMichelsonInstructionDslTest {
                 michelineInstruction(michelsonToMichelineConverter) { UNPAIR((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { UNPAIR(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { UNPAIR(1UL) },
-                michelineInstruction(tezos) {
-                    UNPAIR { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UNPAIR { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    UNPAIR { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UNPAIR { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    UNPAIR { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UNPAIR { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    UNPAIR { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UNPAIR { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    UNPAIR { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UNPAIR { arg(1UL) }
@@ -1073,7 +802,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     LEFT {
                         arg { UNIT }
                     }
@@ -1081,33 +810,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     LEFT {
                         arg { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    LEFT {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    LEFT {
                         arg { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LEFT {
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    LEFT {
-                        arg { UNIT }
                         arg { UNIT }
                     }
                 },
@@ -1144,7 +851,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     RIGHT {
                         arg { UNIT }
                     }
@@ -1152,33 +859,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     RIGHT {
                         arg { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    RIGHT {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    RIGHT {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    RIGHT {
                         arg { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     RIGHT {
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    RIGHT {
-                        arg { UNIT }
                         arg { UNIT }
                     }
                 },
@@ -1205,19 +890,7 @@ class MichelineMichelsonInstructionDslTest {
                         elseBranch { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    IF_LEFT {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    IF_LEFT {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     IF_LEFT {
                         ifBranch { UNIT }
                         elseBranch { UNIT }
@@ -1256,7 +929,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     NIL {
                         arg { UNIT }
                     }
@@ -1264,33 +937,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     NIL {
                         arg { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    NIL {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    NIL {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    NIL {
                         arg { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     NIL {
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    NIL {
-                        arg { UNIT }
                         arg { UNIT }
                     }
                 },
@@ -1306,13 +957,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { CONS },
                 micheline(tezos) { CONS() },
                 micheline(michelsonToMichelineConverter) { CONS() },
-                michelineData(tezos) { CONS },
                 michelineData(michelsonToMichelineConverter) { CONS },
-                michelineData(tezos) { CONS() },
                 michelineData(michelsonToMichelineConverter) { CONS() },
-                michelineInstruction(tezos) { CONS },
                 michelineInstruction(michelsonToMichelineConverter) { CONS },
-                michelineInstruction(tezos) { CONS() },
                 michelineInstruction(michelsonToMichelineConverter) { CONS() },
             ),
             MichelinePrimitiveApplication(
@@ -1331,19 +978,7 @@ class MichelineMichelsonInstructionDslTest {
                         elseBranch { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    IF_CONS {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    IF_CONS {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     IF_CONS {
                         ifBranch { UNIT }
                         elseBranch { UNIT }
@@ -1361,13 +996,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SIZE },
                 micheline(tezos) { SIZE() },
                 micheline(michelsonToMichelineConverter) { SIZE() },
-                michelineData(tezos) { SIZE },
                 michelineData(michelsonToMichelineConverter) { SIZE },
-                michelineData(tezos) { SIZE() },
                 michelineData(michelsonToMichelineConverter) { SIZE() },
-                michelineInstruction(tezos) { SIZE },
                 michelineInstruction(michelsonToMichelineConverter) { SIZE },
-                michelineInstruction(tezos) { SIZE() },
                 michelineInstruction(michelsonToMichelineConverter) { SIZE() },
             ),
             MichelinePrimitiveApplication(
@@ -1396,7 +1027,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     EMPTY_SET {
                         arg { UNIT }
                     }
@@ -1404,33 +1035,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     EMPTY_SET {
                         arg { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    EMPTY_SET {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    EMPTY_SET {
-                        arg { UNIT }
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    EMPTY_SET {
                         arg { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     EMPTY_SET {
-                        arg { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    EMPTY_SET {
-                        arg { UNIT }
                         arg { UNIT }
                     }
                 },
@@ -1457,19 +1066,7 @@ class MichelineMichelsonInstructionDslTest {
                         value { bool }
                     }
                 },
-                michelineData(tezos) {
-                    EMPTY_MAP {
-                        key { unit }
-                        value { bool }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    EMPTY_MAP {
-                        key { unit }
-                        value { bool }
-                    }
-                },
-                michelineInstruction(tezos) {
                     EMPTY_MAP {
                         key { unit }
                         value { bool }
@@ -1498,19 +1095,7 @@ class MichelineMichelsonInstructionDslTest {
                         value { bool }
                     }
                 },
-                michelineData(tezos) {
-                    EMPTY_BIG_MAP {
-                        key { unit }
-                        value { bool }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    EMPTY_BIG_MAP {
-                        key { unit }
-                        value { bool }
-                    }
-                },
-                michelineInstruction(tezos) {
                     EMPTY_BIG_MAP {
                         key { unit }
                         value { bool }
@@ -1549,7 +1134,7 @@ class MichelineMichelsonInstructionDslTest {
                         expression { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     MAP {
                         expression { UNIT }
                     }
@@ -1557,33 +1142,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     MAP {
                         expression { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    MAP {
-                        expression { UNIT }
-                        expression { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    MAP {
-                        expression { UNIT }
-                        expression { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    MAP {
                         expression { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     MAP {
-                        expression { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    MAP {
-                        expression { UNIT }
                         expression { UNIT }
                     }
                 },
@@ -1620,7 +1183,7 @@ class MichelineMichelsonInstructionDslTest {
                         expression { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     ITER {
                         expression { UNIT }
                     }
@@ -1628,33 +1191,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     ITER {
                         expression { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    ITER {
-                        expression { UNIT }
-                        expression { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    ITER {
-                        expression { UNIT }
-                        expression { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    ITER {
                         expression { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     ITER {
-                        expression { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    ITER {
-                        expression { UNIT }
                         expression { UNIT }
                     }
                 },
@@ -1670,13 +1211,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { MEM },
                 micheline(tezos) { MEM() },
                 micheline(michelsonToMichelineConverter) { MEM() },
-                michelineData(tezos) { MEM },
                 michelineData(michelsonToMichelineConverter) { MEM },
-                michelineData(tezos) { MEM() },
                 michelineData(michelsonToMichelineConverter) { MEM() },
-                michelineInstruction(tezos) { MEM },
                 michelineInstruction(michelsonToMichelineConverter) { MEM },
-                michelineInstruction(tezos) { MEM() },
                 michelineInstruction(michelsonToMichelineConverter) { MEM() },
             ),
             MichelinePrimitiveApplication("GET") to listOf(
@@ -1684,13 +1221,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { GET },
                 micheline(tezos) { GET() },
                 micheline(michelsonToMichelineConverter) { GET() },
-                michelineData(tezos) { GET },
                 michelineData(michelsonToMichelineConverter) { GET },
-                michelineData(tezos) { GET() },
                 michelineData(michelsonToMichelineConverter) { GET() },
-                michelineInstruction(tezos) { GET },
                 michelineInstruction(michelsonToMichelineConverter) { GET },
-                michelineInstruction(tezos) { GET() },
                 michelineInstruction(michelsonToMichelineConverter) { GET() },
             ),
             MichelinePrimitiveApplication(
@@ -1732,82 +1265,42 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) {
                     GET { arg(1UL) }
                 },
-                michelineData(tezos) { GET("1") },
                 michelineData(michelsonToMichelineConverter) { GET("1") },
-                michelineData(tezos) { GET((1).toUByte()) },
                 michelineData(michelsonToMichelineConverter) { GET((1).toUByte()) },
-                michelineData(tezos) { GET((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { GET((1).toUShort()) },
-                michelineData(tezos) { GET(1U) },
                 michelineData(michelsonToMichelineConverter) { GET(1U) },
-                michelineData(tezos) { GET(1UL) },
                 michelineData(michelsonToMichelineConverter) { GET(1UL) },
-                michelineData(tezos) {
-                    GET { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     GET { arg("1") }
-                },
-                michelineData(tezos) {
-                    GET { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     GET { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    GET { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     GET { arg((1).toUShort()) }
-                },
-                michelineData(tezos) {
-                    GET { arg(1U) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     GET { arg(1U) }
                 },
-                michelineData(tezos) {
-                    GET { arg(1UL) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     GET { arg(1UL) }
                 },
-                michelineInstruction(tezos) { GET("1") },
                 michelineInstruction(michelsonToMichelineConverter) { GET("1") },
-                michelineInstruction(tezos) { GET((1).toUByte()) },
                 michelineInstruction(michelsonToMichelineConverter) { GET((1).toUByte()) },
-                michelineInstruction(tezos) { GET((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { GET((1).toUShort()) },
-                michelineInstruction(tezos) { GET(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { GET(1U) },
-                michelineInstruction(tezos) { GET(1UL) },
                 michelineInstruction(michelsonToMichelineConverter) { GET(1UL) },
-                michelineInstruction(tezos) {
-                    GET { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     GET { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    GET { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     GET { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    GET { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     GET { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    GET { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     GET { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    GET { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     GET { arg(1UL) }
@@ -1818,13 +1311,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { UPDATE },
                 micheline(tezos) { UPDATE() },
                 micheline(michelsonToMichelineConverter) { UPDATE() },
-                michelineData(tezos) { UPDATE },
                 michelineData(michelsonToMichelineConverter) { UPDATE },
-                michelineData(tezos) { UPDATE() },
                 michelineData(michelsonToMichelineConverter) { UPDATE() },
-                michelineInstruction(tezos) { UPDATE },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE },
-                michelineInstruction(tezos) { UPDATE() },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE() },
             ),
             MichelinePrimitiveApplication(
@@ -1871,82 +1360,42 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) {
                     UPDATE { arg(1UL) }
                 },
-                michelineData(tezos) { UPDATE("1") },
                 michelineData(michelsonToMichelineConverter) { UPDATE("1") },
-                michelineData(tezos) { UPDATE((1).toUByte()) },
                 michelineData(michelsonToMichelineConverter) { UPDATE((1).toUByte()) },
-                michelineData(tezos) { UPDATE((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { UPDATE((1).toUShort()) },
-                michelineData(tezos) { UPDATE(1U) },
                 michelineData(michelsonToMichelineConverter) { UPDATE(1U) },
-                michelineData(tezos) { UPDATE(1UL) },
                 michelineData(michelsonToMichelineConverter) { UPDATE(1UL) },
-                michelineData(tezos) {
-                    UPDATE { arg("1") }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     UPDATE { arg("1") }
-                },
-                michelineData(tezos) {
-                    UPDATE { arg((1).toUByte()) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     UPDATE { arg((1).toUByte()) }
                 },
-                michelineData(tezos) {
-                    UPDATE { arg((1).toUShort()) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     UPDATE { arg((1).toUShort()) }
-                },
-                michelineData(tezos) {
-                    UPDATE { arg(1U) }
                 },
                 michelineData(michelsonToMichelineConverter) {
                     UPDATE { arg(1U) }
                 },
-                michelineData(tezos) {
-                    UPDATE { arg(1UL) }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     UPDATE { arg(1UL) }
                 },
-                michelineInstruction(tezos) { UPDATE("1") },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE("1") },
-                michelineInstruction(tezos) { UPDATE((1).toUByte()) },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE((1).toUByte()) },
-                michelineInstruction(tezos) { UPDATE((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE((1).toUShort()) },
-                michelineInstruction(tezos) { UPDATE(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE(1U) },
-                michelineInstruction(tezos) { UPDATE(1UL) },
                 michelineInstruction(michelsonToMichelineConverter) { UPDATE(1UL) },
-                michelineInstruction(tezos) {
-                    UPDATE { arg("1") }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UPDATE { arg("1") }
-                },
-                michelineInstruction(tezos) {
-                    UPDATE { arg((1).toUByte()) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UPDATE { arg((1).toUByte()) }
                 },
-                michelineInstruction(tezos) {
-                    UPDATE { arg((1).toUShort()) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UPDATE { arg((1).toUShort()) }
                 },
-                michelineInstruction(tezos) {
-                    UPDATE { arg(1U) }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UPDATE { arg(1U) }
-                },
-                michelineInstruction(tezos) {
-                    UPDATE { arg(1UL) }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UPDATE { arg(1UL) }
@@ -1957,13 +1406,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { GET_AND_UPDATE },
                 micheline(tezos) { GET_AND_UPDATE() },
                 micheline(michelsonToMichelineConverter) { GET_AND_UPDATE() },
-                michelineData(tezos) { GET_AND_UPDATE },
                 michelineData(michelsonToMichelineConverter) { GET_AND_UPDATE },
-                michelineData(tezos) { GET_AND_UPDATE() },
                 michelineData(michelsonToMichelineConverter) { GET_AND_UPDATE() },
-                michelineInstruction(tezos) { GET_AND_UPDATE },
                 michelineInstruction(michelsonToMichelineConverter) { GET_AND_UPDATE },
-                michelineInstruction(tezos) { GET_AND_UPDATE() },
                 michelineInstruction(michelsonToMichelineConverter) { GET_AND_UPDATE() },
             ),
             MichelinePrimitiveApplication(
@@ -1982,19 +1427,7 @@ class MichelineMichelsonInstructionDslTest {
                         elseBranch { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    IF {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    IF {
-                        ifBranch { UNIT }
-                        elseBranch { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     IF {
                         ifBranch { UNIT }
                         elseBranch { UNIT }
@@ -2033,7 +1466,7 @@ class MichelineMichelsonInstructionDslTest {
                         body { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     LOOP {
                         body { UNIT }
                     }
@@ -2041,33 +1474,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     LOOP {
                         body { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    LOOP {
-                        body { UNIT }
-                        body { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    LOOP {
-                        body { UNIT }
-                        body { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    LOOP {
                         body { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LOOP {
-                        body { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    LOOP {
-                        body { UNIT }
                         body { UNIT }
                     }
                 },
@@ -2104,7 +1515,7 @@ class MichelineMichelsonInstructionDslTest {
                         body { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     LOOP_LEFT {
                         body { UNIT }
                     }
@@ -2112,33 +1523,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     LOOP_LEFT {
                         body { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    LOOP_LEFT {
-                        body { UNIT }
-                        body { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    LOOP_LEFT {
-                        body { UNIT }
-                        body { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    LOOP_LEFT {
                         body { UNIT }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     LOOP_LEFT {
-                        body { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    LOOP_LEFT {
-                        body { UNIT }
                         body { UNIT }
                     }
                 },
@@ -2158,7 +1547,7 @@ class MichelineMichelsonInstructionDslTest {
                 ),
             ) to listOf(
                 micheline(tezos) {
-                    LAMBDA { 
+                    LAMBDA {
                         parameter { unit }
                         returnType { unit }
                         body { UNIT }
@@ -2205,13 +1594,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { EXEC },
                 micheline(tezos) { EXEC() },
                 micheline(michelsonToMichelineConverter) { EXEC() },
-                michelineData(tezos) { EXEC },
                 michelineData(michelsonToMichelineConverter) { EXEC },
-                michelineData(tezos) { EXEC() },
                 michelineData(michelsonToMichelineConverter) { EXEC() },
-                michelineInstruction(tezos) { EXEC },
                 michelineInstruction(michelsonToMichelineConverter) { EXEC },
-                michelineInstruction(tezos) { EXEC() },
                 michelineInstruction(michelsonToMichelineConverter) { EXEC() },
             ),
             MichelinePrimitiveApplication("APPLY") to listOf(
@@ -2219,13 +1604,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { APPLY },
                 micheline(tezos) { APPLY() },
                 micheline(michelsonToMichelineConverter) { APPLY() },
-                michelineData(tezos) { APPLY },
                 michelineData(michelsonToMichelineConverter) { APPLY },
-                michelineData(tezos) { APPLY() },
                 michelineData(michelsonToMichelineConverter) { APPLY() },
-                michelineInstruction(tezos) { APPLY },
                 michelineInstruction(michelsonToMichelineConverter) { APPLY },
-                michelineInstruction(tezos) { APPLY() },
                 michelineInstruction(michelsonToMichelineConverter) { APPLY() },
             ),
             MichelinePrimitiveApplication(
@@ -2242,17 +1623,7 @@ class MichelineMichelsonInstructionDslTest {
                         instruction { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    DIP {
-                        instruction { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    DIP {
-                        instruction { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     DIP {
                         instruction { UNIT }
                     }
@@ -2327,21 +1698,9 @@ class MichelineMichelsonInstructionDslTest {
                         instruction { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    DIP {
-                        n("1")
-                        instruction { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
                     DIP {
                         n("1")
-                        instruction { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    DIP {
-                        n((1).toUByte())
                         instruction { UNIT }
                     }
                 },
@@ -2351,7 +1710,7 @@ class MichelineMichelsonInstructionDslTest {
                         instruction { UNIT }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     DIP {
                         n((1).toUShort())
                         instruction { UNIT }
@@ -2359,25 +1718,7 @@ class MichelineMichelsonInstructionDslTest {
                 },
                 michelineData(michelsonToMichelineConverter) {
                     DIP {
-                        n((1).toUShort())
-                        instruction { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    DIP {
                         n(1U)
-                        instruction { UNIT }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    DIP {
-                        n(1U)
-                        instruction { UNIT }
-                    }
-                },
-                michelineData(tezos) {
-                    DIP {
-                        n(1UL)
                         instruction { UNIT }
                     }
                 },
@@ -2387,21 +1728,9 @@ class MichelineMichelsonInstructionDslTest {
                         instruction { UNIT }
                     }
                 },
-                michelineInstruction(tezos) {
-                    DIP {
-                        n("1")
-                        instruction { UNIT }
-                    }
-                },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIP {
                         n("1")
-                        instruction { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    DIP {
-                        n((1).toUByte())
                         instruction { UNIT }
                     }
                 },
@@ -2411,7 +1740,7 @@ class MichelineMichelsonInstructionDslTest {
                         instruction { UNIT }
                     }
                 },
-                michelineInstruction(tezos) {
+                michelineInstruction(michelsonToMichelineConverter) {
                     DIP {
                         n((1).toUShort())
                         instruction { UNIT }
@@ -2419,25 +1748,7 @@ class MichelineMichelsonInstructionDslTest {
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     DIP {
-                        n((1).toUShort())
-                        instruction { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    DIP {
                         n(1U)
-                        instruction { UNIT }
-                    }
-                },
-                michelineInstruction(michelsonToMichelineConverter) {
-                    DIP {
-                        n(1U)
-                        instruction { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    DIP {
-                        n(1UL)
                         instruction { UNIT }
                     }
                 },
@@ -2453,13 +1764,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { FAILWITH },
                 micheline(tezos) { FAILWITH() },
                 micheline(michelsonToMichelineConverter) { FAILWITH() },
-                michelineData(tezos) { FAILWITH },
                 michelineData(michelsonToMichelineConverter) { FAILWITH },
-                michelineData(tezos) { FAILWITH() },
                 michelineData(michelsonToMichelineConverter) { FAILWITH() },
-                michelineInstruction(tezos) { FAILWITH },
                 michelineInstruction(michelsonToMichelineConverter) { FAILWITH },
-                michelineInstruction(tezos) { FAILWITH() },
                 michelineInstruction(michelsonToMichelineConverter) { FAILWITH() },
             ),
             MichelinePrimitiveApplication("CAST") to listOf(
@@ -2467,13 +1774,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { CAST },
                 micheline(tezos) { CAST() },
                 micheline(michelsonToMichelineConverter) { CAST() },
-                michelineData(tezos) { CAST },
                 michelineData(michelsonToMichelineConverter) { CAST },
-                michelineData(tezos) { CAST() },
                 michelineData(michelsonToMichelineConverter) { CAST() },
-                michelineInstruction(tezos) { CAST },
                 michelineInstruction(michelsonToMichelineConverter) { CAST },
-                michelineInstruction(tezos) { CAST() },
                 michelineInstruction(michelsonToMichelineConverter) { CAST() },
             ),
             MichelinePrimitiveApplication("RENAME") to listOf(
@@ -2481,13 +1784,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { RENAME },
                 micheline(tezos) { RENAME() },
                 micheline(michelsonToMichelineConverter) { RENAME() },
-                michelineData(tezos) { RENAME },
                 michelineData(michelsonToMichelineConverter) { RENAME },
-                michelineData(tezos) { RENAME() },
                 michelineData(michelsonToMichelineConverter) { RENAME() },
-                michelineInstruction(tezos) { RENAME },
                 michelineInstruction(michelsonToMichelineConverter) { RENAME },
-                michelineInstruction(tezos) { RENAME() },
                 michelineInstruction(michelsonToMichelineConverter) { RENAME() },
             ),
             MichelinePrimitiveApplication("CONCAT") to listOf(
@@ -2495,13 +1794,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { CONCAT },
                 micheline(tezos) { CONCAT() },
                 micheline(michelsonToMichelineConverter) { CONCAT() },
-                michelineData(tezos) { CONCAT },
                 michelineData(michelsonToMichelineConverter) { CONCAT },
-                michelineData(tezos) { CONCAT() },
                 michelineData(michelsonToMichelineConverter) { CONCAT() },
-                michelineInstruction(tezos) { CONCAT },
                 michelineInstruction(michelsonToMichelineConverter) { CONCAT },
-                michelineInstruction(tezos) { CONCAT() },
                 michelineInstruction(michelsonToMichelineConverter) { CONCAT() },
             ),
             MichelinePrimitiveApplication("SLICE") to listOf(
@@ -2509,13 +1804,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SLICE },
                 micheline(tezos) { SLICE() },
                 micheline(michelsonToMichelineConverter) { SLICE() },
-                michelineData(tezos) { SLICE },
                 michelineData(michelsonToMichelineConverter) { SLICE },
-                michelineData(tezos) { SLICE() },
                 michelineData(michelsonToMichelineConverter) { SLICE() },
-                michelineInstruction(tezos) { SLICE },
                 michelineInstruction(michelsonToMichelineConverter) { SLICE },
-                michelineInstruction(tezos) { SLICE() },
                 michelineInstruction(michelsonToMichelineConverter) { SLICE() },
             ),
             MichelinePrimitiveApplication("PACK") to listOf(
@@ -2523,13 +1814,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { PACK },
                 micheline(tezos) { PACK() },
                 micheline(michelsonToMichelineConverter) { PACK() },
-                michelineData(tezos) { PACK },
                 michelineData(michelsonToMichelineConverter) { PACK },
-                michelineData(tezos) { PACK() },
                 michelineData(michelsonToMichelineConverter) { PACK() },
-                michelineInstruction(tezos) { PACK },
                 michelineInstruction(michelsonToMichelineConverter) { PACK },
-                michelineInstruction(tezos) { PACK() },
                 michelineInstruction(michelsonToMichelineConverter) { PACK() },
             ),
             MichelinePrimitiveApplication(
@@ -2558,7 +1845,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { unit }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     UNPACK {
                         arg { unit }
                     }
@@ -2566,33 +1853,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     UNPACK {
                         arg { unit }
-                    }
-                },
-                michelineData(tezos) {
-                    UNPACK {
-                        arg { unit }
-                        arg { unit }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    UNPACK {
-                        arg { unit }
-                        arg { unit }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    UNPACK {
                         arg { unit }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     UNPACK {
-                        arg { unit }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    UNPACK {
-                        arg { unit }
                         arg { unit }
                     }
                 },
@@ -2608,13 +1873,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { ADD },
                 micheline(tezos) { ADD() },
                 micheline(michelsonToMichelineConverter) { ADD() },
-                michelineData(tezos) { ADD },
                 michelineData(michelsonToMichelineConverter) { ADD },
-                michelineData(tezos) { ADD() },
                 michelineData(michelsonToMichelineConverter) { ADD() },
-                michelineInstruction(tezos) { ADD },
                 michelineInstruction(michelsonToMichelineConverter) { ADD },
-                michelineInstruction(tezos) { ADD() },
                 michelineInstruction(michelsonToMichelineConverter) { ADD() },
             ),
             MichelinePrimitiveApplication("SUB") to listOf(
@@ -2622,13 +1883,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SUB },
                 micheline(tezos) { SUB() },
                 micheline(michelsonToMichelineConverter) { SUB() },
-                michelineData(tezos) { SUB },
                 michelineData(michelsonToMichelineConverter) { SUB },
-                michelineData(tezos) { SUB() },
                 michelineData(michelsonToMichelineConverter) { SUB() },
-                michelineInstruction(tezos) { SUB },
                 michelineInstruction(michelsonToMichelineConverter) { SUB },
-                michelineInstruction(tezos) { SUB() },
                 michelineInstruction(michelsonToMichelineConverter) { SUB() },
             ),
             MichelinePrimitiveApplication("MUL") to listOf(
@@ -2636,13 +1893,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { MUL },
                 micheline(tezos) { MUL() },
                 micheline(michelsonToMichelineConverter) { MUL() },
-                michelineData(tezos) { MUL },
                 michelineData(michelsonToMichelineConverter) { MUL },
-                michelineData(tezos) { MUL() },
                 michelineData(michelsonToMichelineConverter) { MUL() },
-                michelineInstruction(tezos) { MUL },
                 michelineInstruction(michelsonToMichelineConverter) { MUL },
-                michelineInstruction(tezos) { MUL() },
                 michelineInstruction(michelsonToMichelineConverter) { MUL() },
             ),
             MichelinePrimitiveApplication("EDIV") to listOf(
@@ -2650,13 +1903,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { EDIV },
                 micheline(tezos) { EDIV() },
                 micheline(michelsonToMichelineConverter) { EDIV() },
-                michelineData(tezos) { EDIV },
                 michelineData(michelsonToMichelineConverter) { EDIV },
-                michelineData(tezos) { EDIV() },
                 michelineData(michelsonToMichelineConverter) { EDIV() },
-                michelineInstruction(tezos) { EDIV },
                 michelineInstruction(michelsonToMichelineConverter) { EDIV },
-                michelineInstruction(tezos) { EDIV() },
                 michelineInstruction(michelsonToMichelineConverter) { EDIV() },
             ),
             MichelinePrimitiveApplication("ABS") to listOf(
@@ -2664,13 +1913,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { ABS },
                 micheline(tezos) { ABS() },
                 micheline(michelsonToMichelineConverter) { ABS() },
-                michelineData(tezos) { ABS },
                 michelineData(michelsonToMichelineConverter) { ABS },
-                michelineData(tezos) { ABS() },
                 michelineData(michelsonToMichelineConverter) { ABS() },
-                michelineInstruction(tezos) { ABS },
                 michelineInstruction(michelsonToMichelineConverter) { ABS },
-                michelineInstruction(tezos) { ABS() },
                 michelineInstruction(michelsonToMichelineConverter) { ABS() },
             ),
             MichelinePrimitiveApplication("ISNAT") to listOf(
@@ -2678,13 +1923,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { ISNAT },
                 micheline(tezos) { ISNAT() },
                 micheline(michelsonToMichelineConverter) { ISNAT() },
-                michelineData(tezos) { ISNAT },
                 michelineData(michelsonToMichelineConverter) { ISNAT },
-                michelineData(tezos) { ISNAT() },
                 michelineData(michelsonToMichelineConverter) { ISNAT() },
-                michelineInstruction(tezos) { ISNAT },
                 michelineInstruction(michelsonToMichelineConverter) { ISNAT },
-                michelineInstruction(tezos) { ISNAT() },
                 michelineInstruction(michelsonToMichelineConverter) { ISNAT() },
             ),
             MichelinePrimitiveApplication("INT") to listOf(
@@ -2692,13 +1933,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { INT },
                 micheline(tezos) { INT() },
                 micheline(michelsonToMichelineConverter) { INT() },
-                michelineData(tezos) { INT },
                 michelineData(michelsonToMichelineConverter) { INT },
-                michelineData(tezos) { INT() },
                 michelineData(michelsonToMichelineConverter) { INT() },
-                michelineInstruction(tezos) { INT },
                 michelineInstruction(michelsonToMichelineConverter) { INT },
-                michelineInstruction(tezos) { INT() },
                 michelineInstruction(michelsonToMichelineConverter) { INT() },
             ),
             MichelinePrimitiveApplication("NEG") to listOf(
@@ -2706,13 +1943,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { NEG },
                 micheline(tezos) { NEG() },
                 micheline(michelsonToMichelineConverter) { NEG() },
-                michelineData(tezos) { NEG },
                 michelineData(michelsonToMichelineConverter) { NEG },
-                michelineData(tezos) { NEG() },
                 michelineData(michelsonToMichelineConverter) { NEG() },
-                michelineInstruction(tezos) { NEG },
                 michelineInstruction(michelsonToMichelineConverter) { NEG },
-                michelineInstruction(tezos) { NEG() },
                 michelineInstruction(michelsonToMichelineConverter) { NEG() },
             ),
             MichelinePrimitiveApplication("LSL") to listOf(
@@ -2720,13 +1953,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { LSL },
                 micheline(tezos) { LSL() },
                 micheline(michelsonToMichelineConverter) { LSL() },
-                michelineData(tezos) { LSL },
                 michelineData(michelsonToMichelineConverter) { LSL },
-                michelineData(tezos) { LSL() },
                 michelineData(michelsonToMichelineConverter) { LSL() },
-                michelineInstruction(tezos) { LSL },
                 michelineInstruction(michelsonToMichelineConverter) { LSL },
-                michelineInstruction(tezos) { LSL() },
                 michelineInstruction(michelsonToMichelineConverter) { LSL() },
             ),
             MichelinePrimitiveApplication("LSR") to listOf(
@@ -2734,13 +1963,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { LSR },
                 micheline(tezos) { LSR() },
                 micheline(michelsonToMichelineConverter) { LSR() },
-                michelineData(tezos) { LSR },
                 michelineData(michelsonToMichelineConverter) { LSR },
-                michelineData(tezos) { LSR() },
                 michelineData(michelsonToMichelineConverter) { LSR() },
-                michelineInstruction(tezos) { LSR },
                 michelineInstruction(michelsonToMichelineConverter) { LSR },
-                michelineInstruction(tezos) { LSR() },
                 michelineInstruction(michelsonToMichelineConverter) { LSR() },
             ),
             MichelinePrimitiveApplication("OR") to listOf(
@@ -2748,13 +1973,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { OR },
                 micheline(tezos) { OR() },
                 micheline(michelsonToMichelineConverter) { OR() },
-                michelineData(tezos) { OR },
                 michelineData(michelsonToMichelineConverter) { OR },
-                michelineData(tezos) { OR() },
                 michelineData(michelsonToMichelineConverter) { OR() },
-                michelineInstruction(tezos) { OR },
                 michelineInstruction(michelsonToMichelineConverter) { OR },
-                michelineInstruction(tezos) { OR() },
                 michelineInstruction(michelsonToMichelineConverter) { OR() },
             ),
             MichelinePrimitiveApplication("AND") to listOf(
@@ -2762,13 +1983,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { AND },
                 micheline(tezos) { AND() },
                 micheline(michelsonToMichelineConverter) { AND() },
-                michelineData(tezos) { AND },
                 michelineData(michelsonToMichelineConverter) { AND },
-                michelineData(tezos) { AND() },
                 michelineData(michelsonToMichelineConverter) { AND() },
-                michelineInstruction(tezos) { AND },
                 michelineInstruction(michelsonToMichelineConverter) { AND },
-                michelineInstruction(tezos) { AND() },
                 michelineInstruction(michelsonToMichelineConverter) { AND() },
             ),
             MichelinePrimitiveApplication("XOR") to listOf(
@@ -2776,13 +1993,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { XOR },
                 micheline(tezos) { XOR() },
                 micheline(michelsonToMichelineConverter) { XOR() },
-                michelineData(tezos) { XOR },
                 michelineData(michelsonToMichelineConverter) { XOR },
-                michelineData(tezos) { XOR() },
                 michelineData(michelsonToMichelineConverter) { XOR() },
-                michelineInstruction(tezos) { XOR },
                 michelineInstruction(michelsonToMichelineConverter) { XOR },
-                michelineInstruction(tezos) { XOR() },
                 michelineInstruction(michelsonToMichelineConverter) { XOR() },
             ),
             MichelinePrimitiveApplication("NOT") to listOf(
@@ -2790,13 +2003,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { NOT },
                 micheline(tezos) { NOT() },
                 micheline(michelsonToMichelineConverter) { NOT() },
-                michelineData(tezos) { NOT },
                 michelineData(michelsonToMichelineConverter) { NOT },
-                michelineData(tezos) { NOT() },
                 michelineData(michelsonToMichelineConverter) { NOT() },
-                michelineInstruction(tezos) { NOT },
                 michelineInstruction(michelsonToMichelineConverter) { NOT },
-                michelineInstruction(tezos) { NOT() },
                 michelineInstruction(michelsonToMichelineConverter) { NOT() },
             ),
             MichelinePrimitiveApplication("COMPARE") to listOf(
@@ -2804,13 +2013,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { COMPARE },
                 micheline(tezos) { COMPARE() },
                 micheline(michelsonToMichelineConverter) { COMPARE() },
-                michelineData(tezos) { COMPARE },
                 michelineData(michelsonToMichelineConverter) { COMPARE },
-                michelineData(tezos) { COMPARE() },
                 michelineData(michelsonToMichelineConverter) { COMPARE() },
-                michelineInstruction(tezos) { COMPARE },
                 michelineInstruction(michelsonToMichelineConverter) { COMPARE },
-                michelineInstruction(tezos) { COMPARE() },
                 michelineInstruction(michelsonToMichelineConverter) { COMPARE() },
             ),
             MichelinePrimitiveApplication("EQ") to listOf(
@@ -2818,13 +2023,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { EQ },
                 micheline(tezos) { EQ() },
                 micheline(michelsonToMichelineConverter) { EQ() },
-                michelineData(tezos) { EQ },
                 michelineData(michelsonToMichelineConverter) { EQ },
-                michelineData(tezos) { EQ() },
                 michelineData(michelsonToMichelineConverter) { EQ() },
-                michelineInstruction(tezos) { EQ },
                 michelineInstruction(michelsonToMichelineConverter) { EQ },
-                michelineInstruction(tezos) { EQ() },
                 michelineInstruction(michelsonToMichelineConverter) { EQ() },
             ),
             MichelinePrimitiveApplication("NEQ") to listOf(
@@ -2832,13 +2033,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { NEQ },
                 micheline(tezos) { NEQ() },
                 micheline(michelsonToMichelineConverter) { NEQ() },
-                michelineData(tezos) { NEQ },
                 michelineData(michelsonToMichelineConverter) { NEQ },
-                michelineData(tezos) { NEQ() },
                 michelineData(michelsonToMichelineConverter) { NEQ() },
-                michelineInstruction(tezos) { NEQ },
                 michelineInstruction(michelsonToMichelineConverter) { NEQ },
-                michelineInstruction(tezos) { NEQ() },
                 michelineInstruction(michelsonToMichelineConverter) { NEQ() },
             ),
             MichelinePrimitiveApplication("LT") to listOf(
@@ -2846,13 +2043,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { LT },
                 micheline(tezos) { LT() },
                 micheline(michelsonToMichelineConverter) { LT() },
-                michelineData(tezos) { LT },
                 michelineData(michelsonToMichelineConverter) { LT },
-                michelineData(tezos) { LT() },
                 michelineData(michelsonToMichelineConverter) { LT() },
-                michelineInstruction(tezos) { LT },
                 michelineInstruction(michelsonToMichelineConverter) { LT },
-                michelineInstruction(tezos) { LT() },
                 michelineInstruction(michelsonToMichelineConverter) { LT() },
             ),
             MichelinePrimitiveApplication("GT") to listOf(
@@ -2860,13 +2053,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { GT },
                 micheline(tezos) { GT() },
                 micheline(michelsonToMichelineConverter) { GT() },
-                michelineData(tezos) { GT },
                 michelineData(michelsonToMichelineConverter) { GT },
-                michelineData(tezos) { GT() },
                 michelineData(michelsonToMichelineConverter) { GT() },
-                michelineInstruction(tezos) { GT },
                 michelineInstruction(michelsonToMichelineConverter) { GT },
-                michelineInstruction(tezos) { GT() },
                 michelineInstruction(michelsonToMichelineConverter) { GT() },
             ),
             MichelinePrimitiveApplication("LE") to listOf(
@@ -2874,13 +2063,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { LE },
                 micheline(tezos) { LE() },
                 micheline(michelsonToMichelineConverter) { LE() },
-                michelineData(tezos) { LE },
                 michelineData(michelsonToMichelineConverter) { LE },
-                michelineData(tezos) { LE() },
                 michelineData(michelsonToMichelineConverter) { LE() },
-                michelineInstruction(tezos) { LE },
                 michelineInstruction(michelsonToMichelineConverter) { LE },
-                michelineInstruction(tezos) { LE() },
                 michelineInstruction(michelsonToMichelineConverter) { LE() },
             ),
             MichelinePrimitiveApplication("GE") to listOf(
@@ -2888,13 +2073,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { GE },
                 micheline(tezos) { GE() },
                 micheline(michelsonToMichelineConverter) { GE() },
-                michelineData(tezos) { GE },
                 michelineData(michelsonToMichelineConverter) { GE },
-                michelineData(tezos) { GE() },
                 michelineData(michelsonToMichelineConverter) { GE() },
-                michelineInstruction(tezos) { GE },
                 michelineInstruction(michelsonToMichelineConverter) { GE },
-                michelineInstruction(tezos) { GE() },
                 michelineInstruction(michelsonToMichelineConverter) { GE() },
             ),
             MichelinePrimitiveApplication("SELF") to listOf(
@@ -2902,13 +2083,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SELF },
                 micheline(tezos) { SELF() },
                 micheline(michelsonToMichelineConverter) { SELF() },
-                michelineData(tezos) { SELF },
                 michelineData(michelsonToMichelineConverter) { SELF },
-                michelineData(tezos) { SELF() },
                 michelineData(michelsonToMichelineConverter) { SELF() },
-                michelineInstruction(tezos) { SELF },
                 michelineInstruction(michelsonToMichelineConverter) { SELF },
-                michelineInstruction(tezos) { SELF() },
                 michelineInstruction(michelsonToMichelineConverter) { SELF() },
             ),
             MichelinePrimitiveApplication("SELF_ADDRESS") to listOf(
@@ -2916,13 +2093,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SELF_ADDRESS },
                 micheline(tezos) { SELF_ADDRESS() },
                 micheline(michelsonToMichelineConverter) { SELF_ADDRESS() },
-                michelineData(tezos) { SELF_ADDRESS },
                 michelineData(michelsonToMichelineConverter) { SELF_ADDRESS },
-                michelineData(tezos) { SELF_ADDRESS() },
                 michelineData(michelsonToMichelineConverter) { SELF_ADDRESS() },
-                michelineInstruction(tezos) { SELF_ADDRESS },
                 michelineInstruction(michelsonToMichelineConverter) { SELF_ADDRESS },
-                michelineInstruction(tezos) { SELF_ADDRESS() },
                 michelineInstruction(michelsonToMichelineConverter) { SELF_ADDRESS() },
             ),
             MichelinePrimitiveApplication(
@@ -2951,7 +2124,7 @@ class MichelineMichelsonInstructionDslTest {
                         arg { unit }
                     }
                 },
-                michelineData(tezos) {
+                michelineData(michelsonToMichelineConverter) {
                     CONTRACT {
                         arg { unit }
                     }
@@ -2959,33 +2132,11 @@ class MichelineMichelsonInstructionDslTest {
                 michelineData(michelsonToMichelineConverter) {
                     CONTRACT {
                         arg { unit }
-                    }
-                },
-                michelineData(tezos) {
-                    CONTRACT {
-                        arg { unit }
-                        arg { unit }
-                    }
-                },
-                michelineData(michelsonToMichelineConverter) {
-                    CONTRACT {
-                        arg { unit }
-                        arg { unit }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    CONTRACT {
                         arg { unit }
                     }
                 },
                 michelineInstruction(michelsonToMichelineConverter) {
                     CONTRACT {
-                        arg { unit }
-                    }
-                },
-                michelineInstruction(tezos) {
-                    CONTRACT {
-                        arg { unit }
                         arg { unit }
                     }
                 },
@@ -3001,13 +2152,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { TRANSFER_TOKENS },
                 micheline(tezos) { TRANSFER_TOKENS() },
                 micheline(michelsonToMichelineConverter) { TRANSFER_TOKENS() },
-                michelineData(tezos) { TRANSFER_TOKENS },
                 michelineData(michelsonToMichelineConverter) { TRANSFER_TOKENS },
-                michelineData(tezos) { TRANSFER_TOKENS() },
                 michelineData(michelsonToMichelineConverter) { TRANSFER_TOKENS() },
-                michelineInstruction(tezos) { TRANSFER_TOKENS },
                 michelineInstruction(michelsonToMichelineConverter) { TRANSFER_TOKENS },
-                michelineInstruction(tezos) { TRANSFER_TOKENS() },
                 michelineInstruction(michelsonToMichelineConverter) { TRANSFER_TOKENS() },
             ),
             MichelinePrimitiveApplication("SET_DELEGATE") to listOf(
@@ -3015,13 +2162,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SET_DELEGATE },
                 micheline(tezos) { SET_DELEGATE() },
                 micheline(michelsonToMichelineConverter) { SET_DELEGATE() },
-                michelineData(tezos) { SET_DELEGATE },
                 michelineData(michelsonToMichelineConverter) { SET_DELEGATE },
-                michelineData(tezos) { SET_DELEGATE() },
                 michelineData(michelsonToMichelineConverter) { SET_DELEGATE() },
-                michelineInstruction(tezos) { SET_DELEGATE },
                 michelineInstruction(michelsonToMichelineConverter) { SET_DELEGATE },
-                michelineInstruction(tezos) { SET_DELEGATE() },
                 michelineInstruction(michelsonToMichelineConverter) { SET_DELEGATE() },
             ),
             MichelinePrimitiveApplication(
@@ -3046,21 +2189,7 @@ class MichelineMichelsonInstructionDslTest {
                         code { UNIT }
                     }
                 },
-                michelineData(tezos) {
-                    CREATE_CONTRACT {
-                        parameter { unit }
-                        storage { unit }
-                        code { UNIT }
-                    }
-                },
                 michelineData(michelsonToMichelineConverter) {
-                    CREATE_CONTRACT {
-                        parameter { unit }
-                        storage { unit }
-                        code { UNIT }
-                    }
-                },
-                michelineInstruction(tezos) {
                     CREATE_CONTRACT {
                         parameter { unit }
                         storage { unit }
@@ -3080,13 +2209,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { IMPLICIT_ACCOUNT },
                 micheline(tezos) { IMPLICIT_ACCOUNT() },
                 micheline(michelsonToMichelineConverter) { IMPLICIT_ACCOUNT() },
-                michelineData(tezos) { IMPLICIT_ACCOUNT },
                 michelineData(michelsonToMichelineConverter) { IMPLICIT_ACCOUNT },
-                michelineData(tezos) { IMPLICIT_ACCOUNT() },
                 michelineData(michelsonToMichelineConverter) { IMPLICIT_ACCOUNT() },
-                michelineInstruction(tezos) { IMPLICIT_ACCOUNT },
                 michelineInstruction(michelsonToMichelineConverter) { IMPLICIT_ACCOUNT },
-                michelineInstruction(tezos) { IMPLICIT_ACCOUNT() },
                 michelineInstruction(michelsonToMichelineConverter) { IMPLICIT_ACCOUNT() },
             ),
             MichelinePrimitiveApplication("VOTING_POWER") to listOf(
@@ -3094,13 +2219,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { VOTING_POWER },
                 micheline(tezos) { VOTING_POWER() },
                 micheline(michelsonToMichelineConverter) { VOTING_POWER() },
-                michelineData(tezos) { VOTING_POWER },
                 michelineData(michelsonToMichelineConverter) { VOTING_POWER },
-                michelineData(tezos) { VOTING_POWER() },
                 michelineData(michelsonToMichelineConverter) { VOTING_POWER() },
-                michelineInstruction(tezos) { VOTING_POWER },
                 michelineInstruction(michelsonToMichelineConverter) { VOTING_POWER },
-                michelineInstruction(tezos) { VOTING_POWER() },
                 michelineInstruction(michelsonToMichelineConverter) { VOTING_POWER() },
             ),
             MichelinePrimitiveApplication("NOW") to listOf(
@@ -3108,13 +2229,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { NOW },
                 micheline(tezos) { NOW() },
                 micheline(michelsonToMichelineConverter) { NOW() },
-                michelineData(tezos) { NOW },
                 michelineData(michelsonToMichelineConverter) { NOW },
-                michelineData(tezos) { NOW() },
                 michelineData(michelsonToMichelineConverter) { NOW() },
-                michelineInstruction(tezos) { NOW },
                 michelineInstruction(michelsonToMichelineConverter) { NOW },
-                michelineInstruction(tezos) { NOW() },
                 michelineInstruction(michelsonToMichelineConverter) { NOW() },
             ),
             MichelinePrimitiveApplication("LEVEL") to listOf(
@@ -3122,13 +2239,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { LEVEL },
                 micheline(tezos) { LEVEL() },
                 micheline(michelsonToMichelineConverter) { LEVEL() },
-                michelineData(tezos) { LEVEL },
                 michelineData(michelsonToMichelineConverter) { LEVEL },
-                michelineData(tezos) { LEVEL() },
                 michelineData(michelsonToMichelineConverter) { LEVEL() },
-                michelineInstruction(tezos) { LEVEL },
                 michelineInstruction(michelsonToMichelineConverter) { LEVEL },
-                michelineInstruction(tezos) { LEVEL() },
                 michelineInstruction(michelsonToMichelineConverter) { LEVEL() },
             ),
             MichelinePrimitiveApplication("AMOUNT") to listOf(
@@ -3136,13 +2249,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { AMOUNT },
                 micheline(tezos) { AMOUNT() },
                 micheline(michelsonToMichelineConverter) { AMOUNT() },
-                michelineData(tezos) { AMOUNT },
                 michelineData(michelsonToMichelineConverter) { AMOUNT },
-                michelineData(tezos) { AMOUNT() },
                 michelineData(michelsonToMichelineConverter) { AMOUNT() },
-                michelineInstruction(tezos) { AMOUNT },
                 michelineInstruction(michelsonToMichelineConverter) { AMOUNT },
-                michelineInstruction(tezos) { AMOUNT() },
                 michelineInstruction(michelsonToMichelineConverter) { AMOUNT() },
             ),
             MichelinePrimitiveApplication("BALANCE") to listOf(
@@ -3150,13 +2259,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { BALANCE },
                 micheline(tezos) { BALANCE() },
                 micheline(michelsonToMichelineConverter) { BALANCE() },
-                michelineData(tezos) { BALANCE },
                 michelineData(michelsonToMichelineConverter) { BALANCE },
-                michelineData(tezos) { BALANCE() },
                 michelineData(michelsonToMichelineConverter) { BALANCE() },
-                michelineInstruction(tezos) { BALANCE },
                 michelineInstruction(michelsonToMichelineConverter) { BALANCE },
-                michelineInstruction(tezos) { BALANCE() },
                 michelineInstruction(michelsonToMichelineConverter) { BALANCE() },
             ),
             MichelinePrimitiveApplication("CHECK_SIGNATURE") to listOf(
@@ -3164,55 +2269,39 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { CHECK_SIGNATURE },
                 micheline(tezos) { CHECK_SIGNATURE() },
                 micheline(michelsonToMichelineConverter) { CHECK_SIGNATURE() },
-                michelineData(tezos) { CHECK_SIGNATURE },
                 michelineData(michelsonToMichelineConverter) { CHECK_SIGNATURE },
-                michelineData(tezos) { CHECK_SIGNATURE() },
                 michelineData(michelsonToMichelineConverter) { CHECK_SIGNATURE() },
-                michelineInstruction(tezos) { CHECK_SIGNATURE },
                 michelineInstruction(michelsonToMichelineConverter) { CHECK_SIGNATURE },
-                michelineInstruction(tezos) { CHECK_SIGNATURE() },
                 michelineInstruction(michelsonToMichelineConverter) { CHECK_SIGNATURE() },
             ),
             MichelinePrimitiveApplication("BLAKE2B") to listOf(
                 micheline(tezos) { BLAKE2B },
+                micheline(michelsonToMichelineConverter) { BLAKE2B },
+                micheline(tezos) { BLAKE2B() },
+                micheline(michelsonToMichelineConverter) { BLAKE2B() },
                 micheline(tezos) { BLAKE2B },
+                micheline(michelsonToMichelineConverter) { BLAKE2B },
                 micheline(tezos) { BLAKE2B() },
-                micheline(tezos) { BLAKE2B() },
-                michelineData(tezos) { BLAKE2B },
-                michelineData(tezos) { BLAKE2B },
-                michelineData(tezos) { BLAKE2B() },
-                michelineData(tezos) { BLAKE2B() },
-                michelineInstruction(tezos) { BLAKE2B },
-                michelineInstruction(tezos) { BLAKE2B },
-                michelineInstruction(tezos) { BLAKE2B() },
-                michelineInstruction(tezos) { BLAKE2B() },
+                micheline(michelsonToMichelineConverter) { BLAKE2B() },
             ),
             MichelinePrimitiveApplication("KECCAK") to listOf(
                 micheline(tezos) { KECCAK },
+                micheline(michelsonToMichelineConverter) { KECCAK },
+                micheline(tezos) { KECCAK() },
+                micheline(michelsonToMichelineConverter) { KECCAK() },
                 micheline(tezos) { KECCAK },
+                micheline(michelsonToMichelineConverter) { KECCAK },
                 micheline(tezos) { KECCAK() },
-                micheline(tezos) { KECCAK() },
-                michelineData(tezos) { KECCAK },
-                michelineData(tezos) { KECCAK },
-                michelineData(tezos) { KECCAK() },
-                michelineData(tezos) { KECCAK() },
-                michelineInstruction(tezos) { KECCAK },
-                michelineInstruction(tezos) { KECCAK },
-                michelineInstruction(tezos) { KECCAK() },
-                michelineInstruction(tezos) { KECCAK() },
+                micheline(michelsonToMichelineConverter) { KECCAK() },
             ),
             MichelinePrimitiveApplication("SHA3") to listOf(
                 micheline(tezos) { SHA3 },
                 micheline(michelsonToMichelineConverter) { SHA3 },
                 micheline(tezos) { SHA3() },
                 micheline(michelsonToMichelineConverter) { SHA3() },
-                michelineData(tezos) { SHA3 },
                 michelineData(michelsonToMichelineConverter) { SHA3 },
-                michelineData(tezos) { SHA3() },
                 michelineData(michelsonToMichelineConverter) { SHA3() },
-                michelineInstruction(tezos) { SHA3 },
                 michelineInstruction(michelsonToMichelineConverter) { SHA3 },
-                michelineInstruction(tezos) { SHA3() },
                 michelineInstruction(michelsonToMichelineConverter) { SHA3() },
             ),
             MichelinePrimitiveApplication("SHA256") to listOf(
@@ -3220,13 +2309,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SHA256 },
                 micheline(tezos) { SHA256() },
                 micheline(michelsonToMichelineConverter) { SHA256() },
-                michelineData(tezos) { SHA256 },
                 michelineData(michelsonToMichelineConverter) { SHA256 },
-                michelineData(tezos) { SHA256() },
                 michelineData(michelsonToMichelineConverter) { SHA256() },
-                michelineInstruction(tezos) { SHA256 },
                 michelineInstruction(michelsonToMichelineConverter) { SHA256 },
-                michelineInstruction(tezos) { SHA256() },
                 michelineInstruction(michelsonToMichelineConverter) { SHA256() },
             ),
             MichelinePrimitiveApplication("SHA512") to listOf(
@@ -3234,13 +2319,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SHA512 },
                 micheline(tezos) { SHA512() },
                 micheline(michelsonToMichelineConverter) { SHA512() },
-                michelineData(tezos) { SHA512 },
                 michelineData(michelsonToMichelineConverter) { SHA512 },
-                michelineData(tezos) { SHA512() },
                 michelineData(michelsonToMichelineConverter) { SHA512() },
-                michelineInstruction(tezos) { SHA512 },
                 michelineInstruction(michelsonToMichelineConverter) { SHA512 },
-                michelineInstruction(tezos) { SHA512() },
                 michelineInstruction(michelsonToMichelineConverter) { SHA512() },
             ),
             MichelinePrimitiveApplication("HASH_KEY") to listOf(
@@ -3248,13 +2329,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { HASH_KEY },
                 micheline(tezos) { HASH_KEY() },
                 micheline(michelsonToMichelineConverter) { HASH_KEY() },
-                michelineData(tezos) { HASH_KEY },
                 michelineData(michelsonToMichelineConverter) { HASH_KEY },
-                michelineData(tezos) { HASH_KEY() },
                 michelineData(michelsonToMichelineConverter) { HASH_KEY() },
-                michelineInstruction(tezos) { HASH_KEY },
                 michelineInstruction(michelsonToMichelineConverter) { HASH_KEY },
-                michelineInstruction(tezos) { HASH_KEY() },
                 michelineInstruction(michelsonToMichelineConverter) { HASH_KEY() },
             ),
             MichelinePrimitiveApplication("SOURCE") to listOf(
@@ -3262,13 +2339,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SOURCE },
                 micheline(tezos) { SOURCE() },
                 micheline(michelsonToMichelineConverter) { SOURCE() },
-                michelineData(tezos) { SOURCE },
                 michelineData(michelsonToMichelineConverter) { SOURCE },
-                michelineData(tezos) { SOURCE() },
                 michelineData(michelsonToMichelineConverter) { SOURCE() },
-                michelineInstruction(tezos) { SOURCE },
                 michelineInstruction(michelsonToMichelineConverter) { SOURCE },
-                michelineInstruction(tezos) { SOURCE() },
                 michelineInstruction(michelsonToMichelineConverter) { SOURCE() },
             ),
             MichelinePrimitiveApplication("SENDER") to listOf(
@@ -3276,13 +2349,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SENDER },
                 micheline(tezos) { SENDER() },
                 micheline(michelsonToMichelineConverter) { SENDER() },
-                michelineData(tezos) { SENDER },
                 michelineData(michelsonToMichelineConverter) { SENDER },
-                michelineData(tezos) { SENDER() },
                 michelineData(michelsonToMichelineConverter) { SENDER() },
-                michelineInstruction(tezos) { SENDER },
                 michelineInstruction(michelsonToMichelineConverter) { SENDER },
-                michelineInstruction(tezos) { SENDER() },
                 michelineInstruction(michelsonToMichelineConverter) { SENDER() },
             ),
             MichelinePrimitiveApplication("ADDRESS") to listOf(
@@ -3290,13 +2359,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { ADDRESS },
                 micheline(tezos) { ADDRESS() },
                 micheline(michelsonToMichelineConverter) { ADDRESS() },
-                michelineData(tezos) { ADDRESS },
                 michelineData(michelsonToMichelineConverter) { ADDRESS },
-                michelineData(tezos) { ADDRESS() },
                 michelineData(michelsonToMichelineConverter) { ADDRESS() },
-                michelineInstruction(tezos) { ADDRESS },
                 michelineInstruction(michelsonToMichelineConverter) { ADDRESS },
-                michelineInstruction(tezos) { ADDRESS() },
                 michelineInstruction(michelsonToMichelineConverter) { ADDRESS() },
             ),
             MichelinePrimitiveApplication("CHAIN_ID") to listOf(
@@ -3304,13 +2369,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { CHAIN_ID },
                 micheline(tezos) { CHAIN_ID() },
                 micheline(michelsonToMichelineConverter) { CHAIN_ID() },
-                michelineData(tezos) { CHAIN_ID },
                 michelineData(michelsonToMichelineConverter) { CHAIN_ID },
-                michelineData(tezos) { CHAIN_ID() },
                 michelineData(michelsonToMichelineConverter) { CHAIN_ID() },
-                michelineInstruction(tezos) { CHAIN_ID },
                 michelineInstruction(michelsonToMichelineConverter) { CHAIN_ID },
-                michelineInstruction(tezos) { CHAIN_ID() },
                 michelineInstruction(michelsonToMichelineConverter) { CHAIN_ID() },
             ),
             MichelinePrimitiveApplication("TOTAL_VOTING_POWER") to listOf(
@@ -3318,13 +2379,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { TOTAL_VOTING_POWER },
                 micheline(tezos) { TOTAL_VOTING_POWER() },
                 micheline(michelsonToMichelineConverter) { TOTAL_VOTING_POWER() },
-                michelineData(tezos) { TOTAL_VOTING_POWER },
                 michelineData(michelsonToMichelineConverter) { TOTAL_VOTING_POWER },
-                michelineData(tezos) { TOTAL_VOTING_POWER() },
                 michelineData(michelsonToMichelineConverter) { TOTAL_VOTING_POWER() },
-                michelineInstruction(tezos) { TOTAL_VOTING_POWER },
                 michelineInstruction(michelsonToMichelineConverter) { TOTAL_VOTING_POWER },
-                michelineInstruction(tezos) { TOTAL_VOTING_POWER() },
                 michelineInstruction(michelsonToMichelineConverter) { TOTAL_VOTING_POWER() },
             ),
             MichelinePrimitiveApplication("PAIRING_CHECK") to listOf(
@@ -3332,13 +2389,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { PAIRING_CHECK },
                 micheline(tezos) { PAIRING_CHECK() },
                 micheline(michelsonToMichelineConverter) { PAIRING_CHECK() },
-                michelineData(tezos) { PAIRING_CHECK },
                 michelineData(michelsonToMichelineConverter) { PAIRING_CHECK },
-                michelineData(tezos) { PAIRING_CHECK() },
                 michelineData(michelsonToMichelineConverter) { PAIRING_CHECK() },
-                michelineInstruction(tezos) { PAIRING_CHECK },
                 michelineInstruction(michelsonToMichelineConverter) { PAIRING_CHECK },
-                michelineInstruction(tezos) { PAIRING_CHECK() },
                 michelineInstruction(michelsonToMichelineConverter) { PAIRING_CHECK() },
             ),
             MichelinePrimitiveApplication(
@@ -3357,23 +2410,15 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE(1UL) },
                 micheline(tezos) { SAPLING_EMPTY_STATE("1") },
                 micheline(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE("1") },
-                michelineData(tezos) { SAPLING_EMPTY_STATE((1).toUByte()) },
                 michelineData(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE((1).toUByte()) },
-                michelineData(tezos) { SAPLING_EMPTY_STATE((1).toUShort()) },
                 michelineData(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE((1).toUShort()) },
-                michelineData(tezos) { SAPLING_EMPTY_STATE(1U) },
                 michelineData(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE(1U) },
-                michelineData(tezos) { SAPLING_EMPTY_STATE(1UL) },
                 michelineData(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE(1UL) },
                 micheline(tezos) { SAPLING_EMPTY_STATE("1") },
                 micheline(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE("1") },
-                michelineInstruction(tezos) { SAPLING_EMPTY_STATE((1).toUByte()) },
                 michelineInstruction(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE((1).toUByte()) },
-                michelineInstruction(tezos) { SAPLING_EMPTY_STATE((1).toUShort()) },
                 michelineInstruction(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE((1).toUShort()) },
-                michelineInstruction(tezos) { SAPLING_EMPTY_STATE(1U) },
                 michelineInstruction(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE(1U) },
-                michelineInstruction(tezos) { SAPLING_EMPTY_STATE(1UL) },
                 michelineInstruction(michelsonToMichelineConverter) { SAPLING_EMPTY_STATE(1UL) },
             ),
             MichelinePrimitiveApplication("SAPLING_VERIFY_UPDATE") to listOf(
@@ -3381,13 +2426,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SAPLING_VERIFY_UPDATE },
                 micheline(tezos) { SAPLING_VERIFY_UPDATE() },
                 micheline(michelsonToMichelineConverter) { SAPLING_VERIFY_UPDATE() },
-                michelineData(tezos) { SAPLING_VERIFY_UPDATE },
                 michelineData(michelsonToMichelineConverter) { SAPLING_VERIFY_UPDATE },
-                michelineData(tezos) { SAPLING_VERIFY_UPDATE() },
                 michelineData(michelsonToMichelineConverter) { SAPLING_VERIFY_UPDATE() },
-                michelineInstruction(tezos) { SAPLING_VERIFY_UPDATE },
                 michelineInstruction(michelsonToMichelineConverter) { SAPLING_VERIFY_UPDATE },
-                michelineInstruction(tezos) { SAPLING_VERIFY_UPDATE() },
                 michelineInstruction(michelsonToMichelineConverter) { SAPLING_VERIFY_UPDATE() },
             ),
             MichelinePrimitiveApplication("TICKET") to listOf(
@@ -3395,13 +2436,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { TICKET },
                 micheline(tezos) { TICKET() },
                 micheline(michelsonToMichelineConverter) { TICKET() },
-                michelineData(tezos) { TICKET },
                 michelineData(michelsonToMichelineConverter) { TICKET },
-                michelineData(tezos) { TICKET() },
                 michelineData(michelsonToMichelineConverter) { TICKET() },
-                michelineInstruction(tezos) { TICKET },
                 michelineInstruction(michelsonToMichelineConverter) { TICKET },
-                michelineInstruction(tezos) { TICKET() },
                 michelineInstruction(michelsonToMichelineConverter) { TICKET() },
             ),
             MichelinePrimitiveApplication("READ_TICKET") to listOf(
@@ -3409,13 +2446,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { READ_TICKET },
                 micheline(tezos) { READ_TICKET() },
                 micheline(michelsonToMichelineConverter) { READ_TICKET() },
-                michelineData(tezos) { READ_TICKET },
                 michelineData(michelsonToMichelineConverter) { READ_TICKET },
-                michelineData(tezos) { READ_TICKET() },
                 michelineData(michelsonToMichelineConverter) { READ_TICKET() },
-                michelineInstruction(tezos) { READ_TICKET },
                 michelineInstruction(michelsonToMichelineConverter) { READ_TICKET },
-                michelineInstruction(tezos) { READ_TICKET() },
                 michelineInstruction(michelsonToMichelineConverter) { READ_TICKET() },
             ),
             MichelinePrimitiveApplication("SPLIT_TICKET") to listOf(
@@ -3423,13 +2456,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { SPLIT_TICKET },
                 micheline(tezos) { SPLIT_TICKET() },
                 micheline(michelsonToMichelineConverter) { SPLIT_TICKET() },
-                michelineData(tezos) { SPLIT_TICKET },
                 michelineData(michelsonToMichelineConverter) { SPLIT_TICKET },
-                michelineData(tezos) { SPLIT_TICKET() },
                 michelineData(michelsonToMichelineConverter) { SPLIT_TICKET() },
-                michelineInstruction(tezos) { SPLIT_TICKET },
                 michelineInstruction(michelsonToMichelineConverter) { SPLIT_TICKET },
-                michelineInstruction(tezos) { SPLIT_TICKET() },
                 michelineInstruction(michelsonToMichelineConverter) { SPLIT_TICKET() },
             ),
             MichelinePrimitiveApplication("JOIN_TICKETS") to listOf(
@@ -3437,13 +2466,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { JOIN_TICKETS },
                 micheline(tezos) { JOIN_TICKETS() },
                 micheline(michelsonToMichelineConverter) { JOIN_TICKETS() },
-                michelineData(tezos) { JOIN_TICKETS },
                 michelineData(michelsonToMichelineConverter) { JOIN_TICKETS },
-                michelineData(tezos) { JOIN_TICKETS() },
                 michelineData(michelsonToMichelineConverter) { JOIN_TICKETS() },
-                michelineInstruction(tezos) { JOIN_TICKETS },
                 michelineInstruction(michelsonToMichelineConverter) { JOIN_TICKETS },
-                michelineInstruction(tezos) { JOIN_TICKETS() },
                 michelineInstruction(michelsonToMichelineConverter) { JOIN_TICKETS() },
             ),
             MichelinePrimitiveApplication("OPEN_CHEST") to listOf(
@@ -3451,13 +2476,9 @@ class MichelineMichelsonInstructionDslTest {
                 micheline(michelsonToMichelineConverter) { OPEN_CHEST },
                 micheline(tezos) { OPEN_CHEST() },
                 micheline(michelsonToMichelineConverter) { OPEN_CHEST() },
-                michelineData(tezos) { OPEN_CHEST },
                 michelineData(michelsonToMichelineConverter) { OPEN_CHEST },
-                michelineData(tezos) { OPEN_CHEST() },
                 michelineData(michelsonToMichelineConverter) { OPEN_CHEST() },
-                michelineInstruction(tezos) { OPEN_CHEST },
                 michelineInstruction(michelsonToMichelineConverter) { OPEN_CHEST },
-                michelineInstruction(tezos) { OPEN_CHEST() },
                 michelineInstruction(michelsonToMichelineConverter) { OPEN_CHEST() },
             ),
         )

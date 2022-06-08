@@ -5,6 +5,7 @@ import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.converter.fromStringOrNull
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import mockTezos
 import org.junit.After
 import org.junit.Before
@@ -42,7 +43,7 @@ class StringToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should convert name to Michelson Prim`() {
+    fun `should convert name to Michelson Prim`() = withTezosContext {
         val valuesWithExpected = Michelson.Prim.values.map {
             when (it) {
                 MichelsonComparableType.Option -> it.name to MichelsonType.Option
@@ -60,7 +61,7 @@ class StringToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should convert name to MichelsonData Prim`() {
+    fun `should convert name to MichelsonData Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonData.Prim.values.map { it.name to it }
 
         valuesWithExpected.forEach {
@@ -71,7 +72,7 @@ class StringToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should convert name to MichelsonInstruction Prim`() {
+    fun `should convert name to MichelsonInstruction Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonInstruction.Prim.values.map { it.name to it }
 
         valuesWithExpected.forEach {
@@ -82,7 +83,7 @@ class StringToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should convert name to MichelsonType Prim`() {
+    fun `should convert name to MichelsonType Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonType.Prim.values.map {
             when (it) {
                 MichelsonComparableType.Option -> it.name to MichelsonType.Option
@@ -100,7 +101,7 @@ class StringToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should convert name to MichelsonComparableType Prim`() {
+    fun `should convert name to MichelsonComparableType Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonComparableType.Prim.values.map { it.name to it }
 
         valuesWithExpected.forEach {
@@ -111,7 +112,7 @@ class StringToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should fail to convert unknown string to Michelson Prim`() {
+    fun `should fail to convert unknown string to Michelson Prim`() = withTezosContext {
         val unknownStrings = listOf("unknown")
 
         unknownStrings.forEach {

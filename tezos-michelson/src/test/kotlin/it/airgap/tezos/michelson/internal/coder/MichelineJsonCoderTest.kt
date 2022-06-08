@@ -6,6 +6,7 @@ import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.coder.fromJsonString
 import it.airgap.tezos.michelson.coder.toJsonString
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -41,7 +42,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should encode Micheline Node to JSON`() {
+    fun `should encode Micheline Node to JSON`() = withTezosContext {
         listOf(
             literalIntegerWithJson(),
             literalStringWithJson(),
@@ -72,7 +73,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should encode Micheline Literal to JSON`() {
+    fun `should encode Micheline Literal to JSON`() = withTezosContext {
         listOf(
             literalIntegerWithJson(),
             literalStringWithJson(),
@@ -99,7 +100,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should encode Micheline Primitive Application to JSON`() {
+    fun `should encode Micheline Primitive Application to JSON`() = withTezosContext {
         listOf(
             primitiveApplicationWithJson(),
             primitiveApplicationWithJson(args = listOf(MichelineLiteral.Integer(0))),
@@ -115,7 +116,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should encode Micheline Sequence to JSON`() {
+    fun `should encode Micheline Sequence to JSON`() = withTezosContext {
         listOf(
             sequenceWithJson(),
             sequenceWithJson(listOf(MichelineLiteral.Integer(0))),
@@ -138,7 +139,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should decode Micheline Node from JSON`() {
+    fun `should decode Micheline Node from JSON`() = withTezosContext {
         listOf(
             literalIntegerWithJson(),
             literalStringWithJson(),
@@ -167,7 +168,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should decode Micheline Literal from JSON`() {
+    fun `should decode Micheline Literal from JSON`() = withTezosContext {
         listOf(
             literalIntegerWithJson(),
             literalStringWithJson(),
@@ -190,7 +191,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should decode Micheline Primitive Application from JSON`() {
+    fun `should decode Micheline Primitive Application from JSON`() = withTezosContext {
         listOf(
             primitiveApplicationWithJson(),
             primitiveApplicationWithJson(args = listOf(MichelineLiteral.Integer(0))),
@@ -205,7 +206,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should decode Micheline Sequence from JSON`() {
+    fun `should decode Micheline Sequence from JSON`() = withTezosContext {
         listOf(
             sequenceWithJson(),
             sequenceWithJson(listOf(MichelineLiteral.Integer(0))),

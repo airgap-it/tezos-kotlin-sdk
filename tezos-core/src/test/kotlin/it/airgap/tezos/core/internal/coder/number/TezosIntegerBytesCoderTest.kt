@@ -2,11 +2,9 @@ package it.airgap.tezos.core.internal.coder.number
 
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.number.decodeConsumingFromBytes
-import it.airgap.tezos.core.coder.number.decodeFromBytes
-import it.airgap.tezos.core.coder.number.encodeToBytes
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.number.TezosInteger
 import mockTezos
 import org.junit.After
@@ -33,30 +31,27 @@ class TezosIntegerBytesCoderTest {
     }
 
     @Test
-    fun `should encode TezosInteger to bytes`() {
+    fun `should encode TezosInteger to bytes`() = withTezosContext {
         integersWithBytes.forEach {
             assertContentEquals(it.second, tezosIntegerBytesCoder.encode(it.first))
-            assertContentEquals(it.second, it.first.encodeToBytes(tezos))
             assertContentEquals(it.second, it.first.encodeToBytes(tezosIntegerBytesCoder))
         }
     }
 
     @Test
-    fun `should decode TezosInteger from bytes`() {
+    fun `should decode TezosInteger from bytes`() = withTezosContext {
         integersWithBytes.forEach {
             assertEquals(it.first, tezosIntegerBytesCoder.decode(it.second))
             assertEquals(it.first, tezosIntegerBytesCoder.decodeConsuming(it.second.toMutableList()))
-            assertEquals(it.first, TezosInteger.decodeFromBytes(it.second, tezos))
             assertEquals(it.first, TezosInteger.decodeFromBytes(it.second, tezosIntegerBytesCoder))
             assertEquals(it.first, TezosInteger.decodeConsumingFromBytes(it.second.toMutableList(), tezosIntegerBytesCoder))
         }
     }
 
     @Test
-    fun `should fail to decode Tezos integer from invalid bytes`() {
+    fun `should fail to decode Tezos integer from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { tezosIntegerBytesCoder.decode(it) }
-            assertFailsWith<IllegalArgumentException> { TezosInteger.decodeFromBytes(it, tezos) }
             assertFailsWith<IllegalArgumentException> { TezosInteger.decodeFromBytes(it, tezosIntegerBytesCoder) }
             assertFailsWith<IllegalArgumentException> { tezosIntegerBytesCoder.decodeConsuming(it.toMutableList()) }
             assertFailsWith<IllegalArgumentException> { TezosInteger.decodeConsumingFromBytes(it.toMutableList(), tezosIntegerBytesCoder) }

@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.MichelsonData
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -34,7 +35,7 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline Literal`() {
+    fun `builds Micheline Literal`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelineLiteral.Integer(0) to listOf(
                 micheline(tezos) { int("0") },
@@ -68,7 +69,7 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline Primitive Application`() {
+    fun `builds Micheline Primitive Application`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("Unit") to listOf(
                 micheline(tezos) {
@@ -162,7 +163,7 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline Sequence`() {
+    fun `builds Micheline Sequence`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelineSequence(MichelineLiteral.Integer(0)) to listOf(
                 micheline(tezos) {
@@ -215,7 +216,7 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline from Michelson`() {
+    fun `builds Micheline from Michelson`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("Unit") to listOf(
                 micheline(tezos) {

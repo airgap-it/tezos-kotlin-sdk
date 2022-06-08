@@ -4,12 +4,12 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.lazyWeak
 import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker

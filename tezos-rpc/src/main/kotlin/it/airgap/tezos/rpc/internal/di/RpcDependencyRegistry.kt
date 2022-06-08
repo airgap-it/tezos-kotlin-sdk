@@ -2,7 +2,6 @@ package it.airgap.tezos.rpc.internal.di
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
-import it.airgap.tezos.core.internal.utils.getOrPutWeak
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.internal.di.OperationDependencyRegistry
 import it.airgap.tezos.rpc.TezosRpc
@@ -10,6 +9,7 @@ import it.airgap.tezos.rpc.TezosRpcClient
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpc
 import it.airgap.tezos.rpc.active.ActiveSimplifiedRpcClient
 import it.airgap.tezos.rpc.http.HttpClientProvider
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.getOrPutWeak
 import it.airgap.tezos.rpc.internal.estimator.FeeEstimator
 import it.airgap.tezos.rpc.internal.estimator.OperationFeeEstimator
 import it.airgap.tezos.rpc.internal.http.HttpClient

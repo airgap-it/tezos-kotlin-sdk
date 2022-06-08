@@ -4,8 +4,8 @@ import it.airgap.tezos.core.crypto.CryptoProvider
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58
 import it.airgap.tezos.core.internal.base58.Base58Check
+import it.airgap.tezos.core.internal.context.TezosCoreContext.lazyWeak
 import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.delegate.lazyWeak
 
 @InternalTezosSdkApi
 public class DependencyRegistry(cryptoProvider: CryptoProvider) {

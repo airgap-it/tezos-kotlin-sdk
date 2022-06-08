@@ -1,5 +1,6 @@
 package it.airgap.tezos.core.internal.delegate
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.default
 import org.junit.Test
 import kotlin.test.assertEquals
 

@@ -1,20 +1,20 @@
 package it.airgap.tezos.contract.internal.converter
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
+import it.airgap.tezos.contract.internal.context.TezosContractContext.consume
+import it.airgap.tezos.contract.internal.context.TezosContractContext.consumeAll
+import it.airgap.tezos.contract.internal.context.TezosContractContext.consumeAt
+import it.airgap.tezos.contract.internal.context.TezosContractContext.failWithIllegalArgument
+import it.airgap.tezos.contract.internal.context.TezosContractContext.fromStringOrNull
+import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
 import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypointArgument
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.consume
-import it.airgap.tezos.core.internal.utils.consumeAll
-import it.airgap.tezos.core.internal.utils.consumeAt
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.converter.fromStringOrNull
-import it.airgap.tezos.michelson.converter.toCompactExpression
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
@@ -58,7 +58,7 @@ internal class EntrypointParameterToMichelineConverter(
         when (value) {
             is ContractEntrypointParameter.Value -> value.sequenceOrNull() ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
-                val named = meta.findValue(value) ?: failWithValueMetaMismatch(value, meta)
+                val named = meta.findValue(value) ?: meta.findFirstInstance<ContractEntrypointParameter.Sequence>(value) ?: failWithValueMetaMismatch(value, meta)
                 createMicheline(named, meta)
             }
             is ContractEntrypointParameter.Sequence -> {
@@ -73,7 +73,7 @@ internal class EntrypointParameterToMichelineConverter(
         when (value) {
             is ContractEntrypointParameter.Value -> value.sequenceOrNull(MichelsonData.Elt) ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
-                val named = meta.findValue(value) ?: failWithValueMetaMismatch(value, meta)
+                val named = meta.findValue(value) ?: meta.findFirstInstance<ContractEntrypointParameter.Map>(value) ?: failWithValueMetaMismatch(value, meta)
                 createMicheline(named, meta)
             }
             is ContractEntrypointParameter.Map -> {
@@ -270,6 +270,10 @@ internal class EntrypointParameterToMichelineConverter(
 
     private fun MetaContractEntrypointArgument.findValue(value: ContractEntrypointParameter.Object): ContractEntrypointParameter? =
         value.elements.consume { names.contains(it.name) }
+
+    private inline fun <reified T : ContractEntrypointParameter> MetaContractEntrypointArgument.findFirstInstance(
+        value: ContractEntrypointParameter.Object
+    ): ContractEntrypointParameter? = value.elements.consume { it is T }
 
     private fun MetaContractEntrypointArgument.Object.extract(value: ContractEntrypointParameter.Object): MetaContractEntrypointArgument? {
         val direction = flattenTraces.entries

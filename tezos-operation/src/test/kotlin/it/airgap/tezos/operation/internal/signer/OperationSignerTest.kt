@@ -4,13 +4,16 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.asHexString
+import it.airgap.tezos.operation.internal.context.withTezosContext
 import it.airgap.tezos.operation.internal.operationModule
 import it.airgap.tezos.operation.signer.sign
+import it.airgap.tezos.operation.signer.signWith
 import it.airgap.tezos.operation.signer.verify
+import it.airgap.tezos.operation.signer.verifyWith
 import mockTezos
 import org.junit.After
 import org.junit.Before
@@ -62,7 +65,7 @@ class OperationSignerTest {
     }
 
     @Test
-    fun `should sign Operation`() {
+    fun `should sign Operation`() = withTezosContext {
         operationsWithEd25519Signatures.forEach {
             val key = ed25519KeyPair.first
 
@@ -73,11 +76,11 @@ class OperationSignerTest {
             assertEquals(it.second, operationEd25519Signer.sign(it.first, key))
             assertEquals(it.second, operationSigner.sign(signedWithCurrentKey, key))
             assertEquals(it.second, operationEd25519Signer.sign(signedWithCurrentKey, key))
-            assertEquals(signedWithCurrentKey, it.first.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, it.first.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, it.first.sign(key, operationSigner))
-            assertEquals(signedWithCurrentKey, signedWithCurrentKey.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, signedWithCurrentKey.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, signedWithCurrentKey.sign(key, operationSigner))
-            assertEquals(signedWithCurrentKey, signedWithOtherKey.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, signedWithOtherKey.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, signedWithOtherKey.sign(key, operationSigner))
             assertEquals(it.second, (key as SecretKey).sign(it.first, tezos))
             assertEquals(it.second, key.sign(it.first, tezos))
@@ -95,11 +98,11 @@ class OperationSignerTest {
             assertEquals(it.second, operationSecp256K1Signer.sign(it.first, key))
             assertEquals(it.second, operationSigner.sign(signedWithCurrentKey, key))
             assertEquals(it.second, operationSecp256K1Signer.sign(signedWithCurrentKey, key))
-            assertEquals(signedWithCurrentKey, it.first.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, it.first.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, it.first.sign(key, operationSigner))
-            assertEquals(signedWithCurrentKey, signedWithCurrentKey.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, signedWithCurrentKey.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, signedWithCurrentKey.sign(key, operationSigner))
-            assertEquals(signedWithCurrentKey, signedWithOtherKey.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, signedWithOtherKey.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, signedWithOtherKey.sign(key, operationSigner))
             assertEquals(it.second, (key as SecretKey).sign(it.first, tezos))
             assertEquals(it.second, key.sign(it.first, tezos))
@@ -117,11 +120,11 @@ class OperationSignerTest {
             assertEquals(it.second, operationP256Signer.sign(it.first, key))
             assertEquals(it.second, operationSigner.sign(signedWithCurrentKey, key))
             assertEquals(it.second, operationP256Signer.sign(signedWithCurrentKey, key))
-            assertEquals(signedWithCurrentKey, it.first.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, it.first.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, it.first.sign(key, operationSigner))
-            assertEquals(signedWithCurrentKey, signedWithCurrentKey.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, signedWithCurrentKey.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, signedWithCurrentKey.sign(key, operationSigner))
-            assertEquals(signedWithCurrentKey, signedWithOtherKey.sign(key, tezos))
+            assertEquals(signedWithCurrentKey, signedWithOtherKey.signWith(key, tezos))
             assertEquals(signedWithCurrentKey, signedWithOtherKey.sign(key, operationSigner))
             assertEquals(it.second, (key as SecretKey).sign(it.first, tezos))
             assertEquals(it.second, key.sign(it.first, tezos))
@@ -131,7 +134,7 @@ class OperationSignerTest {
     }
 
     @Test
-    fun `should verify Operation signature`() {
+    fun `should verify Operation signature`() = withTezosContext {
         operationsWithEd25519Signatures.forEach {
             val key = ed25519KeyPair.second
 
@@ -141,25 +144,25 @@ class OperationSignerTest {
             val signedWithP256Key = Operation.Signed.from(it.first, P256Signature("p2sigTrmxRGhckRaai4vVSDBeRwUfuPhHzJZmQtnX9MxaUsRBE9KMgNe1nwA2BWWZdH8qUtcE5nr8H5XjD8VtcJsabqGpNDRgx"))
 
             assertTrue(operationSigner.verify(signedWithCurrentKey, signedWithCurrentKey.signature, key), "Expected operation signed with matching secret key to be verified positively.")
-            assertTrue(signedWithCurrentKey.verify(key, tezos), "Expected operation signed with matching secret key to be verified positively.")
+            assertTrue(signedWithCurrentKey.verifyWith(key, tezos), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(signedWithCurrentKey.verify(key, operationSigner), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(key.verify(signedWithCurrentKey, tezos), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(key.verify(signedWithCurrentKey, operationSigner), "Expected operation signed with matching secret key to be verified positively.")
 
             assertFalse(operationSigner.verify(signedWithOtherKey, signedWithOtherKey.signature, key), "Expected operation signed with other key to be verified negatively.")
-            assertFalse(signedWithOtherKey.verify(key, tezos), "Expected operation signed with other key to be verified negatively.")
+            assertFalse(signedWithOtherKey.verifyWith(key, tezos), "Expected operation signed with other key to be verified negatively.")
             assertFalse(signedWithOtherKey.verify(key, operationSigner), "Expected operation signed with other key to be verified negatively.")
             assertFalse(key.verify(signedWithOtherKey, tezos), "Expected operation signed with other key to be verified negatively.")
             assertFalse(key.verify(signedWithOtherKey, operationSigner), "Expected operation signed with other key to be verified negatively.")
 
             assertFalse(operationSigner.verify(signedWithSecp256K1Key, signedWithSecp256K1Key.signature, key), "Expected operation signed with secp256K1 key to be verified negatively.")
-            assertFalse(signedWithSecp256K1Key.verify(key, tezos), "Expected operation signed with secp256K1 key to be verified negatively.")
+            assertFalse(signedWithSecp256K1Key.verifyWith(key, tezos), "Expected operation signed with secp256K1 key to be verified negatively.")
             assertFalse(signedWithSecp256K1Key.verify(key, operationSigner), "Expected operation signed with secp256K1 key to be verified negatively.")
             assertFalse(key.verify(signedWithSecp256K1Key, tezos), "Expected operation signed with secp256K1 key to be verified negatively.")
             assertFalse(key.verify(signedWithSecp256K1Key, operationSigner), "Expected operation signed with secp256K1 key to be verified negatively.")
 
             assertFalse(operationSigner.verify(signedWithP256Key, signedWithP256Key.signature, key), "Expected operation signed with P256 key to be verified negatively.")
-            assertFalse(signedWithP256Key.verify(key, tezos), "Expected operation signed with P256 key to be verified negatively.")
+            assertFalse(signedWithP256Key.verifyWith(key, tezos), "Expected operation signed with P256 key to be verified negatively.")
             assertFalse(signedWithP256Key.verify(key, operationSigner), "Expected operation signed with P256 key to be verified negatively.")
             assertFalse(key.verify(signedWithP256Key, tezos), "Expected operation signed with P256 key to be verified negatively.")
             assertFalse(key.verify(signedWithP256Key, operationSigner), "Expected operation signed with P256 key to be verified negatively.")
@@ -174,25 +177,25 @@ class OperationSignerTest {
             val signedWithP256Key = Operation.Signed.from(it.first, P256Signature("p2sigTrmxRGhckRaai4vVSDBeRwUfuPhHzJZmQtnX9MxaUsRBE9KMgNe1nwA2BWWZdH8qUtcE5nr8H5XjD8VtcJsabqGpNDRgx"))
 
             assertTrue(operationSigner.verify(signedWithCurrentKey, signedWithCurrentKey.signature, key), "Expected operation signed with matching secret key to be verified positively.")
-            assertTrue(signedWithCurrentKey.verify(key, tezos), "Expected operation signed with matching secret key to be verified positively.")
+            assertTrue(signedWithCurrentKey.verifyWith(key, tezos), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(signedWithCurrentKey.verify(key, operationSigner), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(key.verify(signedWithCurrentKey, tezos), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(key.verify(signedWithCurrentKey, operationSigner), "Expected operation signed with matching secret key to be verified positively.")
 
             assertFalse(operationSigner.verify(signedWithOtherKey, signedWithOtherKey.signature, key), "Expected operation signed with other key to be verified negatively.")
-            assertFalse(signedWithOtherKey.verify(key, tezos), "Expected operation signed with other key to be verified negatively.")
+            assertFalse(signedWithOtherKey.verifyWith(key, tezos), "Expected operation signed with other key to be verified negatively.")
             assertFalse(signedWithOtherKey.verify(key, operationSigner), "Expected operation signed with other key to be verified negatively.")
             assertFalse(key.verify(signedWithOtherKey, tezos), "Expected operation signed with other key to be verified negatively.")
             assertFalse(key.verify(signedWithOtherKey, operationSigner), "Expected operation signed with other key to be verified negatively.")
 
             assertFalse(operationSigner.verify(signedWithEd25519Key, signedWithEd25519Key.signature, key), "Expected operation signed with Ed25519 key to be verified negatively.")
-            assertFalse(signedWithEd25519Key.verify(key, tezos), "Expected operation signed with Ed25519 key to be verified negatively.")
+            assertFalse(signedWithEd25519Key.verifyWith(key, tezos), "Expected operation signed with Ed25519 key to be verified negatively.")
             assertFalse(signedWithEd25519Key.verify(key, operationSigner), "Expected operation signed with Ed25519 key to be verified negatively.")
             assertFalse(key.verify(signedWithEd25519Key, tezos), "Expected operation signed with Ed25519 key to be verified negatively.")
             assertFalse(key.verify(signedWithEd25519Key, operationSigner), "Expected operation signed with Ed25519 key to be verified negatively.")
 
             assertFalse(operationSigner.verify(signedWithP256Key, signedWithP256Key.signature, key), "Expected operation signed with P256 key to be verified negatively.")
-            assertFalse(signedWithP256Key.verify(key, tezos), "Expected operation signed with P256 key to be verified negatively.")
+            assertFalse(signedWithP256Key.verifyWith(key, tezos), "Expected operation signed with P256 key to be verified negatively.")
             assertFalse(signedWithP256Key.verify(key, operationSigner), "Expected operation signed with P256 key to be verified negatively.")
             assertFalse(key.verify(signedWithP256Key, tezos), "Expected operation signed with P256 key to be verified negatively.")
             assertFalse(key.verify(signedWithP256Key, operationSigner), "Expected operation signed with P256 key to be verified negatively.")
@@ -207,25 +210,25 @@ class OperationSignerTest {
             val signedWithSecp256K1Key = Operation.Signed.from(it.first, Secp256K1Signature("spsig19ZLL6dzEryZ8sPp7ggaqK6p7P6oC4Zc24BTFYNZykuiuVA9KuNzfuoNETzPpqEzN16cLiHMfrfys8TTDV1ycyDgPL8wvm"))
 
             assertTrue(operationSigner.verify(signedWithCurrentKey, signedWithCurrentKey.signature, key), "Expected operation signed with matching secret key to be verified positively.")
-            assertTrue(signedWithCurrentKey.verify(key, tezos), "Expected operation signed with matching secret key to be verified positively.")
+            assertTrue(signedWithCurrentKey.verifyWith(key, tezos), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(signedWithCurrentKey.verify(key, operationSigner), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(key.verify(signedWithCurrentKey, tezos), "Expected operation signed with matching secret key to be verified positively.")
             assertTrue(key.verify(signedWithCurrentKey, operationSigner), "Expected operation signed with matching secret key to be verified positively.")
 
             assertFalse(operationSigner.verify(signedWithOtherKey, signedWithOtherKey.signature, key), "Expected operation signed with other key to be verified negatively.")
-            assertFalse(signedWithOtherKey.verify(key, tezos), "Expected operation signed with other key to be verified negatively.")
+            assertFalse(signedWithOtherKey.verifyWith(key, tezos), "Expected operation signed with other key to be verified negatively.")
             assertFalse(signedWithOtherKey.verify(key, operationSigner), "Expected operation signed with other key to be verified negatively.")
             assertFalse(key.verify(signedWithOtherKey, tezos), "Expected operation signed with other key to be verified negatively.")
             assertFalse(key.verify(signedWithOtherKey, operationSigner), "Expected operation signed with other key to be verified negatively.")
 
             assertFalse(operationSigner.verify(signedWithEd25519Key, signedWithEd25519Key.signature, key), "Expected operation signed with Ed25519 key to be verified negatively.")
-            assertFalse(signedWithEd25519Key.verify(key, tezos), "Expected operation signed with Ed25519 key to be verified negatively.")
+            assertFalse(signedWithEd25519Key.verifyWith(key, tezos), "Expected operation signed with Ed25519 key to be verified negatively.")
             assertFalse(signedWithEd25519Key.verify(key, operationSigner), "Expected operation signed with Ed25519 key to be verified negatively.")
             assertFalse(key.verify(signedWithEd25519Key, tezos), "Expected operation signed with Ed25519 key to be verified negatively.")
             assertFalse(key.verify(signedWithEd25519Key, operationSigner), "Expected operation signed with Ed25519 key to be verified negatively.")
 
             assertFalse(operationSigner.verify(signedWithSecp256K1Key, signedWithSecp256K1Key.signature, key), "Expected operation signed with secp256K1 key to be verified negatively.")
-            assertFalse(signedWithSecp256K1Key.verify(key, tezos), "Expected operation signed with secp256K1 key to be verified negatively.")
+            assertFalse(signedWithSecp256K1Key.verifyWith(key, tezos), "Expected operation signed with secp256K1 key to be verified negatively.")
             assertFalse(signedWithSecp256K1Key.verify(key, operationSigner), "Expected operation signed with secp256K1 key to be verified negatively.")
             assertFalse(key.verify(signedWithSecp256K1Key, tezos), "Expected operation signed with secp256K1 key to be verified negatively.")
             assertFalse(key.verify(signedWithSecp256K1Key, operationSigner), "Expected operation signed with secp256K1 key to be verified negatively.")

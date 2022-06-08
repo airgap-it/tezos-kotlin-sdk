@@ -1,8 +1,8 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.*
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.failWithIllegalArgument
 
 internal class TagToMichelsonPrimConverter : Converter<ByteArray, Michelson.Prim> {
     override fun convert(value: ByteArray): Michelson.Prim =

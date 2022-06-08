@@ -5,11 +5,17 @@ import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.type.operation.RpcInjectableOperation
 import it.airgap.tezos.rpc.type.protocol.RpcProtocolComponent
 
+/**
+ * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/injection`
+ */
 public interface Injection {
     public val block: Block
     public val operation: Operation
     public val protocol: Protocol
 
+    /**
+     * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/injection/block`
+     */
     public interface Block {
         public suspend fun post(
             data: String,
@@ -21,6 +27,9 @@ public interface Injection {
         ): InjectBlockResponse
     }
 
+    /**
+     * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/injection/operation`
+     */
     public interface Operation {
         public suspend fun post(
             data: String,
@@ -30,6 +39,9 @@ public interface Injection {
         ): InjectOperationResponse
     }
 
+    /**
+     * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/injection/protocol`
+     */
     public interface Protocol {
         public suspend fun post(
             expectedEnvVersion: UShort,

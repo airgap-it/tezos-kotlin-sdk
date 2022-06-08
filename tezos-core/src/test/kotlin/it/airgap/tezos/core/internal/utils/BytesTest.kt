@@ -1,5 +1,10 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.isHex
+import it.airgap.tezos.core.internal.context.TezosCoreContext.padStartEven
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toHexStringOrNull
 import it.airgap.tezos.core.internal.type.BigInt
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -26,8 +31,8 @@ class BytesTest {
 
     @Test
     fun `verifies if string is valid hex string`() {
-        val allValid = validHexStrings.map(String::isHex).fold(true, Boolean::and)
-        val allInvalid = invalidHexStrings.map(String::isHex).fold(false, Boolean::or)
+        val allValid = validHexStrings.map { it.isHex() }.fold(true, Boolean::and)
+        val allInvalid = invalidHexStrings.map { it.isHex() }.fold(false, Boolean::or)
 
         assertTrue(allValid)
         assertFalse(allInvalid)
@@ -157,7 +162,7 @@ class BytesTest {
             -1,
         ).map(BigInt::valueOf)
 
-        val hexStrings = negativeBigIntegers.mapNotNull(BigInt::toHexStringOrNull)
+        val hexStrings = negativeBigIntegers.mapNotNull { it.toHexStringOrNull() }
 
         assertEquals(0, hexStrings.size)
     }

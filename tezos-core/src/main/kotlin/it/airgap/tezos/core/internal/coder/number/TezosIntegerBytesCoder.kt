@@ -1,13 +1,16 @@
 package it.airgap.tezos.core.internal.coder.number
 
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeAt
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toBigInt
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toTezosInteger
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toTezosNatural
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.*
 import it.airgap.tezos.core.type.number.TezosInteger
 import it.airgap.tezos.core.type.number.TezosNatural
 
-internal class TezosIntegerBytesCoder(private val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural>) :
-    ConsumingBytesCoder<TezosInteger> {
+internal class TezosIntegerBytesCoder(private val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural>) : ConsumingBytesCoder<TezosInteger> {
     override fun encode(value: TezosInteger): ByteArray {
         val int = value.toBigInt()
         val abs = int.abs()

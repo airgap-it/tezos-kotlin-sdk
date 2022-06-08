@@ -1,6 +1,6 @@
 package it.airgap.tezos.core.internal.type
 
-import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toHexString
 import java.math.BigInteger
 import kotlin.random.Random
 import kotlin.test.*
@@ -1449,22 +1449,22 @@ class BigIntTest {
 
         assertEquals(
             -1,
-            jvmBigInt_1.div((-10).toInt(), roundingMode = BigInt.RoundingMode.Up).toInt(),
+            jvmBigInt_1.div(-10, roundingMode = BigInt.RoundingMode.Up).toInt(),
         )
 
         assertEquals(
             0,
-            jvmBigInt_1.div((-10).toInt(), roundingMode = BigInt.RoundingMode.Down).toInt(),
+            jvmBigInt_1.div(-10, roundingMode = BigInt.RoundingMode.Down).toInt(),
         )
 
         assertEquals(
             0,
-            jvmBigInt_1.div((-10).toInt(), roundingMode = BigInt.RoundingMode.Ceiling).toInt(),
+            jvmBigInt_1.div(-10, roundingMode = BigInt.RoundingMode.Ceiling).toInt(),
         )
 
         assertEquals(
             -1,
-            jvmBigInt_1.div((-10).toInt(), roundingMode = BigInt.RoundingMode.Floor).toInt(),
+            jvmBigInt_1.div(-10, roundingMode = BigInt.RoundingMode.Floor).toInt(),
         )
 
         assertEquals(

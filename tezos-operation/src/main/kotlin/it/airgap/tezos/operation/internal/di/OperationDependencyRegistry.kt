@@ -3,7 +3,6 @@ package it.airgap.tezos.operation.internal.di
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.signer.Signer
@@ -13,6 +12,7 @@ import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.internal.coder.OperationBytesCoder
 import it.airgap.tezos.operation.internal.coder.OperationContentBytesCoder
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.lazyWeak
 import it.airgap.tezos.operation.internal.converter.TagToOperationContentKindConverter
 import it.airgap.tezos.operation.internal.signer.OperationEd25519Signer
 import it.airgap.tezos.operation.internal.signer.OperationP256Signer

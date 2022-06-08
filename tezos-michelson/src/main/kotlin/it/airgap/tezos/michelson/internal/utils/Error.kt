@@ -6,10 +6,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlin.reflect.KClass
 
 @PublishedApi
-internal fun failWithUnexpectedMichelsonType(type: KClass<out Michelson>, caller: String): Nothing =
-    error("Unexpected Michelson type (${type}) for `$caller`.")
-
-@PublishedApi
 internal fun failWithUnexpectedMichelsonPrim(prim: KClass<out Michelson.Prim>, caller: String): Nothing =
     error("Unexpected Michelson prim (${prim.qualifiedName?.removePrefix(".Companion")?.substringAfterLast(".")}) for `$caller`.")
 

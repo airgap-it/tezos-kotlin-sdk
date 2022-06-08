@@ -2,12 +2,12 @@
 
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.core.converter.encoded.fromString
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.fromString
 import it.airgap.tezos.rpc.internal.utils.failWithUnexpectedJsonType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

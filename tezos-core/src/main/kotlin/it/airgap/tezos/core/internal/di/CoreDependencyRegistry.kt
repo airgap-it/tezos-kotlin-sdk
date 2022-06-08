@@ -8,9 +8,9 @@ import it.airgap.tezos.core.internal.coder.number.TezosIntegerBytesCoder
 import it.airgap.tezos.core.internal.coder.number.TezosNaturalBytesCoder
 import it.airgap.tezos.core.internal.coder.tez.MutezBytesCoder
 import it.airgap.tezos.core.internal.coder.timestamp.TimestampBigIntCoder
+import it.airgap.tezos.core.internal.context.TezosCoreContext.lazyWeak
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.converter.encoded.*
-import it.airgap.tezos.core.internal.delegate.lazyWeak
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
@@ -40,22 +40,11 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
 
     // -- converter --
 
-    public val bytesToAddressConverter: Converter<ByteArray, Address> by lazy { BytesToAddressConverter(global.base58Check) }
     public val stringToAddressConverter: Converter<String, Address> by lazy { Static.stringToAddressConverter }
-
-    public val bytesToImplicitAddressConverter: Converter<ByteArray, ImplicitAddress> by lazy { BytesToImplicitAddressConverter(bytesToPublicKeyHashConverter) }
     public val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazy { Static.stringToImplicitAddressConverter }
-
-    public val bytesToPublicKeyConverter: Converter<ByteArray, PublicKey> by lazy { BytesToPublicKeyConverter(global.base58Check) }
     public val stringToPublicKeyConverter: Converter<String, PublicKey> by lazy { Static.stringToPublicKeyConverter }
-
-    public val bytesToPublicKeyHashConverter: Converter<ByteArray, PublicKeyHash> by lazy { BytesToPublicKeyHashConverter(global.base58Check) }
     public val stringToPublicKeyHashConverter: Converter<String, PublicKeyHash> by lazy { Static.stringToPublicKeyHashConverter }
-
-    public val bytesToBlindedPublicKeyHashConverter: Converter<ByteArray, BlindedPublicKeyHash> by lazy { BytesToBlindedPublicKeyHashConverter(global.base58Check) }
     public val stringToBlindedPublicKeyHashConverter: Converter<String, BlindedPublicKeyHash> by lazy { Static.stringToBlindedPublicKeyHashConverter }
-
-    public val bytesToSignatureConverter: Converter<ByteArray, Signature> by lazy { BytesToSignatureConverter(global.base58Check) }
     public val stringToSignatureConverter: Converter<String, Signature> by lazy { Static.stringToSignatureConverter }
 
     public val signatureToGenericSignatureConverter: Converter<Signature, GenericSignature> by lazy { SignatureToGenericSignatureConverter(signatureBytesCoder, encodedBytesCoder) }
