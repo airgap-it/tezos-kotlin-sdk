@@ -1,22 +1,20 @@
 package it.airgap.tezos.michelson.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.allIsInstance
-import it.airgap.tezos.core.internal.utils.anyIsInstance
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.utils.second
-import it.airgap.tezos.michelson.internal.utils.third
+import it.airgap.tezos.michelson.comparator.isPrim
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.failWithIllegalArgument
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.fromStringOrNull
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toCompactExpression
+import it.airgap.tezos.michelson.internal.utils.*
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-@InternalTezosSdkApi
-public class MichelineToMichelsonConverter(
-    stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    michelineToCompactStringConverter: MichelineToCompactStringConverter,
+internal class MichelineToMichelsonConverter(
+    stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    michelineToCompactStringConverter: Converter<MichelineNode, String>,
 ) : Converter<MichelineNode, Michelson> {
     private val literalToMichelsonConverter: MichelineLiteralToMichelsonConverter = MichelineLiteralToMichelsonConverter(michelineToCompactStringConverter)
     private val primitiveApplicationToMichelsonConverter: MichelinePrimitiveApplicationToMichelsonConverter = MichelinePrimitiveApplicationToMichelsonConverter(
@@ -34,7 +32,7 @@ public class MichelineToMichelsonConverter(
         }
 }
 
-private class MichelineLiteralToMichelsonConverter(private val michelineToCompactStringConverter: MichelineToCompactStringConverter) : Converter<MichelineLiteral, Michelson> {
+private class MichelineLiteralToMichelsonConverter(private val michelineToCompactStringConverter: Converter<MichelineNode, String>) : Converter<MichelineLiteral, Michelson> {
     override fun convert(value: MichelineLiteral): Michelson = with(value) {
         try {
             when (this) {
@@ -52,9 +50,9 @@ private class MichelineLiteralToMichelsonConverter(private val michelineToCompac
 }
 
 private class MichelinePrimitiveApplicationToMichelsonConverter(
-    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
-    private val toMichelsonConverter: MichelineToMichelsonConverter,
+    private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    private val toMichelsonConverter: Converter<MichelineNode, Michelson>,
 ) : Converter<MichelinePrimitiveApplication, Michelson> {
     override fun convert(value: MichelinePrimitiveApplication): Michelson = with(value) {
         val prim = Michelson.Prim.fromStringOrNull(prim.value, stringToMichelsonPrimConverter) ?: failWithUnknownPrimitiveApplication(this)
@@ -117,8 +115,11 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             }
             MichelsonInstruction.Dup -> {
                 val n = args.firstOrNull()?.convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonInstruction.Dup.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Dup(n)
+                MichelsonInstruction.Dup(n, metadata)
             }
             MichelsonInstruction.Swap -> MichelsonInstruction.Swap
             MichelsonInstruction.Dig -> {
@@ -134,16 +135,37 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             MichelsonInstruction.Push -> {
                 val type = args.first().convertToExpected<MichelsonType>()
                 val value = args.second().convertToExpected<MichelsonData>()
+                val metadata = MichelsonInstruction.Push.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Push(type, value)
+                MichelsonInstruction.Push(type, value, metadata)
             }
-            MichelsonInstruction.Some -> MichelsonInstruction.Some
+            MichelsonInstruction.Some -> {
+                val metadata = MichelsonInstruction.Some.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Some(metadata)
+            }
             MichelsonInstruction.None -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.None.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.None(type)
+                MichelsonInstruction.None(type, metadata)
             }
-            MichelsonInstruction.Unit -> MichelsonInstruction.Unit
+            MichelsonInstruction.Unit -> {
+                val metadata = MichelsonInstruction.Unit.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Unit(metadata)
+            }
             MichelsonInstruction.Never -> MichelsonInstruction.Never
             MichelsonInstruction.IfNone -> {
                 val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
@@ -153,25 +175,53 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             }
             MichelsonInstruction.Pair -> {
                 val n = args.firstOrNull()?.convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonInstruction.Pair.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Pair(n)
+                MichelsonInstruction.Pair(n, metadata)
             }
-            MichelsonInstruction.Car -> MichelsonInstruction.Car
-            MichelsonInstruction.Cdr -> MichelsonInstruction.Cdr
+            MichelsonInstruction.Car -> {
+                val metadata = MichelsonInstruction.Car.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Car(metadata)
+            }
+            MichelsonInstruction.Cdr -> {
+                val metadata = MichelsonInstruction.Cdr.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Cdr(metadata)
+            }
             MichelsonInstruction.Unpair -> {
                 val n = args.firstOrNull()?.convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonInstruction.Unpair.Metadata(
+                    firstVariableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    secondVariableName = michelsonAnnotations.secondInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Unpair(n)
+                MichelsonInstruction.Unpair(n, metadata)
             }
             MichelsonInstruction.Left -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.Left.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Left(type)
+                MichelsonInstruction.Left(type, metadata)
             }
             MichelsonInstruction.Right -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.Right.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Right(type)
+                MichelsonInstruction.Right(type, metadata)
             }
             MichelsonInstruction.IfLeft -> {
                 val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
@@ -181,54 +231,97 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
             }
             MichelsonInstruction.Nil -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.Nil.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Nil(type)
+                MichelsonInstruction.Nil(type, metadata)
             }
-            MichelsonInstruction.Cons -> MichelsonInstruction.Cons
+            MichelsonInstruction.Cons -> {
+                val metadata = MichelsonInstruction.Cons.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Cons(metadata)
+            }
             MichelsonInstruction.IfCons -> {
                 val ifBranch = args.first().convertToExpected<MichelsonInstruction.Sequence>()
                 val elseBranch = args.second().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.IfCons(ifBranch, elseBranch)
             }
-            MichelsonInstruction.Size -> MichelsonInstruction.Size
+            MichelsonInstruction.Size -> {
+                val metadata = MichelsonInstruction.Size.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Size(metadata)
+            }
             MichelsonInstruction.EmptySet -> {
                 val type = args.first().convertToExpected<MichelsonComparableType>()
+                val metadata = MichelsonInstruction.EmptySet.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.EmptySet(type)
+                MichelsonInstruction.EmptySet(type, metadata)
             }
             MichelsonInstruction.EmptyMap -> {
                 val keyType = args.first().convertToExpected<MichelsonComparableType>()
                 val valueType = args.second().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.EmptyMap.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.EmptyMap(keyType, valueType)
+                MichelsonInstruction.EmptyMap(keyType, valueType, metadata)
             }
             MichelsonInstruction.EmptyBigMap -> {
                 val keyType = args.first().convertToExpected<MichelsonComparableType>()
                 val valueType = args.second().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.EmptyBigMap.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.EmptyBigMap(keyType, valueType)
+                MichelsonInstruction.EmptyBigMap(keyType, valueType, metadata)
             }
             MichelsonInstruction.Map -> {
                 val expression = args.first().convertToExpected<MichelsonInstruction.Sequence>()
+                val metadata = MichelsonInstruction.Map.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Map(expression)
+                MichelsonInstruction.Map(expression, metadata)
             }
             MichelsonInstruction.Iter -> {
                 val expression = args.first().convertToExpected<MichelsonInstruction.Sequence>()
 
                 MichelsonInstruction.Iter(expression)
             }
-            MichelsonInstruction.Mem -> MichelsonInstruction.Mem
+            MichelsonInstruction.Mem -> {
+                val metadata = MichelsonInstruction.Mem.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Mem(metadata)
+            }
             MichelsonInstruction.Get -> {
                 val n = args.firstOrNull()?.convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonInstruction.Get.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Get(n)
+                MichelsonInstruction.Get(n, metadata)
             }
             MichelsonInstruction.Update -> {
                 val n = args.firstOrNull()?.convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonInstruction.Update.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Update(n)
+                MichelsonInstruction.Update(n, metadata)
             }
             MichelsonInstruction.GetAndUpdate -> MichelsonInstruction.GetAndUpdate
             MichelsonInstruction.If -> {
@@ -251,10 +344,19 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
                 val parameterType = args.first().convertToExpected<MichelsonType>()
                 val returnType = args.second().convertToExpected<MichelsonType>()
                 val body = args.third().convertToExpected<MichelsonInstruction.Sequence>()
+                val metadata = MichelsonInstruction.Lambda.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Lambda(parameterType, returnType, body)
+                MichelsonInstruction.Lambda(parameterType, returnType, body, metadata)
             }
-            MichelsonInstruction.Exec -> MichelsonInstruction.Exec
+            MichelsonInstruction.Exec -> {
+                val metadata = MichelsonInstruction.Exec.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Exec(metadata)
+            }
             MichelsonInstruction.Apply -> MichelsonInstruction.Apply
             MichelsonInstruction.Dip -> {
                 val (n, instruction) = if (args.size == 1) {
@@ -269,9 +371,27 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
                 MichelsonInstruction.Dip(instruction, n)
             }
             MichelsonInstruction.Failwith -> MichelsonInstruction.Failwith
-            MichelsonInstruction.Cast -> MichelsonInstruction.Cast
-            MichelsonInstruction.Rename -> MichelsonInstruction.Rename
-            MichelsonInstruction.Concat -> MichelsonInstruction.Concat
+            MichelsonInstruction.Cast -> {
+                val metadata = MichelsonInstruction.Cast.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Cast(metadata)
+            }
+            MichelsonInstruction.Rename -> {
+                val metadata = MichelsonInstruction.Rename.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Rename(metadata)
+            }
+            MichelsonInstruction.Concat -> {
+                val metadata = MichelsonInstruction.Concat.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Concat(metadata)
+            }
             MichelsonInstruction.Slice -> MichelsonInstruction.Slice
             MichelsonInstruction.Pack -> MichelsonInstruction.Pack
             MichelsonInstruction.Unpack -> {
@@ -279,60 +399,307 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
 
                 MichelsonInstruction.Unpack(type)
             }
-            MichelsonInstruction.Add -> MichelsonInstruction.Add
-            MichelsonInstruction.Sub -> MichelsonInstruction.Sub
-            MichelsonInstruction.Mul -> MichelsonInstruction.Mul
-            MichelsonInstruction.Ediv -> MichelsonInstruction.Ediv
-            MichelsonInstruction.Abs -> MichelsonInstruction.Abs
-            MichelsonInstruction.Isnat -> MichelsonInstruction.Isnat
-            MichelsonInstruction.Int -> MichelsonInstruction.Int
-            MichelsonInstruction.Neg -> MichelsonInstruction.Neg
-            MichelsonInstruction.Lsl -> MichelsonInstruction.Lsl
-            MichelsonInstruction.Lsr -> MichelsonInstruction.Lsr
-            MichelsonInstruction.Or -> MichelsonInstruction.Or
-            MichelsonInstruction.And -> MichelsonInstruction.And
-            MichelsonInstruction.Xor -> MichelsonInstruction.Xor
-            MichelsonInstruction.Not -> MichelsonInstruction.Not
-            MichelsonInstruction.Compare -> MichelsonInstruction.Compare
-            MichelsonInstruction.Eq -> MichelsonInstruction.Eq
-            MichelsonInstruction.Neq -> MichelsonInstruction.Neq
-            MichelsonInstruction.Lt -> MichelsonInstruction.Lt
-            MichelsonInstruction.Gt -> MichelsonInstruction.Gt
-            MichelsonInstruction.Le -> MichelsonInstruction.Le
-            MichelsonInstruction.Ge -> MichelsonInstruction.Ge
-            MichelsonInstruction.Self -> MichelsonInstruction.Self
-            MichelsonInstruction.SelfAddress -> MichelsonInstruction.SelfAddress
+            MichelsonInstruction.Add -> {
+                val metadata = MichelsonInstruction.Add.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Add(metadata)
+            }
+            MichelsonInstruction.Sub -> {
+                val metadata = MichelsonInstruction.Sub.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Sub(metadata)
+            }
+            MichelsonInstruction.Mul -> {
+                val metadata = MichelsonInstruction.Mul.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Mul(metadata)
+            }
+            MichelsonInstruction.Ediv -> {
+                val metadata = MichelsonInstruction.Ediv.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Ediv(metadata)
+            }
+            MichelsonInstruction.Abs -> {
+                val metadata = MichelsonInstruction.Abs.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Abs(metadata)
+            }
+            MichelsonInstruction.Isnat -> {
+                val metadata = MichelsonInstruction.Isnat.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Isnat(metadata)
+            }
+            MichelsonInstruction.Int -> {
+                val metadata = MichelsonInstruction.Int.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Int(metadata)
+            }
+            MichelsonInstruction.Neg -> {
+                val metadata = MichelsonInstruction.Neg.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Neg(metadata)
+            }
+            MichelsonInstruction.Lsl -> {
+                val metadata = MichelsonInstruction.Lsl.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Lsl(metadata)
+            }
+            MichelsonInstruction.Lsr -> {
+                val metadata = MichelsonInstruction.Lsr.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Lsr(metadata)
+            }
+            MichelsonInstruction.Or -> {
+                val metadata = MichelsonInstruction.Or.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Or(metadata)
+            }
+            MichelsonInstruction.And -> {
+                val metadata = MichelsonInstruction.And.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.And(metadata)
+            }
+            MichelsonInstruction.Xor -> {
+                val metadata = MichelsonInstruction.Xor.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Xor(metadata)
+            }
+            MichelsonInstruction.Not -> {
+                val metadata = MichelsonInstruction.Not.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Not(metadata)
+            }
+            MichelsonInstruction.Compare -> {
+                val metadata = MichelsonInstruction.Compare.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Compare(metadata)
+            }
+            MichelsonInstruction.Eq -> {
+                val metadata = MichelsonInstruction.Eq.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Eq(metadata)
+            }
+            MichelsonInstruction.Neq -> {
+                val metadata = MichelsonInstruction.Neq.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Neq(metadata)
+            }
+            MichelsonInstruction.Lt -> {
+                val metadata = MichelsonInstruction.Lt.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Lt(metadata)
+            }
+            MichelsonInstruction.Gt -> {
+                val metadata = MichelsonInstruction.Gt.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Gt(metadata)
+            }
+            MichelsonInstruction.Le -> {
+                val metadata = MichelsonInstruction.Le.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Le(metadata)
+            }
+            MichelsonInstruction.Ge -> {
+                val metadata = MichelsonInstruction.Ge.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Ge(metadata)
+            }
+            MichelsonInstruction.Self -> {
+                val metadata = MichelsonInstruction.Self.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Self(metadata)
+            }
+            MichelsonInstruction.SelfAddress -> {
+                val metadata = MichelsonInstruction.SelfAddress.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.SelfAddress(metadata)
+            }
             MichelsonInstruction.Contract -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonInstruction.Contract.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.Contract(type)
+                MichelsonInstruction.Contract(type, metadata)
             }
             MichelsonInstruction.TransferTokens -> MichelsonInstruction.TransferTokens
-            MichelsonInstruction.SetDelegate -> MichelsonInstruction.SetDelegate
+            MichelsonInstruction.SetDelegate -> {
+                val metadata = MichelsonInstruction.SetDelegate.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.SetDelegate(metadata)
+            }
             MichelsonInstruction.CreateContract -> {
                 val parameterType = args.first().convertToExpected<MichelsonType>()
                 val storageType = args.second().convertToExpected<MichelsonType>()
                 val code = args.third().convertToExpected<MichelsonInstruction.Sequence>()
+                val metadata = MichelsonInstruction.CreateContract.Metadata(
+                    firstVariableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    secondVariableName = michelsonAnnotations.secondInstanceOfOrNull(),
+                )
 
-                MichelsonInstruction.CreateContract(parameterType, storageType, code)
+                MichelsonInstruction.CreateContract(parameterType, storageType, code, metadata)
             }
-            MichelsonInstruction.ImplicitAccount -> MichelsonInstruction.ImplicitAccount
+            MichelsonInstruction.ImplicitAccount -> {
+                val metadata = MichelsonInstruction.ImplicitAccount.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.ImplicitAccount(metadata)
+            }
             MichelsonInstruction.VotingPower -> MichelsonInstruction.VotingPower
-            MichelsonInstruction.Now -> MichelsonInstruction.Now
-            MichelsonInstruction.Level -> MichelsonInstruction.Level
-            MichelsonInstruction.Amount -> MichelsonInstruction.Amount
-            MichelsonInstruction.Balance -> MichelsonInstruction.Balance
-            MichelsonInstruction.CheckSignature -> MichelsonInstruction.CheckSignature
-            MichelsonInstruction.Blake2B -> MichelsonInstruction.Blake2B
-            MichelsonInstruction.Keccak -> MichelsonInstruction.Keccak
-            MichelsonInstruction.Sha3 -> MichelsonInstruction.Sha3
-            MichelsonInstruction.Sha256 -> MichelsonInstruction.Sha256
-            MichelsonInstruction.Sha512 -> MichelsonInstruction.Sha512
-            MichelsonInstruction.HashKey -> MichelsonInstruction.HashKey
-            MichelsonInstruction.Source -> MichelsonInstruction.Source
-            MichelsonInstruction.Sender -> MichelsonInstruction.Sender
-            MichelsonInstruction.Address -> MichelsonInstruction.Address
-            MichelsonInstruction.ChainId -> MichelsonInstruction.ChainId
+            MichelsonInstruction.Now -> {
+                val metadata = MichelsonInstruction.Now.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Now(metadata)
+            }
+            MichelsonInstruction.Level -> {
+                val metadata = MichelsonInstruction.Level.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Level(metadata)
+            }
+            MichelsonInstruction.Amount -> {
+                val metadata = MichelsonInstruction.Amount.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Amount(metadata)
+            }
+            MichelsonInstruction.Balance -> {
+                val metadata = MichelsonInstruction.Balance.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Balance(metadata)
+            }
+            MichelsonInstruction.CheckSignature -> {
+                val metadata = MichelsonInstruction.CheckSignature.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.CheckSignature(metadata)
+            }
+            MichelsonInstruction.Blake2B -> {
+                val metadata = MichelsonInstruction.Blake2B.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Blake2B(metadata)
+            }
+            MichelsonInstruction.Keccak -> {
+                val metadata = MichelsonInstruction.Keccak.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Keccak(metadata)
+            }
+            MichelsonInstruction.Sha3 -> {
+                val metadata = MichelsonInstruction.Sha3.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Sha3(metadata)
+            }
+            MichelsonInstruction.Sha256 -> {
+                val metadata = MichelsonInstruction.Sha256.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Sha256(metadata)
+            }
+            MichelsonInstruction.Sha512 -> {
+                val metadata = MichelsonInstruction.Sha512.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Sha512(metadata)
+            }
+            MichelsonInstruction.HashKey -> {
+                val metadata = MichelsonInstruction.HashKey.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.HashKey(metadata)
+            }
+            MichelsonInstruction.Source -> {
+                val metadata = MichelsonInstruction.Source.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Source(metadata)
+            }
+            MichelsonInstruction.Sender -> {
+                val metadata = MichelsonInstruction.Sender.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Sender(metadata)
+            }
+            MichelsonInstruction.Address -> {
+                val metadata = MichelsonInstruction.Address.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.Address(metadata)
+            }
+            MichelsonInstruction.ChainId -> {
+                val metadata = MichelsonInstruction.ChainId.Metadata(
+                    variableName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonInstruction.ChainId(metadata)
+            }
             MichelsonInstruction.TotalVotingPower -> MichelsonInstruction.TotalVotingPower
             MichelsonInstruction.PairingCheck -> MichelsonInstruction.PairingCheck
             MichelsonInstruction.SaplingEmptyState -> {
@@ -356,95 +723,196 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
         when (prim) {
             MichelsonType.Parameter -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Parameter(type)
+                MichelsonType.Parameter(type, metadata)
             }
             MichelsonType.Storage -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Storage(type)
+                MichelsonType.Storage(type, metadata)
             }
             MichelsonType.Code -> {
                 val code = args.first().convertToExpected<MichelsonInstruction>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Code(code)
+                MichelsonType.Code(code, metadata)
             }
             MichelsonType.Option -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                if (type is MichelsonComparableType) MichelsonComparableType.Option(type)
-
-                else MichelsonType.Option(type)
+                if (type is MichelsonComparableType) MichelsonComparableType.Option(type, metadata)
+                else MichelsonType.Option(type, metadata)
             }
             MichelsonType.List -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.List(type)
+                MichelsonType.List(type, metadata)
             }
             MichelsonType.Set -> {
                 val type = args.first().convertToExpected<MichelsonComparableType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Set(type)
+                MichelsonType.Set(type, metadata)
             }
-            MichelsonType.Operation -> MichelsonType.Operation
+            MichelsonType.Operation -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonType.Operation(metadata)
+            }
             MichelsonType.Contract -> {
                 val type = args.first().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Contract(type)
+                MichelsonType.Contract(type, metadata)
             }
             MichelsonType.Ticket -> {
                 val type = args.first().convertToExpected<MichelsonComparableType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Ticket(type)
+                MichelsonType.Ticket(type, metadata)
             }
             MichelsonType.Pair -> {
                 val types = args.convertToExpected<MichelsonType>()
                 require(types.size > 1)
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
                 @Suppress("UNCHECKED_CAST")
-                if (types.allIsInstance<MichelsonComparableType>()) MichelsonComparableType.Pair(types as List<MichelsonComparableType>)
-                else MichelsonType.Pair(types)
+                if (types.allIsInstance<MichelsonComparableType>()) MichelsonComparableType.Pair(types as List<MichelsonComparableType>, metadata)
+                else MichelsonType.Pair(types, metadata)
             }
             MichelsonType.Or -> {
                 val lhs = args.first().convertToExpected<MichelsonType>()
                 val rhs = args.second().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                if (lhs is MichelsonComparableType && rhs is MichelsonComparableType) MichelsonComparableType.Or(lhs, rhs)
-                else MichelsonType.Or(lhs, rhs)
+                if (lhs is MichelsonComparableType && rhs is MichelsonComparableType) MichelsonComparableType.Or(lhs, rhs, metadata)
+                else MichelsonType.Or(lhs, rhs, metadata)
             }
             MichelsonType.Lambda -> {
                 val parameterType = args.first().convertToExpected<MichelsonType>()
                 val returnType = args.second().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Lambda(parameterType, returnType)
+                MichelsonType.Lambda(parameterType, returnType, metadata)
             }
             MichelsonType.Map -> {
                 val keyType = args.first().convertToExpected<MichelsonComparableType>()
                 val valueType = args.second().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.Map(keyType, valueType)
+                MichelsonType.Map(keyType, valueType, metadata)
             }
             MichelsonType.BigMap -> {
                 val keyType = args.first().convertToExpected<MichelsonComparableType>()
                 val valueType = args.second().convertToExpected<MichelsonType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.BigMap(keyType, valueType)
+                MichelsonType.BigMap(keyType, valueType, metadata)
             }
-            MichelsonType.Bls12_381G1 -> MichelsonType.Bls12_381G1
-            MichelsonType.Bls12_381G2 -> MichelsonType.Bls12_381G2
-            MichelsonType.Bls12_381Fr -> MichelsonType.Bls12_381Fr
+            MichelsonType.Bls12_381G1 -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonType.Bls12_381G1(metadata)
+            }
+            MichelsonType.Bls12_381G2 -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonType.Bls12_381G2(metadata)
+            }
+            MichelsonType.Bls12_381Fr -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonType.Bls12_381Fr(metadata)
+            }
             MichelsonType.SaplingTransaction -> {
                 val memoSize = args.first().convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.SaplingTransaction(memoSize)
+                MichelsonType.SaplingTransaction(memoSize, metadata)
             }
             MichelsonType.SaplingState -> {
                 val memoSize = args.first().convertToExpected<MichelsonData.NaturalNumberConstant>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonType.SaplingState(memoSize)
+                MichelsonType.SaplingState(memoSize, metadata)
             }
-            MichelsonType.Chest -> MichelsonType.Chest
-            MichelsonType.ChestKey -> MichelsonType.ChestKey
+            MichelsonType.Chest -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonType.Chest(metadata)
+            }
+            MichelsonType.ChestKey -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonType.ChestKey(metadata)
+            }
             is MichelsonComparableType.Prim -> fromComparableTypePrimitiveApplication(prim, primitiveApplication)
         }
     }
@@ -454,36 +922,146 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
         primitiveApplication: MichelinePrimitiveApplication,
     ): MichelsonComparableType = with(primitiveApplication) {
         when (prim) {
-            MichelsonComparableType.Unit -> MichelsonComparableType.Unit
-            MichelsonComparableType.Never -> MichelsonComparableType.Never
-            MichelsonComparableType.Bool -> MichelsonComparableType.Bool
-            MichelsonComparableType.Int -> MichelsonComparableType.Int
-            MichelsonComparableType.Nat -> MichelsonComparableType.Nat
-            MichelsonComparableType.String -> MichelsonComparableType.String
-            MichelsonComparableType.ChainId -> MichelsonComparableType.ChainId
-            MichelsonComparableType.Bytes -> MichelsonComparableType.Bytes
-            MichelsonComparableType.Mutez -> MichelsonComparableType.Mutez
-            MichelsonComparableType.KeyHash -> MichelsonComparableType.KeyHash
-            MichelsonComparableType.Key -> MichelsonComparableType.Key
-            MichelsonComparableType.Signature -> MichelsonComparableType.Signature
-            MichelsonComparableType.Timestamp -> MichelsonComparableType.Timestamp
-            MichelsonComparableType.Address -> MichelsonComparableType.Address
+            MichelsonComparableType.Unit -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Unit(metadata)
+            }
+            MichelsonComparableType.Never -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Never(metadata)
+            }
+            MichelsonComparableType.Bool -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Bool(metadata)
+            }
+            MichelsonComparableType.Int -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Int(metadata)
+            }
+            MichelsonComparableType.Nat -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Nat(metadata)
+            }
+            MichelsonComparableType.String -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.String(metadata)
+            }
+            MichelsonComparableType.ChainId -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.ChainId(metadata)
+            }
+            MichelsonComparableType.Bytes -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Bytes(metadata)
+            }
+            MichelsonComparableType.Mutez -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Mutez(metadata)
+            }
+            MichelsonComparableType.KeyHash -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.KeyHash(metadata)
+            }
+            MichelsonComparableType.Key -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Key(metadata)
+            }
+            MichelsonComparableType.Signature -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Signature(metadata)
+            }
+            MichelsonComparableType.Timestamp -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Timestamp(metadata)
+            }
+            MichelsonComparableType.Address -> {
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
+
+                MichelsonComparableType.Address(metadata)
+            }
             MichelsonComparableType.Option -> {
                 val type = args.first().convertToExpected<MichelsonComparableType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonComparableType.Option(type)
+                MichelsonComparableType.Option(type, metadata)
             }
             MichelsonComparableType.Or -> {
                 val lhs = args.first().convertToExpected<MichelsonComparableType>()
                 val rhs = args.second().convertToExpected<MichelsonComparableType>()
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonComparableType.Or(lhs, rhs)
+                MichelsonComparableType.Or(lhs, rhs, metadata)
             }
             MichelsonComparableType.Pair -> {
                 val types = args.convertToExpected<MichelsonComparableType>()
                 require(types.size > 1)
+                val metadata = MichelsonType.Metadata(
+                    typeName = michelsonAnnotations.firstInstanceOfOrNull(),
+                    fieldName = michelsonAnnotations.firstInstanceOfOrNull(),
+                )
 
-                MichelsonComparableType.Pair(types)
+                MichelsonComparableType.Pair(types, metadata)
             }
         }
     }
@@ -500,6 +1078,17 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
     private inline fun <reified T : Michelson> List<MichelineNode>.convertToExpected(): List<T> =
         map { it.convertToExpected() }
 
+    private val MichelinePrimitiveApplication.michelsonAnnotations: List<Michelson.Annotation>
+        get() = annots.mapNotNull { it.asMichelsonAnnotationOrNull() }
+
+    private fun MichelinePrimitiveApplication.Annotation.asMichelsonAnnotationOrNull(): Michelson.Annotation? =
+        when {
+            Michelson.Annotation.Type.isValid(value) -> Michelson.Annotation.Type(value)
+            Michelson.Annotation.Variable.isValid(value) -> Michelson.Annotation.Variable(value)
+            Michelson.Annotation.Field.isValid(value) -> Michelson.Annotation.Field(value)
+            else -> null
+        }
+
     private fun failWithUnknownPrimitiveApplication(primitiveApplication: MichelinePrimitiveApplication): Nothing =
         failWithIllegalArgument("Unknown Micheline Primitive Application: ${primitiveApplication.toCompactExpression(michelineToCompactStringConverter)}.")
 
@@ -508,29 +1097,26 @@ private class MichelinePrimitiveApplicationToMichelsonConverter(
 }
 
 private class MichelineSequenceToMichelsonConverter(
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
     private val toMichelsonConverter: MichelineToMichelsonConverter,
 ) : Converter<MichelineSequence, Michelson> {
     @Suppress("UNCHECKED_CAST")
     override fun convert(value: MichelineSequence): Michelson {
         val michelsonValues = value.nodes.map {
-            if (it is MichelinePrimitiveApplication && it.isElt) it.convertToElt()
+            if (it.isPrim(MichelsonData.Elt)) it.convertToElt()
             else toMichelsonConverter.convert(it)
         }
         with(michelsonValues) {
             return when {
                 isEmpty() -> MichelsonData.Sequence(emptyList())
                 allIsInstance<MichelsonInstruction>() -> MichelsonInstruction.Sequence(this as List<MichelsonInstruction>)
-                allIsInstance<MichelsonData.Elt>() -> MichelsonData.EltSequence(this as List<MichelsonData.Elt>)
+                allIsInstance<MichelsonData.Elt>() -> MichelsonData.Map(this as List<MichelsonData.Elt>)
                 anyIsInstance<MichelsonData.Elt>() /* any but not all */ -> failWithInvalidSequence(value)
                 allIsInstance<MichelsonData>() -> MichelsonData.Sequence(this as List<MichelsonData>)
                 else -> failWithUnknownSequence(value)
             }
         }
     }
-
-    private val MichelinePrimitiveApplication.isElt: Boolean
-        get() = prim.value == MichelsonData.Elt.name
 
     private fun MichelinePrimitiveApplication.convertToElt(): MichelsonData.Elt {
         val key = args.first().convertToExpected<MichelsonData>()

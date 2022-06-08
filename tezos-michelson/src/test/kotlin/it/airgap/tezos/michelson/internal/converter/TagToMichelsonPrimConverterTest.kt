@@ -1,12 +1,12 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
-import mockTezosSdk
+import it.airgap.tezos.michelson.converter.fromTagOrNull
+import it.airgap.tezos.michelson.internal.context.withTezosContext
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -16,8 +16,7 @@ import kotlin.test.assertNull
 
 class TagToMichelsonPrimConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
+    private lateinit var tezos: Tezos
 
     private lateinit var tagToMichelsonPrimConverter: TagToMichelsonPrimConverter
     private lateinit var tagToMichelsonDataPrimConverter: TagToMichelsonDataPrimConverter
@@ -28,19 +27,14 @@ class TagToMichelsonPrimConverterTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
+
+        tezos = mockTezos()
 
         tagToMichelsonPrimConverter = TagToMichelsonPrimConverter()
         tagToMichelsonDataPrimConverter = TagToMichelsonDataPrimConverter()
         tagToMichelsonInstructionPrimConverter = TagToMichelsonInstructionPrimConverter()
         tagToMichelsonTypePrimConverter = TagToMichelsonTypePrimConverter()
         tagToMichelsonComparableTypePrimConverter = TagToMichelsonComparableTypePrimConverter()
-
-        every { dependencyRegistry.tagToMichelsonPrimConverter } returns tagToMichelsonPrimConverter
-        every { dependencyRegistry.tagToMichelsonDataPrimConverter } returns tagToMichelsonDataPrimConverter
-        every { dependencyRegistry.tagToMichelsonInstructionPrimConverter } returns tagToMichelsonInstructionPrimConverter
-        every { dependencyRegistry.tagToMichelsonTypePrimConverter } returns tagToMichelsonTypePrimConverter
-        every { dependencyRegistry.tagToMichelsonComparableTypePrimConverter } returns tagToMichelsonComparableTypePrimConverter
     }
 
     @After
@@ -49,7 +43,7 @@ class TagToMichelsonPrimConverterTest {
     }
 
     @Test
-    fun `should convert tag to Michelson Prim`() {
+    fun `should convert tag to Michelson Prim`() = withTezosContext {
         val valuesWithExpected = Michelson.Prim.values.map {
             when (it) {
                 MichelsonComparableType.Option -> it.tag to MichelsonType.Option
@@ -61,35 +55,35 @@ class TagToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, tagToMichelsonPrimConverter.convert(it.first))
-            assertEquals(it.second, Michelson.Prim.fromTagOrNull(it.first))
+            assertEquals(it.second, Michelson.Prim.fromTagOrNull(it.first, tezos))
             assertEquals(it.second, Michelson.Prim.fromTagOrNull(it.first, tagToMichelsonPrimConverter))
         }
     }
 
     @Test
-    fun `should convert name to MichelsonData Prim`() {
+    fun `should convert name to MichelsonData Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonData.Prim.values.map { it.tag to it }
 
         valuesWithExpected.forEach {
             assertEquals(it.second, tagToMichelsonDataPrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonData.Prim.fromTagOrNull(it.first))
+            assertEquals(it.second, MichelsonData.Prim.fromTagOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonData.Prim.fromTagOrNull(it.first, tagToMichelsonDataPrimConverter))
         }
     }
 
     @Test
-    fun `should convert name to MichelsonInstruction Prim`() {
+    fun `should convert name to MichelsonInstruction Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonInstruction.Prim.values.map { it.tag to it }
 
         valuesWithExpected.forEach {
             assertEquals(it.second, tagToMichelsonInstructionPrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonInstruction.Prim.fromTagOrNull(it.first))
+            assertEquals(it.second, MichelsonInstruction.Prim.fromTagOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonInstruction.Prim.fromTagOrNull(it.first, tagToMichelsonInstructionPrimConverter))
         }
     }
 
     @Test
-    fun `should convert name to MichelsonType Prim`() {
+    fun `should convert name to MichelsonType Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonType.Prim.values.map {
             when (it) {
                 MichelsonComparableType.Option -> it.tag to MichelsonType.Option
@@ -101,45 +95,45 @@ class TagToMichelsonPrimConverterTest {
 
         valuesWithExpected.forEach {
             assertEquals(it.second, tagToMichelsonTypePrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonType.Prim.fromTagOrNull(it.first))
+            assertEquals(it.second, MichelsonType.Prim.fromTagOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonType.Prim.fromTagOrNull(it.first, tagToMichelsonTypePrimConverter))
         }
     }
 
     @Test
-    fun `should convert name to MichelsonComparableType Prim`() {
+    fun `should convert name to MichelsonComparableType Prim`() = withTezosContext {
         val valuesWithExpected = MichelsonComparableType.Prim.values.map { it.tag to it }
 
         valuesWithExpected.forEach {
             assertEquals(it.second, tagToMichelsonComparableTypePrimConverter.convert(it.first))
-            assertEquals(it.second, MichelsonComparableType.Prim.fromTagOrNull(it.first))
+            assertEquals(it.second, MichelsonComparableType.Prim.fromTagOrNull(it.first, tezos))
             assertEquals(it.second, MichelsonComparableType.Prim.fromTagOrNull(it.first, tagToMichelsonComparableTypePrimConverter))
         }
     }
 
     @Test
-    fun `should fail to convert unknown string to Michelson Prim`() {
+    fun `should fail to convert unknown string to Michelson Prim`() = withTezosContext {
         val unknownTags = listOf(byteArrayOf( -1))
 
         unknownTags.forEach {
             assertFailsWith<IllegalArgumentException> { tagToMichelsonPrimConverter.convert(it) }
-            assertNull(Michelson.Prim.fromTagOrNull(it))
+            assertNull(Michelson.Prim.fromTagOrNull(it, tezos))
             assertNull(Michelson.Prim.fromTagOrNull(it, tagToMichelsonPrimConverter))
 
             assertFailsWith<IllegalArgumentException> { tagToMichelsonDataPrimConverter.convert(it) }
-            assertNull(MichelsonData.Prim.fromTagOrNull(it))
+            assertNull(MichelsonData.Prim.fromTagOrNull(it, tezos))
             assertNull(MichelsonData.Prim.fromTagOrNull(it, tagToMichelsonDataPrimConverter))
 
             assertFailsWith<IllegalArgumentException> { tagToMichelsonInstructionPrimConverter.convert(it) }
-            assertNull(MichelsonInstruction.Prim.fromTagOrNull(it))
+            assertNull(MichelsonInstruction.Prim.fromTagOrNull(it, tezos))
             assertNull(MichelsonInstruction.Prim.fromTagOrNull(it, tagToMichelsonInstructionPrimConverter))
 
             assertFailsWith<IllegalArgumentException> { tagToMichelsonTypePrimConverter.convert(it) }
-            assertNull(MichelsonType.Prim.fromTagOrNull(it))
+            assertNull(MichelsonType.Prim.fromTagOrNull(it, tezos))
             assertNull(MichelsonType.Prim.fromTagOrNull(it, tagToMichelsonTypePrimConverter))
 
             assertFailsWith<IllegalArgumentException> { tagToMichelsonComparableTypePrimConverter.convert(it) }
-            assertNull(MichelsonComparableType.Prim.fromTagOrNull(it))
+            assertNull(MichelsonComparableType.Prim.fromTagOrNull(it, tezos))
             assertNull(MichelsonComparableType.Prim.fromTagOrNull(it, tagToMichelsonComparableTypePrimConverter))
         }
     }

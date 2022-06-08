@@ -1,47 +1,46 @@
 package it.airgap.tezos.michelson.internal.packer
 
-import it.airgap.tezos.core.decodeFromBytes
-import it.airgap.tezos.core.encodeToBytes
-import it.airgap.tezos.core.fromString
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
-import it.airgap.tezos.core.internal.coder.*
-import it.airgap.tezos.core.internal.converter.StringToAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToImplicitAddressConverter
-import it.airgap.tezos.core.internal.converter.StringToPublicKeyConverter
-import it.airgap.tezos.core.internal.converter.StringToSignatureConverter
+import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
+import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
+import it.airgap.tezos.core.internal.converter.Converter
+import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.replacingAt
-import it.airgap.tezos.core.internal.utils.startsWith
+import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
-import it.airgap.tezos.michelson.internal.converter.MichelinePrimitiveApplicationToNormalizedConverter
-import it.airgap.tezos.michelson.internal.converter.MichelineToCompactStringConverter
-import it.airgap.tezos.michelson.internal.converter.StringToMichelsonPrimConverter
+import it.airgap.tezos.michelson.comparator.isPrim
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeFromBytes
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.encodeToBytes
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.failWithIllegalArgument
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.fromString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.fromStringOrNull
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.normalized
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replacingAt
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.startsWith
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toCompactExpression
 import it.airgap.tezos.michelson.internal.utils.second
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-@InternalTezosSdkApi
-public class MichelinePacker(
-    private val michelineBytesCoder: MichelineBytesCoder,
-    private val stringToMichelsonPrimConverter: StringToMichelsonPrimConverter,
-    private val michelinePrimitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationToNormalizedConverter,
-    private val michelineToCompactStringConverter: MichelineToCompactStringConverter,
+internal class MichelinePacker(
+    private val michelineBytesCoder: ConsumingBytesCoder<MichelineNode>,
+    private val michelinePrimitiveApplicationNormalizer: Normalizer<MichelinePrimitiveApplication>,
+    private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
+    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
     private val encodedBytesCoder: EncodedBytesCoder,
-    private val addressBytesCoder: AddressBytesCoder,
-    private val publicKeyBytesCoder: PublicKeyBytesCoder,
-    private val implicitAddressBytesCoder: ImplicitAddressBytesCoder,
-    private val signatureBytesCoder: SignatureBytesCoder,
-    private val timestampBigIntCoder: TimestampBigIntCoder,
-    private val stringToAddressConverter: StringToAddressConverter,
-    private val stringToImplicitAddressConverter: StringToImplicitAddressConverter,
-    private val stringToPublicKeyConverter: StringToPublicKeyConverter,
-    private val stringToSignatureConverter: StringToSignatureConverter,
+    private val addressBytesCoder: ConsumingBytesCoder<Address>,
+    private val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey>,
+    private val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>,
+    private val signatureBytesCoder: ConsumingBytesCoder<Signature>,
+    private val timestampBigIntCoder: Coder<Timestamp, BigInt>,
+    private val stringToAddressConverter: Converter<String, Address>,
+    private val stringToImplicitAddressConverter: Converter<String, ImplicitAddress>,
+    private val stringToPublicKeyConverter: Converter<String, PublicKey>,
+    private val stringToSignatureConverter: Converter<String, Signature>,
 ) : Packer<MichelineNode> {
     override fun pack(value: MichelineNode, schema: MichelineNode?): ByteArray {
         val prePacked = if (schema != null) prePack(value, schema) else value
@@ -126,13 +125,13 @@ public class MichelinePacker(
                 val pair = MichelinePrimitiveApplication(
                     prim = MichelsonData.Pair,
                     args = value.nodes,
-                ).normalized(michelinePrimitiveApplicationToNormalizedConverter)
+                ).normalized(michelinePrimitiveApplicationNormalizer)
 
                 prePack(pair, schema)
             }
-            value is MichelinePrimitiveApplication && value.isPrim(MichelsonData.Pair) -> {
-                val valueNormalized = value.normalized(michelinePrimitiveApplicationToNormalizedConverter)
-                val schemaNormalized = schema.normalized(michelinePrimitiveApplicationToNormalizedConverter)
+            value.isPrim(MichelsonData.Pair) -> {
+                val valueNormalized = value.normalized(michelinePrimitiveApplicationNormalizer)
+                val schemaNormalized = schema.normalized(michelinePrimitiveApplicationNormalizer)
 
                 if (valueNormalized.args.size != schemaNormalized.args.size) failWithValueSchemaMismatch(value, schema)
 
@@ -195,13 +194,13 @@ public class MichelinePacker(
         prePackStringToBytes(value, schema) { ImplicitAddress.fromString(it, stringToImplicitAddressConverter).encodeToBytes(implicitAddressBytesCoder) }
 
     private fun prePackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { PublicKeyEncoded.fromString(it, stringToPublicKeyConverter).encodeToBytes(publicKeyBytesCoder) }
+        prePackStringToBytes(value, schema) { PublicKey.fromString(it, stringToPublicKeyConverter).encodeToBytes(publicKeyBytesCoder) }
 
     private fun prePackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToBytes(value, schema) { SignatureEncoded.fromString(it, stringToSignatureConverter).encodeToBytes(signatureBytesCoder) }
+        prePackStringToBytes(value, schema) { Signature.fromString(it, stringToSignatureConverter).encodeToBytes(signatureBytesCoder) }
 
     private fun prePackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        prePackStringToInt(value, schema, timestampBigIntCoder::encode)
+        prePackStringToInt(value, schema) { timestampBigIntCoder.encode(Timestamp.Rfc3339(it)) }
 
     private fun prePackStringToBytes(value: MichelineNode, schema: MichelinePrimitiveApplication, prePackMethod: (String) -> ByteArray): MichelineNode =
         when (value) {
@@ -342,8 +341,8 @@ public class MichelinePacker(
 
         return when {
             value.isPrim(MichelsonData.Pair) -> {
-                val valueNormalized = value.normalized(michelinePrimitiveApplicationToNormalizedConverter)
-                val schemaNormalized = schema.normalized(michelinePrimitiveApplicationToNormalizedConverter)
+                val valueNormalized = value.normalized(michelinePrimitiveApplicationNormalizer)
+                val schemaNormalized = schema.normalized(michelinePrimitiveApplicationNormalizer)
 
                 if (valueNormalized.args.size != schemaNormalized.args.size) failWithValueSchemaMismatch(value, schema)
 
@@ -407,13 +406,13 @@ public class MichelinePacker(
         postUnpackBytesToString(value, schema) { ImplicitAddress.decodeFromBytes(it, implicitAddressBytesCoder).base58 }
 
     private fun postUnpackKeyData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema) { PublicKeyEncoded.decodeFromBytes(it, publicKeyBytesCoder).base58 }
+        postUnpackBytesToString(value, schema) { PublicKey.decodeFromBytes(it, publicKeyBytesCoder).base58 }
 
     private fun postUnpackSignatureData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBytesToString(value, schema) { SignatureEncoded.decodeFromBytes(it, signatureBytesCoder).base58 }
+        postUnpackBytesToString(value, schema) { Signature.decodeFromBytes(it, signatureBytesCoder).base58 }
 
     private fun postUnpackTimestampData(value: MichelineNode, schema: MichelinePrimitiveApplication): MichelineNode =
-        postUnpackBigIntToString(value, schema, timestampBigIntCoder::decode)
+        postUnpackBigIntToString(value, schema) { timestampBigIntCoder.decode(it).toRfc3339().dateString }
 
     private fun postUnpackBytesToString(value: MichelineNode, schema: MichelinePrimitiveApplication, postUnpackMethod: (ByteArray) -> String): MichelineNode =
         when (value) {
@@ -504,6 +503,6 @@ private enum class Tag(override val value: ByteArray) : BytesTag {
     companion object {
         fun recognize(bytes: ByteArray): Tag? =
             if (bytes.isEmpty()) null
-            else values().find {bytes.startsWith(it.value) }
+            else values().find { bytes.startsWith(it.value) }
     }
 }

@@ -1,6 +1,5 @@
 package it.airgap.tezos.michelson.internal.converter
 
-import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
@@ -8,8 +7,7 @@ import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-@InternalTezosSdkApi
-public class MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
+internal class MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
     private val dataToMichelineConverter: MichelsonDataToMichelineConverter = MichelsonDataToMichelineConverter(this)
     private val typeToMichelineConverter: MichelsonTypeToMichelineConverter = MichelsonTypeToMichelineConverter(
         dataToMichelineConverter,
@@ -34,22 +32,39 @@ private class MichelsonDataToMichelineConverter(
             is MichelsonData.NaturalNumberConstant -> MichelineLiteral.Integer(this.value)
             is MichelsonData.StringConstant -> MichelineLiteral.String(this.value)
             is MichelsonData.ByteSequenceConstant -> MichelineLiteral.Bytes(this.value)
-            MichelsonData.Unit -> MichelinePrimitiveApplication(MichelsonData.Unit)
-            MichelsonData.True -> MichelinePrimitiveApplication(MichelsonData.True)
-            MichelsonData.False -> MichelinePrimitiveApplication(MichelsonData.False)
-            is MichelsonData.Pair -> MichelinePrimitiveApplication(MichelsonData.Pair, values.map { convert(it) })
-            is MichelsonData.Left -> MichelinePrimitiveApplication(MichelsonData.Left, listOf(convert(this.value)))
-            is MichelsonData.Right -> MichelinePrimitiveApplication(MichelsonData.Right, listOf(convert(this.value)))
-            is MichelsonData.Some -> MichelinePrimitiveApplication(MichelsonData.Some, listOf(convert(this.value)))
-            MichelsonData.None -> MichelinePrimitiveApplication(MichelsonData.None)
+            MichelsonData.Unit -> MichelinePrimitiveApplication(MichelsonData.Unit, annots = michelineAnnotations)
+            MichelsonData.True -> MichelinePrimitiveApplication(MichelsonData.True, annots = michelineAnnotations)
+            MichelsonData.False -> MichelinePrimitiveApplication(MichelsonData.False, annots = michelineAnnotations)
+            is MichelsonData.Pair -> MichelinePrimitiveApplication(
+                MichelsonData.Pair,
+                args = values.map { convert(it) },
+                annots = michelineAnnotations,
+            )
+            is MichelsonData.Left -> MichelinePrimitiveApplication(
+                MichelsonData.Left,
+                args = listOf(convert(this.value)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonData.Right -> MichelinePrimitiveApplication(
+                MichelsonData.Right,
+                args = listOf(convert(this.value)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonData.Some -> MichelinePrimitiveApplication(
+                MichelsonData.Some,
+                args = listOf(convert(this.value)),
+                annots = michelineAnnotations,
+            )
+            MichelsonData.None -> MichelinePrimitiveApplication(MichelsonData.None, annots = michelineAnnotations)
             is MichelsonData.Sequence -> MichelineSequence(values.map { convert(it) })
-            is MichelsonData.EltSequence -> MichelineSequence(values.map {
+            is MichelsonData.Map -> MichelineSequence(values.map {
                 MichelinePrimitiveApplication(
                     MichelsonData.Elt,
-                    listOf(
+                    args = listOf(
                         toMichelineConverter.convert(it.key),
                         toMichelineConverter.convert(it.value),
-                    )
+                    ),
+                    annots = michelineAnnotations,
                 )
             })
             is MichelsonInstruction -> instructionToMichelineConverter.convert(this)
@@ -67,217 +82,248 @@ private class MichelsonInstructionToMichelineConverter(
             is MichelsonInstruction.Sequence -> MichelineSequence(instructions.map { toMichelineConverter.convert(it) })
             is MichelsonInstruction.Drop -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Drop,
-                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                args = listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Dup -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dup,
-                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                args = listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Swap -> MichelinePrimitiveApplication(MichelsonInstruction.Swap)
+            MichelsonInstruction.Swap -> MichelinePrimitiveApplication(MichelsonInstruction.Swap, annots = michelineAnnotations)
             is MichelsonInstruction.Dig -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dig,
-                listOf(dataToMichelineConverter.convert(n)),
+                args = listOf(dataToMichelineConverter.convert(n)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Dug -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dug,
-                listOf(dataToMichelineConverter.convert(n)),
+                args = listOf(dataToMichelineConverter.convert(n)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Push -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Push,
-                listOf(toMichelineConverter.convert(type), toMichelineConverter.convert(this.value)),
+                args = listOf(toMichelineConverter.convert(type), toMichelineConverter.convert(this.value)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Some -> MichelinePrimitiveApplication(MichelsonInstruction.Some)
+            is MichelsonInstruction.Some -> MichelinePrimitiveApplication(MichelsonInstruction.Some, annots = michelineAnnotations)
             is MichelsonInstruction. None -> MichelinePrimitiveApplication(
                 MichelsonInstruction.None,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Unit -> MichelinePrimitiveApplication(MichelsonInstruction.Unit)
-            MichelsonInstruction.Never -> MichelinePrimitiveApplication(MichelsonInstruction.Never)
+            is MichelsonInstruction.Unit -> MichelinePrimitiveApplication(MichelsonInstruction.Unit, annots = michelineAnnotations)
+            is MichelsonInstruction.Never -> MichelinePrimitiveApplication(MichelsonInstruction.Never, annots = michelineAnnotations)
             is MichelsonInstruction.IfNone -> MichelinePrimitiveApplication(
                 MichelsonInstruction.IfNone,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(ifBranch),
                     toMichelineConverter.convert(elseBranch),
                 ),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Pair -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Pair,
-                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                args = listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Car -> MichelinePrimitiveApplication(MichelsonInstruction.Car)
-            MichelsonInstruction.Cdr -> MichelinePrimitiveApplication(MichelsonInstruction.Cdr)
+            is MichelsonInstruction.Car -> MichelinePrimitiveApplication(MichelsonInstruction.Car, annots = michelineAnnotations)
+            is MichelsonInstruction.Cdr -> MichelinePrimitiveApplication(MichelsonInstruction.Cdr, annots = michelineAnnotations)
             is MichelsonInstruction.Unpair -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Unpair,
-                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                args = listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Left -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Left,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Right -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Right,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.IfLeft -> MichelinePrimitiveApplication(
                 MichelsonInstruction.IfLeft,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(ifBranch),
                     toMichelineConverter.convert(elseBranch),
                 ),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Nil -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Nil,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Cons -> MichelinePrimitiveApplication(MichelsonInstruction.Cons)
+            is MichelsonInstruction.Cons -> MichelinePrimitiveApplication(MichelsonInstruction.Cons, annots = michelineAnnotations)
             is MichelsonInstruction.IfCons -> MichelinePrimitiveApplication(
                 MichelsonInstruction.IfCons,
-                listOf(toMichelineConverter.convert(ifBranch), toMichelineConverter.convert(elseBranch)),
+                args = listOf(toMichelineConverter.convert(ifBranch), toMichelineConverter.convert(elseBranch)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Size -> MichelinePrimitiveApplication(MichelsonInstruction.Size)
+            is MichelsonInstruction.Size -> MichelinePrimitiveApplication(MichelsonInstruction.Size, annots = michelineAnnotations)
             is MichelsonInstruction.EmptySet -> MichelinePrimitiveApplication(
                 MichelsonInstruction.EmptySet,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.EmptyMap -> MichelinePrimitiveApplication(
                 MichelsonInstruction.EmptyMap,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(keyType),
                     toMichelineConverter.convert(valueType),
                 ),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.EmptyBigMap -> MichelinePrimitiveApplication(
                 MichelsonInstruction.EmptyBigMap,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(keyType),
                     toMichelineConverter.convert(valueType),
                 ),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Map -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Map,
-                listOf(toMichelineConverter.convert(expression)),
+                args = listOf(toMichelineConverter.convert(expression)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Iter -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Iter,
-                listOf(toMichelineConverter.convert(expression)),
+                args = listOf(toMichelineConverter.convert(expression)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Mem -> MichelinePrimitiveApplication(MichelsonInstruction.Mem)
+            is MichelsonInstruction.Mem -> MichelinePrimitiveApplication(MichelsonInstruction.Mem, annots = michelineAnnotations)
             is MichelsonInstruction.Get -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Get,
-                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                args = listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Update -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Update,
-                listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                args = listOfNotNull(n?.let(dataToMichelineConverter::convert)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.GetAndUpdate -> MichelinePrimitiveApplication(MichelsonInstruction.GetAndUpdate)
             is MichelsonInstruction.If -> MichelinePrimitiveApplication(
                 MichelsonInstruction.If,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(ifBranch),
                     toMichelineConverter.convert(elseBranch),
                 ),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Loop -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Loop,
-                listOf(toMichelineConverter.convert(body)),
+                args = listOf(toMichelineConverter.convert(body)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.LoopLeft -> MichelinePrimitiveApplication(
                 MichelsonInstruction.LoopLeft,
-                listOf(toMichelineConverter.convert(body)),
+                args = listOf(toMichelineConverter.convert(body)),
+                annots = michelineAnnotations,
             )
             is MichelsonInstruction.Lambda -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Lambda,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(parameterType),
                     toMichelineConverter.convert(returnType),
-                    toMichelineConverter.convert(body)),
+                    toMichelineConverter.convert(body)
+                ),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Exec -> MichelinePrimitiveApplication(MichelsonInstruction.Exec)
+            is MichelsonInstruction.Exec -> MichelinePrimitiveApplication(MichelsonInstruction.Exec, annots = michelineAnnotations)
             MichelsonInstruction.Apply -> MichelinePrimitiveApplication(MichelsonInstruction.Apply)
             is MichelsonInstruction.Dip -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Dip,
-                listOfNotNull(
+                args = listOfNotNull(
                     n?.let(dataToMichelineConverter::convert),
                     toMichelineConverter.convert(instruction),
                 ),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Failwith -> MichelinePrimitiveApplication(MichelsonInstruction.Failwith)
-            MichelsonInstruction.Cast -> MichelinePrimitiveApplication(MichelsonInstruction.Cast)
-            MichelsonInstruction.Rename -> MichelinePrimitiveApplication(MichelsonInstruction.Rename)
-            MichelsonInstruction.Concat -> MichelinePrimitiveApplication(MichelsonInstruction.Concat)
-            MichelsonInstruction.Slice -> MichelinePrimitiveApplication(MichelsonInstruction.Slice)
-            MichelsonInstruction.Pack -> MichelinePrimitiveApplication(MichelsonInstruction.Pack)
+            MichelsonInstruction.Failwith -> MichelinePrimitiveApplication(MichelsonInstruction.Failwith, annots = michelineAnnotations)
+            is MichelsonInstruction.Cast -> MichelinePrimitiveApplication(MichelsonInstruction.Cast, annots = michelineAnnotations)
+            is MichelsonInstruction.Rename -> MichelinePrimitiveApplication(MichelsonInstruction.Rename, annots = michelineAnnotations)
+            is MichelsonInstruction.Concat -> MichelinePrimitiveApplication(MichelsonInstruction.Concat, annots = michelineAnnotations)
+            MichelsonInstruction.Slice -> MichelinePrimitiveApplication(MichelsonInstruction.Slice, annots = michelineAnnotations)
+            MichelsonInstruction.Pack -> MichelinePrimitiveApplication(MichelsonInstruction.Pack, annots = michelineAnnotations)
             is MichelsonInstruction.Unpack -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Unpack,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.Add -> MichelinePrimitiveApplication(MichelsonInstruction.Add)
-            MichelsonInstruction.Sub -> MichelinePrimitiveApplication(MichelsonInstruction.Sub)
-            MichelsonInstruction.Mul -> MichelinePrimitiveApplication(MichelsonInstruction.Mul)
-            MichelsonInstruction.Ediv -> MichelinePrimitiveApplication(MichelsonInstruction.Ediv)
-            MichelsonInstruction.Abs -> MichelinePrimitiveApplication(MichelsonInstruction.Abs)
-            MichelsonInstruction.Isnat -> MichelinePrimitiveApplication(MichelsonInstruction.Isnat)
-            MichelsonInstruction.Int -> MichelinePrimitiveApplication(MichelsonInstruction.Int)
-            MichelsonInstruction.Neg -> MichelinePrimitiveApplication(MichelsonInstruction.Neg)
-            MichelsonInstruction.Lsl -> MichelinePrimitiveApplication(MichelsonInstruction.Lsl)
-            MichelsonInstruction.Lsr -> MichelinePrimitiveApplication(MichelsonInstruction.Lsr)
-            MichelsonInstruction.Or -> MichelinePrimitiveApplication(MichelsonInstruction.Or)
-            MichelsonInstruction.And -> MichelinePrimitiveApplication(MichelsonInstruction.And)
-            MichelsonInstruction.Xor -> MichelinePrimitiveApplication(MichelsonInstruction.Xor)
-            MichelsonInstruction.Not -> MichelinePrimitiveApplication(MichelsonInstruction.Not)
-            MichelsonInstruction.Compare -> MichelinePrimitiveApplication(MichelsonInstruction.Compare)
-            MichelsonInstruction.Eq -> MichelinePrimitiveApplication(MichelsonInstruction.Eq)
-            MichelsonInstruction.Neq -> MichelinePrimitiveApplication(MichelsonInstruction.Neq)
-            MichelsonInstruction.Lt -> MichelinePrimitiveApplication(MichelsonInstruction.Lt)
-            MichelsonInstruction.Gt -> MichelinePrimitiveApplication(MichelsonInstruction.Gt)
-            MichelsonInstruction.Le -> MichelinePrimitiveApplication(MichelsonInstruction.Le)
-            MichelsonInstruction.Ge -> MichelinePrimitiveApplication(MichelsonInstruction.Ge)
-            MichelsonInstruction.Self -> MichelinePrimitiveApplication(MichelsonInstruction.Self)
-            MichelsonInstruction.SelfAddress -> MichelinePrimitiveApplication(MichelsonInstruction.SelfAddress)
+            is MichelsonInstruction.Add -> MichelinePrimitiveApplication(MichelsonInstruction.Add, annots = michelineAnnotations)
+            is MichelsonInstruction.Sub -> MichelinePrimitiveApplication(MichelsonInstruction.Sub, annots = michelineAnnotations)
+            is MichelsonInstruction.Mul -> MichelinePrimitiveApplication(MichelsonInstruction.Mul, annots = michelineAnnotations)
+            is MichelsonInstruction.Ediv -> MichelinePrimitiveApplication(MichelsonInstruction.Ediv, annots = michelineAnnotations)
+            is MichelsonInstruction.Abs -> MichelinePrimitiveApplication(MichelsonInstruction.Abs, annots = michelineAnnotations)
+            is MichelsonInstruction.Isnat -> MichelinePrimitiveApplication(MichelsonInstruction.Isnat, annots = michelineAnnotations)
+            is MichelsonInstruction.Int -> MichelinePrimitiveApplication(MichelsonInstruction.Int, annots = michelineAnnotations)
+            is MichelsonInstruction.Neg -> MichelinePrimitiveApplication(MichelsonInstruction.Neg, annots = michelineAnnotations)
+            is MichelsonInstruction.Lsl -> MichelinePrimitiveApplication(MichelsonInstruction.Lsl, annots = michelineAnnotations)
+            is MichelsonInstruction.Lsr -> MichelinePrimitiveApplication(MichelsonInstruction.Lsr, annots = michelineAnnotations)
+            is MichelsonInstruction.Or -> MichelinePrimitiveApplication(MichelsonInstruction.Or, annots = michelineAnnotations)
+            is MichelsonInstruction.And -> MichelinePrimitiveApplication(MichelsonInstruction.And, annots = michelineAnnotations)
+            is MichelsonInstruction.Xor -> MichelinePrimitiveApplication(MichelsonInstruction.Xor, annots = michelineAnnotations)
+            is MichelsonInstruction.Not -> MichelinePrimitiveApplication(MichelsonInstruction.Not, annots = michelineAnnotations)
+            is MichelsonInstruction.Compare -> MichelinePrimitiveApplication(MichelsonInstruction.Compare, annots = michelineAnnotations)
+            is MichelsonInstruction.Eq -> MichelinePrimitiveApplication(MichelsonInstruction.Eq, annots = michelineAnnotations)
+            is MichelsonInstruction.Neq -> MichelinePrimitiveApplication(MichelsonInstruction.Neq, annots = michelineAnnotations)
+            is MichelsonInstruction.Lt -> MichelinePrimitiveApplication(MichelsonInstruction.Lt, annots = michelineAnnotations)
+            is MichelsonInstruction.Gt -> MichelinePrimitiveApplication(MichelsonInstruction.Gt, annots = michelineAnnotations)
+            is MichelsonInstruction.Le -> MichelinePrimitiveApplication(MichelsonInstruction.Le, annots = michelineAnnotations)
+            is MichelsonInstruction.Ge -> MichelinePrimitiveApplication(MichelsonInstruction.Ge, annots = michelineAnnotations)
+            is MichelsonInstruction.Self -> MichelinePrimitiveApplication(MichelsonInstruction.Self, annots = michelineAnnotations)
+            is MichelsonInstruction.SelfAddress -> MichelinePrimitiveApplication(MichelsonInstruction.SelfAddress, annots = michelineAnnotations)
             is MichelsonInstruction.Contract -> MichelinePrimitiveApplication(
                 MichelsonInstruction.Contract,
-                listOf(toMichelineConverter.convert(type)),
+                args = listOf(toMichelineConverter.convert(type)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.TransferTokens -> MichelinePrimitiveApplication(MichelsonInstruction.TransferTokens)
-            MichelsonInstruction.SetDelegate -> MichelinePrimitiveApplication(MichelsonInstruction.SetDelegate)
+            MichelsonInstruction.TransferTokens -> MichelinePrimitiveApplication(MichelsonInstruction.TransferTokens, annots = michelineAnnotations)
+            is MichelsonInstruction.SetDelegate -> MichelinePrimitiveApplication(MichelsonInstruction.SetDelegate, annots = michelineAnnotations)
             is MichelsonInstruction.CreateContract -> MichelinePrimitiveApplication(
                 MichelsonInstruction.CreateContract,
-                listOf(
+                args = listOf(
                     toMichelineConverter.convert(parameterType),
                     toMichelineConverter.convert(storageType),
                     toMichelineConverter.convert(code),
                 ),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.ImplicitAccount -> MichelinePrimitiveApplication(MichelsonInstruction.ImplicitAccount)
-            MichelsonInstruction.VotingPower -> MichelinePrimitiveApplication(MichelsonInstruction.VotingPower)
-            MichelsonInstruction.Now -> MichelinePrimitiveApplication(MichelsonInstruction.Now)
-            MichelsonInstruction.Level -> MichelinePrimitiveApplication(MichelsonInstruction.Level)
-            MichelsonInstruction.Amount -> MichelinePrimitiveApplication(MichelsonInstruction.Amount)
-            MichelsonInstruction.Balance -> MichelinePrimitiveApplication(MichelsonInstruction.Balance)
-            MichelsonInstruction.CheckSignature -> MichelinePrimitiveApplication(MichelsonInstruction.CheckSignature)
-            MichelsonInstruction.Blake2B -> MichelinePrimitiveApplication(MichelsonInstruction.Blake2B)
-            MichelsonInstruction.Keccak -> MichelinePrimitiveApplication(MichelsonInstruction.Keccak)
-            MichelsonInstruction.Sha3 -> MichelinePrimitiveApplication(MichelsonInstruction.Sha3)
-            MichelsonInstruction.Sha256 -> MichelinePrimitiveApplication(MichelsonInstruction.Sha256)
-            MichelsonInstruction.Sha512 -> MichelinePrimitiveApplication(MichelsonInstruction.Sha512)
-            MichelsonInstruction.HashKey -> MichelinePrimitiveApplication(MichelsonInstruction.HashKey)
-            MichelsonInstruction.Source -> MichelinePrimitiveApplication(MichelsonInstruction.Source)
-            MichelsonInstruction.Sender -> MichelinePrimitiveApplication(MichelsonInstruction.Sender)
-            MichelsonInstruction.Address -> MichelinePrimitiveApplication(MichelsonInstruction.Address)
-            MichelsonInstruction.ChainId -> MichelinePrimitiveApplication(MichelsonInstruction.ChainId)
-            MichelsonInstruction.TotalVotingPower -> MichelinePrimitiveApplication(MichelsonInstruction.TotalVotingPower)
-            MichelsonInstruction.PairingCheck -> MichelinePrimitiveApplication(MichelsonInstruction.PairingCheck)
+            is MichelsonInstruction.ImplicitAccount -> MichelinePrimitiveApplication(MichelsonInstruction.ImplicitAccount, annots = michelineAnnotations)
+            MichelsonInstruction.VotingPower -> MichelinePrimitiveApplication(MichelsonInstruction.VotingPower, annots = michelineAnnotations)
+            is MichelsonInstruction.Now -> MichelinePrimitiveApplication(MichelsonInstruction.Now, annots = michelineAnnotations)
+            is MichelsonInstruction.Level -> MichelinePrimitiveApplication(MichelsonInstruction.Level, annots = michelineAnnotations)
+            is MichelsonInstruction.Amount -> MichelinePrimitiveApplication(MichelsonInstruction.Amount, annots = michelineAnnotations)
+            is MichelsonInstruction.Balance -> MichelinePrimitiveApplication(MichelsonInstruction.Balance, annots = michelineAnnotations)
+            is MichelsonInstruction.CheckSignature -> MichelinePrimitiveApplication(MichelsonInstruction.CheckSignature, annots = michelineAnnotations)
+            is MichelsonInstruction.Blake2B -> MichelinePrimitiveApplication(MichelsonInstruction.Blake2B, annots = michelineAnnotations)
+            is MichelsonInstruction.Keccak -> MichelinePrimitiveApplication(MichelsonInstruction.Keccak, annots = michelineAnnotations)
+            is MichelsonInstruction.Sha3 -> MichelinePrimitiveApplication(MichelsonInstruction.Sha3, annots = michelineAnnotations)
+            is MichelsonInstruction.Sha256 -> MichelinePrimitiveApplication(MichelsonInstruction.Sha256, annots = michelineAnnotations)
+            is MichelsonInstruction.Sha512 -> MichelinePrimitiveApplication(MichelsonInstruction.Sha512, annots = michelineAnnotations)
+            is MichelsonInstruction.HashKey -> MichelinePrimitiveApplication(MichelsonInstruction.HashKey, annots = michelineAnnotations)
+            is MichelsonInstruction.Source -> MichelinePrimitiveApplication(MichelsonInstruction.Source, annots = michelineAnnotations)
+            is MichelsonInstruction.Sender -> MichelinePrimitiveApplication(MichelsonInstruction.Sender, annots = michelineAnnotations)
+            is MichelsonInstruction.Address -> MichelinePrimitiveApplication(MichelsonInstruction.Address, annots = michelineAnnotations)
+            is MichelsonInstruction.ChainId -> MichelinePrimitiveApplication(MichelsonInstruction.ChainId, annots = michelineAnnotations)
+            MichelsonInstruction.TotalVotingPower -> MichelinePrimitiveApplication(MichelsonInstruction.TotalVotingPower, annots = michelineAnnotations)
+            MichelsonInstruction.PairingCheck -> MichelinePrimitiveApplication(MichelsonInstruction.PairingCheck, annots = michelineAnnotations)
             is MichelsonInstruction.SaplingEmptyState -> MichelinePrimitiveApplication(
                 MichelsonInstruction.SaplingEmptyState,
-                listOf(dataToMichelineConverter.convert(memoSize)),
+                args = listOf(dataToMichelineConverter.convert(memoSize)),
+                annots = michelineAnnotations,
             )
-            MichelsonInstruction.SaplingVerifyUpdate -> MichelinePrimitiveApplication(MichelsonInstruction.SaplingVerifyUpdate)
-            MichelsonInstruction.Ticket -> MichelinePrimitiveApplication(MichelsonInstruction.Ticket)
-            MichelsonInstruction.ReadTicket -> MichelinePrimitiveApplication(MichelsonInstruction.ReadTicket)
-            MichelsonInstruction.SplitTicket -> MichelinePrimitiveApplication(MichelsonInstruction.SplitTicket)
-            MichelsonInstruction.JoinTickets -> MichelinePrimitiveApplication(MichelsonInstruction.JoinTickets)
-            MichelsonInstruction.OpenChest -> MichelinePrimitiveApplication(MichelsonInstruction.OpenChest)
+            MichelsonInstruction.SaplingVerifyUpdate -> MichelinePrimitiveApplication(MichelsonInstruction.SaplingVerifyUpdate, annots = michelineAnnotations)
+            MichelsonInstruction.Ticket -> MichelinePrimitiveApplication(MichelsonInstruction.Ticket, annots = michelineAnnotations)
+            MichelsonInstruction.ReadTicket -> MichelinePrimitiveApplication(MichelsonInstruction.ReadTicket, annots = michelineAnnotations)
+            MichelsonInstruction.SplitTicket -> MichelinePrimitiveApplication(MichelsonInstruction.SplitTicket, annots = michelineAnnotations)
+            MichelsonInstruction.JoinTickets -> MichelinePrimitiveApplication(MichelsonInstruction.JoinTickets, annots = michelineAnnotations)
+            MichelsonInstruction.OpenChest -> MichelinePrimitiveApplication(MichelsonInstruction.OpenChest, annots = michelineAnnotations)
         }
     }
 }
@@ -290,33 +336,87 @@ private class MichelsonTypeToMichelineConverter(
 
     override fun convert(value: MichelsonType): MichelineNode = with(value) {
         when (this) {
-            is MichelsonType.Parameter -> MichelinePrimitiveApplication(MichelsonType.Parameter, listOf(convert(this.type)))
-            is MichelsonType.Storage -> MichelinePrimitiveApplication(MichelsonType.Storage, listOf(convert(this.type)))
-            is MichelsonType.Code -> MichelinePrimitiveApplication(MichelsonType.Code, listOf(instructionToMichelineConverter.convert(this.code)))
-            is MichelsonType.Option -> MichelinePrimitiveApplication(MichelsonType.Option, listOf(convert(this.type)))
-            is MichelsonType.List -> MichelinePrimitiveApplication(MichelsonType.List, listOf(convert(this.type)))
-            is MichelsonType.Set -> MichelinePrimitiveApplication(MichelsonType.Set, listOf(convert(this.type)))
-            MichelsonType.Operation -> MichelinePrimitiveApplication(MichelsonType.Operation)
-            is MichelsonType.Contract -> MichelinePrimitiveApplication(MichelsonType.Contract, listOf(convert(this.type)))
-            is MichelsonType.Ticket -> MichelinePrimitiveApplication(MichelsonType.Ticket, listOf(convert(this.type)))
-            is MichelsonType.Pair -> MichelinePrimitiveApplication(MichelsonType.Pair, types.map { convert(it) })
-            is MichelsonType.Or -> MichelinePrimitiveApplication(MichelsonType.Or, listOf(convert(lhs), convert(rhs)))
-            is MichelsonType.Lambda -> MichelinePrimitiveApplication(MichelsonType.Lambda, listOf(convert(parameterType), convert(parameterType)))
-            is MichelsonType.Map -> MichelinePrimitiveApplication(MichelsonType.Map, listOf(convert(keyType), convert(valueType)))
-            is MichelsonType.BigMap -> MichelinePrimitiveApplication(MichelsonType.BigMap, listOf(convert(keyType), convert(valueType)), )
-            MichelsonType.Bls12_381G1 -> MichelinePrimitiveApplication(MichelsonType.Bls12_381G1)
-            MichelsonType.Bls12_381G2 -> MichelinePrimitiveApplication(MichelsonType.Bls12_381G2)
-            MichelsonType. Bls12_381Fr -> MichelinePrimitiveApplication(MichelsonType.Bls12_381Fr)
+            is MichelsonType.Parameter -> MichelinePrimitiveApplication(
+                MichelsonType.Parameter,
+                args = listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Storage -> MichelinePrimitiveApplication(
+                MichelsonType.Storage,
+                args = listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Code -> MichelinePrimitiveApplication(
+                MichelsonType.Code,
+                args = listOf(instructionToMichelineConverter.convert(this.code)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Option -> MichelinePrimitiveApplication(
+                MichelsonType.Option,
+                args = listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.List -> MichelinePrimitiveApplication(
+                MichelsonType.List,
+                args = listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Set -> MichelinePrimitiveApplication(
+                MichelsonType.Set,
+                args = listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Operation -> MichelinePrimitiveApplication(MichelsonType.Operation, annots = michelineAnnotations)
+            is MichelsonType.Contract -> MichelinePrimitiveApplication(
+                MichelsonType.Contract,
+                listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Ticket -> MichelinePrimitiveApplication(
+                MichelsonType.Ticket,
+                listOf(convert(this.type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Pair -> MichelinePrimitiveApplication(
+                MichelsonType.Pair,
+                types.map { convert(it) },
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Or -> MichelinePrimitiveApplication(
+                MichelsonType.Or,
+                listOf(convert(lhs), convert(rhs)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Lambda -> MichelinePrimitiveApplication(
+                MichelsonType.Lambda,
+                listOf(convert(parameterType), convert(parameterType)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Map -> MichelinePrimitiveApplication(
+                MichelsonType.Map,
+                listOf(convert(keyType), convert(valueType)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.BigMap -> MichelinePrimitiveApplication(
+                MichelsonType.BigMap,
+                listOf(convert(keyType), convert(valueType)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonType.Bls12_381G1 -> MichelinePrimitiveApplication(MichelsonType.Bls12_381G1, annots = michelineAnnotations)
+            is MichelsonType.Bls12_381G2 -> MichelinePrimitiveApplication(MichelsonType.Bls12_381G2, annots = michelineAnnotations)
+            is MichelsonType. Bls12_381Fr -> MichelinePrimitiveApplication(MichelsonType.Bls12_381Fr, annots = michelineAnnotations)
             is MichelsonType.SaplingTransaction -> MichelinePrimitiveApplication(
                 MichelsonType.SaplingTransaction,
-                listOf(dataToMichelineConverter.convert(memoSize)),
+                args = listOf(dataToMichelineConverter.convert(memoSize)),
+                annots = michelineAnnotations,
             )
             is MichelsonType.SaplingState -> MichelinePrimitiveApplication(
                 MichelsonType.SaplingState,
-                listOf(dataToMichelineConverter.convert(memoSize)),
+                args = listOf(dataToMichelineConverter.convert(memoSize)),
+                annots = michelineAnnotations,
             )
-            MichelsonType.Chest -> MichelinePrimitiveApplication(MichelsonType.Chest)
-            MichelsonType.ChestKey -> MichelinePrimitiveApplication(MichelsonType.ChestKey)
+            is MichelsonType.Chest -> MichelinePrimitiveApplication(MichelsonType.Chest, annots = michelineAnnotations)
+            is MichelsonType.ChestKey -> MichelinePrimitiveApplication(MichelsonType.ChestKey, annots = michelineAnnotations)
             is MichelsonComparableType -> comparableTypeToMichelineConverter.convert(this)
         }
     }
@@ -325,23 +425,48 @@ private class MichelsonTypeToMichelineConverter(
 private class MichelsonComparableTypeToMichelineConverter : Converter<MichelsonComparableType, MichelineNode> {
     override fun convert(value: MichelsonComparableType): MichelineNode = with(value) {
         when (this) {
-            MichelsonComparableType.Unit -> MichelinePrimitiveApplication(MichelsonComparableType.Unit)
-            MichelsonComparableType.Never -> MichelinePrimitiveApplication(MichelsonComparableType.Never)
-            MichelsonComparableType.Bool -> MichelinePrimitiveApplication(MichelsonComparableType.Bool)
-            MichelsonComparableType.Int -> MichelinePrimitiveApplication(MichelsonComparableType.Int)
-            MichelsonComparableType.Nat -> MichelinePrimitiveApplication(MichelsonComparableType.Nat)
-            MichelsonComparableType.String -> MichelinePrimitiveApplication(MichelsonComparableType.String)
-            MichelsonComparableType.ChainId ->  MichelinePrimitiveApplication(MichelsonComparableType.ChainId)
-            MichelsonComparableType.Bytes -> MichelinePrimitiveApplication(MichelsonComparableType.Bytes)
-            MichelsonComparableType.Mutez -> MichelinePrimitiveApplication(MichelsonComparableType.Mutez)
-            MichelsonComparableType.KeyHash -> MichelinePrimitiveApplication(MichelsonComparableType.KeyHash)
-            MichelsonComparableType.Key -> MichelinePrimitiveApplication(MichelsonComparableType.Key)
-            MichelsonComparableType.Signature -> MichelinePrimitiveApplication(MichelsonComparableType.Signature)
-            MichelsonComparableType.Timestamp -> MichelinePrimitiveApplication(MichelsonComparableType.Timestamp)
-            MichelsonComparableType.Address -> MichelinePrimitiveApplication(MichelsonComparableType.Address)
-            is MichelsonComparableType.Option -> MichelinePrimitiveApplication(MichelsonComparableType.Option, listOf(convert(type)))
-            is MichelsonComparableType.Or -> MichelinePrimitiveApplication(MichelsonComparableType.Or, listOf(convert(lhs), convert(rhs)))
-            is MichelsonComparableType.Pair -> MichelinePrimitiveApplication(MichelsonComparableType.Pair, types.map { convert(it) })
+            is MichelsonComparableType.Unit -> MichelinePrimitiveApplication(MichelsonComparableType.Unit, annots = michelineAnnotations)
+            is MichelsonComparableType.Never -> MichelinePrimitiveApplication(MichelsonComparableType.Never, annots = michelineAnnotations)
+            is MichelsonComparableType.Bool -> MichelinePrimitiveApplication(MichelsonComparableType.Bool, annots = michelineAnnotations)
+            is MichelsonComparableType.Int -> MichelinePrimitiveApplication(MichelsonComparableType.Int, annots = michelineAnnotations)
+            is MichelsonComparableType.Nat -> MichelinePrimitiveApplication(MichelsonComparableType.Nat, annots = michelineAnnotations)
+            is MichelsonComparableType.String -> MichelinePrimitiveApplication(MichelsonComparableType.String, annots = michelineAnnotations)
+            is MichelsonComparableType.ChainId ->  MichelinePrimitiveApplication(MichelsonComparableType.ChainId, annots = michelineAnnotations)
+            is MichelsonComparableType.Bytes -> MichelinePrimitiveApplication(MichelsonComparableType.Bytes, annots = michelineAnnotations)
+            is MichelsonComparableType.Mutez -> MichelinePrimitiveApplication(MichelsonComparableType.Mutez, annots = michelineAnnotations)
+            is MichelsonComparableType.KeyHash -> MichelinePrimitiveApplication(MichelsonComparableType.KeyHash, annots = michelineAnnotations)
+            is MichelsonComparableType.Key -> MichelinePrimitiveApplication(MichelsonComparableType.Key, annots = michelineAnnotations)
+            is MichelsonComparableType.Signature -> MichelinePrimitiveApplication(MichelsonComparableType.Signature, annots = michelineAnnotations)
+            is MichelsonComparableType.Timestamp -> MichelinePrimitiveApplication(MichelsonComparableType.Timestamp, annots = michelineAnnotations)
+            is MichelsonComparableType.Address -> MichelinePrimitiveApplication(MichelsonComparableType.Address, annots = michelineAnnotations)
+            is MichelsonComparableType.Option -> MichelinePrimitiveApplication(
+                MichelsonComparableType.Option,
+                args = listOf(convert(type)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonComparableType.Or -> MichelinePrimitiveApplication(
+                MichelsonComparableType.Or,
+                args = listOf(convert(lhs), convert(rhs)),
+                annots = michelineAnnotations,
+            )
+            is MichelsonComparableType.Pair -> MichelinePrimitiveApplication(
+                MichelsonComparableType.Pair,
+                args = types.map { convert(it) },
+                annots = michelineAnnotations,
+            )
         }
     }
 }
+
+private fun <T : Michelson.Prim> MichelinePrimitiveApplication(
+    prim: T,
+    args: List<MichelineNode> = emptyList(),
+    annots: List<MichelinePrimitiveApplication.Annotation> = emptyList(),
+): MichelinePrimitiveApplication =
+    MichelinePrimitiveApplication(MichelinePrimitiveApplication.Primitive(prim.name), args, annots)
+
+private val Michelson.michelineAnnotations: List<MichelinePrimitiveApplication.Annotation>
+    get() = annotations.mapNotNull { it.asMichelineAnnotation() }
+
+private fun Michelson.Annotation.asMichelineAnnotation(): MichelinePrimitiveApplication.Annotation? =
+    if (MichelinePrimitiveApplication.Annotation.isValid(value)) MichelinePrimitiveApplication.Annotation(value) else null

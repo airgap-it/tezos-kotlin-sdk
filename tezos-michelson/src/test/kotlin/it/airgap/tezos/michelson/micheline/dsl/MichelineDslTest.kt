@@ -1,17 +1,16 @@
 package it.airgap.tezos.michelson.micheline.dsl
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.MichelsonData
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.unit
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -19,19 +18,15 @@ import kotlin.test.assertEquals
 
 class MichelineDslTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        every { dependencyRegistry.michelsonToMichelineConverter } returns michelsonToMichelineConverter
     }
 
     @After
@@ -40,30 +35,30 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline Literal`() {
+    fun `builds Micheline Literal`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelineLiteral.Integer(0) to listOf(
-                micheline { int("0") },
+                micheline(tezos) { int("0") },
                 micheline(michelsonToMichelineConverter) { int("0") },
-                micheline { int((0).toByte()) },
+                micheline(tezos) { int((0).toByte()) },
                 micheline(michelsonToMichelineConverter) { int((0).toByte()) },
-                micheline { int((0).toShort()) },
+                micheline(tezos) { int((0).toShort()) },
                 micheline(michelsonToMichelineConverter) { int((0).toShort()) },
-                micheline { int(0) },
+                micheline(tezos) { int(0) },
                 micheline(michelsonToMichelineConverter) { int(0) },
-                micheline { int(0L) },
+                micheline(tezos) { int(0L) },
                 micheline(michelsonToMichelineConverter) { int(0L) },
             ),
             MichelineLiteral.String("string") to listOf(
-                micheline { string("string") },
+                micheline(tezos) { string("string") },
                 micheline(michelsonToMichelineConverter) { string("string") },
             ),
             MichelineLiteral.Bytes("0x00") to listOf(
-                micheline { bytes("0x00") },
+                micheline(tezos) { bytes("0x00") },
                 micheline(michelsonToMichelineConverter) { bytes("0x00") },
-                micheline { bytes("00") },
+                micheline(tezos) { bytes("00") },
                 micheline(michelsonToMichelineConverter) { bytes("00") },
-                micheline { bytes(byteArrayOf(0)) },
+                micheline(tezos) { bytes(byteArrayOf(0)) },
                 micheline(michelsonToMichelineConverter) { bytes(byteArrayOf(0)) },
             ),
         )
@@ -74,10 +69,10 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline Primitive Application`() {
+    fun `builds Micheline Primitive Application`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("Unit") to listOf(
-                micheline {
+                micheline(tezos) {
                     primitiveApplication(MichelsonData.Unit) {}
                 },
                 micheline(michelsonToMichelineConverter) {
@@ -88,7 +83,7 @@ class MichelineDslTest {
                 "Pair",
                 args = listOf(MichelineLiteral.Integer(0), MichelineLiteral.String("string")),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     primitiveApplication(MichelsonData.Pair)  {
                         arg { int(0) }
                         arg { string("string") }
@@ -106,7 +101,7 @@ class MichelineDslTest {
                 listOf(MichelineLiteral.Integer(0), MichelineLiteral.String("string")),
                 listOf("%annot")
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     primitiveApplication(MichelsonData.Pair)  {
                         arg { int(0) }
                         arg { string("string") }
@@ -120,7 +115,7 @@ class MichelineDslTest {
                         annots("%annot")
                     }
                 },
-                micheline {
+                micheline(tezos) {
                     primitiveApplication(MichelsonData.Pair)  {
                         arg { int(0) }
                         arg { string("string") }
@@ -141,7 +136,7 @@ class MichelineDslTest {
                     MichelinePrimitiveApplication("Unit", annots = listOf("%arg"))
                 ),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     primitiveApplication(MichelsonData.Pair)  {
                         arg { int(0) }
                         arg { string("string") }
@@ -168,10 +163,10 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline Sequence`() {
+    fun `builds Micheline Sequence`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelineSequence(MichelineLiteral.Integer(0)) to listOf(
-                micheline {
+                micheline(tezos) {
                     sequence { int(0) }
                 },
                 micheline(michelsonToMichelineConverter) {
@@ -182,7 +177,7 @@ class MichelineDslTest {
                 MichelineLiteral.Integer(0),
                 MichelineLiteral.String("string"),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     int(0)
                     string("string")
                 },
@@ -198,7 +193,7 @@ class MichelineDslTest {
                     MichelineLiteral.String("string"),
                 ),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     unit
                     sequence {
                         int(0)
@@ -221,10 +216,10 @@ class MichelineDslTest {
     }
 
     @Test
-    fun `builds Micheline from Michelson`() {
+    fun `builds Micheline from Michelson`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("Unit") to listOf(
-                micheline {
+                micheline(tezos) {
                     michelson(MichelsonData.Unit)
                 },
                 micheline(michelsonToMichelineConverter) {

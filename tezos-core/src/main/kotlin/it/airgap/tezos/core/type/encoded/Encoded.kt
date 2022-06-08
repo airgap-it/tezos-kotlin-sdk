@@ -1,31 +1,47 @@
 package it.airgap.tezos.core.type.encoded
 
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.startsWith
+import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 
-public sealed interface Encoded<out Self : Encoded<Self>> {
-    public val kind: Kind<Self>
+/**
+ * Group of base58 Tezos values.
+ */
+public sealed interface Encoded {
+    /**
+     * The encoded base58 value.
+     */
     public val base58: String
 
-    public sealed interface Kind<out E : Encoded<E>> {
+    @InternalTezosSdkApi
+    public val meta: MetaEncoded<*, *>
+
+    public companion object {}
+}
+
+// -- meta --
+
+@InternalTezosSdkApi
+public sealed interface MetaEncoded<out Self : MetaEncoded<Self, E>, out E : Encoded> {
+    public val kind: Kind<Self, E>
+    public val encoded: E
+
+    public sealed interface Kind<out M : MetaEncoded<M, E>, out E : Encoded> {
         public val base58Prefix: String
         public val base58Bytes: ByteArray
         public val base58Length: Int
 
         public val bytesLength: Int
 
-        public fun createValue(base58: String): E = createValueOrNull(base58) ?: failWithIllegalArgument("Invalid Base58 encoded data.")
-        public fun createValueOrNull(base58: String): E?
-
-        public operator fun plus(string: String): String = base58Prefix + string
-        public operator fun plus(bytes: ByteArray): ByteArray = base58Bytes + bytes
+        public fun createValue(base58: String): M = createValueOrNull(base58) ?: failWithIllegalArgument("Invalid Base58 encoded data.")
+        public fun createValueOrNull(base58: String): M?
 
         public fun isValid(string: String): Boolean = string.startsWith(base58Prefix) && string.length == base58Length
         public fun isValid(bytes: ByteArray): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size == bytesLength + base58Bytes.size)
         public fun isValid(bytes: List<Byte>): Boolean = bytes.size == bytesLength || (bytes.startsWith(base58Bytes) && bytes.size >= bytesLength + base58Bytes.size)
 
         public companion object {
-            public val values: List<Kind<*>>
+            public val values: List<Kind<*, *>>
                 get() = listOf(
                     BlockHash, /* B(51) */
                     BlockMetadataHash, /* bm(52) */
@@ -44,6 +60,7 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
                     NonceHash, /* nce(53) */
 
                     Ed25519PublicKeyHash, /* tz1(36) */
+                    Ed25519BlindedPublicKeyHash, /* btz1(37) */
                     Secp256K1PublicKeyHash, /* tz2(36) */
                     P256PublicKeyHash, /* tz3(36) */
                     ContractHash, /* KT1(36) */
@@ -77,13 +94,13 @@ public sealed interface Encoded<out Self : Encoded<Self>> {
 
                     SaplingSpendingKey, /* sask(241) */
                     SaplingAddress, /* zet1(69) */
+
+                    ScriptExprHash, /* expr(54) */
                 )
 
-            public fun recognize(string: String): Kind<*>? = values.find { it.isValid(string) }
-            public fun recognize(bytes: ByteArray): Kind<*>? = values.find { it.isValid(bytes) }
-            public fun recognize(bytes: List<Byte>): Kind<*>? = values.find { it.isValid(bytes) }
+            public fun recognize(string: String): Kind<*, *>? = values.find { it.isValid(string) }
+            public fun recognize(bytes: ByteArray): Kind<*, *>? = values.find { it.isValid(bytes) }
+            public fun recognize(bytes: List<Byte>): Kind<*, *>? = values.find { it.isValid(bytes) }
         }
     }
-
-    public companion object {}
 }

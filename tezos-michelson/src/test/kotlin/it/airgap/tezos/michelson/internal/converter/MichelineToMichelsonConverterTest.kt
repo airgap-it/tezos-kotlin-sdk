@@ -2,19 +2,22 @@ package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.core.internal.converter.Converter
+import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.michelson.converter.toMichelson
+import it.airgap.tezos.michelson.internal.context.withTezosContext
+import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.toMichelson
 import michelsonComparableTypeMichelinePairs
 import michelsonMichelinePairs
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -23,25 +26,19 @@ import kotlin.test.assertFailsWith
 
 class MichelineToMichelsonConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelineToMichelsonConverter: MichelineToMichelsonConverter
-
-    private lateinit var stringToMichelsonPrimConverter: StringToMichelsonPrimConverter
-    private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
+    private lateinit var stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
-        stringToMichelsonPrimConverter = spyk(StringToMichelsonPrimConverter())
-        michelineToCompactStringConverter = MichelineToCompactStringConverter()
-
-        michelineToMichelsonConverter = MichelineToMichelsonConverter(stringToMichelsonPrimConverter, michelineToCompactStringConverter)
-
-        every { dependencyRegistry.michelineToMichelsonConverter } returns michelineToMichelsonConverter
+        tezos = mockTezos()
+        michelineToMichelsonConverter = MichelineToMichelsonConverter(
+            spyk(tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter).also { stringToMichelsonPrimConverter = it },
+            tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
+        )
     }
 
     @After
@@ -50,7 +47,7 @@ class MichelineToMichelsonConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Literal to Michelson`() {
+    fun `should convert Micheline Literal to Michelson`() = withTezosContext {
         val expectedWithMicheline = listOf(
             MichelsonData.IntConstant(1) to MichelineLiteral.Integer(1),
             MichelsonData.StringConstant("string") to MichelineLiteral.String("string"),
@@ -59,19 +56,19 @@ class MichelineToMichelsonConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(tezos))
             assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
     }
 
     @Test
-    fun `should convert Micheline Primitive Application to Michelson`() {
+    fun `should convert Micheline Primitive Application to Michelson`() = withTezosContext {
         @Suppress("UNCHECKED_CAST")
         val expectedWithMicheline1 = michelsonMichelinePairs.filter { it.second is MichelinePrimitiveApplication }
 
         expectedWithMicheline1.forEach {
             assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(tezos))
             assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
 
@@ -83,19 +80,21 @@ class MichelineToMichelsonConverterTest {
 
         expectedWithMicheline2.forEach {
             assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(tezos))
             assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
     }
 
     @Test
-    fun `should fail to convert invalid Micheline Primitive Application`() {
+    fun `should fail to convert invalid Micheline Primitive Application`() = withTezosContext {
         val unknownMicheline = listOf(
             MichelinePrimitiveApplication("unknown_prim")
         )
 
         unknownMicheline.forEach {
             assertFailsWith<IllegalArgumentException> { michelineToMichelsonConverter.convert(it) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(tezos) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(michelineToMichelsonConverter) }
         }
 
         val invalidMicheline: List<MichelinePrimitiveApplication> = listOf(
@@ -285,29 +284,33 @@ class MichelineToMichelsonConverterTest {
 
         invalidMicheline.forEach {
             assertFailsWith<IllegalArgumentException> { michelineToMichelsonConverter.convert(it) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(tezos) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(michelineToMichelsonConverter) }
         }
     }
 
     @Test
-    fun `should convert Micheline Sequence to Michelson`() {
+    fun `should convert Micheline Sequence to Michelson`() = withTezosContext {
         @Suppress("UNCHECKED_CAST")
         val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelineSequence }
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToMichelsonConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMichelson())
+            assertEquals(it.first, it.second.toMichelson(tezos))
             assertEquals(it.first, it.second.toMichelson(michelineToMichelsonConverter))
         }
     }
 
     @Test
-    fun `should fail to convert invalid Micheline Sequence`() {
+    fun `should fail to convert invalid Micheline Sequence`() = withTezosContext {
         val unknownMicheline = listOf(
             MichelineSequence(MichelinePrimitiveApplication("unit"))
         )
 
         unknownMicheline.forEach {
             assertFailsWith<IllegalArgumentException> { michelineToMichelsonConverter.convert(it) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(tezos) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(michelineToMichelsonConverter) }
         }
 
         val invalidMicheline: List<MichelineSequence> = listOf(
@@ -325,6 +328,8 @@ class MichelineToMichelsonConverterTest {
 
         invalidMicheline.forEach {
             assertFailsWith<IllegalArgumentException> { michelineToMichelsonConverter.convert(it) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(tezos) }
+            assertFailsWith<IllegalArgumentException> { it.toMichelson(michelineToMichelsonConverter) }
         }
     }
 }

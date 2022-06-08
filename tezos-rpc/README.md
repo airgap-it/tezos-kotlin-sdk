@@ -1,0 +1,76 @@
+# Tezos Kotlin SDK: RPC
+
+[![stable](https://img.shields.io/github/v/tag/airgap-it/tezos-kotlin-sdk?label=stable&sort=semver)](https://github.com/airgap-it/tezos-kotlin-sdk/releases)
+[![latest](https://img.shields.io/github/v/tag/airgap-it/tezos-kotlin-sdk?color=orange&include_prereleases&label=latest)](https://github.com/airgap-it/tezos-kotlin-sdk/releases)
+[![release](https://img.shields.io/jitpack/v/github/airgap-it/tezos-kotlin-sdk)](https://jitpack.io/#airgap-it/tezos-kotlin-sdk)
+[![license](https://img.shields.io/github/license/airgap-it/tezos-kotlin-sdk)](https://github.com/airgap-it/tezos-kotlin-sdk/blob/master/LICENSE)
+
+`:tezos-rpc` provides a Tezos RPC client which should be used to interact with Tezos nodes.
+
+## Setup
+
+To add `:tezos-rpc` into your project:
+
+1. Make sure the [JitPack](https://jitpack.io/) repository is included in your root `build.gradle` file:
+
+#### Groovy
+  ```groovy
+  allprojects {
+    repositories {
+      ...
+      maven { url 'https://jitpack.io' }
+    }
+  }
+  ```
+
+#### Kotlin
+  ```kotlin
+  allprojects {
+    repositories {
+      ...
+      maven("https://jitpack.io")
+    }
+  }
+  ```
+
+2. Add the dependencies:
+
+#### Groovy
+  ```groovy
+  dependencies {
+    def tezos_version = "0.0.1"
+
+    implementation "com.github.airgap-it.tezos:tezos-rpc:$tezos_version"
+
+    // dependencies
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos:tezos-michelson:$tezos_version"
+    implementation "com.github.airgap-it.tezos:tezos-operation:$tezos_version"
+  }
+  ```
+
+#### Kotlin
+
+  ```kotlin
+  dependencies {
+    val tezosVersion = "0.0.1"
+
+    implementation("com.github.airgap-it.tezos:tezos-rpc:$tezosVersion")
+
+    // dependencies
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos:tezos-michelson:$tezosVersion")
+    implementation("com.github.airgap-it.tezos:tezos-operation:$tezosVersion")
+}
+  ```
+
+### ProGuard and R8
+Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules. If you are using ProGuard or R8, please follow the guides listed below to make sure your project works correctly after obfuscation:
+
+- [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android)
+- [`:tezos-michelson`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson#proguard-and-r8)
+- [`:tezos-operation`](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-operation#proguard-and-r8)
+
+## Usage
+
+See `samples` to learn how to use the library.

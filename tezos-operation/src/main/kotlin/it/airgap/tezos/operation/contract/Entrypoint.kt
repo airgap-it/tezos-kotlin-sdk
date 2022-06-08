@@ -1,6 +1,13 @@
 package it.airgap.tezos.operation.contract
 
+/**
+ * Entrypoint types defined in Tezos.
+ *
+ * See [P2P message format](https://tezos.gitlab.io/shell/p2p_api.html#alpha-entrypoint-determined-from-data-8-bit-tag) for more details.
+ */
 public sealed interface Entrypoint {
+    public val value: String
+
     public sealed interface Kind {
         public val tag: ByteArray
 
@@ -19,25 +26,30 @@ public sealed interface Entrypoint {
 
     public object Default : Entrypoint, Kind {
         override val tag: ByteArray = byteArrayOf(0)
+        override val value: String = "default"
     }
 
     public object Root : Entrypoint, Kind {
         override val tag: ByteArray = byteArrayOf(1)
+        override val value: String = "root"
     }
 
     public object Do : Entrypoint, Kind {
         override val tag: ByteArray = byteArrayOf(2)
+        override val value: String = "do"
     }
 
     public object SetDelegate : Entrypoint, Kind {
         override val tag: ByteArray = byteArrayOf(3)
+        override val value: String = "set_delegate"
     }
 
     public object RemoveDelegate : Entrypoint, Kind {
         override val tag: ByteArray = byteArrayOf(4)
+        override val value: String = "remove_delegate"
     }
 
-    public data class Named(public val value: String) : Entrypoint {
+    public data class Named(override val value: String) : Entrypoint {
 
         public companion object : Kind {
             override val tag: ByteArray = byteArrayOf((255).toByte())
@@ -46,3 +58,16 @@ public sealed interface Entrypoint {
 
     public companion object {}
 }
+
+/**
+ * Creates an [entrypoint][Entrypoint] from an arbitrary [String][value].
+ */
+public fun Entrypoint(value: String): Entrypoint =
+    when (value) {
+        Entrypoint.Default.value -> Entrypoint.Default
+        Entrypoint.Root.value -> Entrypoint.Root
+        Entrypoint.Do.value -> Entrypoint.Do
+        Entrypoint.SetDelegate.value -> Entrypoint.SetDelegate
+        Entrypoint.RemoveDelegate.value -> Entrypoint.RemoveDelegate
+        else -> Entrypoint.Named(value)
+    }

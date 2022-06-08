@@ -3,13 +3,16 @@ package it.airgap.tezos.michelson.micheline
 import it.airgap.tezos.michelson.Michelson
 import kotlinx.serialization.Serializable
 
-// https://tezos.gitlab.io/shell/micheline.html#bnf-grammar
+/**
+ * Micheline primitive application as defined in [the documentation](https://tezos.gitlab.io/shell/micheline.html#bnf-grammar).
+ */
 @Serializable
 public data class MichelinePrimitiveApplication internal constructor(
     public val prim: Primitive,
-    public val args: List<MichelineNode>,
-    public val annots: List<Annotation>,
+    public val args: List<MichelineNode> = emptyList(),
+    public val annots: List<Annotation> = emptyList(),
 ) : MichelineNode() {
+
     @Serializable
     @JvmInline public value class Primitive(public val value: String) {
         init {
@@ -42,7 +45,6 @@ internal fun MichelinePrimitiveApplication(
 ): MichelinePrimitiveApplication =
     MichelinePrimitiveApplication(MichelinePrimitiveApplication.Primitive(prim), args, annots.map { MichelinePrimitiveApplication.Annotation(it) })
 
-@Suppress("FunctionName")
 public fun <T : Michelson.Prim> MichelinePrimitiveApplication(
     prim: T,
     args: List<MichelineNode> = emptyList(),

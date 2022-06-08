@@ -1,6 +1,6 @@
 package it.airgap.tezos.core.internal.base58
 
-import it.airgap.tezos.core.internal.utils.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertContentEquals
@@ -55,7 +55,7 @@ class Base58Test {
     }
 
     @Test
-    fun `decodes Base58 string to bytes`() {
+    fun `decodes Base58 string to ByteArray`() {
         val encodedWithExpected = bytesWithEncodings.map { it.second to it.first.asHexString().toByteArray() }
 
         encodedWithExpected

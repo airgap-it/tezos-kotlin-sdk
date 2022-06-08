@@ -1,16 +1,15 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
-import it.airgap.tezos.michelson.toMicheline
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.converter.toMicheline
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import michelsonComparableTypeMichelinePairs
 import michelsonDataMichelinePairs
 import michelsonInstructionMichelinePairs
 import michelsonTypeMichelinePairs
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -18,19 +17,15 @@ import kotlin.test.assertEquals
 
 class MichelsonToMichelineConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        every { dependencyRegistry.michelsonToMichelineConverter } returns michelsonToMichelineConverter
     }
 
     @After
@@ -39,45 +34,45 @@ class MichelsonToMichelineConverterTest {
     }
 
     @Test
-    fun `should convert Michelson Data to Micheline`() {
+    fun `should convert Michelson Data to Micheline`() = withTezosContext {
         val expectedWithMichelson = michelsonDataMichelinePairs.map { it.second to it.first }
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }
 
     @Test
-    fun `should convert Michelson Instruction to Micheline`() {
+    fun `should convert Michelson Instruction to Micheline`() = withTezosContext {
         val expectedWithMichelson = michelsonInstructionMichelinePairs.map { it.second to it.first }
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }
 
     @Test
-    fun `should convert Michelson Type to Micheline`() {
+    fun `should convert Michelson Type to Micheline`() = withTezosContext {
         val expectedWithMichelson = michelsonTypeMichelinePairs.map { it.second to it.first }
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }
 
     @Test
-    fun `should convert Michelson Comparable Type to Micheline`() {
+    fun `should convert Michelson Comparable Type to Micheline`() = withTezosContext {
         val expectedWithMichelson = michelsonComparableTypeMichelinePairs.map { it.second to it.first }
 
         expectedWithMichelson.forEach {
             assertEquals(it.first, michelsonToMichelineConverter.convert(it.second))
-            assertEquals(it.first, it.second.toMicheline())
+            assertEquals(it.first, it.second.toMicheline(tezos))
             assertEquals(it.first, it.second.toMicheline(michelsonToMichelineConverter))
         }
     }

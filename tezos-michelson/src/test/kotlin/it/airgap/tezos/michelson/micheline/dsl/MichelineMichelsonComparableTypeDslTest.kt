@@ -1,14 +1,13 @@
 package it.airgap.tezos.michelson.micheline.dsl
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -16,19 +15,15 @@ import kotlin.test.assertEquals
 
 class MichelineMichelsonComparableTypeDslTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelsonToMichelineConverter: MichelsonToMichelineConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelsonToMichelineConverter = MichelsonToMichelineConverter()
-
-        every { dependencyRegistry.michelsonToMichelineConverter } returns michelsonToMichelineConverter
     }
 
     @After
@@ -37,213 +32,158 @@ class MichelineMichelsonComparableTypeDslTest {
     }
 
     @Test
-    fun `builds Micheline Michelson Comparable Type Expression`() {
+    fun `builds Micheline Michelson Comparable Type Expression`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication("unit") to listOf(
-                micheline { unit },
+                micheline(tezos) { unit },
                 micheline(michelsonToMichelineConverter) { unit },
-                micheline { unit() },
+                micheline(tezos) { unit() },
                 micheline(michelsonToMichelineConverter) { unit() },
-                michelineType { unit },
                 michelineType(michelsonToMichelineConverter) { unit },
-                michelineType { unit() },
                 michelineType(michelsonToMichelineConverter) { unit() },
-                michelineComparableType { unit },
                 michelineComparableType(michelsonToMichelineConverter) { unit },
-                michelineComparableType { unit() },
                 michelineComparableType(michelsonToMichelineConverter) { unit() },
             ),
             MichelinePrimitiveApplication("never") to listOf(
-                micheline { never },
+                micheline(tezos) { never },
                 micheline(michelsonToMichelineConverter) { never },
-                micheline { never() },
+                micheline(tezos) { never() },
                 micheline(michelsonToMichelineConverter) { never() },
-                michelineType { never },
                 michelineType(michelsonToMichelineConverter) { never },
-                michelineType { never() },
                 michelineType(michelsonToMichelineConverter) { never() },
-                michelineComparableType { never },
                 michelineComparableType(michelsonToMichelineConverter) { never },
-                michelineComparableType { never() },
                 michelineComparableType(michelsonToMichelineConverter) { never() },
             ),
             MichelinePrimitiveApplication("bool") to listOf(
-                micheline { bool },
+                micheline(tezos) { bool },
                 micheline(michelsonToMichelineConverter) { bool },
-                micheline { bool() },
+                micheline(tezos) { bool() },
                 micheline(michelsonToMichelineConverter) { bool() },
-                michelineType { bool },
                 michelineType(michelsonToMichelineConverter) { bool },
-                michelineType { bool() },
                 michelineType(michelsonToMichelineConverter) { bool() },
-                michelineComparableType { bool },
                 michelineComparableType(michelsonToMichelineConverter) { bool },
-                michelineComparableType { bool() },
                 michelineComparableType(michelsonToMichelineConverter) { bool() },
             ),
             MichelinePrimitiveApplication("int") to listOf(
-                micheline { int },
-                micheline { int() },
-                michelineType { int },
-                michelineType { int() },
-                michelineComparableType { int },
-                michelineComparableType { int() },
+                micheline(tezos) { int },
+                micheline(michelsonToMichelineConverter) { int },
+                micheline(tezos) { int() },
+                micheline(michelsonToMichelineConverter) { int() },
+                michelineType(michelsonToMichelineConverter) { int },
+                michelineType(michelsonToMichelineConverter) { int() },
+                michelineComparableType(michelsonToMichelineConverter) { int },
+                michelineComparableType(michelsonToMichelineConverter) { int() },
             ),
             MichelinePrimitiveApplication("nat") to listOf(
-                micheline { nat },
+                micheline(tezos) { nat },
                 micheline(michelsonToMichelineConverter) { nat },
-                micheline { nat() },
+                micheline(tezos) { nat() },
                 micheline(michelsonToMichelineConverter) { nat() },
-                michelineType { nat },
                 michelineType(michelsonToMichelineConverter) { nat },
-                michelineType { nat() },
                 michelineType(michelsonToMichelineConverter) { nat() },
-                michelineComparableType { nat },
                 michelineComparableType(michelsonToMichelineConverter) { nat },
-                michelineComparableType { nat() },
                 michelineComparableType(michelsonToMichelineConverter) { nat() },
             ),
             MichelinePrimitiveApplication("string") to listOf(
-                micheline { string },
+                micheline(tezos) { string },
                 micheline(michelsonToMichelineConverter) { string },
-                micheline { string() },
+                micheline(tezos) { string() },
                 micheline(michelsonToMichelineConverter) { string() },
-                michelineType { string },
                 michelineType(michelsonToMichelineConverter) { string },
-                michelineType { string() },
                 michelineType(michelsonToMichelineConverter) { string() },
-                michelineComparableType { string },
                 michelineComparableType(michelsonToMichelineConverter) { string },
-                michelineComparableType { string() },
                 michelineComparableType(michelsonToMichelineConverter) { string() },
             ),
             MichelinePrimitiveApplication("chain_id") to listOf(
-                micheline { chainId },
+                micheline(tezos) { chainId },
                 micheline(michelsonToMichelineConverter) { chainId },
-                micheline { chainId() },
+                micheline(tezos) { chainId() },
                 micheline(michelsonToMichelineConverter) { chainId() },
-                michelineType { chainId },
                 michelineType(michelsonToMichelineConverter) { chainId },
-                michelineType { chainId() },
                 michelineType(michelsonToMichelineConverter) { chainId() },
-                michelineComparableType { chainId },
                 michelineComparableType(michelsonToMichelineConverter) { chainId },
-                michelineComparableType { chainId() },
                 michelineComparableType(michelsonToMichelineConverter) { chainId() },
             ),
             MichelinePrimitiveApplication("bytes") to listOf(
-                micheline { bytes },
+                micheline(tezos) { bytes },
                 micheline(michelsonToMichelineConverter) { bytes },
-                micheline { bytes() },
+                micheline(tezos) { bytes() },
                 micheline(michelsonToMichelineConverter) { bytes() },
-                michelineType { bytes },
                 michelineType(michelsonToMichelineConverter) { bytes },
-                michelineType { bytes() },
                 michelineType(michelsonToMichelineConverter) { bytes() },
-                michelineComparableType { bytes },
                 michelineComparableType(michelsonToMichelineConverter) { bytes },
-                michelineComparableType { bytes() },
                 michelineComparableType(michelsonToMichelineConverter) { bytes() },
             ),
             MichelinePrimitiveApplication("mutez") to listOf(
-                micheline { mutez },
+                micheline(tezos) { mutez },
                 micheline(michelsonToMichelineConverter) { mutez },
-                micheline { mutez() },
+                micheline(tezos) { mutez() },
                 micheline(michelsonToMichelineConverter) { mutez() },
-                michelineType { mutez },
                 michelineType(michelsonToMichelineConverter) { mutez },
-                michelineType { mutez() },
                 michelineType(michelsonToMichelineConverter) { mutez() },
-                michelineComparableType { mutez },
                 michelineComparableType(michelsonToMichelineConverter) { mutez },
-                michelineComparableType { mutez() },
                 michelineComparableType(michelsonToMichelineConverter) { mutez() },
             ),
             MichelinePrimitiveApplication("key_hash") to listOf(
-                micheline { keyHash },
+                micheline(tezos) { keyHash },
                 micheline(michelsonToMichelineConverter) { keyHash },
-                micheline { keyHash() },
+                micheline(tezos) { keyHash() },
                 micheline(michelsonToMichelineConverter) { keyHash() },
-                michelineType { keyHash },
                 michelineType(michelsonToMichelineConverter) { keyHash },
-                michelineType { keyHash() },
                 michelineType(michelsonToMichelineConverter) { keyHash() },
-                michelineComparableType { keyHash },
                 michelineComparableType(michelsonToMichelineConverter) { keyHash },
-                michelineComparableType { keyHash() },
                 michelineComparableType(michelsonToMichelineConverter) { keyHash() },
             ),
             MichelinePrimitiveApplication("key") to listOf(
-                micheline { key },
+                micheline(tezos) { key },
                 micheline(michelsonToMichelineConverter) { key },
-                micheline { key() },
+                micheline(tezos) { key() },
                 micheline(michelsonToMichelineConverter) { key() },
-                michelineType { key },
                 michelineType(michelsonToMichelineConverter) { key },
-                michelineType { key() },
                 michelineType(michelsonToMichelineConverter) { key() },
-                michelineComparableType { key },
                 michelineComparableType(michelsonToMichelineConverter) { key },
-                michelineComparableType { key() },
                 michelineComparableType(michelsonToMichelineConverter) { key() },
             ),
             MichelinePrimitiveApplication("signature") to listOf(
-                micheline { signature },
+                micheline(tezos) { signature },
                 micheline(michelsonToMichelineConverter) { signature },
-                micheline { signature() },
+                micheline(tezos) { signature() },
                 micheline(michelsonToMichelineConverter) { signature() },
-                michelineType { signature },
                 michelineType(michelsonToMichelineConverter) { signature },
-                michelineType { signature() },
                 michelineType(michelsonToMichelineConverter) { signature() },
-                michelineComparableType { signature },
                 michelineComparableType(michelsonToMichelineConverter) { signature },
-                michelineComparableType { signature() },
                 michelineComparableType(michelsonToMichelineConverter) { signature() },
             ),
             MichelinePrimitiveApplication("timestamp") to listOf(
-                micheline { timestamp },
+                micheline(tezos) { timestamp },
                 micheline(michelsonToMichelineConverter) { timestamp },
-                micheline { timestamp() },
+                micheline(tezos) { timestamp() },
                 micheline(michelsonToMichelineConverter) { timestamp() },
-                michelineType { timestamp },
                 michelineType(michelsonToMichelineConverter) { timestamp },
-                michelineType { timestamp() },
                 michelineType(michelsonToMichelineConverter) { timestamp() },
-                michelineComparableType { timestamp },
                 michelineComparableType(michelsonToMichelineConverter) { timestamp },
-                michelineComparableType { timestamp() },
                 michelineComparableType(michelsonToMichelineConverter) { timestamp() },
             ),
             MichelinePrimitiveApplication("address") to listOf(
-                micheline { address },
+                micheline(tezos) { address },
                 micheline(michelsonToMichelineConverter) { address },
-                micheline { address() },
+                micheline(tezos) { address() },
                 micheline(michelsonToMichelineConverter) { address() },
-                michelineType { address },
                 michelineType(michelsonToMichelineConverter) { address },
-                michelineType { address() },
                 michelineType(michelsonToMichelineConverter) { address() },
-                michelineComparableType { address },
                 michelineComparableType(michelsonToMichelineConverter) { address },
-                michelineComparableType { address() },
                 michelineComparableType(michelsonToMichelineConverter) { address() },
             ),
             MichelinePrimitiveApplication(
                 "option",
                 args = listOf(MichelinePrimitiveApplication("operation")),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     option {
                         arg { operation }
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
-                    option {
-                        arg { operation }
-                    }
-                },
-                michelineType {
                     option {
                         arg { operation }
                     }
@@ -258,7 +198,7 @@ class MichelineMichelsonComparableTypeDslTest {
                 "option",
                 args = listOf(MichelinePrimitiveApplication("unit")),
             ) to listOf(
-                micheline {
+                micheline(tezos) {
                     option {
                         arg { unit }
                     }
@@ -268,17 +208,7 @@ class MichelineMichelsonComparableTypeDslTest {
                         arg { unit }
                     }
                 },
-                michelineType {
-                    option {
-                        arg { unit }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
-                    option {
-                        arg { unit }
-                    }
-                },
-                michelineComparableType {
                     option {
                         arg { unit }
                     }

@@ -1,16 +1,15 @@
 package it.airgap.tezos.michelson.internal.converter
 
 import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import it.airgap.tezos.michelson.internal.di.ScopedDependencyRegistry
+import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.converter.toCompactExpression
+import it.airgap.tezos.michelson.converter.toExpression
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.toCompactExpression
-import it.airgap.tezos.michelson.toExpression
-import mockTezosSdk
+import mockTezos
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -18,22 +17,17 @@ import kotlin.test.assertEquals
 
 class MichelineToStringConverterTest {
 
-    @MockK
-    private lateinit var dependencyRegistry: ScopedDependencyRegistry
-
+    private lateinit var tezos: Tezos
     private lateinit var michelineToStringConverter: MichelineToStringConverter
     private lateinit var michelineToCompactStringConverter: MichelineToCompactStringConverter
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        mockTezosSdk(dependencyRegistry)
 
+        tezos = mockTezos()
         michelineToStringConverter = MichelineToStringConverter()
         michelineToCompactStringConverter = MichelineToCompactStringConverter()
-
-        every { dependencyRegistry.michelineToStringConverter } returns michelineToStringConverter
-        every { dependencyRegistry.michelineToCompactStringConverter } returns michelineToCompactStringConverter
     }
 
     @After
@@ -42,7 +36,7 @@ class MichelineToStringConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Literal to string`() {
+    fun `should convert Micheline Literal to string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "1" to MichelineLiteral.Integer(1),
             "string" to MichelineLiteral.String("string"),
@@ -51,13 +45,13 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toExpression())
+            assertEquals(it.first, it.second.toExpression(tezos))
             assertEquals(it.first, it.second.toExpression(michelineToStringConverter))
         }
     }
 
     @Test
-    fun `should convert Micheline Literal to compact string`() {
+    fun `should convert Micheline Literal to compact string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "1" to MichelineLiteral.Integer(1),
             "string" to MichelineLiteral.String("string"),
@@ -66,13 +60,13 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToCompactStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toCompactExpression())
+            assertEquals(it.first, it.second.toCompactExpression(tezos))
             assertEquals(it.first, it.second.toCompactExpression(michelineToCompactStringConverter))
         }
     }
 
     @Test
-    fun `should convert Micheline Primitive Application to string`() {
+    fun `should convert Micheline Primitive Application to string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "prim" to MichelinePrimitiveApplication("prim"),
             "prim arg1 arg2" to MichelinePrimitiveApplication(
@@ -120,13 +114,13 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toExpression())
+            assertEquals(it.first, it.second.toExpression(tezos))
             assertEquals(it.first, it.second.toExpression(michelineToStringConverter))
         }
     }
 
     @Test
-    fun `should convert Micheline Primitive Application to compact string`() {
+    fun `should convert Micheline Primitive Application to compact string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "prim" to MichelinePrimitiveApplication("prim"),
             "prim arg1 arg2" to MichelinePrimitiveApplication(
@@ -214,12 +208,12 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToCompactStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toCompactExpression())
+            assertEquals(it.first, it.second.toCompactExpression(tezos))
         }
     }
 
     @Test
-    fun `should convert Micheline Sequence to string`() {
+    fun `should convert Micheline Sequence to string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "{ expr1 ; expr2 ; expr3 ; expr4 }" to MichelineSequence(
                 MichelineLiteral.String("expr1"),
@@ -272,13 +266,13 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toExpression())
+            assertEquals(it.first, it.second.toExpression(tezos))
             assertEquals(it.first, it.second.toExpression(michelineToStringConverter))
         }
     }
 
     @Test
-    fun `should convert Micheline Sequence to compact string`() {
+    fun `should convert Micheline Sequence to compact string`() = withTezosContext {
         val expectedWithMicheline = listOf(
             "{ }" to MichelineSequence(),
             "{ expr1 ; expr2 }" to MichelineSequence(
@@ -336,7 +330,7 @@ class MichelineToStringConverterTest {
 
         expectedWithMicheline.forEach {
             assertEquals(it.first, michelineToCompactStringConverter.convert(it.second))
-            assertEquals(it.first, it.second.toCompactExpression())
+            assertEquals(it.first, it.second.toCompactExpression(tezos))
         }
     }
 }

@@ -19,4 +19,6 @@ public class LazyWeak<T : Any>(private val initializer: () -> T, lock: Any? = nu
 }
 
 @InternalTezosSdkApi
-public fun <T : Any> lazyWeak(lock: Any? = null, initializer: () -> T): LazyWeak<T> = LazyWeak(initializer, lock)
+public interface LazyWeakDelegateContext {
+    public fun <T : Any> lazyWeak(lock: Any? = null, initializer: () -> T): LazyWeak<T> = LazyWeak(initializer, lock)
+}
