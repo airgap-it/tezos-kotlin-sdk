@@ -1,5 +1,6 @@
 package it.airgap.tezos.core.internal.utils
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.padStartEven
 import org.junit.Test
 import kotlin.test.assertEquals
 

@@ -1,8 +1,8 @@
 package it.airgap.tezos.michelson
 
 import inRange
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.HexString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
 import org.junit.Test
 import kotlin.test.*
 

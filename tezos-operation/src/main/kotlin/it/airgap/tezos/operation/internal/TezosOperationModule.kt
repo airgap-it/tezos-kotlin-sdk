@@ -11,7 +11,7 @@ import it.airgap.tezos.operation.internal.di.OperationDependencyRegistry
 
 public class TezosOperationModule private constructor(public val dependencyRegistry: OperationDependencyRegistry) : TezosModule {
 
-    public class Builder : TezosModule.Builder<TezosOperationModule> {
+    public class Builder internal constructor() : TezosModule.Builder<TezosOperationModule> {
 
         @InternalTezosSdkApi
         override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosOperationModule {

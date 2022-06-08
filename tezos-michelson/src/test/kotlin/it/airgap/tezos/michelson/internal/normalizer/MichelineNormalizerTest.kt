@@ -3,6 +3,7 @@ package it.airgap.tezos.michelson.internal.normalizer
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
@@ -38,7 +39,7 @@ class MichelineNormalizerTest {
     }
 
     @Test
-    fun `should normalize Micheline Literal`() {
+    fun `should normalize Micheline Literal`() = withTezosContext {
         val expectedWithMicheline = listOf(
             MichelineLiteral.Integer(0),
             MichelineLiteral.String("string"),
@@ -53,7 +54,7 @@ class MichelineNormalizerTest {
     }
 
     @Test
-    fun `should normalize Micheline Primitive Application`() {
+    fun `should normalize Micheline Primitive Application`() = withTezosContext {
         val expectedWithMicheline = expectedWithMichelinePairs + expectedWithNestedPairs + listOf(
             MichelinePrimitiveApplication("Unit"),
             MichelinePrimitiveApplication("True"),
@@ -70,7 +71,7 @@ class MichelineNormalizerTest {
     }
 
     @Test
-    fun `should normalize Micheline Sequence`() {
+    fun `should normalize Micheline Sequence`() = withTezosContext {
         val expectedWithMicheline =
             expectedWithMichelinePairs.map {
                 MichelineSequence(it.first) to MichelineSequence(it.second)

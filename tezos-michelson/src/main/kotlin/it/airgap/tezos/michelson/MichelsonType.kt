@@ -1,6 +1,10 @@
 package it.airgap.tezos.michelson
 
-// https://tezos.gitlab.io/active/michelson.html#full-grammar
+/**
+ * Tezos Michelson types as defined in [the documentation](https://tezos.gitlab.io/active/michelson.html#full-grammar).
+ *
+ * See also: [Michelson Reference](https://tezos.gitlab.io/michelson-reference/).
+ */
 public sealed interface MichelsonType : Michelson {
     public val metadata: Metadata
 
@@ -74,6 +78,8 @@ public sealed interface MichelsonType : Michelson {
     }
 
     public data class Pair(public val types: kotlin.collections.List<MichelsonType>, override val metadata: Metadata = Metadata()) : MichelsonType {
+        public constructor(vararg types: MichelsonType, metadata: Metadata = Metadata()) : this(types.toList(), metadata)
+
         init {
             require(types.size >= 2)
         }
@@ -221,7 +227,5 @@ public sealed interface MichelsonType : Michelson {
     
     public data class Metadata(public val typeName: Michelson.Annotation.Type? = null, public val fieldName: Michelson.Annotation.Field? = null)
 
-    public companion object {
-        public fun Pair(vararg types: MichelsonType, metadata: Metadata = Metadata()): Pair = Pair(types.toList(), metadata)
-    }
+    public companion object {}
 }

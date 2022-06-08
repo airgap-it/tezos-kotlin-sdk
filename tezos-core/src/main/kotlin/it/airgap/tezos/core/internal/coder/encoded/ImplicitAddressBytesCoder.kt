@@ -1,9 +1,9 @@
 package it.airgap.tezos.core.internal.coder.encoded
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeUntil
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import it.airgap.tezos.core.internal.type.EncodedTag
-import it.airgap.tezos.core.internal.utils.consumeUntil
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.core.type.encoded.*
 import kotlin.math.min
 
@@ -20,7 +20,10 @@ internal class ImplicitAddressBytesCoder(encodedBytesCoder: EncodedBytesCoder) :
     private fun failWithInvalidImplicitAddressBytes(value: String): Nothing = failWithIllegalArgument("Bytes `$value` are not valid Tezos implicit address bytes.")
 }
 
-private enum class ImplicitAddressTag(override val value: ByteArray, override val kind: MetaImplicitAddress.Kind<*, ImplicitAddress>) : EncodedTag<MetaImplicitAddress.Kind<*, ImplicitAddress>> {
+private enum class ImplicitAddressTag(
+    override val value: ByteArray,
+    override val kind: MetaImplicitAddress.Kind<*, ImplicitAddress>,
+) : EncodedTag<MetaImplicitAddress.Kind<*, ImplicitAddress>> {
     Tz1(byteArrayOf(0), Ed25519PublicKeyHash),
     Tz2(byteArrayOf(1), Secp256K1PublicKeyHash),
     Tz3(byteArrayOf(2), P256PublicKeyHash);

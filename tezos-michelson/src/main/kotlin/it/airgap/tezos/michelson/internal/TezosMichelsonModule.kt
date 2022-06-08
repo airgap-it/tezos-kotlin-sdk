@@ -10,7 +10,8 @@ import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 
 public class TezosMichelsonModule private constructor(public val dependencyRegistry: MichelsonDependencyRegistry) : TezosModule {
 
-    public class Builder : TezosModule.Builder<TezosMichelsonModule> {
+    public class Builder internal constructor() : TezosModule.Builder<TezosMichelsonModule> {
+
         @InternalTezosSdkApi
         override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosMichelsonModule {
             val core = moduleRegistry.coreModule(dependencyRegistry)

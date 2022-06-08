@@ -3,6 +3,7 @@ package it.airgap.tezos.michelson.micheline.dsl
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.converter.MichelsonToMichelineConverter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -32,7 +33,7 @@ class MichelineMichelsonTypeDslTest {
     }
 
     @Test
-    fun `builds Micheline Michelson Type Expression`() {
+    fun `builds Micheline Michelson Type Expression`() = withTezosContext {
         val expectedWithActual = listOf(
             MichelinePrimitiveApplication(
                 "parameter",
@@ -44,11 +45,6 @@ class MichelineMichelsonTypeDslTest {
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
-                    parameter {
-                        arg { unit }
-                    }
-                },
-                michelineType(tezos) {
                     parameter {
                         arg { unit }
                     }
@@ -73,11 +69,6 @@ class MichelineMichelsonTypeDslTest {
                         arg { unit }
                     }
                 },
-                michelineType(tezos) {
-                    storage {
-                        arg { unit }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     storage {
                         arg { unit }
@@ -98,11 +89,6 @@ class MichelineMichelsonTypeDslTest {
                         arg { UNIT }
                     }
                 },
-                michelineType(tezos) {
-                    code {
-                        arg { UNIT }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     code {
                         arg { UNIT }
@@ -119,11 +105,6 @@ class MichelineMichelsonTypeDslTest {
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
-                    option {
-                        arg { unit }
-                    }
-                },
-                michelineType(tezos) {
                     option {
                         arg { unit }
                     }
@@ -160,19 +141,8 @@ class MichelineMichelsonTypeDslTest {
                         arg { unit }
                     }
                 },
-                michelineType(tezos) {
-                    list {
-                        arg { unit }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     list {
-                        arg { unit }
-                    }
-                },
-                michelineType(tezos) {
-                    list {
-                        arg { unit }
                         arg { unit }
                     }
                 },
@@ -207,19 +177,7 @@ class MichelineMichelsonTypeDslTest {
                         arg { unit }
                     }
                 },
-                michelineType(tezos) {
-                    set {
-                        arg { unit }
-                        arg { unit }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
-                    set {
-                        arg { unit }
-                        arg { unit }
-                    }
-                },
-                michelineType(tezos) {
                     set {
                         arg { unit }
                         arg { unit }
@@ -237,9 +195,7 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) { operation },
                 micheline(tezos) { operation() },
                 micheline(michelsonToMichelineConverter) { operation() },
-                michelineType(tezos) { operation },
                 michelineType(michelsonToMichelineConverter) { operation },
-                michelineType(tezos) { operation() },
                 michelineType(michelsonToMichelineConverter) { operation() },
             ),
             MichelinePrimitiveApplication(
@@ -252,11 +208,6 @@ class MichelineMichelsonTypeDslTest {
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
-                    contract {
-                        arg { unit }
-                    }
-                },
-                michelineType(tezos) {
                     contract {
                         arg { unit }
                     }
@@ -281,11 +232,6 @@ class MichelineMichelsonTypeDslTest {
                         arg { unit }
                     }
                 },
-                michelineType(tezos) {
-                    ticket {
-                        arg { unit }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     ticket {
                         arg { unit }
@@ -303,12 +249,6 @@ class MichelineMichelsonTypeDslTest {
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
-                    pair {
-                        arg { unit }
-                        arg { bool }
-                    }
-                },
-                michelineType(tezos) {
                     pair {
                         arg { unit }
                         arg { bool }
@@ -337,12 +277,6 @@ class MichelineMichelsonTypeDslTest {
                         rhs { bool }
                     }
                 },
-                michelineType(tezos) {
-                    or {
-                        lhs { unit }
-                        rhs { bool }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     or {
                         lhs { unit }
@@ -361,12 +295,6 @@ class MichelineMichelsonTypeDslTest {
                     }
                 },
                 micheline(michelsonToMichelineConverter) {
-                    lambda {
-                        parameter { unit }
-                        returnType { bool }
-                    }
-                },
-                michelineType(tezos) {
                     lambda {
                         parameter { unit }
                         returnType { bool }
@@ -395,12 +323,6 @@ class MichelineMichelsonTypeDslTest {
                         value { bool }
                     }
                 },
-                michelineType(tezos) {
-                    map {
-                        key { unit }
-                        value { bool }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     map {
                         key { unit }
@@ -424,12 +346,6 @@ class MichelineMichelsonTypeDslTest {
                         value { bool }
                     }
                 },
-                michelineType(tezos) {
-                    bigMap {
-                        key { unit }
-                        value { bool }
-                    }
-                },
                 michelineType(michelsonToMichelineConverter) {
                     bigMap {
                         key { unit }
@@ -442,9 +358,7 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) { bls12_381G1 },
                 micheline(tezos) { bls12_381G1() },
                 micheline(michelsonToMichelineConverter) { bls12_381G1() },
-                michelineType(tezos) { bls12_381G1 },
                 michelineType(michelsonToMichelineConverter) { bls12_381G1 },
-                michelineType(tezos) { bls12_381G1() },
                 michelineType(michelsonToMichelineConverter) { bls12_381G1() },
             ),
             MichelinePrimitiveApplication("bls12_381_g2") to listOf(
@@ -452,9 +366,7 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) { bls12_381G2 },
                 micheline(tezos) { bls12_381G2() },
                 micheline(michelsonToMichelineConverter) { bls12_381G2() },
-                michelineType(tezos) { bls12_381G2 },
                 michelineType(michelsonToMichelineConverter) { bls12_381G2 },
-                michelineType(tezos) { bls12_381G2() },
                 michelineType(michelsonToMichelineConverter) { bls12_381G2() },
             ),
             MichelinePrimitiveApplication("bls12_381_fr") to listOf(
@@ -462,9 +374,7 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) { bls12_381Fr },
                 micheline(tezos) { bls12_381Fr() },
                 micheline(michelsonToMichelineConverter) { bls12_381Fr() },
-                michelineType(tezos) { bls12_381Fr },
                 michelineType(michelsonToMichelineConverter) { bls12_381Fr },
-                michelineType(tezos) { bls12_381Fr() },
                 michelineType(michelsonToMichelineConverter) { bls12_381Fr() },
             ),
             MichelinePrimitiveApplication(
@@ -501,32 +411,17 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) {
                     saplingTransaction(1UL)
                 },
-                michelineType(tezos) {
-                    saplingTransaction("1")
-                },
                 michelineType(michelsonToMichelineConverter) {
                     saplingTransaction("1")
-                },
-                michelineType(tezos) {
-                    saplingTransaction((1).toUByte())
                 },
                 michelineType(michelsonToMichelineConverter) {
                     saplingTransaction((1).toUByte())
                 },
-                michelineType(tezos) {
-                    saplingTransaction((1).toUShort())
-                },
                 michelineType(michelsonToMichelineConverter) {
                     saplingTransaction((1).toUShort())
                 },
-                michelineType(tezos) {
-                    saplingTransaction(1U)
-                },
                 michelineType(michelsonToMichelineConverter) {
                     saplingTransaction(1U)
-                },
-                michelineType(tezos) {
-                    saplingTransaction(1UL)
                 },
                 michelineType(michelsonToMichelineConverter) {
                     saplingTransaction(1UL)
@@ -566,32 +461,17 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) {
                     saplingState(1UL)
                 },
-                michelineType(tezos) {
-                    saplingState("1")
-                },
                 michelineType(michelsonToMichelineConverter) {
                     saplingState("1")
-                },
-                michelineType(tezos) {
-                    saplingState((1).toUByte())
                 },
                 michelineType(michelsonToMichelineConverter) {
                     saplingState((1).toUByte())
                 },
-                michelineType(tezos) {
-                    saplingState((1).toUShort())
-                },
                 michelineType(michelsonToMichelineConverter) {
                     saplingState((1).toUShort())
                 },
-                michelineType(tezos) {
-                    saplingState(1U)
-                },
                 michelineType(michelsonToMichelineConverter) {
                     saplingState(1U)
-                },
-                michelineType(tezos) {
-                    saplingState(1UL)
                 },
                 michelineType(michelsonToMichelineConverter) {
                     saplingState(1UL)
@@ -602,9 +482,7 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) { chest },
                 micheline(tezos) { chest() },
                 micheline(michelsonToMichelineConverter) { chest() },
-                michelineType(tezos) { chest },
                 michelineType(michelsonToMichelineConverter) { chest },
-                michelineType(tezos) { chest() },
                 michelineType(michelsonToMichelineConverter) { chest() },
             ),
             MichelinePrimitiveApplication("chest_key") to listOf(
@@ -612,9 +490,7 @@ class MichelineMichelsonTypeDslTest {
                 micheline(michelsonToMichelineConverter) { chestKey },
                 micheline(tezos) { chestKey() },
                 micheline(michelsonToMichelineConverter) { chestKey() },
-                michelineType(tezos) { chestKey },
                 michelineType(michelsonToMichelineConverter) { chestKey },
-                michelineType(tezos) { chestKey() },
                 michelineType(michelsonToMichelineConverter) { chestKey() },
             ),
         )

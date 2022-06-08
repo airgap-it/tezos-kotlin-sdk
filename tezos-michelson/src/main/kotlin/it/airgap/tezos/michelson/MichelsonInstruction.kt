@@ -1,8 +1,14 @@
 package it.airgap.tezos.michelson
 
-// https://tezos.gitlab.io/active/michelson.html#full-grammar
+/**
+ * Tezos Michelson instruction types as defined in [the documentation](https://tezos.gitlab.io/active/michelson.html#full-grammar).
+ *
+ * See also: [Michelson Reference](https://tezos.gitlab.io/michelson-reference/).
+ */
 public sealed interface MichelsonInstruction : MichelsonData {
     public data class Sequence(public val instructions: List<MichelsonInstruction>) : MichelsonInstruction {
+        public constructor(vararg instructions: MichelsonInstruction) : this(instructions.toList())
+
         public companion object {}
     }
 
@@ -1263,7 +1269,5 @@ public sealed interface MichelsonInstruction : MichelsonData {
         }
     }
 
-    public companion object {
-        public fun Sequence(vararg instructions: MichelsonInstruction): Sequence = Sequence(instructions.toList())
-    }
+    public companion object {}
 }

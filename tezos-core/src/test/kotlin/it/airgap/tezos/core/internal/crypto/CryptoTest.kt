@@ -4,10 +4,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import it.airgap.tezos.core.crypto.CryptoProvider
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.padStartEven
-import it.airgap.tezos.core.internal.utils.splitAt
-import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.TezosCoreContext.padStartEven
+import it.airgap.tezos.core.internal.context.TezosCoreContext.splitAt
+import it.airgap.tezos.core.internal.context.TezosCoreContext.toHexString
 import org.bouncycastle.crypto.digests.Blake2bDigest
 import org.bouncycastle.crypto.digests.SHA256Digest
 import org.bouncycastle.crypto.params.*

@@ -2,39 +2,95 @@ package it.airgap.tezos.core.type.encoded
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 
-// --  KeyHash --
-
+/**
+ * Group of base58 encoded key hashes.
+ *
+ * @see [PublicKeyHash]
+ */
 public sealed interface KeyHash : Encoded {
     @InternalTezosSdkApi
     override val meta: MetaKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaKeyHash.Kind<*, *>>
+            get() = PublicKeyHash.kinds
+
+        /**
+         * Checks if [string] is a valid Tezos [KeyHash]
+         */
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
+/**
+ * Group of base58 encoded public key hashes.
+ *
+ * @see [Ed25519PublicKeyHash]
+ * @see [Secp256K1PublicKeyHash]
+ * @see [P256PublicKeyHash]
+ */
 public sealed interface PublicKeyHash : KeyHash, ImplicitAddress {
     @InternalTezosSdkApi
     override val meta: MetaPublicKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaPublicKeyHash.Kind<*, *>>
+            get() = listOf(
+                Ed25519PublicKeyHash,
+                Secp256K1PublicKeyHash,
+                P256PublicKeyHash,
+            )
+
+        /**
+         * Checks if [string] is a valid Tezos [PublicKeyHash]
+         */
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
-// -- BlindedKeyHash --
-
+/**
+ * Group of base58 encoded blinded key hashes.
+ *
+ * @see [BlindedPublicKeyHash]
+ */
 public sealed interface BlindedKeyHash : Encoded {
     @InternalTezosSdkApi
     override val meta: MetaBlindedKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaBlindedKeyHash.Kind<*, *>>
+            get() = BlindedPublicKeyHash.kinds
+
+        /**
+         * Checks if [string] is a valid Tezos [BlindedKeyHash]
+         */
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
+/**
+ * Group of base58 encoded blinded public key hashes.
+ *
+ * @see [Ed25519BlindedPublicKeyHash]
+ */
 public sealed interface BlindedPublicKeyHash : BlindedKeyHash {
     @InternalTezosSdkApi
     override val meta: MetaBlindedPublicKeyHash<*, *>
 
-    public companion object {}
+    public companion object {
+        internal val kinds: List<MetaBlindedPublicKeyHash.Kind<*, *>>
+            get() = listOf(
+                Ed25519BlindedPublicKeyHash,
+            )
+
+        /**
+         * Checks if [string] is a valid Tezos [BlindedPublicKeyHash]
+         */
+        public fun isValid(string: String): Boolean = kinds.any { it.isValid(string) }
+    }
 }
 
-// -- MetaKeyHash --
+// -- meta --
 
 @InternalTezosSdkApi
 public sealed interface MetaKeyHash<out Self : MetaKeyHash<Self, KH>, out KH : KeyHash> : MetaEncoded<Self, KH> {
@@ -49,8 +105,6 @@ public sealed interface MetaPublicKeyHash<out Self : MetaPublicKeyHash<Self, PKH
 
     public sealed interface Kind<out M : MetaPublicKeyHash<M, PKH>, out PKH : PublicKeyHash> : MetaKeyHash.Kind<M, PKH>, MetaImplicitAddress.Kind<M, PKH>
 }
-
-// -- MetaBlindedKeyHash --
 
 @InternalTezosSdkApi
 public sealed interface MetaBlindedKeyHash<out Self: MetaBlindedKeyHash<Self, BKH>, out BKH : BlindedKeyHash> : MetaEncoded<Self, BKH> {

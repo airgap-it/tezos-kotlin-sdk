@@ -1,8 +1,8 @@
 package it.airgap.tezos.core.internal.coder.timestamp
 
 import it.airgap.tezos.core.internal.coder.Coder
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
 import it.airgap.tezos.core.type.Timestamp
 
 internal class TimestampBigIntCoder : Coder<Timestamp, BigInt> {

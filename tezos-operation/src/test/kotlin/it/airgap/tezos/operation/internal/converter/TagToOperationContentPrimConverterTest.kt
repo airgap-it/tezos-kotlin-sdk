@@ -5,6 +5,7 @@ import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.converter.fromTagOrNull
+import it.airgap.tezos.operation.internal.context.withTezosContext
 import mockTezos
 import org.junit.After
 import org.junit.Before
@@ -32,7 +33,7 @@ class TagToOperationContentPrimConverterTest {
     }
 
     @Test
-    fun `should convert tag to Michelson GrammarType`() {
+    fun `should convert tag to Michelson GrammarType`() = withTezosContext {
         val valuesWithExpected = OperationContent.Kind.values.map {
             it.tag to it
         }
@@ -45,7 +46,7 @@ class TagToOperationContentPrimConverterTest {
     }
 
     @Test
-    fun `should fail to convert unknown string to Michelson GrammarType`() {
+    fun `should fail to convert unknown string to Michelson GrammarType`() = withTezosContext {
         val tags = OperationContent.Kind.values.map { it.tag.toUInt() }.toSet()
         val unknownTags = (UByte.MIN_VALUE until UByte.MAX_VALUE).toSet().minus(tags).map { it.toUByte() }
 

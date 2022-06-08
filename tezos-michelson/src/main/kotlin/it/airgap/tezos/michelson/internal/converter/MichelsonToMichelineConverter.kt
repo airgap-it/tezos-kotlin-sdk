@@ -57,7 +57,7 @@ private class MichelsonDataToMichelineConverter(
             )
             MichelsonData.None -> MichelinePrimitiveApplication(MichelsonData.None, annots = michelineAnnotations)
             is MichelsonData.Sequence -> MichelineSequence(values.map { convert(it) })
-            is MichelsonData.EltSequence -> MichelineSequence(values.map {
+            is MichelsonData.Map -> MichelineSequence(values.map {
                 MichelinePrimitiveApplication(
                     MichelsonData.Elt,
                     args = listOf(

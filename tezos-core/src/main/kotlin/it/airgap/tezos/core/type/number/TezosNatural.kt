@@ -1,5 +1,10 @@
 package it.airgap.tezos.core.type.number
 
+/**
+ * Big natural number represented as a [String].
+ *
+ * @property nat The natural number value.
+ */
 @JvmInline
 public value class TezosNatural(public val nat: String) {
 
@@ -18,6 +23,9 @@ public value class TezosNatural(public val nat: String) {
     public fun toULong(): ULong = nat.toULong()
 
     public companion object {
+        /**
+         * Checks if [value] is a valid natural number.
+         */
         public fun isValid(value: String): Boolean = value.matches(Regex("^[0-9]+$"))
     }
 }

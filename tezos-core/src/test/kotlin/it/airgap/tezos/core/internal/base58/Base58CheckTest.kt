@@ -3,8 +3,8 @@ package it.airgap.tezos.core.internal.base58
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
 import it.airgap.tezos.core.internal.crypto.Crypto
-import it.airgap.tezos.core.internal.utils.asHexString
 import org.junit.Before
 import org.junit.Test
 import java.security.MessageDigest
@@ -86,7 +86,7 @@ class Base58CheckTest {
     }
 
     @Test
-    fun `decodes Base58Check string to bytes`() {
+    fun `decodes Base58Check string to ByteArray`() {
         val encodedWithExpected = bytesWithEncodings.map { it.second to it.first.asHexString().toByteArray() }
 
         encodedWithExpected

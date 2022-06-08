@@ -3,13 +3,14 @@ package it.airgap.tezos.core.internal.coder.encoded
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.base58.Base58Check
 import it.airgap.tezos.core.internal.coder.ConfigurableConsumingBytesCoder
-import it.airgap.tezos.core.internal.utils.consumeUntil
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeUntil
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
 import it.airgap.tezos.core.type.encoded.Encoded
 import it.airgap.tezos.core.type.encoded.MetaEncoded
 
 @InternalTezosSdkApi
-public class EncodedBytesCoder internal constructor(private val base58Check: Base58Check) : ConfigurableConsumingBytesCoder<Encoded, EncodedBytesCoder.EncoderConfiguration, Unit> {
+public class EncodedBytesCoder internal constructor(private val base58Check: Base58Check)
+    : ConfigurableConsumingBytesCoder<Encoded, EncodedBytesCoder.EncoderConfiguration, Unit> {
 
     public fun encode(value: Encoded): ByteArray = encode(value, EncoderConfiguration(keepPrefix = false))
     override fun encode(value: Encoded, configuration: EncoderConfiguration): ByteArray =

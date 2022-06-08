@@ -1,10 +1,10 @@
 package it.airgap.tezos.michelson.micheline.dsl.builder.expression
 
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.utils.replaceOrAdd
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonType
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replaceOrAdd
 import it.airgap.tezos.michelson.internal.utils.failWithUnexpectedMichelsonPrim
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode

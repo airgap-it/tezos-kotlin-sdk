@@ -4,8 +4,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.toHexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.number.TezosNatural
@@ -23,6 +21,8 @@ import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
+import it.airgap.tezos.operation.internal.context.TezosOperationContext.asHexString
+import it.airgap.tezos.operation.internal.context.withTezosContext
 import it.airgap.tezos.operation.internal.operationModule
 import mockTezos
 import org.junit.After
@@ -62,7 +62,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should encode Operation to bytes`() {
+    fun `should encode Operation to bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertContentEquals(it.second, operationContentBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.forgeToBytes(tezos))
@@ -75,7 +75,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should decode Operation from bytes`() {
+    fun `should decode Operation from bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertEquals(it.first, operationContentBytesCoder.decode(it.second))
             assertEquals(it.first, operationContentBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -87,7 +87,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Operation from invalid bytes`() {
+    fun `should fail to decode Operation from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decodeConsuming(it.toMutableList()) }

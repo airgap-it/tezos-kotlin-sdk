@@ -2,17 +2,17 @@ package it.airgap.tezos.rpc.internal.estimator
 
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.type.BigInt
-import it.airgap.tezos.core.internal.utils.toTezosNatural
 import it.airgap.tezos.core.type.encoded.ChainId
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
-import it.airgap.tezos.operation.coder.forgeToBytes
 import it.airgap.tezos.rpc.converter.asOperation
 import it.airgap.tezos.rpc.converter.asOperationContent
 import it.airgap.tezos.rpc.converter.asRunnable
 import it.airgap.tezos.rpc.http.HttpHeader
 import it.airgap.tezos.rpc.internal.cache.CachedMap
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.forgeToBytes
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.toTezosNatural
 import it.airgap.tezos.rpc.internal.converter.tez.toMutez
 import it.airgap.tezos.rpc.internal.type.Nanotez
 import it.airgap.tezos.rpc.internal.utils.*

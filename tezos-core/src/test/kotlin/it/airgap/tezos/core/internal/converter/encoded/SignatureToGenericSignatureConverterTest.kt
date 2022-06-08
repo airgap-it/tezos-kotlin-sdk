@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.toGenericSignature
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
@@ -34,7 +35,7 @@ class SignatureToGenericSignatureConverterTest {
     }
 
     @Test
-    fun `should convert SignatureEncoded to GenericSignature`() {
+    fun `should convert SignatureEncoded to GenericSignature`() = withTezosContext {
         signaturesWithGenerics.forEach {
             assertEquals(it.second, signatureToGenericSignatureConverter.convert(it.first))
             assertEquals(it.second, it.second.toGenericSignature(tezos))

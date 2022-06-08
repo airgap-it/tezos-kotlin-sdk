@@ -4,6 +4,11 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 
+/**
+ * Shell Tezos block header.
+ *
+ * See [P2P message format](https://tezos.gitlab.io/shell/p2p_api.html#block-header-shell) for more details.
+ */
 public interface ShellBlockHeader {
     public val level: Int
     public val proto: UByte
@@ -15,6 +20,11 @@ public interface ShellBlockHeader {
     public val context: ContextHash
 }
 
+/**
+ * Protocol specific Tezos block header.
+ *
+ * See [P2P message format](https://tezos.gitlab.io/shell/p2p_api.html#block-header-alpha-specific) for more details.
+ */
 public interface ProtocolBlockHeader {
     public val payloadHash: BlockPayloadHash
     public val payloadRound: Int
@@ -24,6 +34,11 @@ public interface ProtocolBlockHeader {
     public val signature: Signature
 }
 
+/**
+ * Full Tezos block header.
+ *
+ * See [P2P message format](https://tezos.gitlab.io/shell/p2p_api.html#alpha-block-header-alpha-full-header) for more details.
+ */
 public data class BlockHeader(
     override val level: Int,
     override val proto: UByte,

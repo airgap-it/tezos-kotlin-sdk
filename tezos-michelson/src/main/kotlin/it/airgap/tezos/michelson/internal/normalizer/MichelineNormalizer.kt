@@ -25,9 +25,8 @@ internal class MichelineNormalizer : Normalizer<MichelineNode> {
 internal class MichelinePrimitiveApplicationNormalizer(private val normalizer: MichelineNormalizer) : Normalizer<MichelinePrimitiveApplication> {
     override fun normalize(value: MichelinePrimitiveApplication): MichelinePrimitiveApplication =
         when {
-            value.isPrim(MichelsonData.Pair) || value.isPrim(MichelsonType.Pair) || value.isPrim(MichelsonComparableType.Pair) -> {
-                if (value.args.size <= 2) value
-                else value.copy(
+            (value.isPrim(MichelsonData.Pair) || value.isPrim(MichelsonType.Pair) || value.isPrim(MichelsonComparableType.Pair)) && value.args.size > 2 -> {
+                value.copy(
                     args = listOf(
                         normalizer.normalize(value.args.first()),
                         normalizer.normalize(

@@ -10,6 +10,7 @@ import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.converter.toMichelson
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -46,7 +47,7 @@ class MichelineToMichelsonConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Literal to Michelson`() {
+    fun `should convert Micheline Literal to Michelson`() = withTezosContext {
         val expectedWithMicheline = listOf(
             MichelsonData.IntConstant(1) to MichelineLiteral.Integer(1),
             MichelsonData.StringConstant("string") to MichelineLiteral.String("string"),
@@ -61,7 +62,7 @@ class MichelineToMichelsonConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Primitive Application to Michelson`() {
+    fun `should convert Micheline Primitive Application to Michelson`() = withTezosContext {
         @Suppress("UNCHECKED_CAST")
         val expectedWithMicheline1 = michelsonMichelinePairs.filter { it.second is MichelinePrimitiveApplication }
 
@@ -85,7 +86,7 @@ class MichelineToMichelsonConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid Micheline Primitive Application`() {
+    fun `should fail to convert invalid Micheline Primitive Application`() = withTezosContext {
         val unknownMicheline = listOf(
             MichelinePrimitiveApplication("unknown_prim")
         )
@@ -289,7 +290,7 @@ class MichelineToMichelsonConverterTest {
     }
 
     @Test
-    fun `should convert Micheline Sequence to Michelson`() {
+    fun `should convert Micheline Sequence to Michelson`() = withTezosContext {
         @Suppress("UNCHECKED_CAST")
         val expectedWithMicheline = michelsonMichelinePairs.filter { it.second is MichelineSequence }
 
@@ -301,7 +302,7 @@ class MichelineToMichelsonConverterTest {
     }
 
     @Test
-    fun `should fail to convert invalid Micheline Sequence`() {
+    fun `should fail to convert invalid Micheline Sequence`() = withTezosContext {
         val unknownMicheline = listOf(
             MichelineSequence(MichelinePrimitiveApplication("unit"))
         )

@@ -4,9 +4,12 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.toHexString
-import it.airgap.tezos.michelson.coder.*
+import it.airgap.tezos.michelson.coder.decodeFromBytes
+import it.airgap.tezos.michelson.coder.decodeFromString
+import it.airgap.tezos.michelson.coder.encodeToBytes
+import it.airgap.tezos.michelson.coder.encodeToString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
@@ -45,7 +48,7 @@ class MichelineBytesCoderTest {
     }
 
     @Test
-    fun `should encode Micheline Node to bytes`() {
+    fun `should encode Micheline Node to bytes`() = withTezosContext {
         listOf(
             literalIntegersWithBytes,
             literalStringsWithBytes,
@@ -64,7 +67,7 @@ class MichelineBytesCoderTest {
     }
 
     @Test
-    fun `should fail to encode Micheline Primitive Application if prim is unknown`() {
+    fun `should fail to encode Micheline Primitive Application if prim is unknown`() = withTezosContext {
         unknownPrimitiveApplications.forEach {
             assertFailsWith<IllegalArgumentException> { michelineBytesCoder.encode(it) }
             assertFailsWith<IllegalArgumentException> { it.encodeToBytes(tezos) }
@@ -75,7 +78,7 @@ class MichelineBytesCoderTest {
     }
 
     @Test
-    fun `should decode Micheline Node from bytes`() {
+    fun `should decode Micheline Node from bytes`() = withTezosContext {
         listOf(
             literalIntegersWithBytes,
             literalStringsWithBytes,
@@ -86,7 +89,6 @@ class MichelineBytesCoderTest {
             assertEquals(it.first, michelineBytesCoder.decode(it.second))
             assertEquals(it.first, MichelineNode.decodeFromBytes(it.second, tezos))
             assertEquals(it.first, MichelineNode.decodeFromBytes(it.second, michelineBytesCoder))
-            assertEquals(it.first, MichelineNode.decodeConsumingFromBytes(it.second.toMutableList(), tezos))
             assertEquals(it.first, MichelineNode.decodeConsumingFromBytes(it.second.toMutableList(), michelineBytesCoder))
             assertEquals(it.first, MichelineNode.decodeFromString(it.second.toHexString().asString(withPrefix = false), tezos))
             assertEquals(it.first, MichelineNode.decodeFromString(it.second.toHexString().asString(withPrefix = false), michelineBytesCoder))
@@ -96,14 +98,13 @@ class MichelineBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Micheline Node if encoded value is invalid`() {
+    fun `should fail to decode Micheline Node if encoded value is invalid`() = withTezosContext {
         invalidEncodings.forEach {
             assertFailsWith<IllegalArgumentException> { michelineBytesCoder.decode(it.asHexString().toByteArray()) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromString(it, tezos) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromString(it, michelineBytesCoder) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromBytes(it.asHexString().toByteArray(), tezos) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeFromBytes(it.asHexString().toByteArray(), michelineBytesCoder) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.decodeConsumingFromBytes(it.asHexString().toByteArray().toMutableList(), tezos) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.decodeConsumingFromBytes(it.asHexString().toByteArray().toMutableList(), michelineBytesCoder) }
         }
     }

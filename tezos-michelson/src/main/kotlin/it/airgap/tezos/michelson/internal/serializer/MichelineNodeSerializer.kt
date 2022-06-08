@@ -1,7 +1,5 @@
 package it.airgap.tezos.michelson.internal.serializer
 
-import it.airgap.tezos.michelson.internal.utils.KJsonSerializer
-import it.airgap.tezos.michelson.internal.utils.KListSerializer
 import it.airgap.tezos.michelson.internal.utils.failWithUnexpectedJsonType
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode

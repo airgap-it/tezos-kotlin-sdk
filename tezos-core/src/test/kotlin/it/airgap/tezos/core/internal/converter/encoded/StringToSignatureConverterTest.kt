@@ -3,7 +3,8 @@ package it.airgap.tezos.core.internal.converter.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.converter.encoded.fromString
+import it.airgap.tezos.core.converter.encoded.Signature
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.type.encoded.*
 import mockTezos
 import org.junit.After
@@ -31,19 +32,19 @@ class StringToSignatureConverterTest {
     }
 
     @Test
-    fun `should convert string to SignatureEncoded`() {
+    fun `should convert string to SignatureEncoded`() = withTezosContext {
         signaturesWithStrings.forEach {
             assertEquals(it.first, stringToSignatureConverter.convert(it.second))
-            assertEquals(it.first, Signature.fromString(it.second, tezos))
+            assertEquals(it.first, Signature(it.second, tezos))
             assertEquals(it.first, Signature.fromString(it.second, stringToSignatureConverter))
         }
     }
 
     @Test
-    fun `should fail to convert invalid string to SignatureEncoded`() {
+    fun `should fail to convert invalid string to SignatureEncoded`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToSignatureConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { Signature.fromString(it, tezos) }
+            assertFailsWith<IllegalArgumentException> { Signature(it, tezos) }
             assertFailsWith<IllegalArgumentException> { Signature.fromString(it, stringToSignatureConverter) }
         }
     }

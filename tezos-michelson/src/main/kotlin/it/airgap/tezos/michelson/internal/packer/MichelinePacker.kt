@@ -1,8 +1,5 @@
 package it.airgap.tezos.michelson.internal.packer
 
-import it.airgap.tezos.core.coder.encoded.decodeFromBytes
-import it.airgap.tezos.core.coder.encoded.encodeToBytes
-import it.airgap.tezos.core.converter.encoded.fromString
 import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
@@ -10,23 +7,24 @@ import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.internal.type.BigInt
 import it.airgap.tezos.core.internal.type.BytesTag
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.replacingAt
-import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.*
-import it.airgap.tezos.michelson.coder.decodeFromBytes
-import it.airgap.tezos.michelson.coder.encodeToBytes
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.converter.fromStringOrNull
-import it.airgap.tezos.michelson.converter.toCompactExpression
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeFromBytes
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.encodeToBytes
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.failWithIllegalArgument
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.fromString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.fromStringOrNull
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.normalized
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replacingAt
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.startsWith
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toCompactExpression
 import it.airgap.tezos.michelson.internal.utils.second
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
-import it.airgap.tezos.michelson.normalizer.normalized
 
 internal class MichelinePacker(
     private val michelineBytesCoder: ConsumingBytesCoder<MichelineNode>,
@@ -505,6 +503,6 @@ private enum class Tag(override val value: ByteArray) : BytesTag {
     companion object {
         fun recognize(bytes: ByteArray): Tag? =
             if (bytes.isEmpty()) null
-            else values().find {bytes.startsWith(it.value) }
+            else values().find { bytes.startsWith(it.value) }
     }
 }

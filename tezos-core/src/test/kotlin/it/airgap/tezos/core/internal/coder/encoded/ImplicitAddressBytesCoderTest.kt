@@ -3,11 +3,11 @@ package it.airgap.tezos.core.internal.coder.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.coder.encoded.decodeConsumingFromBytes
 import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
+import it.airgap.tezos.core.internal.context.TezosCoreContext.asHexString
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
 import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
@@ -39,7 +39,7 @@ class ImplicitAddressBytesCoderTest {
     }
 
     @Test
-    fun `should encode ImplicitAddress to bytes`() {
+    fun `should encode ImplicitAddress to bytes`() = withTezosContext {
         keyHashesWithBytes.forEach {
             assertContentEquals(it.second, implicitAddressBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.encodeToBytes(tezos))
@@ -48,7 +48,7 @@ class ImplicitAddressBytesCoderTest {
     }
 
     @Test
-    fun `should decode ImplicitAddress from bytes`() {
+    fun `should decode ImplicitAddress from bytes`() = withTezosContext {
         keyHashesWithBytes.forEach {
             assertEquals(it.first, implicitAddressBytesCoder.decode(it.second))
             assertEquals(it.first, implicitAddressBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -59,7 +59,7 @@ class ImplicitAddressBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode ImplicitAddress from invalid bytes`() {
+    fun `should fail to decode ImplicitAddress from invalid bytes`() = withTezosContext {
         listOf(
             invalidBytes,
             listOf(

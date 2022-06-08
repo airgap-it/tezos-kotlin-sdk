@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.type.network
 
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
+import it.airgap.tezos.rpc.internal.context.TezosRpcContext.failWithIllegalArgument
 import it.airgap.tezos.rpc.internal.serializer.RpcIPAddressSerializer
 import kotlinx.serialization.Serializable
 import java.net.Inet4Address

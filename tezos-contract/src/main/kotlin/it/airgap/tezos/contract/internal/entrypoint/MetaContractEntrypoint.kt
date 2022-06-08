@@ -1,10 +1,10 @@
 package it.airgap.tezos.contract.internal.entrypoint
 
 import it.airgap.tezos.contract.entrypoint.ContractEntrypointParameter
+import it.airgap.tezos.contract.internal.context.TezosContractContext.flatten
 import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.converter.toMicheline
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
-import it.airgap.tezos.core.internal.utils.flatten
 import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.rpc.internal.cache.Cached
@@ -57,9 +57,7 @@ internal sealed interface MetaContractEntrypointArgument {
         override val trace: MichelineTrace,
         val elements: List<MetaContractEntrypointArgument>,
     ) : MetaContractEntrypointArgument {
-        val namedTraces: kotlin.collections.Map<String, MichelineTrace> = elements.map { it.flattenTraces }.flatten()
-
-        override fun trace(name: String): MichelineTrace? = namedTraces[name]
+        override fun trace(name: String): MichelineTrace? = null
     }
 
     class Map(
@@ -68,9 +66,7 @@ internal sealed interface MetaContractEntrypointArgument {
         val key: MetaContractEntrypointArgument,
         val value: MetaContractEntrypointArgument,
     ) : MetaContractEntrypointArgument {
-        val namedTraces: kotlin.collections.Map<String, MichelineTrace> = key.flattenTraces + value.flattenTraces
-
-        override fun trace(name: String): MichelineTrace? = namedTraces[name]
+        override fun trace(name: String): MichelineTrace? = null
     }
 
     val MetaContractEntrypointArgument.flattenTraces: kotlin.collections.Map<String, MichelineTrace>

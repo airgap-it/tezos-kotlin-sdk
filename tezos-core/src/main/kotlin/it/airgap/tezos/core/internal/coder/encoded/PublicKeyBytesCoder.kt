@@ -1,9 +1,9 @@
 package it.airgap.tezos.core.internal.coder.encoded
 
+import it.airgap.tezos.core.internal.context.TezosCoreContext.consumeUntil
+import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArgument
+import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import it.airgap.tezos.core.internal.type.EncodedTag
-import it.airgap.tezos.core.internal.utils.consumeUntil
-import it.airgap.tezos.core.internal.utils.failWithIllegalArgument
-import it.airgap.tezos.core.internal.utils.startsWith
 import it.airgap.tezos.core.type.encoded.*
 import kotlin.math.min
 

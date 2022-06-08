@@ -3,8 +3,12 @@ package it.airgap.tezos.core.internal.converter.encoded
 import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.converter.encoded.fromString
-import it.airgap.tezos.core.type.encoded.*
+import it.airgap.tezos.core.converter.encoded.PublicKeyHash
+import it.airgap.tezos.core.internal.context.withTezosContext
+import it.airgap.tezos.core.type.encoded.Ed25519PublicKeyHash
+import it.airgap.tezos.core.type.encoded.P256PublicKeyHash
+import it.airgap.tezos.core.type.encoded.PublicKeyHash
+import it.airgap.tezos.core.type.encoded.Secp256K1PublicKeyHash
 import mockTezos
 import org.junit.After
 import org.junit.Before
@@ -31,19 +35,19 @@ class StringToPublicKeyHashConverterTest {
     }
 
     @Test
-    fun `should convert string to ImplicitAddress`() {
+    fun `should convert string to ImplicitAddress`() = withTezosContext {
         addressesWithStrings.forEach {
             assertEquals(it.first, stringToPublicKeyHashConverter.convert(it.second))
-            assertEquals(it.first, PublicKeyHash.fromString(it.second, tezos))
+            assertEquals(it.first, PublicKeyHash(it.second, tezos))
             assertEquals(it.first, PublicKeyHash.fromString(it.second, stringToPublicKeyHashConverter))
         }
     }
 
     @Test
-    fun `should fail to convert invalid string to ImplicitAddress`() {
+    fun `should fail to convert invalid string to ImplicitAddress`() = withTezosContext {
         invalidStrings.forEach {
             assertFailsWith<IllegalArgumentException> { stringToPublicKeyHashConverter.convert(it) }
-            assertFailsWith<IllegalArgumentException> { PublicKeyHash.fromString(it, tezos) }
+            assertFailsWith<IllegalArgumentException> { PublicKeyHash(it, tezos) }
             assertFailsWith<IllegalArgumentException> { PublicKeyHash.fromString(it, stringToPublicKeyHashConverter) }
         }
     }

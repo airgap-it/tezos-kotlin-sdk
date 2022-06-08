@@ -4,8 +4,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.internal.utils.asHexString
-import it.airgap.tezos.core.internal.utils.toHexString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
+import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineNode
@@ -60,7 +60,7 @@ class MichelinePackerTest {
     }
 
     @Test
-    fun `should pack Micheline Node to bytes`() {
+    fun `should pack Micheline Node to bytes`() = withTezosContext {
         listOf(
             packedWithIntegersAndSchemas,
             packedWithStringsAndSchemas,
@@ -126,7 +126,7 @@ class MichelinePackerTest {
     }
 
     @Test
-    fun `should fail to pack Micheline Primitive Application if prim is unknown`() {
+    fun `should fail to pack Micheline Primitive Application if prim is unknown`() = withTezosContext {
         invalidPrimitiveApplicationsWithSchema.forEach {
             assertFailsWith<IllegalArgumentException> { michelinePacker.pack(it.first, it.second) }
             assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second, tezos) }
@@ -137,7 +137,7 @@ class MichelinePackerTest {
     }
 
     @Test
-    fun `should unpack Micheline Node from bytes`() {
+    fun `should unpack Micheline Node from bytes`() = withTezosContext {
         listOf(
             packedWithIntegersAndSchemas,
             packedWithStringsAndSchemas,
@@ -172,7 +172,7 @@ class MichelinePackerTest {
     }
 
     @Test
-    fun `should fail to unpack Micheline Node if packed value or schema is invalid`() {
+    fun `should fail to unpack Micheline Node if packed value or schema is invalid`() = withTezosContext {
         (invalidPackedWithSchema + packedWithInvalidSchema).forEach {
             assertFailsWith<IllegalArgumentException> { michelinePacker.unpack(it.first.asHexString().toByteArray(), it.second) }
             assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, tezos) }

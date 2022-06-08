@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.unmockkAll
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.converter.encoded.fromGenericSignature
+import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.core.type.encoded.GenericSignature
 import it.airgap.tezos.core.type.encoded.Secp256K1Signature
@@ -36,7 +37,7 @@ class GenericSignatureToSecp256K1SignatureConverterTest {
     }
 
     @Test
-    fun `should convert GenericSignature to Secp256K1Signature`() {
+    fun `should convert GenericSignature to Secp256K1Signature`() = withTezosContext {
         signaturesWithGenerics.forEach {
             assertEquals(it.first, genericSignatureToSecp256K1SignatureConverter.convert(it.second))
             assertEquals(it.first, Secp256K1Signature.fromGenericSignature(it.second, tezos))
