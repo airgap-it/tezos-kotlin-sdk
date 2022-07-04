@@ -6,7 +6,7 @@ import it.airgap.tezos.contract.internal.context.TezosContractContext.micheline
 import it.airgap.tezos.contract.internal.utils.allIsInstance
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.Michelson
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.MichelineMichelsonExpressionBuilder
 
 public interface ContractEntrypointParameterBuilder {
@@ -16,8 +16,8 @@ public interface ContractEntrypointParameterBuilder {
 
 @ContractEntrypointParameterDslMaker
 public class ContractEntrypointValueParameterBuilder(
-    private val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
-    private var value: MichelineNode? = null,
+    private val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
+    private var value: Micheline? = null,
     name: String? = null,
 ) : ContractEntrypointParameterBuilder {
     override var name: String? = name
@@ -26,7 +26,7 @@ public class ContractEntrypointValueParameterBuilder(
     public val none: ContractEntrypointValueParameterBuilder
         get() = also { value = null }
 
-    public fun value(node: MichelineNode): ContractEntrypointValueParameterBuilder = also {
+    public fun value(node: Micheline): ContractEntrypointValueParameterBuilder = also {
         value = node
     }
 
@@ -44,7 +44,7 @@ public class ContractEntrypointValueParameterBuilder(
 
 @ContractEntrypointParameterDslMaker
 public class ContractEntrypointObjectParameterBuilder(
-    private val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    private val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     name: String? = null,
 ) : ContractEntrypointParameterBuilder {
     override var name: String? = name
@@ -52,7 +52,7 @@ public class ContractEntrypointObjectParameterBuilder(
 
     private val builders: MutableList<ContractEntrypointParameterBuilder> = mutableListOf()
 
-    public fun value(annot: String? = null, micheline: MichelineNode? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): ContractEntrypointValueParameterBuilder =
+    public fun value(annot: String? = null, micheline: Micheline? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): ContractEntrypointValueParameterBuilder =
         ContractEntrypointValueParameterBuilder(michelsonToMichelineConverter, micheline, annot).apply { value(createExpression) }.also { builders.add(it) }
 
     public fun `object`(annot: String? = null, builderAction: ContractEntrypointObjectParameterBuilder.() -> Unit): ContractEntrypointObjectParameterBuilder =
@@ -80,7 +80,7 @@ public class ContractEntrypointObjectParameterBuilder(
 
 @ContractEntrypointParameterDslMaker
 public class ContractEntrypointSequenceParameterBuilder(
-    private val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    private val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     name: String? = null,
 ) : ContractEntrypointParameterBuilder {
     override var name: String? = name
@@ -88,7 +88,7 @@ public class ContractEntrypointSequenceParameterBuilder(
 
     private val builders: MutableList<ContractEntrypointParameterBuilder> = mutableListOf()
 
-    public fun value(annot: String? = null, micheline: MichelineNode? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): ContractEntrypointValueParameterBuilder =
+    public fun value(annot: String? = null, micheline: Micheline? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): ContractEntrypointValueParameterBuilder =
         ContractEntrypointValueParameterBuilder(michelsonToMichelineConverter, micheline, annot).apply { value(createExpression) }.also { builders.addIfAllInstance(it) }
 
     public fun `object`(annot: String? = null, builderAction: ContractEntrypointObjectParameterBuilder.() -> Unit): ContractEntrypointObjectParameterBuilder =
@@ -112,7 +112,7 @@ public class ContractEntrypointSequenceParameterBuilder(
 
 @ContractEntrypointParameterDslMaker
 public class ContractEntrypointMapParameterBuilder(
-    private val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    private val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     name: String? = null,
 ) : ContractEntrypointParameterBuilder {
     override var name: String? = name
@@ -120,9 +120,9 @@ public class ContractEntrypointMapParameterBuilder(
 
     private val builders: MutableList<Pair<ContractEntrypointParameterBuilder, ContractEntrypointParameterBuilder>> = mutableListOf()
 
-    public fun key(annot: String? = null, micheline: MichelineNode? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): Key =
+    public fun key(annot: String? = null, micheline: Micheline? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): Key =
         Key(ContractEntrypointValueParameterBuilder(michelsonToMichelineConverter, micheline, annot).apply { value(createExpression) })
-    public fun value(annot: String? = null, micheline: MichelineNode? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): Value =
+    public fun value(annot: String? = null, micheline: Micheline? = null, createExpression: MichelineMichelsonExpressionBuilder.() -> Unit = {}): Value =
         Value(ContractEntrypointValueParameterBuilder(michelsonToMichelineConverter, micheline, annot).apply { value(createExpression) })
 
     public fun keyObject(annot: String? = null, builderAction: ContractEntrypointObjectParameterBuilder.() -> Unit): Key =

@@ -10,7 +10,7 @@ import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
@@ -43,7 +43,7 @@ internal class OperationContentBytesCoder(
     private val signatureBytesCoder: ConsumingBytesCoder<Signature>,
     private val tezosNaturalBytesCoder: ConsumingBytesCoder<TezosNatural>,
     private val mutezBytesCoder: ConsumingBytesCoder<Mutez>,
-    private val michelineBytesCoder: ConsumingBytesCoder<MichelineNode>,
+    private val michelineBytesCoder: ConsumingBytesCoder<Micheline>,
     private val timestampBigIntCoder: Coder<Timestamp, BigInt>,
     private val tagToOperationContentKindConverter: Converter<UByte, OperationContent.Kind>,
 ) : ConsumingBytesCoder<OperationContent> {
@@ -527,7 +527,7 @@ internal class OperationContentBytesCoder(
 
         return decodeManagerOperation(bytes) { source, fee, counter, gasLimit, storageLimit, bytes ->
             val valueLength = bytes.decodeConsumingInt32()
-            val value = MichelineNode.decodeFromBytes(bytes.consumeUntil(valueLength).toByteArray(), michelineBytesCoder)
+            val value = Micheline.decodeFromBytes(bytes.consumeUntil(valueLength).toByteArray(), michelineBytesCoder)
             OperationContent.RegisterGlobalConstant(
                 source,
                 fee,
@@ -642,17 +642,17 @@ internal class OperationContentBytesCoder(
         val entrypoint = decodeEntrypoint(bytes)
 
         val valueLength = bytes.decodeConsumingInt32()
-        val value = MichelineNode.decodeFromBytes(bytes.consumeUntil(valueLength).toByteArray(), michelineBytesCoder)
+        val value = Micheline.decodeFromBytes(bytes.consumeUntil(valueLength).toByteArray(), michelineBytesCoder)
 
         return Parameters(entrypoint, value)
     }
 
     private fun decodeScript(bytes: MutableList<Byte>): Script {
         val codeLength = bytes.decodeConsumingInt32()
-        val code = MichelineNode.decodeFromBytes(bytes.consumeUntil(codeLength).toByteArray(), michelineBytesCoder)
+        val code = Micheline.decodeFromBytes(bytes.consumeUntil(codeLength).toByteArray(), michelineBytesCoder)
 
         val storageLength = bytes.decodeConsumingInt32()
-        val storage = MichelineNode.decodeFromBytes(bytes.consumeUntil(storageLength).toByteArray(), michelineBytesCoder)
+        val storage = Micheline.decodeFromBytes(bytes.consumeUntil(storageLength).toByteArray(), michelineBytesCoder)
 
         return Script(code, storage)
     }

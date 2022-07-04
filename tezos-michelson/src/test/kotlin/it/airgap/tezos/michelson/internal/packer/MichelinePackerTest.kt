@@ -7,8 +7,8 @@ import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
 import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.michelsonModule
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
@@ -60,7 +60,7 @@ class MichelinePackerTest {
     }
 
     @Test
-    fun `should pack Micheline Node to bytes`() = withTezosContext {
+    fun `should pack Micheline to bytes`() = withTezosContext {
         listOf(
             packedWithIntegersAndSchemas,
             packedWithStringsAndSchemas,
@@ -137,7 +137,7 @@ class MichelinePackerTest {
     }
 
     @Test
-    fun `should unpack Micheline Node from bytes`() = withTezosContext {
+    fun `should unpack Micheline from bytes`() = withTezosContext {
         listOf(
             packedWithIntegersAndSchemas,
             packedWithStringsAndSchemas,
@@ -161,28 +161,28 @@ class MichelinePackerTest {
         ).flatten().forEach { (packed, michelineWithSchemas) ->
             michelineWithSchemas.forEach {
                 assertEquals(it.first.normalized(tezos), michelinePacker.unpack(packed, it.second))
-                assertEquals(it.first.normalized(tezos), MichelineNode.unpackFromBytes(packed, it.second, tezos))
-                assertEquals(it.first.normalized(tezos), MichelineNode.unpackFromBytes(packed, it.second, michelinePacker))
-                assertEquals(it.first.normalized(tezos), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, tezos))
-                assertEquals(it.first.normalized(tezos), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, michelinePacker))
-                assertEquals(it.first.normalized(tezos), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, tezos))
-                assertEquals(it.first.normalized(tezos), MichelineNode.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, michelinePacker))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromBytes(packed, it.second, tezos))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromBytes(packed, it.second, michelinePacker))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, tezos))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, michelinePacker))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, tezos))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, michelinePacker))
             }
         }
     }
 
     @Test
-    fun `should fail to unpack Micheline Node if packed value or schema is invalid`() = withTezosContext {
+    fun `should fail to unpack Micheline if packed value or schema is invalid`() = withTezosContext {
         (invalidPackedWithSchema + packedWithInvalidSchema).forEach {
             assertFailsWith<IllegalArgumentException> { michelinePacker.unpack(it.first.asHexString().toByteArray(), it.second) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, tezos) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, michelinePacker) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromString(it.first, it.second, tezos) }
-            assertFailsWith<IllegalArgumentException> { MichelineNode.unpackFromString(it.first, it.second, michelinePacker) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, tezos) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, michelinePacker) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromString(it.first, it.second, tezos) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromString(it.first, it.second, michelinePacker) }
         }
     }
 
-    private val packedWithIntegersAndSchemas: List<Pair<ByteArray, List<Pair<MichelineLiteral.Integer, MichelineNode?>>>>
+    private val packedWithIntegersAndSchemas: List<Pair<ByteArray, List<Pair<MichelineLiteral.Integer, Micheline?>>>>
         get() = listOf(
             "0500c384efcfc7dac2f5849995afab9fa7c48b8fa4c0d9b5ca908dc70d".asHexString().toByteArray() to listOf(
                 MichelineLiteral.Integer("-41547452475632687683489977342365486797893454355756867843") to null,
@@ -278,7 +278,7 @@ class MichelinePackerTest {
             ),
         )
 
-    private val packedWithStringsAndSchemas: List<Pair<ByteArray, List<Pair<MichelineLiteral.String, MichelineNode?>>>>
+    private val packedWithStringsAndSchemas: List<Pair<ByteArray, List<Pair<MichelineLiteral.String, Micheline?>>>>
         get() = listOf(
             "050100000000".asHexString().toByteArray() to listOf(
                 MichelineLiteral.String("") to null,
@@ -313,7 +313,7 @@ class MichelinePackerTest {
             ),
         )
 
-    private val packedWithBytesAndSchemas: List<Pair<ByteArray, List<Pair<MichelineLiteral.Bytes, MichelineNode?>>>>
+    private val packedWithBytesAndSchemas: List<Pair<ByteArray, List<Pair<MichelineLiteral.Bytes, Micheline?>>>>
         get() = listOf(
             "050a00000000".asHexString().toByteArray() to listOf(
                 MichelineLiteral.Bytes("0x") to null,
@@ -345,7 +345,7 @@ class MichelinePackerTest {
             ),
         )
 
-    private val packedWithPrimitiveApplicationsAndSchemas: List<Pair<ByteArray, List<Pair<MichelinePrimitiveApplication, MichelineNode?>>>>
+    private val packedWithPrimitiveApplicationsAndSchemas: List<Pair<ByteArray, List<Pair<MichelinePrimitiveApplication, Micheline?>>>>
         get() = listOf(
             "050500036c".asHexString().toByteArray() to listOf(
                 MichelinePrimitiveApplication(
@@ -598,7 +598,7 @@ class MichelinePackerTest {
             ),
         )
 
-    private val packedWithSequencesAndSchemas: List<Pair<ByteArray, List<Pair<MichelineSequence, MichelineNode?>>>>
+    private val packedWithSequencesAndSchemas: List<Pair<ByteArray, List<Pair<MichelineSequence, Micheline?>>>>
         get() = listOf(
             "050200000000".asHexString().toByteArray() to listOf(
                 MichelineSequence(listOf()) to null,
@@ -1006,15 +1006,15 @@ class MichelinePackerTest {
             ),
         )
 
-    private val invalidPrimitiveApplicationsWithSchema: List<Pair<MichelinePrimitiveApplication, MichelineNode?>>
+    private val invalidPrimitiveApplicationsWithSchema: List<Pair<MichelinePrimitiveApplication, Micheline?>>
         get() = listOf(
             MichelinePrimitiveApplication("unknown") to null,
         )
 
-    private val invalidPackedWithSchema: List<Pair<String, MichelineNode?>>
+    private val invalidPackedWithSchema: List<Pair<String, Micheline?>>
         get() = listOf(
             "00" to null,
-            "0020000000f0743075e036c036c0200000002034f" to micheline(tezos) {
+            "00020000000f0743075e036c036c0200000002034f" to micheline(tezos) {
                 lambda {
                     parameter { unit }
                     returnType { unit }
@@ -1028,7 +1028,7 @@ class MichelinePackerTest {
             }
         )
 
-    private val packedWithInvalidSchema: List<Pair<String, MichelineNode?>>
+    private val packedWithInvalidSchema: List<Pair<String, Micheline?>>
         get() = listOf(
             "050100000000" to micheline(tezos) { int(1) },
             "0500aff8aff1ce5f" to micheline(tezos) {

@@ -81,7 +81,7 @@ public sealed interface MichelsonType : Michelson {
         public constructor(vararg types: MichelsonType, metadata: Metadata = Metadata()) : this(types.toList(), metadata)
 
         init {
-            require(types.size >= 2)
+            require(types.size >= 2) { "Expected at least 2 pair arguments." }
         }
 
         public operator fun get(field: String): MichelsonType? = types.find { it.metadata.typeName?.matches(field) == true }

@@ -1,11 +1,11 @@
 package it.airgap.tezos.michelson.internal.coder
 
 import it.airgap.tezos.core.internal.coder.Coder
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
-internal class MichelineJsonCoder : Coder<MichelineNode, JsonElement> {
-    override fun encode(value: MichelineNode): JsonElement = Json.encodeToJsonElement(MichelineNode.serializer(), value)
-    override fun decode(value: JsonElement): MichelineNode = Json.decodeFromJsonElement(MichelineNode.serializer(), value)
+internal class MichelineJsonCoder : Coder<Micheline, JsonElement> {
+    override fun encode(value: Micheline): JsonElement = Json.encodeToJsonElement(Micheline.serializer(), value)
+    override fun decode(value: JsonElement): Micheline = Json.decodeFromJsonElement(Micheline.serializer(), value)
 }

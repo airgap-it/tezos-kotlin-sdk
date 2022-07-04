@@ -6,15 +6,15 @@ import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelineNormalizer : Normalizer<MichelineNode> {
+internal class MichelineNormalizer : Normalizer<Micheline> {
     internal val primitiveApplicationToNormalizedConverter: MichelinePrimitiveApplicationNormalizer = MichelinePrimitiveApplicationNormalizer((this))
     internal val sequenceToNormalizedConverter: MichelineSequenceNormalizer = MichelineSequenceNormalizer(this)
 
-    override fun normalize(value: MichelineNode): MichelineNode =
+    override fun normalize(value: Micheline): Micheline =
         when (value) {
             is MichelineLiteral -> value
             is MichelinePrimitiveApplication -> primitiveApplicationToNormalizedConverter.normalize(value)

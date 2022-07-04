@@ -14,7 +14,7 @@ import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
 import it.airgap.tezos.michelson.internal.packer.MichelinePacker
 import it.airgap.tezos.michelson.internal.packer.Packer
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import kotlinx.serialization.json.JsonElement
@@ -24,7 +24,7 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
 
     // -- coder --
 
-    public val michelineBytesCoder: ConsumingBytesCoder<MichelineNode> by lazy {
+    public val michelineBytesCoder: ConsumingBytesCoder<Micheline> by lazy {
         MichelineBytesCoder(
             stringToMichelsonPrimConverter,
             tagToMichelsonPrimConverter,
@@ -32,16 +32,16 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
             core.tezosIntegerBytesCoder,
         )
     }
-    public val michelineJsonCoder: Coder<MichelineNode, JsonElement> by lazy { Static.michelineJsonCoder }
+    public val michelineJsonCoder: Coder<Micheline, JsonElement> by lazy { Static.michelineJsonCoder }
 
     // -- converter --
 
-    public val michelineToMichelsonConverter: Converter<MichelineNode, Michelson> by lazy { Static.michelineToMichelsonConverter }
+    public val michelineToMichelsonConverter: Converter<Micheline, Michelson> by lazy { Static.michelineToMichelsonConverter }
 
-    public val michelineToStringConverter: Converter<MichelineNode, String> by lazy { Static.michelineToStringConverter }
-    public val michelineToCompactStringConverter: Converter<MichelineNode, String> by lazy { Static.michelineToCompactStringConverter }
+    public val michelineToStringConverter: Converter<Micheline, String> by lazy { Static.michelineToStringConverter }
+    public val michelineToCompactStringConverter: Converter<Micheline, String> by lazy { Static.michelineToCompactStringConverter }
 
-    public val michelsonToMichelineConverter: Converter<Michelson, MichelineNode> by lazy { Static.michelsonToMichelineConverter }
+    public val michelsonToMichelineConverter: Converter<Michelson, Micheline> by lazy { Static.michelsonToMichelineConverter }
 
     public val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim> by lazy { Static.stringToMichelsonPrimConverter }
     public val stringToMichelsonDataPrimConverter: Converter<String, MichelsonData.Prim> by lazy { Static.stringToMichelsonDataPrimConverter }
@@ -57,13 +57,13 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
 
     // -- normalizer --
 
-    public val michelineNormalizer: Normalizer<MichelineNode> by lazy { Static.michelineNormalizer }
+    public val michelineNormalizer: Normalizer<Micheline> by lazy { Static.michelineNormalizer }
     public val michelinePrimitiveApplicationNormalizer: Normalizer<MichelinePrimitiveApplication> by lazy { Static.michelinePrimitiveApplicationNormalizer }
     public val michelineSequenceNormalizer: Normalizer<MichelineSequence> by lazy { Static.michelineSequenceNormalizer }
 
     // -- packer --
 
-    public val michelinePacker: Packer<MichelineNode> by lazy {
+    public val michelinePacker: Packer<Micheline> by lazy {
         MichelinePacker(
             michelineBytesCoder,
             michelinePrimitiveApplicationNormalizer,
@@ -86,16 +86,16 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
 
         // -- coder --
 
-        val michelineJsonCoder: Coder<MichelineNode, JsonElement> = MichelineJsonCoder()
+        val michelineJsonCoder: Coder<Micheline, JsonElement> = MichelineJsonCoder()
 
         // -- converter --
 
-        val michelineToMichelsonConverter: Converter<MichelineNode, Michelson> by lazy { MichelineToMichelsonConverter(stringToMichelsonPrimConverter, michelineToCompactStringConverter) }
+        val michelineToMichelsonConverter: Converter<Micheline, Michelson> by lazy { MichelineToMichelsonConverter(stringToMichelsonPrimConverter, michelineToCompactStringConverter) }
 
-        val michelineToStringConverter: Converter<MichelineNode, String> by lazyWeak { MichelineToStringConverter() }
-        val michelineToCompactStringConverter: Converter<MichelineNode, String> by lazyWeak { MichelineToCompactStringConverter() }
+        val michelineToStringConverter: Converter<Micheline, String> by lazyWeak { MichelineToStringConverter() }
+        val michelineToCompactStringConverter: Converter<Micheline, String> by lazyWeak { MichelineToCompactStringConverter() }
 
-        val michelsonToMichelineConverter: Converter<Michelson, MichelineNode> by lazyWeak { MichelsonToMichelineConverter() }
+        val michelsonToMichelineConverter: Converter<Michelson, Micheline> by lazyWeak { MichelsonToMichelineConverter() }
 
         val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim> by lazyWeak { StringToMichelsonPrimConverter() }
         val stringToMichelsonDataPrimConverter: Converter<String, MichelsonData.Prim> by lazyWeak { StringToMichelsonDataPrimConverter() }

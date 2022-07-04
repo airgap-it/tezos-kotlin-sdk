@@ -5,15 +5,15 @@ import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.michelsonModule
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 
 /**
- * Converts [Michelson] to [MichelineNode].
+ * Converts [Michelson] to [Micheline].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *
  * See `samples/src/test/kotlin/Michelson/MichelsonSamples.Usage#toMicheline` for a sample usage.
  */
-public fun <T : Michelson> T.toMicheline(tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
+public fun <T : Michelson> T.toMicheline(tezos: Tezos = Tezos.Default): Micheline = withTezosContext {
     toMicheline(tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter)
 }
 
@@ -22,8 +22,8 @@ public fun <T : Michelson> T.toMicheline(tezos: Tezos = Tezos.Default): Michelin
  *
  * @throws IllegalArgumentException if the current value is not [T].
  */
-public inline fun <reified T : Michelson> Michelson?.asInstance(): T = withTezosContext {
-    this@asInstance as? T ?: failWithIllegalArgument("Michelson value ${this@asInstance?.let { it::class } ?: "null" } is not ${T::class}")
+public inline fun <reified T : Michelson> Michelson?.tryAs(): T = withTezosContext {
+    this@tryAs as? T ?: failWithIllegalArgument("Michelson value ${this@tryAs?.let { it::class } ?: "null" } is not ${T::class}")
 }
 
 /**
@@ -107,7 +107,7 @@ public fun MichelsonComparableType.Prim.Companion.fromTagOrNull(value: ByteArray
 }
 
 public interface MichelsonConverterContext {
-    public fun <T : Michelson> T.toMicheline(michelsonToMichelineConverter: Converter<Michelson, MichelineNode>): MichelineNode =
+    public fun <T : Michelson> T.toMicheline(michelsonToMichelineConverter: Converter<Michelson, Micheline>): Micheline =
         michelsonToMichelineConverter.convert(this)
 
     public fun Michelson.Prim.Companion.fromStringOrNull(value: String, stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>): Michelson.Prim? =

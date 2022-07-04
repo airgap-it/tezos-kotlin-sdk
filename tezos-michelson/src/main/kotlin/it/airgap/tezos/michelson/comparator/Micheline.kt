@@ -1,16 +1,16 @@
 package it.airgap.tezos.michelson.comparator
 
 import it.airgap.tezos.michelson.Michelson
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 /**
- * Checks if [MichelineNode] is a [MichelinePrimitiveApplication] of the specified [prim].
+ * Checks if [Micheline] is a [MichelinePrimitiveApplication] of the specified [prim].
  */
 @OptIn(ExperimentalContracts::class)
-public fun MichelineNode.isPrim(prim: Michelson.Prim): Boolean {
+public fun Micheline.isPrim(prim: Michelson.Prim): Boolean {
     contract {
         returns(true) implies (this@isPrim is MichelinePrimitiveApplication)
     }

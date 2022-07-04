@@ -19,17 +19,17 @@ import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.fromTagO
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.startsWith
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toCompactExpression
 import it.airgap.tezos.michelson.internal.utils.second
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
 internal class MichelineBytesCoder(
     stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
     tagToMichelsonPrimConverter: Converter<ByteArray, Michelson.Prim>,
-    michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    michelineToCompactStringConverter: Converter<Micheline, String>,
     tezosIntegerBytesCoder: ConsumingBytesCoder<TezosInteger>,
-) : ConsumingBytesCoder<MichelineNode> {
+) : ConsumingBytesCoder<Micheline> {
     private val literalBytesCoder: MichelineLiteralBytesCoder = MichelineLiteralBytesCoder(tezosIntegerBytesCoder)
     private val primitiveApplicationBytesCoder: MichelinePrimitiveApplicationBytesCoder = MichelinePrimitiveApplicationBytesCoder(
         stringToMichelsonPrimConverter,
@@ -39,15 +39,15 @@ internal class MichelineBytesCoder(
     )
     private val sequenceBytesCoder: MichelineSequenceBytesCoder = MichelineSequenceBytesCoder(this)
 
-    override fun encode(value: MichelineNode): ByteArray =
+    override fun encode(value: Micheline): ByteArray =
         when (value) {
             is MichelineLiteral -> literalBytesCoder.encode(value)
             is MichelinePrimitiveApplication -> primitiveApplicationBytesCoder.encode(value)
             is MichelineSequence -> sequenceBytesCoder.encode(value)
         }
 
-    override fun decode(value: ByteArray): MichelineNode = decodeConsuming(value.toMutableList())
-    override fun decodeConsuming(value: MutableList<Byte>): MichelineNode =
+    override fun decode(value: ByteArray): Micheline = decodeConsuming(value.toMutableList())
+    override fun decodeConsuming(value: MutableList<Byte>): Micheline =
         when {
             literalBytesCoder.recognizesTag(value) -> literalBytesCoder.decodeConsuming(value)
             primitiveApplicationBytesCoder.recognizesTag(value) -> primitiveApplicationBytesCoder.decodeConsuming(value)
@@ -84,14 +84,11 @@ private class MichelineLiteralBytesCoder(private val tezosIntegerBytesCoder: Con
 
     private fun encodeString(value: String): ByteArray {
         val bytes = value.encodeToBytes()
-        val length = bytes.size.encodeToBytes()
-
-        return length + bytes
+        return encodeBytes(bytes)
     }
 
     private fun encodeBytes(value: ByteArray): ByteArray {
         val length = value.size.encodeToBytes()
-
         return length + value
     }
 
@@ -133,7 +130,7 @@ private class MichelineLiteralBytesCoder(private val tezosIntegerBytesCoder: Con
 private class MichelinePrimitiveApplicationBytesCoder(
     private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
     private val tagToMichelsonPrimConverter: Converter<ByteArray, Michelson.Prim>,
-    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    private val michelineToCompactStringConverter: Converter<Micheline, String>,
     private val bytesCoder: MichelineBytesCoder,
 ) : Coder<MichelinePrimitiveApplication, ByteArray> {
     override fun encode(value: MichelinePrimitiveApplication): ByteArray =
@@ -234,7 +231,7 @@ private class MichelinePrimitiveApplicationBytesCoder(
         requireConsumingTag(Tag.Prim1ArgNoAnnots, value)
 
         val prim = decodePrim(value)
-        val arg = MichelineNode.decodeConsumingFromBytes(value, bytesCoder)
+        val arg = Micheline.decodeConsumingFromBytes(value, bytesCoder)
 
         return MichelinePrimitiveApplication(prim, args = listOf(arg))
     }
@@ -243,7 +240,7 @@ private class MichelinePrimitiveApplicationBytesCoder(
         requireConsumingTag(Tag.Prim1ArgSomeAnnots, value)
 
         val prim = decodePrim(value)
-        val arg = MichelineNode.decodeConsumingFromBytes(value, bytesCoder)
+        val arg = Micheline.decodeConsumingFromBytes(value, bytesCoder)
         val annots = decodeAnnots(value)
 
         return MichelinePrimitiveApplication(prim, args = listOf(arg), annots)
@@ -254,8 +251,8 @@ private class MichelinePrimitiveApplicationBytesCoder(
 
         val prim = decodePrim(value)
 
-        val arg1 = MichelineNode.decodeConsumingFromBytes(value, bytesCoder)
-        val arg2 = MichelineNode.decodeConsumingFromBytes(value, bytesCoder)
+        val arg1 = Micheline.decodeConsumingFromBytes(value, bytesCoder)
+        val arg2 = Micheline.decodeConsumingFromBytes(value, bytesCoder)
 
         return MichelinePrimitiveApplication(prim, args = listOf(arg1, arg2))
     }
@@ -265,8 +262,8 @@ private class MichelinePrimitiveApplicationBytesCoder(
 
         val prim = decodePrim(value)
 
-        val arg1 = MichelineNode.decodeConsumingFromBytes(value, bytesCoder)
-        val arg2 = MichelineNode.decodeConsumingFromBytes(value, bytesCoder)
+        val arg1 = Micheline.decodeConsumingFromBytes(value, bytesCoder)
+        val arg2 = Micheline.decodeConsumingFromBytes(value, bytesCoder)
         val annots = decodeAnnots(value)
 
         return MichelinePrimitiveApplication(prim, args = listOf(arg1, arg2), annots)
@@ -288,7 +285,7 @@ private class MichelinePrimitiveApplicationBytesCoder(
         return Michelson.Prim.fromTagOrNull(byteArrayOf(byte), tagToMichelsonPrimConverter) ?: failWithUnknownPrimitiveApplication(byte.toInt())
     }
 
-    private fun decodeArgs(value: MutableList<Byte>): List<MichelineNode> {
+    private fun decodeArgs(value: MutableList<Byte>): List<Micheline> {
         val argsLength = value.decodeConsumingInt32()
         return value.consumeUntil(argsLength).decodeConsumingList(decoder = bytesCoder::decodeConsuming)
     }
@@ -325,14 +322,14 @@ private class MichelineSequenceBytesCoder(private val bytesCoder: MichelineBytes
 
     fun recognizesTag(value: List<Byte>): Boolean = listOf(Tag.Sequence).any { it == Tag.recognize(value) }
 
-    private fun encodeNodes(nodes: List<MichelineNode>): ByteArray {
+    private fun encodeNodes(nodes: List<Micheline>): ByteArray {
         val bytes = nodes.encodeToBytes(bytesCoder::encode)
         val length = bytes.size.encodeToBytes()
 
         return length + bytes
     }
 
-    private fun decodeNodes(value: MutableList<Byte>): List<MichelineNode> {
+    private fun decodeNodes(value: MutableList<Byte>): List<Micheline> {
         val length = value.decodeConsumingInt32()
         return value.consumeUntil(length).decodeConsumingList(decoder = bytesCoder::decodeConsuming)
     }

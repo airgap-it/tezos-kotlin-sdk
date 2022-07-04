@@ -2,7 +2,7 @@ package it.airgap.tezos.rpc.type.operation
 
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.internal.serializer.RpcOperationContentSerializer
@@ -267,7 +267,7 @@ public sealed class RpcOperationContent {
         public val counter: String,
         @SerialName("gas_limit") public val gasLimit: String,
         @SerialName("storage_limit") public val storageLimit: String,
-        public val value: MichelineNode,
+        public val value: Micheline,
         public val metadata: RpcOperationMetadata.RegisterGlobalConstant? = null,
     ) : RpcOperationContent() {
         @EncodeDefault
