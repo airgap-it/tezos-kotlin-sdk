@@ -299,6 +299,12 @@ class MichelinePackerTest {
             "050a00000016000094a0ba27169ed8d97c1f476de6156c2482dbfb3d".asHexString().toByteArray() to listOf(
                 MichelineLiteral.String("tz1ZBuF2dQ7E1b32bK3g1Qsah4pvWqpM4b4A") to micheline(tezos) { address }
             ),
+            "050a0000001601541e2bf7dc4401328be301227d204d5dc233b67600".asHexString().toByteArray() to listOf(
+                MichelineLiteral.String("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2") to micheline(tezos) { address }
+            ),
+            "050a0000002001541e2bf7dc4401328be301227d204d5dc233b67600656e747279706f696e74".asHexString().toByteArray() to listOf(
+                MichelineLiteral.String("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2%entrypoint") to micheline(tezos) { address }
+            ),
             "050a00000004ef6a66af".asHexString().toByteArray() to listOf(
                 MichelineLiteral.String("NetXy3eo3jtuwuc") to micheline(tezos) { chainId }
             ),

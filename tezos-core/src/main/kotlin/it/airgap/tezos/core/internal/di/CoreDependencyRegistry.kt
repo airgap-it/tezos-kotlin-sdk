@@ -25,8 +25,9 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
 
     public val encodedBytesCoder: EncodedBytesCoder by lazy { EncodedBytesCoder(global.base58Check) }
 
-    public val addressBytesCoder: ConsumingBytesCoder<Address> by lazy { AddressBytesCoder(implicitAddressBytesCoder, encodedBytesCoder) }
+    public val addressBytesCoder: ConsumingBytesCoder<Address> by lazy { AddressBytesCoder(implicitAddressBytesCoder, originatedAddressBytesCoder) }
     public val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress> by lazy { ImplicitAddressBytesCoder(encodedBytesCoder) }
+    public val originatedAddressBytesCoder: ConsumingBytesCoder<OriginatedAddress> by lazy { OriginatedAddressBytesCoder(encodedBytesCoder) }
 
     public val publicKeyBytesCoder: ConsumingBytesCoder<PublicKey> by lazy { PublicKeyBytesCoder(encodedBytesCoder) }
     public val signatureBytesCoder: ConsumingBytesCoder<Signature> by lazy { SignatureBytesCoder(encodedBytesCoder) }

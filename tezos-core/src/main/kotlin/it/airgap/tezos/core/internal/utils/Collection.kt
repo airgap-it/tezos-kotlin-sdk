@@ -2,6 +2,7 @@ package it.airgap.tezos.core.internal.utils
 
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.reflect.KClass
 
 @InternalTezosSdkApi
@@ -50,6 +51,11 @@ public interface CollectionUtilsContext {
     public fun List<Byte>.startsWith(bytes: ByteArray): Boolean =
         if (size < bytes.size) false
         else slice(bytes.indices).foldIndexed(true) { index, acc, byte -> acc && byte == bytes[index] }
+
+    public fun <T> List<T>.takeFrom(index: Int, n: Int): List<T> {
+        val rangeEnd = min(index + n, size)
+        return slice(index until rangeEnd)
+    }
 
     public fun <K, V> List<Map<K, V>>.flatten(): Map<K, V> = fold(emptyMap()) { acc, map -> acc + map }
 

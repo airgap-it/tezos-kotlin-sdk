@@ -101,6 +101,8 @@ public sealed interface MichelsonComparableType : MichelsonType {
         public companion object : Prim {
             override val name: kotlin.String = "address"
             override val tag: ByteArray = byteArrayOf(110)
+
+            public const val ENTRYPOINT_SEPARATOR: kotlin.String = "%"
         }
     }
 

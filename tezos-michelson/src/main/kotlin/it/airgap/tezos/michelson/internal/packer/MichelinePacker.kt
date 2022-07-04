@@ -11,6 +11,9 @@ import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.comparator.isPrim
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.consumeAt
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeConsumingFromBytes
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeConsumingString
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeFromBytes
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.encodeToBytes
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.failWithIllegalArgument
@@ -117,7 +120,13 @@ internal class MichelinePacker(
     }
 
     private fun prePackAddressData(value: Micheline, schema: MichelinePrimitiveApplication): Micheline =
-        prePackStringToBytes(value, schema) { Address.fromString(it, stringToAddressConverter).encodeToBytes(addressBytesCoder) }
+        prePackStringToBytes(value, schema) {
+            val (address, entrypoint) = splitAddress(it)
+            val addressBytes = Address.fromString(address, stringToAddressConverter).encodeToBytes(addressBytesCoder)
+            val entrypointBytes = entrypoint?.encodeToBytes() ?: byteArrayOf()
+
+            addressBytes + entrypointBytes
+        }
 
     private fun prePackPairData(value: Micheline, schema: MichelinePrimitiveApplication): Micheline =
         when {
@@ -334,7 +343,13 @@ internal class MichelinePacker(
     }
 
     private fun postUnpackAddressData(value: Micheline, schema: MichelinePrimitiveApplication): Micheline =
-        postUnpackBytesToString(value, schema) { Address.decodeFromBytes(it, addressBytesCoder).base58 }
+        postUnpackBytesToString(value, schema) {
+            val bytes = it.toMutableList()
+            val address = Address.decodeConsumingFromBytes(bytes, addressBytesCoder)
+            val entrypoint = bytes.decodeConsumingString()
+
+            combineAddress(address, entrypoint)
+        }
 
     private fun postUnpackPairData(value: Micheline, schema: MichelinePrimitiveApplication): Micheline {
         if (value !is MichelinePrimitiveApplication) failWithValueSchemaMismatch(value, schema)
@@ -484,6 +499,16 @@ internal class MichelinePacker(
 
     private fun postUnpack(values: List<Micheline>, schema: Micheline): List<Micheline> =
         values.map { postUnpack(it, schema) }
+
+    private fun splitAddress(address: String): Pair<String, String?> {
+        val split = address.split(MichelsonComparableType.Address.ENTRYPOINT_SEPARATOR, limit = 2)
+
+        return Pair(split.get(0), split.getOrNull(1))
+    }
+
+    private fun combineAddress(address: Address, entrypoint: String): String =
+        if (entrypoint.isNotBlank()) "${address.base58}${MichelsonComparableType.Address.ENTRYPOINT_SEPARATOR}$entrypoint"
+        else address.base58
 
     private fun failWithInvalidValue(value: Micheline): Nothing =
         failWithIllegalArgument("Micheline value ${value.toCompactExpression(michelineToCompactStringConverter)} is invalid.")
