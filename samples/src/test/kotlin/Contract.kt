@@ -16,9 +16,9 @@ import it.airgap.tezos.http.ktor.KtorHttpClientProvider
 import it.airgap.tezos.http.ktor.KtorLogger
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.coder.fromJsonString
-import it.airgap.tezos.michelson.converter.asInstance
 import it.airgap.tezos.michelson.converter.toMichelson
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.converter.tryAs
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
@@ -99,15 +99,15 @@ class ContractSamples {
 
         val record = runBlocking { store.objectEntry["%records"].bigMapEntry.get { bytes("talecard.ith".encodeToByteArray()) } }
         val address = record.objectEntry["%address"]?.value?.toMichelson()
-            .asInstance<MichelsonData.Some>().value
-            .asInstance<MichelsonData.StringConstant>()
+            .tryAs<MichelsonData.Some>().value
+            .tryAs<MichelsonData.StringConstant>()
 
         assertEquals("tz1QoNopr5DaaQnf1AjfSFuvRbFeHW5ZzM3Z", address.value)
 
         val reverseRecord = runBlocking { store.objectEntry["%reverse_records"].bigMapEntry.get { string("tz1QoNopr5DaaQnf1AjfSFuvRbFeHW5ZzM3Z") } }
         val name = reverseRecord.objectEntry["%name"]?.value?.toMichelson()
-            .asInstance<MichelsonData.Some>().value
-            .asInstance<MichelsonData.ByteSequenceConstant>()
+            .tryAs<MichelsonData.Some>().value
+            .tryAs<MichelsonData.ByteSequenceConstant>()
 
         assertEquals("talecard.ith", name.toByteArray().decodeToString())
     }
@@ -173,7 +173,7 @@ class ContractSamples {
                         destination = ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"),
                         parameters = Parameters(
                             entrypoint = Entrypoint("transfer"),
-                            value = MichelineNode.fromJsonString("""
+                            value = Micheline.fromJsonString("""
                                 [
                                     {
                                         "prim": "Pair",

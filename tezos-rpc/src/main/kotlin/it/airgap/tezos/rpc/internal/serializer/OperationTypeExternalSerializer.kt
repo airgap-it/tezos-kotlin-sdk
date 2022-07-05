@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.internal.serializer
 
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
@@ -28,7 +28,7 @@ internal object ScriptSerializer : KSerializer<Script> {
 }
 
 @Serializable
-private data class ScriptSurrogate(val code: MichelineNode, val storage: MichelineNode) {
+private data class ScriptSurrogate(val code: Micheline, val storage: Micheline) {
     fun toTarget(): Script = Script(code, storage)
 }
 
@@ -53,7 +53,7 @@ internal object ParametersSerializer : KSerializer<Parameters> {
 }
 
 @Serializable
-private data class ParametersSurrogate(val entrypoint: @Contextual Entrypoint, val value: MichelineNode) {
+private data class ParametersSurrogate(val entrypoint: @Contextual Entrypoint, val value: Micheline) {
     fun toTarget(): Parameters = Parameters(entrypoint, value)
 }
 

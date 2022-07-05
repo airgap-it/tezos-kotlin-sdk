@@ -10,9 +10,9 @@ import it.airgap.tezos.core.type.number.TezosNatural
 
 internal class TezosNaturalBytesCoder : ConsumingBytesCoder<TezosNatural> {
     override fun encode(value: TezosNatural): ByteArray =
-        when (value.toBigInt()) {
+        when (val int = value.toBigInt()) {
             BigInt.zero -> byteArrayOf(0)
-            else -> encode(value.toBigInt(), byteArrayOf())
+            else -> encode(int, byteArrayOf())
         }
 
     override fun decode(value: ByteArray): TezosNatural = decodeConsuming(value.toMutableList())
@@ -29,7 +29,7 @@ internal class TezosNaturalBytesCoder : ConsumingBytesCoder<TezosNatural> {
         val byte = value and 0b0111_1111
         val nextValue = value shr 7
 
-        val sequenceMask = if (nextValue == BigInt.valueOf(0)) 0b0000_0000 else 0b1000_0000
+        val sequenceMask = if (nextValue == BigInt.zero) 0b0000_0000 else 0b1000_0000
         val encodedByte = byte or sequenceMask
 
         return encode(nextValue, encoded + encodedByte.toByte())

@@ -5,15 +5,15 @@ import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toMicheline
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
 
 public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.Prim> internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
 ) : MichelineTransformableBuilder(michelsonToMichelineConverter) {
-    override val value: MichelineNode
+    override val value: Micheline
         get () {
             val nodes = builders.map { it.build() }
             return nodes.singleOrNull() ?: MichelineSequence(nodes)

@@ -1,6 +1,6 @@
 package it.airgap.tezos.operation.contract
 
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.OperationContent
 
 /**
@@ -12,7 +12,7 @@ import it.airgap.tezos.operation.OperationContent
  */
 public data class Parameters(
     public val entrypoint: Entrypoint,
-    public val value: MichelineNode,
+    public val value: Micheline,
 ) {
     public companion object {}
 }

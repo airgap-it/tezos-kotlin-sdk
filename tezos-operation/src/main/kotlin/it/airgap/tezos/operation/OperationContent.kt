@@ -5,7 +5,7 @@ import it.airgap.tezos.core.type.HexString
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
@@ -230,7 +230,7 @@ public sealed interface OperationContent {
         override val counter: TezosNatural,
         override val gasLimit: TezosNatural = TezosNatural(0U),
         override val storageLimit: TezosNatural = TezosNatural(0U),
-        public val value: MichelineNode,
+        public val value: Micheline,
     ) : Manager {
         public companion object : Kind {
             override val tag: UByte = 111U

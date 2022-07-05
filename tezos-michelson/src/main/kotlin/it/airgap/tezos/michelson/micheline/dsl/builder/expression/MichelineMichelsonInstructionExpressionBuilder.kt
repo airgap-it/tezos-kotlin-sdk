@@ -7,7 +7,7 @@ import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonInstruction
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replaceOrAdd
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.*
 
@@ -19,7 +19,7 @@ public typealias MichelineMichelsonInstructionOptionalIntegerArgBuilder = Michel
 public typealias MichelineMichelsonInstructionIntegerArgBuilder = MichelinePrimitiveApplicationIntegerArgBuilder<MichelsonInstruction.Prim>
 
 public class MichelineMichelsonInstructionConditionalBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: MichelsonInstruction.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, prim) {
     public fun ifBranch(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
@@ -30,7 +30,7 @@ public class MichelineMichelsonInstructionConditionalBuilder internal constructo
 }
 
 public class MichelineMichelsonInstructionPushBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, MichelsonInstruction.Push) {
     public fun type(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
@@ -40,7 +40,7 @@ public class MichelineMichelsonInstructionPushBuilder internal constructor(
 }
 
 public class MichelineMichelsonInstructionKeyValueBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: MichelsonInstruction.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit): MichelineMichelsonComparableTypeExpressionBuilder =
@@ -51,7 +51,7 @@ public class MichelineMichelsonInstructionKeyValueBuilder internal constructor(
 }
 
 public class MichelineMichelsonInstructionSingleExpressionArgBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: MichelsonInstruction.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, prim) {
     public fun expression(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
@@ -59,7 +59,7 @@ public class MichelineMichelsonInstructionSingleExpressionArgBuilder internal co
 }
 
 public class MichelineMichelsonInstructionSingleBodyArgBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: MichelsonInstruction.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, prim) {
     public fun body(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
@@ -67,7 +67,7 @@ public class MichelineMichelsonInstructionSingleBodyArgBuilder internal construc
 }
 
 public class MichelineMichelsonInstructionLambdaBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, MichelsonInstruction.Lambda) {
     public fun parameter(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
@@ -80,7 +80,7 @@ public class MichelineMichelsonInstructionLambdaBuilder internal constructor(
 }
 
 public class MichelineMichelsonInstructionDipBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, MichelsonInstruction.Dip) {
     public infix fun n(value: String): MichelineBuilder = MichelineBuilder { MichelineLiteral.Integer(value) }.also { args.replaceOrAdd(0, it) }
     public infix fun n(value: UByte): MichelineBuilder = n(value.toString())
@@ -93,7 +93,7 @@ public class MichelineMichelsonInstructionDipBuilder internal constructor(
 }
 
 public class MichelineMichelsonInstructionTypeArgBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: MichelsonInstruction.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, prim) {
     public fun arg(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
@@ -101,7 +101,7 @@ public class MichelineMichelsonInstructionTypeArgBuilder internal constructor(
 }
 
 public class MichelineMichelsonInstructionCreateContractBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonInstruction.Prim>(michelsonToMichelineConverter, MichelsonInstruction.CreateContract) {
     public fun parameter(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }

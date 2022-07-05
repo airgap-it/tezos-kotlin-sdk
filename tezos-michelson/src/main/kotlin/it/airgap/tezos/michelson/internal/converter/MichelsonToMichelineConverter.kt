@@ -2,19 +2,19 @@ package it.airgap.tezos.michelson.internal.converter
 
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.*
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelsonToMichelineConverter : Converter<Michelson, MichelineNode> {
+internal class MichelsonToMichelineConverter : Converter<Michelson, Micheline> {
     private val dataToMichelineConverter: MichelsonDataToMichelineConverter = MichelsonDataToMichelineConverter(this)
     private val typeToMichelineConverter: MichelsonTypeToMichelineConverter = MichelsonTypeToMichelineConverter(
         dataToMichelineConverter,
         dataToMichelineConverter.instructionToMichelineConverter
     )
 
-    override fun convert(value: Michelson): MichelineNode =
+    override fun convert(value: Michelson): Micheline =
         when (value) {
             is MichelsonData -> dataToMichelineConverter.convert(value)
             is MichelsonType -> typeToMichelineConverter.convert(value)
@@ -23,10 +23,10 @@ internal class MichelsonToMichelineConverter : Converter<Michelson, MichelineNod
 
 private class MichelsonDataToMichelineConverter(
     private val toMichelineConverter: MichelsonToMichelineConverter
-) : Converter<MichelsonData, MichelineNode> {
+) : Converter<MichelsonData, Micheline> {
     val instructionToMichelineConverter: MichelsonInstructionToMichelineConverter = MichelsonInstructionToMichelineConverter(toMichelineConverter, this)
 
-    override fun convert(value: MichelsonData): MichelineNode = with(value) {
+    override fun convert(value: MichelsonData): Micheline = with(value) {
         when (this) {
             is MichelsonData.IntConstant -> MichelineLiteral.Integer(this.value)
             is MichelsonData.NaturalNumberConstant -> MichelineLiteral.Integer(this.value)
@@ -75,9 +75,9 @@ private class MichelsonDataToMichelineConverter(
 private class MichelsonInstructionToMichelineConverter(
     private val toMichelineConverter: MichelsonToMichelineConverter,
     private val dataToMichelineConverter: MichelsonDataToMichelineConverter,
-) : Converter<MichelsonInstruction, MichelineNode> {
+) : Converter<MichelsonInstruction, Micheline> {
 
-    override fun convert(value: MichelsonInstruction): MichelineNode = with(value) {
+    override fun convert(value: MichelsonInstruction): Micheline = with(value) {
         when (this) {
             is MichelsonInstruction.Sequence -> MichelineSequence(instructions.map { toMichelineConverter.convert(it) })
             is MichelsonInstruction.Drop -> MichelinePrimitiveApplication(
@@ -331,10 +331,10 @@ private class MichelsonInstructionToMichelineConverter(
 private class MichelsonTypeToMichelineConverter(
     private val dataToMichelineConverter: MichelsonDataToMichelineConverter,
     private val instructionToMichelineConverter: MichelsonInstructionToMichelineConverter,
-) : Converter<MichelsonType, MichelineNode> {
+) : Converter<MichelsonType, Micheline> {
     val comparableTypeToMichelineConverter: MichelsonComparableTypeToMichelineConverter = MichelsonComparableTypeToMichelineConverter()
 
-    override fun convert(value: MichelsonType): MichelineNode = with(value) {
+    override fun convert(value: MichelsonType): Micheline = with(value) {
         when (this) {
             is MichelsonType.Parameter -> MichelinePrimitiveApplication(
                 MichelsonType.Parameter,
@@ -422,8 +422,8 @@ private class MichelsonTypeToMichelineConverter(
     }
 }
 
-private class MichelsonComparableTypeToMichelineConverter : Converter<MichelsonComparableType, MichelineNode> {
-    override fun convert(value: MichelsonComparableType): MichelineNode = with(value) {
+private class MichelsonComparableTypeToMichelineConverter : Converter<MichelsonComparableType, Micheline> {
+    override fun convert(value: MichelsonComparableType): Micheline = with(value) {
         when (this) {
             is MichelsonComparableType.Unit -> MichelinePrimitiveApplication(MichelsonComparableType.Unit, annots = michelineAnnotations)
             is MichelsonComparableType.Never -> MichelinePrimitiveApplication(MichelsonComparableType.Never, annots = michelineAnnotations)
@@ -460,7 +460,7 @@ private class MichelsonComparableTypeToMichelineConverter : Converter<MichelsonC
 
 private fun <T : Michelson.Prim> MichelinePrimitiveApplication(
     prim: T,
-    args: List<MichelineNode> = emptyList(),
+    args: List<Micheline> = emptyList(),
     annots: List<MichelinePrimitiveApplication.Annotation> = emptyList(),
 ): MichelinePrimitiveApplication =
     MichelinePrimitiveApplication(MichelinePrimitiveApplication.Primitive(prim.name), args, annots)

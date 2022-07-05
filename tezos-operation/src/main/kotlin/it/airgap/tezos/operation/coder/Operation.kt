@@ -3,7 +3,6 @@ package it.airgap.tezos.operation.coder
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
-import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.internal.context.TezosOperationContext.asHexString
 import it.airgap.tezos.operation.internal.context.TezosOperationContext.toHexString

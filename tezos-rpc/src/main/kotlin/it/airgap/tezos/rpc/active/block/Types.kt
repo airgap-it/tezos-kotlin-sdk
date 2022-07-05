@@ -3,7 +3,7 @@ package it.airgap.tezos.rpc.active.block
 import it.airgap.tezos.core.type.encoded.Address
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.PublicKey
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
@@ -32,7 +32,7 @@ public value class GetBlockResponse(public val block: RpcBlock)
  */
 @Serializable
 @JvmInline
-public value class GetBigMapResponse(public val values: List<MichelineNode>)
+public value class GetBigMapResponse(public val values: List<Micheline>)
 
 // -- ../<block_id>/context/big_maps/<big_map_id>/<script_expr> --
 
@@ -41,7 +41,7 @@ public value class GetBigMapResponse(public val values: List<MichelineNode>)
  */
 @Serializable
 @JvmInline
-public value class GetBigMapValueResponse(public val value: MichelineNode? = null)
+public value class GetBigMapValueResponse(public val value: Micheline? = null)
 
 // -- ../<block_id>/context/constants --
 
@@ -100,7 +100,7 @@ public value class GetContractDelegateResponse(public val delegate: @Contextual 
 @Serializable
 public data class GetContractEntrypointsResponse(
     public val unreachable: List<RpcUnreachableEntrypoint> = emptyList(),
-    public val entrypoints: Map<String, MichelineNode>,
+    public val entrypoints: Map<String, Micheline>,
 )
 
 // -- ../<block_id>/context/contracts/<contract_id>/entrypoints/<string> --
@@ -110,7 +110,7 @@ public data class GetContractEntrypointsResponse(
  */
 @Serializable
 @JvmInline
-public value class GetContractEntrypointResponse(public val entrypoint: MichelineNode)
+public value class GetContractEntrypointResponse(public val entrypoint: Micheline)
 
 // -- ../<block_id>/context/contracts/<contract_id>/manager_key --
 
@@ -161,7 +161,7 @@ public value class GetContractSaplingStateDiffResponse(public val stateDiff: Rpc
  */
 @Serializable
 @JvmInline
-public value class GetContractStorageResponse(public val storage: MichelineNode? = null)
+public value class GetContractStorageResponse(public val storage: Micheline? = null)
 
 // -- ../<block_id>/context/contracts/<contract_id>/storage/normalized --
 
@@ -176,7 +176,7 @@ public data class GetContractNormalizedStorageRequest(@SerialName("unparsing_mod
  */
 @Serializable
 @JvmInline
-public value class GetContractNormalizedStorageResponse(public val storage: MichelineNode? = null)
+public value class GetContractNormalizedStorageResponse(public val storage: Micheline? = null)
 
 // -- ../<block_id>/context/delegates/<pkh> --
 

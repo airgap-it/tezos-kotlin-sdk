@@ -6,31 +6,35 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public interface ArrayUtilsContext {
     public fun ByteArray.asInt8Encoded(fillValue: UByte = 0U): ByteArray {
         require(size <= 1) { "ByteArray does not hold Int8 value." }
-        return padStart(n = 1, fillValue)
+        return padStart(targetSize = 1, fillValue)
     }
 
     public fun ByteArray.asInt16Encoded(fillValue: UByte = 0U): ByteArray {
         require(size <= 2) { "ByteArray does not hold Int16 value." }
-        return padStart(n = 2, fillValue)
+        return padStart(targetSize = 2, fillValue)
     }
 
     public fun ByteArray.asInt32Encoded(fillValue: UByte = 0U): ByteArray {
         require(size <= 4) { "ByteArray does not hold Int32 value." }
-        return padStart(n = 4, fillValue)
+        return padStart(targetSize = 4, fillValue)
     }
 
     public fun ByteArray.asInt64Encoded(fillValue: UByte = 0U): ByteArray {
         require(size <= 8) { "ByteArray does not hold Int64 value." }
-        return padStart(n = 8, fillValue)
+        return padStart(targetSize = 8, fillValue)
     }
 
-    public fun ByteArray.padStart(n: Int, fillValue: UByte = 0U): ByteArray =
-        if (size >= n) this
-        else ByteArray(n) { fillValue.toByte() }.also {
+    public fun ByteArray.padStart(targetSize: Int, fillValue: UByte = 0U): ByteArray =
+        if (size >= targetSize) this
+        else ByteArray(targetSize) { fillValue.toByte() }.also {
             for (i in indices) {
                 it[it.size - size + i] = this[i]
             }
         }
+
+    public fun ByteArray.padEnd(targetSize: Int, fillValue: UByte = 0U): ByteArray =
+        if (size >= targetSize) this
+        else this + ByteArray(targetSize - size) { fillValue.toByte() }
 
     public fun ByteArray.splitAt(
         firstInclusive: Boolean = false,

@@ -15,20 +15,20 @@ import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.internal.packer.Packer
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.rpc.internal.cache.Cached
 
 // -- MetaContractStorage --
 
 internal class MetaContractStorage(
-    private val type: MichelineNode,
-    private val michelineToStorageEntryConverter: TypedConverter<MichelineNode, ContractStorageEntry>,
+    private val type: Micheline,
+    private val michelineToStorageEntryConverter: TypedConverter<Micheline, ContractStorageEntry>,
 ) {
-    fun entryFrom(value: MichelineNode): ContractStorageEntry = value.toStorageEntry(type, michelineToStorageEntryConverter)
+    fun entryFrom(value: Micheline): ContractStorageEntry = value.toStorageEntry(type, michelineToStorageEntryConverter)
 
-    class Factory(private val michelineToStorageEntryConverter: TypedConverter<MichelineNode, ContractStorageEntry>) {
-        fun create(type: MichelineNode): MetaContractStorage = MetaContractStorage(type, michelineToStorageEntryConverter)
+    class Factory(private val michelineToStorageEntryConverter: TypedConverter<Micheline, ContractStorageEntry>) {
+        fun create(type: Micheline): MetaContractStorage = MetaContractStorage(type, michelineToStorageEntryConverter)
     }
 }
 
@@ -37,21 +37,21 @@ internal typealias LazyMetaContractStorage = Cached<MetaContractStorage>
 // -- MetaContractStorageEntry --
 
 internal sealed interface MetaContractStorageEntry {
-    val type: MichelineNode
+    val type: Micheline
 
-    class Basic(override val type: MichelineNode) : MetaContractStorageEntry
+    class Basic(override val type: Micheline) : MetaContractStorageEntry
 
     class BigMap(
-        override val type: MichelineNode,
+        override val type: Micheline,
         private val crypto: Crypto,
         private val encodedBytesCoder: EncodedBytesCoder,
-        private val michelinePacker: Packer<MichelineNode>,
+        private val michelinePacker: Packer<Micheline>,
         private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
-        private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
-        private val michelineNormalizer: Normalizer<MichelineNode>,
+        private val michelineToCompactStringConverter: Converter<Micheline, String>,
+        private val michelineNormalizer: Normalizer<Micheline>,
     ) : MetaContractStorageEntry {
 
-        fun scriptExpr(key: MichelineNode): ScriptExprHash {
+        fun scriptExpr(key: Micheline): ScriptExprHash {
             if (type !is MichelinePrimitiveApplication || type.args.size != 2) failWithInvalidType(type)
             val keyBytes = key.packToBytes(type.args.first(), michelinePacker)
             val keyHash = crypto.hash(keyBytes, 32)
@@ -59,13 +59,13 @@ internal sealed interface MetaContractStorageEntry {
             return ScriptExprHash.decodeFromBytes(keyHash, encodedBytesCoder)
         }
 
-        fun entryFrom(value: MichelineNode): ContractStorageEntry {
+        fun entryFrom(value: Micheline): ContractStorageEntry {
             if (type !is MichelinePrimitiveApplication || type.args.size != 2) failWithInvalidType(type)
 
             return value.normalized(michelineNormalizer).toStorageEntry(type.args[1], michelineToStorageEntryConverter)
         }
 
-        private fun failWithInvalidType(type: MichelineNode): Nothing =
+        private fun failWithInvalidType(type: Micheline): Nothing =
             failWithIllegalArgument("Micheline type ${type.toCompactExpression(michelineToCompactStringConverter)} is invalid.")
     }
 }
