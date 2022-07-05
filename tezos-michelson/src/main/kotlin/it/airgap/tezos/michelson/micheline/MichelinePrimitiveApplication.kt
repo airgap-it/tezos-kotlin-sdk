@@ -9,9 +9,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class MichelinePrimitiveApplication internal constructor(
     public val prim: Primitive,
-    public val args: List<MichelineNode> = emptyList(),
+    public val args: List<Micheline> = emptyList(),
     public val annots: List<Annotation> = emptyList(),
-) : MichelineNode() {
+) : Micheline() {
 
     @Serializable
     @JvmInline public value class Primitive(public val value: String) {
@@ -20,7 +20,7 @@ public data class MichelinePrimitiveApplication internal constructor(
         }
 
         public companion object {
-            public fun isValid(value: String): Boolean = value.matches(Regex("[a-zA-Z_0-9]+"))
+            public fun isValid(value: String): Boolean = value.matches(Regex("^[a-zA-Z_0-9]+$"))
         }
     }
 
@@ -31,7 +31,7 @@ public data class MichelinePrimitiveApplication internal constructor(
         }
 
         public companion object {
-            public fun isValid(value: String): Boolean = value.matches(Regex("[@:\$&%!?][_0-9a-zA-Z\\\\.%@]*"))
+            public fun isValid(value: String): Boolean = value.matches(Regex("^[@:\$&%!?][_0-9a-zA-Z\\\\.%@]*$"))
         }
     }
 
@@ -40,14 +40,14 @@ public data class MichelinePrimitiveApplication internal constructor(
 
 internal fun MichelinePrimitiveApplication(
     prim: String,
-    args: List<MichelineNode> = emptyList(),
+    args: List<Micheline> = emptyList(),
     annots: List<String> = emptyList(),
 ): MichelinePrimitiveApplication =
     MichelinePrimitiveApplication(MichelinePrimitiveApplication.Primitive(prim), args, annots.map { MichelinePrimitiveApplication.Annotation(it) })
 
 public fun <T : Michelson.Prim> MichelinePrimitiveApplication(
     prim: T,
-    args: List<MichelineNode> = emptyList(),
+    args: List<Micheline> = emptyList(),
     annots: List<String> = emptyList(),
 ): MichelinePrimitiveApplication =
     MichelinePrimitiveApplication(prim.name, args, annots)

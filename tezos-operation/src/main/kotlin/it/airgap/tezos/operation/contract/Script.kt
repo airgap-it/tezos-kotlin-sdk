@@ -1,6 +1,6 @@
 package it.airgap.tezos.operation.contract
 
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.OperationContent
 
 /**
@@ -11,6 +11,6 @@ import it.airgap.tezos.operation.OperationContent
  * @see [OperationContent.Origination]
  */
 public data class Script(
-    public val code: MichelineNode,
-    public val storage: MichelineNode,
+    public val code: Micheline,
+    public val storage: Micheline,
 )

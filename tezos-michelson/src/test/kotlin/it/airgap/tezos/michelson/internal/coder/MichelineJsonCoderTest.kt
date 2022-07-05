@@ -7,8 +7,8 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.michelson.coder.fromJsonString
 import it.airgap.tezos.michelson.coder.toJsonString
 import it.airgap.tezos.michelson.internal.context.withTezosContext
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import kotlinx.serialization.decodeFromString
@@ -42,7 +42,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should encode Micheline Node to JSON`() = withTezosContext {
+    fun `should encode Micheline to JSON`() = withTezosContext {
         listOf(
             literalIntegerWithJson(),
             literalStringWithJson(),
@@ -139,7 +139,7 @@ class MichelineJsonCoderTest {
     }
 
     @Test
-    fun `should decode Micheline Node from JSON`() = withTezosContext {
+    fun `should decode Micheline from JSON`() = withTezosContext {
         listOf(
             literalIntegerWithJson(),
             literalStringWithJson(),
@@ -162,8 +162,8 @@ class MichelineJsonCoderTest {
         ).forEach {
             assertEquals(it.first, Json.decodeFromString(it.second))
             assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, tezos))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, tezos))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, michelineJsonCoder))
         }
     }
 
@@ -176,8 +176,8 @@ class MichelineJsonCoderTest {
         ).forEach {
             assertEquals(it.first, Json.decodeFromString(it.second))
             assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, tezos))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, tezos))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, michelineJsonCoder))
         }
 
         listOf(
@@ -185,8 +185,8 @@ class MichelineJsonCoderTest {
         ).forEach {
             assertEquals(it.first, Json.decodeFromString(it.second))
             assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, tezos))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, tezos))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, michelineJsonCoder))
         }
     }
 
@@ -200,8 +200,8 @@ class MichelineJsonCoderTest {
         ).forEach {
             assertEquals(it.first, Json.decodeFromString(it.second))
             assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, tezos))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, tezos))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, michelineJsonCoder))
         }
     }
 
@@ -222,8 +222,8 @@ class MichelineJsonCoderTest {
         ).forEach {
             assertEquals(it.first, Json.decodeFromString(it.second))
             assertEquals(it.first, michelineJsonCoder.decode(Json.decodeFromString(it.second)))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, tezos))
-            assertEquals(it.first, MichelineNode.fromJsonString(it.second, michelineJsonCoder))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, tezos))
+            assertEquals(it.first, Micheline.fromJsonString(it.second, michelineJsonCoder))
         }
     }
 
@@ -250,7 +250,7 @@ class MichelineJsonCoderTest {
 
     private fun primitiveApplicationWithJson(
         prim: String = "prim",
-        args: List<MichelineNode> = emptyList(),
+        args: List<Micheline> = emptyList(),
         annots: List<String> = emptyList(),
     ): Pair<MichelinePrimitiveApplication, String> {
         val fields = mapOf(
@@ -262,6 +262,6 @@ class MichelineJsonCoderTest {
         return MichelinePrimitiveApplication(prim, args, annots) to JsonObject(fields).toString()
     }
 
-    private fun sequenceWithJson(expressions: List<MichelineNode> = emptyList()): Pair<MichelineSequence, String> =
+    private fun sequenceWithJson(expressions: List<Micheline> = emptyList()): Pair<MichelineSequence, String> =
         MichelineSequence(expressions) to Json.encodeToString(expressions)
 }

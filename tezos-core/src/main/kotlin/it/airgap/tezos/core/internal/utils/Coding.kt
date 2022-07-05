@@ -16,10 +16,10 @@ public interface CodingUtilsContext {
     // -- String <-> ByteArray
 
     public fun String.encodeToBytes(): ByteArray = toByteArray(charset = Charsets.UTF_8)
-    public fun MutableList<Byte>.decodeConsumingString(size: Int): String = consumeAt(0 until size).toByteArray().decodeToString()
+    public fun MutableList<Byte>.decodeConsumingString(size: Int = this.size): String = consumeAt(0 until size).toByteArray().decodeToString()
 
     public fun HexString.encodeToBytes(): ByteArray = toByteArray()
-    public fun MutableList<Byte>.decodeConsumingHexString(size: Int): HexString = consumeAt(0 until size).toHexString()
+    public fun MutableList<Byte>.decodeConsumingHexString(size: Int = this.size): HexString = consumeAt(0 until size).toHexString()
 
     // -- Number <-> ByteArray
 

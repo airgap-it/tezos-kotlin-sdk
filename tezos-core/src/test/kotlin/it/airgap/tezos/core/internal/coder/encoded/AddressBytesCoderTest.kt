@@ -29,7 +29,7 @@ class AddressBytesCoderTest {
         tezos = mockTezos()
         addressBytesCoder = AddressBytesCoder(
             tezos.coreModule.dependencyRegistry.implicitAddressBytesCoder,
-            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
+            tezos.coreModule.dependencyRegistry.originatedAddressBytesCoder,
         )
     }
 
@@ -91,9 +91,9 @@ class AddressBytesCoderTest {
             P256PublicKeyHash("tz3Nk25g51knuzFZZz2DeA5PveaQYmCtV68B") to "00021a78f4332a6fe15b979904c6c2e5f9521e1ffc4a".asHexString().toByteArray(),
             P256PublicKeyHash("tz3imABPfVxJ33MAW9uFVnvV4qVSiU69AQut") to "0002f612a5590e21bcb4cabc85b30dbbe5f63533e0e7".asHexString().toByteArray(),
             P256PublicKeyHash("tz3RA3NP8Y8MnuJSzUZCvpyD3AsLZ6CG9h5L") to "000234f443872ae83d91d50747de6abf6a125d63112b".asHexString().toByteArray(),
-            ContractHash("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7") to "016077cd98fd8aca94851b83a4c44203b705d2004b".asHexString().toByteArray(),
-            ContractHash("KT1PMSWmevCWDhSRqxkRTknQNyfdJetctoab") to "01a2049364703140f6e6f83b54e15021d63ed3700a".asHexString().toByteArray(),
-            ContractHash("KT1WoDngLZcTnKdW9KDray2BH8PbGW5BWPhT") to "01f3ada5fa3d0003009b493ae4b1af6bf5e7cd6963".asHexString().toByteArray(),
+            ContractHash("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7") to "016077cd98fd8aca94851b83a4c44203b705d2004b00".asHexString().toByteArray(),
+            ContractHash("KT1PMSWmevCWDhSRqxkRTknQNyfdJetctoab") to "01a2049364703140f6e6f83b54e15021d63ed3700a00".asHexString().toByteArray(),
+            ContractHash("KT1WoDngLZcTnKdW9KDray2BH8PbGW5BWPhT") to "01f3ada5fa3d0003009b493ae4b1af6bf5e7cd696300".asHexString().toByteArray(),
         )
 
     private val invalidBytes: List<ByteArray>

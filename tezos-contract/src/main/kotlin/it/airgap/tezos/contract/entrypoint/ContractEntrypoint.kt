@@ -20,7 +20,7 @@ import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.Operation
 import it.airgap.tezos.operation.OperationContent
 import it.airgap.tezos.operation.contract.Entrypoint
@@ -43,7 +43,7 @@ public class ContractEntrypoint internal constructor(
     private val contractAddress: ContractHash,
     private val block: Block,
     private val operationFeeEstimator: FeeEstimator<Operation>,
-    internal val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    internal val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     private val meta: LazyMetaContractEntrypoint,
 ) {
 
@@ -55,7 +55,7 @@ public class ContractEntrypoint internal constructor(
      * If [fee] and [limits] are not provided, the handler will estimate the minimum fee and limits for the resulting operation.
      */
     public suspend operator fun invoke(
-        parameters: MichelineNode,
+        parameters: Micheline,
         source: ImplicitAddress,
         branch: BlockHash? = null,
         fee: Mutez? = null,
@@ -136,8 +136,8 @@ public class ContractEntrypoint internal constructor(
         private val block: Block,
         private val contract: Block.Context.Contracts.Contract,
         private val operationFeeEstimator: FeeEstimator<Operation>,
-        private val michelineNormalizer: Normalizer<MichelineNode>,
-        private val michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+        private val michelineNormalizer: Normalizer<Micheline>,
+        private val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     ) {
 
         private val contractEntrypointsCached: Cached<Map<String, MetaContractEntrypoint>> = Cached { headers -> contract.entrypoints.get(headers).toMetaContractEntrypoint() }
@@ -206,7 +206,7 @@ public sealed interface ContractEntrypointParameter {
     public val name: String?
 
     /**
-     * Property that represents a [MichelineNode] value that should be placed in the specified
+     * Property that represents a [Micheline] value that should be placed in the specified
      * spot (determined either by [name] or by order) while constructing the final Micheline parameter value.
      *
      * Example:
@@ -243,7 +243,7 @@ public sealed interface ContractEntrypointParameter {
      * @property value The Micheline value.
      * @property name The name of the parameter. It should match the annotation specified in the entrypoint definition.
      */
-    public class Value(public val value: MichelineNode?, override val name: String? = null) : ContractEntrypointParameter {
+    public class Value(public val value: Micheline?, override val name: String? = null) : ContractEntrypointParameter {
         public companion object {}
     }
 

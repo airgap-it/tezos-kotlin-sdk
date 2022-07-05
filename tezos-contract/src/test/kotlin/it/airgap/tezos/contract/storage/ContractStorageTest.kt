@@ -8,7 +8,7 @@ import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.michelson.internal.michelsonModule
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 import it.airgap.tezos.michelson.micheline.dsl.micheline
@@ -200,16 +200,16 @@ class ContractStorageTest {
         )
 
     private data class StorageTestCase(
-        val type: MichelineNode,
-        val value: MichelineNode,
+        val type: Micheline,
+        val value: Micheline,
         val entry: ContractStorageEntry,
     )
 
-    private fun StorageTestCase(builder: () -> Triple<MichelineNode, MichelineNode, ContractStorageEntry>): StorageTestCase {
+    private fun StorageTestCase(builder: () -> Triple<Micheline, Micheline, ContractStorageEntry>): StorageTestCase {
         val (type, value, entry) = builder()
         return StorageTestCase(type, value, entry)
     }
 
-    private val MichelineNode.args: List<MichelineNode>
+    private val Micheline.args: List<Micheline>
         get() = if (this is MichelinePrimitiveApplication) args else emptyList()
 }

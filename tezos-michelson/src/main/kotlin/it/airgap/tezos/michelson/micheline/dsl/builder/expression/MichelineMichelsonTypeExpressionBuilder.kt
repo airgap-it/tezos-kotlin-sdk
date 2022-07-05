@@ -7,7 +7,7 @@ import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replaceOrAdd
 import it.airgap.tezos.michelson.internal.utils.failWithUnexpectedMichelsonPrim
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.dsl.builder.node.*
 
 public typealias MichelineMichelsonTypeExpressionBuilder = MichelineNodeBuilder<MichelsonType, MichelsonType.Prim>
@@ -17,21 +17,21 @@ public typealias MichelineMichelsonTypeSingleArgBuilder = MichelinePrimitiveAppl
 public typealias MichelineMichelsonTypeIntegerArgBuilder = MichelinePrimitiveApplicationIntegerArgBuilder<MichelsonType.Prim>
 
 public class MichelineMichelsonTypeCodeBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Code) {
     public fun arg(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
         MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
 public class MichelineMichelsonTypeOptionBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 }
 
 public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun lhs(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
@@ -39,7 +39,7 @@ public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonTyp
 }
 
 public class MichelineMichelsonTypeLambdaBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Lambda) {
     public fun parameter(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
@@ -49,7 +49,7 @@ public class MichelineMichelsonTypeLambdaBuilder internal constructor(
 }
 
 public class MichelineMichelsonTypeMapBuilder internal constructor(
-    michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+    michelsonToMichelineConverter: Converter<Michelson, Micheline>,
     prim: MichelsonType.Prim,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit): MichelineMichelsonComparableTypeExpressionBuilder =

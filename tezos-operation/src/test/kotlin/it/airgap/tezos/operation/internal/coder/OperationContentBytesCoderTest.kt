@@ -276,8 +276,8 @@ class OperationContentBytesCoderTest {
                 TezosNatural("23675"),
                 TezosNatural("34152"),
                 Mutez("763243"),
-                Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
-            ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c800".asHexString().toByteArray(),
+                ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"),
+            ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e01541e2bf7dc4401328be301227d204d5dc233b6760000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),

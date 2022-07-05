@@ -12,6 +12,7 @@ import it.airgap.tezos.core.internal.context.TezosCoreContext.replaceOrAdd
 import it.airgap.tezos.core.internal.context.TezosCoreContext.replacingAt
 import it.airgap.tezos.core.internal.context.TezosCoreContext.secondInstanceOfOrNull
 import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
+import it.airgap.tezos.core.internal.context.TezosCoreContext.takeFrom
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -240,6 +241,15 @@ class CollectionTest {
         assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1, 2)))
         assertTrue(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(1, 2, 3)))
         assertFalse(listOf<Byte>(1, 2, 3).startsWith(byteArrayOf(2, 3)))
+    }
+
+    @Test
+    fun `returns specified number of elements starting from index`() {
+        assertEquals(listOf(2), listOf(1, 2, 3, 4).takeFrom(1, 1))
+        assertEquals(listOf(2, 3), listOf(1, 2, 3, 4).takeFrom(1, 2))
+        assertEquals(listOf(2, 3, 4), listOf(1, 2, 3, 4).takeFrom(1, 3))
+        assertEquals(listOf(3, 4), listOf(1, 2, 3, 4).takeFrom(2, 2))
+        assertEquals(listOf(2, 3, 4), listOf(1, 2, 3, 4).takeFrom(1, 4))
     }
 
     @Test
