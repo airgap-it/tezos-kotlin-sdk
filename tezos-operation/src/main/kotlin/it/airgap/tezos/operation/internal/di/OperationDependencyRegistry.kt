@@ -50,7 +50,16 @@ public class OperationDependencyRegistry internal constructor(
 
     // -- signer --
 
-    public val operationSigner: Signer<Operation, SecretKey, PublicKey, Signature> by lazy { OperationSigner(operationEd25519Signer, operationSecp256K1Signer, operationP256Signer) }
+    public val operationSigner: Signer<Operation, SecretKey, PublicKey, Signature> by lazy {
+        OperationSigner(
+            operationEd25519Signer,
+            operationSecp256K1Signer,
+            operationP256Signer,
+            core.genericSignatureToEd25519SignatureConverter,
+            core.genericSignatureToSecp256K1SignatureConverter,
+            core.genericSignatureToP256SignatureConverter,
+        )
+    }
     public val operationEd25519Signer: Signer<Operation, Ed25519SecretKey, Ed25519PublicKey, Ed25519Signature> by lazy { OperationEd25519Signer(global.crypto, operationBytesCoder, core.encodedBytesCoder) }
     public val operationSecp256K1Signer: Signer<Operation, Secp256K1SecretKey, Secp256K1PublicKey, Secp256K1Signature> by lazy { OperationSecp256K1Signer(global.crypto, operationBytesCoder, core.encodedBytesCoder) }
     public val operationP256Signer: Signer<Operation, P256SecretKey, P256PublicKey, P256Signature> by lazy { OperationP256Signer(global.crypto, operationBytesCoder, core.encodedBytesCoder) }

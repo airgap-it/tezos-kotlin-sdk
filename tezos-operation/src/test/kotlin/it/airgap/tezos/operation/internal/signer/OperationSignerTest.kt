@@ -56,7 +56,14 @@ class OperationSignerTest {
             tezos.coreModule.dependencyRegistry.encodedBytesCoder,
         )
 
-        operationSigner = OperationSigner(operationEd25519Signer, operationSecp256K1Signer, operationP256Signer)
+        operationSigner = OperationSigner(
+            operationEd25519Signer,
+            operationSecp256K1Signer,
+            operationP256Signer,
+            tezos.coreModule.dependencyRegistry.genericSignatureToEd25519SignatureConverter,
+            tezos.coreModule.dependencyRegistry.genericSignatureToSecp256K1SignatureConverter,
+            tezos.coreModule.dependencyRegistry.genericSignatureToP256SignatureConverter,
+        )
     }
 
     @After
