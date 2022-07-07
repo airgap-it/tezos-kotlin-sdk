@@ -177,7 +177,7 @@ internal class OperationContentBytesCoder(
         val amountBytes = amount.encodeToBytes(mutezBytesCoder)
         val destinationBytes = destination.encodeToBytes(addressBytesCoder)
 
-        val parametersBytes = parameters?.let { it.encodeToBytes() } ?: byteArrayOf()
+        val parametersBytes = parameters?.encodeToBytes() ?: byteArrayOf()
         val parametersPresence = parametersBytes.isNotEmpty().encodeToBytes()
 
         OperationContent.Transaction.tag + encodeManagerOperation(this) + amountBytes + destinationBytes + parametersPresence + parametersBytes
@@ -609,7 +609,7 @@ internal class OperationContentBytesCoder(
         val seedNonceHashPresence = decodeBoolean(bytes)
         val seedNonceHash = if (seedNonceHashPresence) NonceHash.decodeConsumingFromBytes(bytes, encodedBytesCoder) else null
 
-        val liquidityBankingEscapeVote = decodeBoolean(bytes)
+        val liquidityBakingEscapeVote = decodeBoolean(bytes)
         val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return BlockHeader(
@@ -625,7 +625,7 @@ internal class OperationContentBytesCoder(
             payloadRound,
             proofOfWorkNonce,
             seedNonceHash,
-            liquidityBankingEscapeVote,
+            liquidityBakingEscapeVote,
             signature,
         )
     }

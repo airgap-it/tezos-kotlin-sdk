@@ -62,7 +62,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should encode Operation to bytes`() = withTezosContext {
+    fun `should encode OperationContent to bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertContentEquals(it.second, operationContentBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.forgeToBytes(tezos))
@@ -75,7 +75,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should decode Operation from bytes`() = withTezosContext {
+    fun `should decode OperationContent from bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertEquals(it.first, operationContentBytesCoder.decode(it.second))
             assertEquals(it.first, operationContentBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -87,7 +87,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Operation from invalid bytes`() = withTezosContext {
+    fun `should fail to decode OperationContent from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decodeConsuming(it.toMutableList()) }
