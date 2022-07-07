@@ -5,8 +5,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.context.withTezosContext
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.coreModule
-import it.airgap.tezos.core.type.encoded.GenericSignature
-import it.airgap.tezos.core.type.encoded.Signature
+import it.airgap.tezos.core.type.encoded.*
 
 /**
  * Creates [Signature] from [string][String].
@@ -42,5 +41,14 @@ public interface SignatureConverterContext {
         converter.convert(string)
 
     public fun <T : Signature> T.toGenericSignature(converter: Converter<Signature, GenericSignature>): GenericSignature =
+        converter.convert(this)
+
+    public fun GenericSignature.toEd25519Signature(converter: Converter<GenericSignature, Ed25519Signature>): Ed25519Signature =
+        converter.convert(this)
+
+    public fun GenericSignature.toSecp256K1Signature(converter: Converter<GenericSignature, Secp256K1Signature>): Secp256K1Signature =
+        converter.convert(this)
+
+    public fun GenericSignature.toP256Signature(converter: Converter<GenericSignature, P256Signature>): P256Signature =
         converter.convert(this)
 }
