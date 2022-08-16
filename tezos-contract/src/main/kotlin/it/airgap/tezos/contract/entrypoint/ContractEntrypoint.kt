@@ -491,7 +491,7 @@ public sealed interface ContractEntrypointParameter {
         /**
          * Constructs [ContractEntrypointParameter.Map] from [a sequence of key-value pairs][elements] and optional [name].
          */
-        public constructor(vararg elements: Pair<ContractEntrypointParameter, ContractEntrypointParameter>, name: String? = null) : this(elements.toMap().toMutableMap(), name)
+        public constructor(vararg elements: Pair<ContractEntrypointParameter, ContractEntrypointParameter>, name: String? = null) : this(elements.toMap(), name)
 
         public companion object {}
     }

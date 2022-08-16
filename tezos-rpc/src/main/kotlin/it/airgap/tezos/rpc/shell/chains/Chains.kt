@@ -51,23 +51,22 @@ public interface Chains {
         }
 
         /**
-         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/chain_id`
+         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/chain_id`
          */
         public interface ChainId {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetChainIdResponse
         }
 
         /**
-         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/invalid_blocks`
+         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/invalid_blocks`
          */
         public interface InvalidBlocks {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetInvalidBlocksResponse
 
-            public operator fun invoke(blockHash: String): Block
-            public operator fun invoke(blockHash: BlockHash): Block = invoke(blockHash.base58)
+            public operator fun invoke(blockHash: BlockHash): Block
 
             /**
-             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/invalid_blocks/<block_hash>`
+             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/invalid_blocks/<block_hash>`
              */
             public interface Block {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetInvalidBlockResponse
@@ -76,14 +75,14 @@ public interface Chains {
         }
 
         /**
-         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/is_bootstrapped`
+         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/is_bootstrapped`
          */
         public interface IsBootstrapped {
             public suspend fun get(headers: List<HttpHeader> = emptyList()): GetBootstrappedStatusResponse
         }
 
         /**
-         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/levels`
+         * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels`
          */
         public interface Levels {
             public val caboose: Caboose
@@ -91,21 +90,21 @@ public interface Chains {
             public val savepoint: Savepoint
 
             /**
-             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/levels/caboose`
+             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels/caboose`
              */
             public interface Caboose {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetCabooseResponse
             }
 
             /**
-             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/levels/checkpoint`
+             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels/checkpoint`
              */
             public interface Checkpoint {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetCheckpointResponse
             }
 
             /**
-             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/levels/savepoint`
+             * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels/savepoint`
              */
             public interface Savepoint {
                 public suspend fun get(headers: List<HttpHeader> = emptyList()): GetSavepointResponse

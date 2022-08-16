@@ -26,7 +26,7 @@ internal typealias LazyMetaContractEntrypoint = Cached<MetaContractEntrypoint>
 
 // -- MetaContractEntrypointArgument --
 
-internal sealed interface MetaContractEntrypointArgument {
+internal sealed interface MetaContractEntrypointParameter {
     val type: Micheline
     val trace: MichelineTrace
 
@@ -38,15 +38,15 @@ internal sealed interface MetaContractEntrypointArgument {
 
     fun trace(name: String): MichelineTrace?
 
-    class Value(override val type: Micheline, override val trace: MichelineTrace) : MetaContractEntrypointArgument {
+    class Value(override val type: Micheline, override val trace: MichelineTrace) : MetaContractEntrypointParameter {
         override fun trace(name: String): MichelineTrace? = if (names.contains(name)) trace else null
     }
 
     class Object(
         override val type: Micheline,
         override val trace: MichelineTrace,
-        val elements: List<MetaContractEntrypointArgument>,
-    ) : MetaContractEntrypointArgument {
+        val elements: List<MetaContractEntrypointParameter>,
+    ) : MetaContractEntrypointParameter {
         val namedTraces: kotlin.collections.Map<String, MichelineTrace> = flattenTraces
 
         override fun trace(name: String): MichelineTrace? = namedTraces[name]
@@ -55,21 +55,21 @@ internal sealed interface MetaContractEntrypointArgument {
     class Sequence(
         override val type: Micheline,
         override val trace: MichelineTrace,
-        val elements: List<MetaContractEntrypointArgument>,
-    ) : MetaContractEntrypointArgument {
+        val elements: List<MetaContractEntrypointParameter>,
+    ) : MetaContractEntrypointParameter {
         override fun trace(name: String): MichelineTrace? = null
     }
 
     class Map(
         override val type: Micheline,
         override val trace: MichelineTrace,
-        val key: MetaContractEntrypointArgument,
-        val value: MetaContractEntrypointArgument,
-    ) : MetaContractEntrypointArgument {
+        val key: MetaContractEntrypointParameter,
+        val value: MetaContractEntrypointParameter,
+    ) : MetaContractEntrypointParameter {
         override fun trace(name: String): MichelineTrace? = null
     }
 
-    val MetaContractEntrypointArgument.flattenTraces: kotlin.collections.Map<String, MichelineTrace>
+    val MetaContractEntrypointParameter.flattenTraces: kotlin.collections.Map<String, MichelineTrace>
         get() = when {
             this is Object && names.isEmpty() -> elements.map { element ->
                 element.flattenTraces.mapValues { element.trace + it.value }

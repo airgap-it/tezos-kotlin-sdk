@@ -192,9 +192,9 @@ public data class GetDelegateDetailsResponse(
     @SerialName("frozen_deposits_limit") public val frozenDepositsLimit: String? = null,
     @SerialName("delegated_contracts") public val delegatedContracts: List<@Contextual Address>,
     @SerialName("delegated_balance") public val delegatedBalance: String,
-    @SerialName("deactivated") public val deactivated: Boolean,
+    public val deactivated: Boolean,
     @SerialName("grace_period") public val gracePeriod: Int,
-    @SerialName("voting_power") public val votingPower: Int,
+    @SerialName("voting_power") public val votingPower: Long,
 )
 
 // -- ../<block_id>/context/delegates/<pkh>/current_frozen_deposits --
@@ -300,7 +300,7 @@ public value class GetDelegateStakingBalanceResponse(public val stakingBalance: 
  */
 @Serializable
 @JvmInline
-public value class GetDelegateVotingPowerResponse(public val votingPower: Int)
+public value class GetDelegateVotingPowerResponse(public val votingPower: Long)
 
 
 // -- ../<block_id>/context/sapling/<sapling_state_id>/get_diff

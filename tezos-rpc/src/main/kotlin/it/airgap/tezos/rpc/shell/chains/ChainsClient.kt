@@ -59,11 +59,11 @@ private class ChainsChainInvalidBlocksClient(parentUrl: String, private val http
 
     override suspend fun get(headers: List<HttpHeader>): GetInvalidBlocksResponse = httpClient.get(baseUrl, "/", headers)
 
-    override operator fun invoke(blockHash: String): Chains.Chain.InvalidBlocks.Block = ChainsInvalidBlockClient(baseUrl, blockHash, httpClient)
+    override operator fun invoke(blockHash: BlockHash): Chains.Chain.InvalidBlocks.Block = ChainsInvalidBlockClient(baseUrl, blockHash, httpClient)
 }
 
-private class ChainsInvalidBlockClient(parentUrl: String, blockHash: String, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks.Block {
-    private val baseUrl: String = /* /chains/<chain_id>/invalid_blocks/<block_hash> */  "$parentUrl/$blockHash"
+private class ChainsInvalidBlockClient(parentUrl: String, blockHash: BlockHash, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks.Block {
+    private val baseUrl: String = /* /chains/<chain_id>/invalid_blocks/<block_hash> */  "$parentUrl/${blockHash.base58}"
 
     override suspend fun get(headers: List<HttpHeader>): GetInvalidBlockResponse = httpClient.get(baseUrl, "/", headers)
     override suspend fun delete(headers: List<HttpHeader>): DeleteInvalidBlockResponse = httpClient.delete(baseUrl, "/", headers)
