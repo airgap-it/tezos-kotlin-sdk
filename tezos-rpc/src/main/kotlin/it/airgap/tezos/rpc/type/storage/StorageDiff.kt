@@ -1,6 +1,6 @@
 package it.airgap.tezos.rpc.type.storage
 
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,10 +21,10 @@ public sealed class RpcStorageBigMapDiff {
     public open val source: String? = null
 
     @Transient
-    public open val keyType: MichelineNode? = null
+    public open val keyType: Micheline? = null
 
     @Transient
-    public open val valueType: MichelineNode? = null
+    public open val valueType: Micheline? = null
 
     @Serializable
     @SerialName(Update.KIND)
@@ -55,8 +55,8 @@ public sealed class RpcStorageBigMapDiff {
     @SerialName(Alloc.KIND)
     public data class Alloc(
         override val updates: List<RpcStorageBigMapUpdate>,
-        @SerialName("key_type") override val keyType: MichelineNode,
-        @SerialName("value_type") override val valueType: MichelineNode,
+        @SerialName("key_type") override val keyType: Micheline,
+        @SerialName("value_type") override val valueType: Micheline,
     ) : RpcStorageBigMapDiff() {
         public companion object {
             internal const val KIND = "alloc"

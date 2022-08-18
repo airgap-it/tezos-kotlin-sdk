@@ -1,6 +1,6 @@
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
@@ -25,10 +25,10 @@ fun <K, V> Map<K, V?>.filterValuesNotNull(): Map<K, V> = filterValues { it != nu
 
 // -- data sets --
 
-val michelsonMichelinePairs: List<Pair<Michelson, MichelineNode>>
+val michelsonMichelinePairs: List<Pair<Michelson, Micheline>>
     get() = michelsonDataMichelinePairs + michelsonTypeMichelinePairs
 
-val michelsonDataMichelinePairs: List<Pair<MichelsonData, MichelineNode>>
+val michelsonDataMichelinePairs: List<Pair<MichelsonData, Micheline>>
     get() = listOf(
         MichelsonData.IntConstant(1) to MichelineLiteral.Integer(1),
         MichelsonData.StringConstant("string") to MichelineLiteral.String("string"),
@@ -76,7 +76,7 @@ val michelsonDataMichelinePairs: List<Pair<MichelsonData, MichelineNode>>
         ),
     ) + michelsonInstructionMichelinePairs
 
-val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, MichelineNode>>
+val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Micheline>>
     get() = listOf(
         MichelsonInstruction.Sequence(MichelsonInstruction.Unit()) to MichelineSequence(MichelinePrimitiveApplication("UNIT")),
         MichelsonInstruction.Drop() to MichelinePrimitiveApplication("DROP"),
@@ -661,7 +661,7 @@ val michelsonInstructionMichelinePairs: List<Pair<MichelsonInstruction, Michelin
         MichelsonInstruction.OpenChest to MichelinePrimitiveApplication("OPEN_CHEST"),
     )
 
-val michelsonTypeMichelinePairs: List<Pair<MichelsonType, MichelineNode>>
+val michelsonTypeMichelinePairs: List<Pair<MichelsonType, Micheline>>
     get() = listOf(
         MichelsonType.Parameter(MichelsonComparableType.Unit()) to MichelinePrimitiveApplication("parameter", listOf(MichelinePrimitiveApplication("unit"))),
         MichelsonType.Parameter(
@@ -937,7 +937,7 @@ val michelsonTypeMichelinePairs: List<Pair<MichelsonType, MichelineNode>>
         ) to MichelinePrimitiveApplication("chest_key", annots = listOf(":type", "%field"),),
     ) + michelsonComparableTypeMichelinePairs
 
-val michelsonComparableTypeMichelinePairs: List<Pair<MichelsonComparableType, MichelineNode>>
+val michelsonComparableTypeMichelinePairs: List<Pair<MichelsonComparableType, Micheline>>
     get() = listOf(
         MichelsonComparableType.Unit() to MichelinePrimitiveApplication("unit"),
         MichelsonComparableType.Unit(

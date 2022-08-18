@@ -4,6 +4,7 @@ import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt16Encoded
 import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt32Encoded
 import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt64Encoded
 import it.airgap.tezos.core.internal.context.TezosCoreContext.asInt8Encoded
+import it.airgap.tezos.core.internal.context.TezosCoreContext.padEnd
 import it.airgap.tezos.core.internal.context.TezosCoreContext.padStart
 import it.airgap.tezos.core.internal.context.TezosCoreContext.splitAt
 import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
@@ -91,6 +92,25 @@ class ArrayTest {
         assertContentEquals(byteArrayOf(1), byteArrayOf(1).padStart(1))
         assertContentEquals(byteArrayOf(1, 1, 1), byteArrayOf(1, 1, 1).padStart(2))
         assertContentEquals(byteArrayOf(1, 1, 1, 1), byteArrayOf(1, 1, 1, 1).padStart(2))
+    }
+
+    @Test
+    fun `appends ByteArray with fill value if size constraint is not met`() {
+        assertContentEquals(byteArrayOf(0, 0, 0, 0), byteArrayOf().padEnd(4))
+        assertContentEquals(byteArrayOf(1, 0, 0, 0), byteArrayOf(1).padEnd(4))
+        assertContentEquals(byteArrayOf(1, 1, 0, 0), byteArrayOf(1, 1).padEnd(4))
+        assertContentEquals(byteArrayOf(1, 1, 1, 0), byteArrayOf(1, 1, 1).padEnd(4))
+        assertContentEquals(byteArrayOf(1, 1, 0, 0), byteArrayOf(1, 1, 0).padEnd(4))
+        assertContentEquals(byteArrayOf(1, 0, 0, 0), byteArrayOf(1, 0).padEnd(4))
+        assertContentEquals(byteArrayOf(0, 1, 0, 0), byteArrayOf(0, 1, 0).padEnd(4))
+    }
+
+    @Test
+    fun `does not append ByteArray with fill value if size constraint is met`() {
+        assertContentEquals(byteArrayOf(), byteArrayOf().padEnd(0))
+        assertContentEquals(byteArrayOf(1), byteArrayOf(1).padEnd(1))
+        assertContentEquals(byteArrayOf(1, 1, 1), byteArrayOf(1, 1, 1).padEnd(2))
+        assertContentEquals(byteArrayOf(1, 1, 1, 1), byteArrayOf(1, 1, 1, 1).padEnd(2))
     }
 
     @Test

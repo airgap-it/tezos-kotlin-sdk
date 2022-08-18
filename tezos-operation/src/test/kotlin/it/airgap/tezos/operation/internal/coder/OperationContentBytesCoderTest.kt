@@ -19,6 +19,7 @@ import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.operation.header.LiquidityBakingToggleVote
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.operation.internal.context.TezosOperationContext.asHexString
@@ -62,7 +63,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should encode Operation to bytes`() = withTezosContext {
+    fun `should encode OperationContent to bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertContentEquals(it.second, operationContentBytesCoder.encode(it.first))
             assertContentEquals(it.second, it.first.forgeToBytes(tezos))
@@ -75,7 +76,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should decode Operation from bytes`() = withTezosContext {
+    fun `should decode OperationContent from bytes`() = withTezosContext {
         operationsWithBytes.forEach {
             assertEquals(it.first, operationContentBytesCoder.decode(it.second))
             assertEquals(it.first, operationContentBytesCoder.decodeConsuming(it.second.toMutableList()))
@@ -87,7 +88,7 @@ class OperationContentBytesCoderTest {
     }
 
     @Test
-    fun `should fail to decode Operation from invalid bytes`() = withTezosContext {
+    fun `should fail to decode OperationContent from invalid bytes`() = withTezosContext {
         invalidBytes.forEach {
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decode(it) }
             assertFailsWith<IllegalArgumentException> { operationContentBytesCoder.decodeConsuming(it.toMutableList()) }
@@ -140,7 +141,7 @@ class OperationContentBytesCoderTest {
                     1,
                     "d4d34b5686c98ae1".asHexString(),
                     null,
-                    true,
+                    LiquidityBakingToggleVote.On,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
                 BlockHeader(
@@ -156,10 +157,10 @@ class OperationContentBytesCoderTest {
                     2,
                     "336ebf95efce0475".asHexString(),
                     NonceHash("nceUeUCJRZ4M7FCSBsAUZU6dmxePdH7irje9Gfj9zWwCdfWd5B4Ee"),
-                    false,
+                    LiquidityBakingToggleVote.Off,
                     GenericSignature("sigRsUhHqaFVBeV4qzyCZ6Y9TvoKajyNwyPQQCW3SbgPYY99MrpTqR2FopjzZEHMWoJG7LaTaHu7bnieKQRKqCRLA7hB7Ekp"),
                 ),
-            ) to "03000000e0000000010114a98b361825acd1997319b0b01069908d1103df26a5646bf998cd6df80b95c60000000000000001018539ef2bf06ca139c6aeda9edc16c853f2b09ff232fab97d7a15150a602ea36500000000dc8d5cafd036ba185119ba904aefbdefd6d30de1f5e4a49fb20b0997ea2cdc357b08b37679350e62ea1bff3287d151c79156f0160b296bdade0ffa7f16f26b6300000001d4d34b5686c98ae100ff9d584824e3bf8b4817abdce782d94d93df6c60581e581990767cb8c0c07c577c328cddebd2da2433736411e17c2cfb282c8067e89c5a3e48246f50eca5e7525f000001000000000202f5043ad9d3aeea868db43f2abda52e1b7f176f928742964ce1db62d8f48cd67f0000000000000002028974da4dc7fcb31faab671f35d065db1d699a2b7d97bb830330977b8650591b0000000008e84ab5712175f8ab1ce14bcf5185d712c472a4e6abf51093a06c7e9042e59d258ef5ec7e36bb4004a4e7f10cb94032d59b65f8a86450c20a63d802ad749546200000002336ebf95efce0475ff37ad10c119adb450d7456104f3971536fb486124a262549c00d3310cd93e6820001dad11dad4d16f110476a24734b1414725506b354e01de4e54a4fdcec01604fda840b53f2cac4109c32680fe58600d96749b1d2891a0aa22b222ba36c864f001".asHexString().toByteArray(),
+            ) to "03000000e0000000010114a98b361825acd1997319b0b01069908d1103df26a5646bf998cd6df80b95c60000000000000001018539ef2bf06ca139c6aeda9edc16c853f2b09ff232fab97d7a15150a602ea36500000000dc8d5cafd036ba185119ba904aefbdefd6d30de1f5e4a49fb20b0997ea2cdc357b08b37679350e62ea1bff3287d151c79156f0160b296bdade0ffa7f16f26b6300000001d4d34b5686c98ae100009d584824e3bf8b4817abdce782d94d93df6c60581e581990767cb8c0c07c577c328cddebd2da2433736411e17c2cfb282c8067e89c5a3e48246f50eca5e7525f000001000000000202f5043ad9d3aeea868db43f2abda52e1b7f176f928742964ce1db62d8f48cd67f0000000000000002028974da4dc7fcb31faab671f35d065db1d699a2b7d97bb830330977b8650591b0000000008e84ab5712175f8ab1ce14bcf5185d712c472a4e6abf51093a06c7e9042e59d258ef5ec7e36bb4004a4e7f10cb94032d59b65f8a86450c20a63d802ad749546200000002336ebf95efce0475ff37ad10c119adb450d7456104f3971536fb486124a262549c00d3310cd93e6820011dad11dad4d16f110476a24734b1414725506b354e01de4e54a4fdcec01604fda840b53f2cac4109c32680fe58600d96749b1d2891a0aa22b222ba36c864f001".asHexString().toByteArray(),
             OperationContent.DoubleBakingEvidence(
                 BlockHeader(
                     1,
@@ -174,7 +175,7 @@ class OperationContentBytesCoderTest {
                     1,
                     "d4d34b5686c98ae1".asHexString(),
                     null,
-                    true,
+                    LiquidityBakingToggleVote.Off,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
                 BlockHeader(
@@ -190,10 +191,10 @@ class OperationContentBytesCoderTest {
                     2,
                     "336ebf95efce0475".asHexString(),
                     NonceHash("nceUeUCJRZ4M7FCSBsAUZU6dmxePdH7irje9Gfj9zWwCdfWd5B4Ee"),
-                    false,
+                    LiquidityBakingToggleVote.Pass,
                     GenericSignature("sigRsUhHqaFVBeV4qzyCZ6Y9TvoKajyNwyPQQCW3SbgPYY99MrpTqR2FopjzZEHMWoJG7LaTaHu7bnieKQRKqCRLA7hB7Ekp"),
                 ),
-            ) to "03000000f1000000010114a98b361825acd1997319b0b01069908d1103df26a5646bf998cd6df80b95c60000000000000001018539ef2bf06ca139c6aeda9edc16c853f2b09ff232fab97d7a15150a602ea365000000110000000d00000001000000000100000001dc8d5cafd036ba185119ba904aefbdefd6d30de1f5e4a49fb20b0997ea2cdc357b08b37679350e62ea1bff3287d151c79156f0160b296bdade0ffa7f16f26b6300000001d4d34b5686c98ae100ff9d584824e3bf8b4817abdce782d94d93df6c60581e581990767cb8c0c07c577c328cddebd2da2433736411e17c2cfb282c8067e89c5a3e48246f50eca5e7525f000001260000000202f5043ad9d3aeea868db43f2abda52e1b7f176f928742964ce1db62d8f48cd67f0000000000000002028974da4dc7fcb31faab671f35d065db1d699a2b7d97bb830330977b8650591b0000000260000001100000002ff0000000200000002000000020000000d000000020000000002000000028e84ab5712175f8ab1ce14bcf5185d712c472a4e6abf51093a06c7e9042e59d258ef5ec7e36bb4004a4e7f10cb94032d59b65f8a86450c20a63d802ad749546200000002336ebf95efce0475ff37ad10c119adb450d7456104f3971536fb486124a262549c00d3310cd93e6820001dad11dad4d16f110476a24734b1414725506b354e01de4e54a4fdcec01604fda840b53f2cac4109c32680fe58600d96749b1d2891a0aa22b222ba36c864f001".asHexString().toByteArray(),
+            ) to "03000000f1000000010114a98b361825acd1997319b0b01069908d1103df26a5646bf998cd6df80b95c60000000000000001018539ef2bf06ca139c6aeda9edc16c853f2b09ff232fab97d7a15150a602ea365000000110000000d00000001000000000100000001dc8d5cafd036ba185119ba904aefbdefd6d30de1f5e4a49fb20b0997ea2cdc357b08b37679350e62ea1bff3287d151c79156f0160b296bdade0ffa7f16f26b6300000001d4d34b5686c98ae100019d584824e3bf8b4817abdce782d94d93df6c60581e581990767cb8c0c07c577c328cddebd2da2433736411e17c2cfb282c8067e89c5a3e48246f50eca5e7525f000001260000000202f5043ad9d3aeea868db43f2abda52e1b7f176f928742964ce1db62d8f48cd67f0000000000000002028974da4dc7fcb31faab671f35d065db1d699a2b7d97bb830330977b8650591b0000000260000001100000002ff0000000200000002000000020000000d000000020000000002000000028e84ab5712175f8ab1ce14bcf5185d712c472a4e6abf51093a06c7e9042e59d258ef5ec7e36bb4004a4e7f10cb94032d59b65f8a86450c20a63d802ad749546200000002336ebf95efce0475ff37ad10c119adb450d7456104f3971536fb486124a262549c00d3310cd93e6820021dad11dad4d16f110476a24734b1414725506b354e01de4e54a4fdcec01604fda840b53f2cac4109c32680fe58600d96749b1d2891a0aa22b222ba36c864f001".asHexString().toByteArray(),
             OperationContent.ActivateAccount(
                 Ed25519PublicKeyHash("tz1PokEhtiBGCmekQrcN87pCDmqy99TjaLuN"),
                 "7b27ba02550e6834b50173c8c506de42d901c606".asHexString(),
@@ -276,8 +277,8 @@ class OperationContentBytesCoderTest {
                 TezosNatural("23675"),
                 TezosNatural("34152"),
                 Mutez("763243"),
-                Ed25519PublicKeyHash("tz1YbTdYqmpLatAqLb1sm67qqXMXyRB3UYiz"),
-            ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e00008e1d34730fcd7e8282b0efe7b09b3c57543e59c800".asHexString().toByteArray(),
+                ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"),
+            ) to "6c00f6cb338e136f281d17a2657437f090daf84b42affba3089a01fbb801e88a02ebca2e01541e2bf7dc4401328be301227d204d5dc233b6760000".asHexString().toByteArray(),
             OperationContent.Transaction(
                 Ed25519PublicKeyHash("tz1i8xLzLPQHknc5jmeFc3qxijar2HLG2W4Z"),
                 Mutez("135675"),

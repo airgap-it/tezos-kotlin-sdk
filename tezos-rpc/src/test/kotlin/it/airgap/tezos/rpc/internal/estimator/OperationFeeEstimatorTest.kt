@@ -62,8 +62,8 @@ class TezosRpcClientTest {
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                 fee = Mutez(0),
                 counter = TezosNatural(727U),
-                gasLimit = TezosNatural(1030000U),
-                storageLimit = TezosNatural(50000U),
+                gasLimit = TezosNatural(1_030_000U),
+                storageLimit = TezosNatural(50_000U),
                 amount = Mutez(1000),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),
@@ -142,9 +142,9 @@ class TezosRpcClientTest {
         val chainId = ChainId("NetXdQprcVkpaWU")
         val branch = BlockHash("BKuka2aVwcjNkZrDzFHJMvdCz43RoMt1kFfjKnipNnGsERSAUEn")
         val limits = Limits(
-            gasPerBlock = 400000U,
-            gasPerOperation = 1020000U,
-            storagePerOperation = 40000U,
+            gasPerBlock = 400_000U,
+            gasPerOperation = 1_020_000U,
+            storagePerOperation = 40_000U,
         )
 
         val operation = Operation(
@@ -152,8 +152,8 @@ class TezosRpcClientTest {
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                 fee = Mutez(0),
                 counter = TezosNatural(727U),
-                gasLimit = TezosNatural(1030000U),
-                storageLimit = TezosNatural(50000U),
+                gasLimit = TezosNatural(1_030_000U),
+                storageLimit = TezosNatural(50_000U),
                 amount = Mutez(1000),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),
@@ -236,8 +236,8 @@ class TezosRpcClientTest {
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                 fee = Mutez(0),
                 counter = TezosNatural(727U),
-                gasLimit = TezosNatural(1030000U),
-                storageLimit = TezosNatural(50000U),
+                gasLimit = TezosNatural(1_030_000U),
+                storageLimit = TezosNatural(50_000U),
                 amount = Mutez(1000),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),
@@ -245,8 +245,8 @@ class TezosRpcClientTest {
                 source = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
                 fee = Mutez(600),
                 counter = TezosNatural(728U),
-                gasLimit = TezosNatural(1030000U),
-                storageLimit = TezosNatural(51000U),
+                gasLimit = TezosNatural(1_030_000U),
+                storageLimit = TezosNatural(51_000U),
                 amount = Mutez(1000),
                 destination = Ed25519PublicKeyHash("tz1gru9Tsz1X7GaYnsKR2YeGJLTVm4NwMhvb"),
             ),
@@ -362,8 +362,8 @@ class TezosRpcClientTest {
         assertEquals(Mutez(1105), updatedOperation.fee)
         assertEquals(
             OperationLimits(
-                BigInt.valueOf(1031521),
-                BigInt.valueOf(51100),
+                BigInt.valueOf(1_031_521),
+                BigInt.valueOf(51_100),
             ),
             updatedOperation.limits,
         )

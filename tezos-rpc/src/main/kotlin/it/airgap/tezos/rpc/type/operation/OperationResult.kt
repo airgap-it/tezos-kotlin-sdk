@@ -5,7 +5,7 @@ import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.PublicKey
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.core.type.tez.Mutez
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.type.bigmap.RpcBigMapDiff
@@ -20,7 +20,7 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 public sealed class RpcOperationResult {
 
     @Transient
-    public open val storage: MichelineNode? = null
+    public open val storage: Micheline? = null
 
     @Transient
     public open val bigMapDiff: List<RpcBigMapDiff>? = null
@@ -108,7 +108,7 @@ public sealed class RpcOperationResult {
         @Serializable
         @SerialName(Applied.KIND)
         public data class Applied(
-            override val storage: MichelineNode? = null,
+            override val storage: Micheline? = null,
             @SerialName("big_map_diff") override val bigMapDiff: List<RpcBigMapDiff>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>? = null,
             @SerialName("originated_contracts") override val originatedContracts: List<Address>? = null,
@@ -142,7 +142,7 @@ public sealed class RpcOperationResult {
         @SerialName(Backtracked.KIND)
         public data class Backtracked(
             override val errors: List<RpcError>? = null,
-            override val storage: MichelineNode? = null,
+            override val storage: Micheline? = null,
             @SerialName("big_map_diff") override val bigMapDiff: List<RpcBigMapDiff>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>? = null,
             @SerialName("originated_contracts") override val originatedContracts: List<Address>? = null,
@@ -397,7 +397,7 @@ public sealed class RpcInternalOperationResult {
     public open val script: Script? = null
 
     @Transient
-    public open val value: MichelineNode? = null
+    public open val value: Micheline? = null
 
     @Transient
     public open val limit: Mutez? = null
@@ -464,7 +464,7 @@ public sealed class RpcInternalOperationResult {
     public data class RegisterGlobalConstant(
         override val source: @Contextual Address,
         override val nonce: UShort,
-        override val value: MichelineNode,
+        override val value: Micheline,
         override val result: RpcOperationResult.RegisterGlobalConstant,
     ) : RpcInternalOperationResult() {
         public companion object {
@@ -511,7 +511,7 @@ public sealed class RpcSuccessfulManagerOperationResult {
     @Serializable
     @SerialName(Transaction.KIND)
     public data class Transaction(
-        public val storage: MichelineNode? = null,
+        public val storage: Micheline? = null,
         @SerialName("big_map_diff") public val bigMapDiff: List<RpcBigMapDiff>? = null,
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>? = null,
         @SerialName("originated_contracts") public val originatedContracts: List<Address>? = null,

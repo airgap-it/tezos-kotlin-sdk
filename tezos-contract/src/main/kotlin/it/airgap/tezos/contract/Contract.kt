@@ -10,7 +10,7 @@ import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.type.encoded.ContractHash
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.rpc.active.block.Block
@@ -33,7 +33,7 @@ public class Contract internal constructor(
     private val contractStorageFactory: ContractStorage.Factory,
     private val contractEntrypointFactory: ContractEntrypoint.Factory,
     private val scriptToContractCodeConverter: Converter<Script, ContractCode>,
-    private val michelineNormalizer: Normalizer<MichelineNode>,
+    private val michelineNormalizer: Normalizer<Micheline>,
 ) {
     private val codeCached: Cached<ContractCode> = Cached { headers -> contract.script.getNormalized(headers).toContractCode() }
 

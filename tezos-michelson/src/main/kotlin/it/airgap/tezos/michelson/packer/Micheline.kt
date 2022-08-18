@@ -7,51 +7,51 @@ import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toHexStr
 import it.airgap.tezos.michelson.internal.context.withTezosContext
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.internal.packer.Packer
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 
 /**
- * Packs [MichelineNode] to [bytes][ByteArray] using an optional [schema].
+ * Packs [Micheline] to [bytes][ByteArray] using an optional [schema].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  */
-public fun <T : MichelineNode> T.packToBytes(schema: MichelineNode? = null, tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
+public fun <T : Micheline> T.packToBytes(schema: Micheline? = null, tezos: Tezos = Tezos.Default): ByteArray = withTezosContext {
     packToBytes(schema, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
 /**
- * Unpacks [MichelineNode] from [ByteArray][bytes] using an optional [schema].
+ * Unpacks [Micheline] from [ByteArray][bytes] using an optional [schema].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  */
-public fun MichelineNode.Companion.unpackFromBytes(bytes: ByteArray, schema: MichelineNode? = null, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
+public fun Micheline.Companion.unpackFromBytes(bytes: ByteArray, schema: Micheline? = null, tezos: Tezos = Tezos.Default): Micheline = withTezosContext {
     unpackFromBytes(bytes, schema, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
 /**
- * Packs [MichelineNode] to hexadecimal [String] representation [with or without hex prefix][withHexPrefix] using an optional [schema].
+ * Packs [Micheline] to hexadecimal [String] representation [with or without hex prefix][withHexPrefix] using an optional [schema].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  */
-public fun <T : MichelineNode> T.packToString(schema: MichelineNode? = null, withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String = withTezosContext {
+public fun <T : Micheline> T.packToString(schema: Micheline? = null, withHexPrefix: Boolean = false, tezos: Tezos = Tezos.Default): String = withTezosContext {
     packToString(schema, withHexPrefix, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
 /**
- * Unpacks [MichelineNode] from [String][string] using an optional [schema].
+ * Unpacks [Micheline] from [String][string] using an optional [schema].
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  */
-public fun MichelineNode.Companion.unpackFromString(string: String, schema: MichelineNode? = null, tezos: Tezos = Tezos.Default): MichelineNode = withTezosContext {
+public fun Micheline.Companion.unpackFromString(string: String, schema: Micheline? = null, tezos: Tezos = Tezos.Default): Micheline = withTezosContext {
     unpackFromString(string, schema, tezos.michelsonModule.dependencyRegistry.michelinePacker)
 }
 
 @InternalTezosSdkApi
 public interface MichelinePackerContext {
-    public fun <T : MichelineNode> T.packToBytes(schema: MichelineNode? = null, michelinePacker: Packer<MichelineNode>): ByteArray =
+    public fun <T : Micheline> T.packToBytes(schema: Micheline? = null, michelinePacker: Packer<Micheline>): ByteArray =
         michelinePacker.pack(this, schema)
 
-    public fun MichelineNode.Companion.unpackFromBytes(bytes: ByteArray, schema: MichelineNode? = null, michelinePacker: Packer<MichelineNode>): MichelineNode =
+    public fun Micheline.Companion.unpackFromBytes(bytes: ByteArray, schema: Micheline? = null, michelinePacker: Packer<Micheline>): Micheline =
         michelinePacker.unpack(bytes, schema)
 
-    public fun <T : MichelineNode> T.packToString(schema: MichelineNode? = null, withHexPrefix: Boolean = false, michelinePacker: Packer<MichelineNode>): String =
+    public fun <T : Micheline> T.packToString(schema: Micheline? = null, withHexPrefix: Boolean = false, michelinePacker: Packer<Micheline>): String =
         packToBytes(schema, michelinePacker).toHexString().asString(withPrefix = withHexPrefix)
 
-    public fun MichelineNode.Companion.unpackFromString(string: String, schema: MichelineNode? = null, michelinePacker: Packer<MichelineNode>): MichelineNode =
-        MichelineNode.unpackFromBytes(string.asHexString().toByteArray(), schema, michelinePacker)
+    public fun Micheline.Companion.unpackFromString(string: String, schema: Micheline? = null, michelinePacker: Packer<Micheline>): Micheline =
+        Micheline.unpackFromBytes(string.asHexString().toByteArray(), schema, michelinePacker)
 }

@@ -1,7 +1,7 @@
 package it.airgap.tezos.rpc.type.bigmap
 
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonClassDiscriminator
 
@@ -17,16 +17,16 @@ public sealed class RpcBigMapDiff {
     public open val keyHash: ScriptExprHash? = null
 
     @Transient
-    public open val key: MichelineNode? = null
+    public open val key: Micheline? = null
 
     @Transient
-    public open val keyType: MichelineNode? = null
+    public open val keyType: Micheline? = null
 
     @Transient
-    public open val value: MichelineNode? = null
+    public open val value: Micheline? = null
 
     @Transient
-    public open val valueType: MichelineNode? = null
+    public open val valueType: Micheline? = null
 
     @Transient
     public open val sourceBigMap: String? = null
@@ -39,8 +39,8 @@ public sealed class RpcBigMapDiff {
     public data class Update(
         @SerialName("big_map") override val bigMap: String,
         @SerialName("key_hash") override val keyHash: @Contextual ScriptExprHash,
-        override val key: MichelineNode,
-        override val value: MichelineNode? = null,
+        override val key: Micheline,
+        override val value: Micheline? = null,
     ) : RpcBigMapDiff() {
         public companion object {
             internal const val KIND = "update"
@@ -70,8 +70,8 @@ public sealed class RpcBigMapDiff {
     @SerialName(Alloc.KIND)
     public data class Alloc(
         @SerialName("big_map") override val bigMap: String,
-        @SerialName("key_type") override val keyType: MichelineNode,
-        @SerialName("value_type") override val valueType: MichelineNode,
+        @SerialName("key_type") override val keyType: Micheline,
+        @SerialName("value_type") override val valueType: Micheline,
     ) : RpcBigMapDiff() {
         public companion object {
             internal const val KIND = "alloc"

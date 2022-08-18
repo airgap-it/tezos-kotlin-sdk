@@ -30,3 +30,12 @@ public data class RpcVotingPeriod(
         @SerialName("adoption") Adoption,
     }
 }
+
+// -- RpcLiquidityBakingToggleVote --
+
+@Serializable
+public enum class RpcLiquidityBakingToggleVote {
+    @SerialName("off") Off,
+    @SerialName("on") On,
+    @SerialName("pass") Pass,
+}

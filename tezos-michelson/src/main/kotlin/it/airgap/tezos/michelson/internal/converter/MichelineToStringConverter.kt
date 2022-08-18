@@ -2,12 +2,12 @@ package it.airgap.tezos.michelson.internal.converter
 
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelineToStringConverter : Converter<MichelineNode, String> {
-    override fun convert(value: MichelineNode): String =
+internal class MichelineToStringConverter : Converter<Micheline, String> {
+    override fun convert(value: Micheline): String =
         when (value) {
             is MichelineLiteral -> literalToString(value)
             is MichelinePrimitiveApplication -> primitiveApplicationToString(value)
@@ -43,8 +43,8 @@ internal class MichelineToStringConverter : Converter<MichelineNode, String> {
     }
 }
 
-internal class MichelineToCompactStringConverter : Converter<MichelineNode, String> {
-    override fun convert(value: MichelineNode): String =
+internal class MichelineToCompactStringConverter : Converter<Micheline, String> {
+    override fun convert(value: Micheline): String =
         when (value) {
             is MichelineLiteral -> literalToCompatString(value)
             is MichelinePrimitiveApplication -> primitiveApplicationToCompatString(value)
@@ -84,7 +84,7 @@ internal class MichelineToCompactStringConverter : Converter<MichelineNode, Stri
         ).joinToString(separator) { it.value }
     }
 
-    private fun argumentsToCompatString(arguments: List<MichelineNode>): String {
+    private fun argumentsToCompatString(arguments: List<Micheline>): String {
         val separator = when (arguments.size) {
             2 -> " "
             else -> " ... "

@@ -80,7 +80,7 @@ class AddressSamples {
             assertContentEquals(hexToBytes("00021a78f4332a6fe15b979904c6c2e5f9521e1ffc4a"), tz3Address.encodeToBytes())
 
             val kt1Address = Address("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7")
-            assertContentEquals(hexToBytes("016077cd98fd8aca94851b83a4c44203b705d2004b"), kt1Address.encodeToBytes())
+            assertContentEquals(hexToBytes("016077cd98fd8aca94851b83a4c44203b705d2004b00"), kt1Address.encodeToBytes())
         }
 
         @Test

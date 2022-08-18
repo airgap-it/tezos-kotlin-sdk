@@ -15,7 +15,7 @@ import it.airgap.tezos.core.type.number.TezosNatural
 import it.airgap.tezos.core.type.tez.Mutez
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.MichelineLiteral
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 import it.airgap.tezos.michelson.micheline.dsl.micheline
 import it.airgap.tezos.operation.Operation
@@ -516,8 +516,8 @@ class ContractEntrypointTest {
     private data class EntrypointTestCase(
         val name: String,
         val contractAddress: ContractHash,
-        val type: MichelineNode,
-        val value: MichelineNode,
+        val type: Micheline,
+        val value: Micheline,
         val namedValue: ContractEntrypointParameter,
     )
 }

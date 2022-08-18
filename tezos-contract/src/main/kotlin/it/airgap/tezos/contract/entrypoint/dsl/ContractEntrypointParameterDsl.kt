@@ -8,7 +8,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.internal.michelsonModule
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 
 /**
  * Creates [ContractEntrypointParameter] using the [parameter builder configuration][createObject].
@@ -21,7 +21,7 @@ public fun entrypointParameters(tezos: Tezos = Tezos.Default, createObject: Cont
 @InternalTezosSdkApi
 public interface ContractEntrypointParameterDslContext {
     public fun entrypointParameters(
-        michelsonToMichelineConverter: Converter<Michelson, MichelineNode>,
+        michelsonToMichelineConverter: Converter<Michelson, Micheline>,
         createObject: ContractEntrypointObjectParameterBuilder.() -> Unit = {},
     ): ContractEntrypointParameter = ContractEntrypointObjectParameterBuilder(michelsonToMichelineConverter).apply(createObject).build()
 }

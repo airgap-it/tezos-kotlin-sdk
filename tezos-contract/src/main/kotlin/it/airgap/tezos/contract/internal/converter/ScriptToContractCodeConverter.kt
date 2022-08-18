@@ -5,7 +5,7 @@ import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.operation.contract.Script
 import kotlin.reflect.KClass
@@ -22,7 +22,7 @@ internal class ScriptToContractCodeConverter : Converter<Script, ContractCode> {
         return ContractCode(parameter, storage, code)
     }
 
-    private fun failWithInvalidMichelineType(expected: KClass<out MichelineNode>, actual: KClass<out MichelineNode>): Nothing =
+    private fun failWithInvalidMichelineType(expected: KClass<out Micheline>, actual: KClass<out Micheline>): Nothing =
         failWithContractException("Invalid Micheline type, expected `$expected` but got `$actual`.")
 
     private fun failWithUnknownCodeType(): Nothing =

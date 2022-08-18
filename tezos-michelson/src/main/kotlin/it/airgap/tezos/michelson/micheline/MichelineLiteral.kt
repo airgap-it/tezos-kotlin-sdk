@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * Micheline literals as defined in [the documentation](https://tezos.gitlab.io/shell/micheline.html#bnf-grammar).
  */
 @Serializable(with = MichelineLiteralSerializer::class)
-public sealed class MichelineLiteral : MichelineNode() {
+public sealed class MichelineLiteral : Micheline() {
 
     @Serializable
     public data class Integer(public val int: kotlin.String) : MichelineLiteral() {

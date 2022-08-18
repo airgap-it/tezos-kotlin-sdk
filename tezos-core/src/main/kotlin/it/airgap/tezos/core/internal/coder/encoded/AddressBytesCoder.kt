@@ -6,18 +6,17 @@ import it.airgap.tezos.core.internal.context.TezosCoreContext.failWithIllegalArg
 import it.airgap.tezos.core.internal.context.TezosCoreContext.startsWith
 import it.airgap.tezos.core.internal.type.BytesTag
 import it.airgap.tezos.core.type.encoded.Address
-import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.core.type.encoded.OriginatedAddress
 
 internal class AddressBytesCoder(
     private val implicitAddressBytesCoder: ConsumingBytesCoder<ImplicitAddress>,
-    private val encodedBytesCoder: EncodedBytesCoder,
+    private val originatedAddressBytesCoder: ConsumingBytesCoder<OriginatedAddress>,
 ) : ConsumingBytesCoder<Address> {
     override fun encode(value: Address): ByteArray =
         when (value) {
             is ImplicitAddress -> AddressTag.Implicit + implicitAddressBytesCoder.encode(value)
-            is OriginatedAddress -> AddressTag.Originated + encodedBytesCoder.encode(value)
+            is OriginatedAddress -> AddressTag.Originated + originatedAddressBytesCoder.encode(value)
         }
 
     override fun decode(value: ByteArray): Address {
@@ -25,7 +24,7 @@ internal class AddressBytesCoder(
 
         val decoder: (ByteArray) -> Address = when (tag) {
             AddressTag.Implicit -> implicitAddressBytesCoder::decode
-            AddressTag.Originated -> ({ encodedBytesCoder.decode(it, ContractHash) })
+            AddressTag.Originated -> originatedAddressBytesCoder::decode
         }
 
         return decoder(value.sliceArray(tag.value.size until value.size))
@@ -37,7 +36,7 @@ internal class AddressBytesCoder(
 
         val decoder: (MutableList<Byte>) -> Address = when (tag) {
             AddressTag.Implicit -> implicitAddressBytesCoder::decodeConsuming
-            AddressTag.Originated -> ({ encodedBytesCoder.decodeConsuming(it, ContractHash) })
+            AddressTag.Originated -> originatedAddressBytesCoder::decodeConsuming
         }
 
         return decoder(value)

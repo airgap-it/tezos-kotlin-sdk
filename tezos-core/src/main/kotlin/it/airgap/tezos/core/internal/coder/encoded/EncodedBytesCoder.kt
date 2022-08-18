@@ -37,7 +37,11 @@ public class EncodedBytesCoder internal constructor(private val base58Check: Bas
     }
 
     public fun <E : Encoded, M : MetaEncoded<*, E>, K : MetaEncoded.Kind<M, E>> decodeConsuming(value: MutableList<Byte>, kind: K): E {
-        val bytes = value.consumeUntil(kind.bytesLength)
+        val bytes = value.take(kind.bytesLength)
+            .takeIf { kind.isValid(it) }
+            ?.also { value.consumeUntil(it.size) }
+            ?: failWithInvalidBytes(value, kind)
+
         return decode(bytes.toByteArray(), kind)
     }
 

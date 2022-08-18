@@ -7,7 +7,7 @@ import it.airgap.tezos.contract.internal.context.TezosContractContext.consumeAt
 import it.airgap.tezos.contract.internal.context.TezosContractContext.failWithIllegalArgument
 import it.airgap.tezos.contract.internal.context.TezosContractContext.fromStringOrNull
 import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
-import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypointArgument
+import it.airgap.tezos.contract.internal.entrypoint.MetaContractEntrypointParameter
 import it.airgap.tezos.contract.internal.micheline.MichelineTrace
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.Michelson
@@ -15,28 +15,28 @@ import it.airgap.tezos.michelson.MichelsonComparableType
 import it.airgap.tezos.michelson.MichelsonData
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.micheline.MichelineNode
+import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
 internal class EntrypointParameterToMichelineConverter(
-    private val michelineToCompactStringConverter: Converter<MichelineNode, String>,
+    private val michelineToCompactStringConverter: Converter<Micheline, String>,
     private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
-) : TypedConverter<ContractEntrypointParameter, MichelineNode> {
-    override fun convert(value: ContractEntrypointParameter, type: MichelineNode): MichelineNode {
-        val meta = createMetaEntrypointArgument(type)
+) : TypedConverter<ContractEntrypointParameter, Micheline> {
+    override fun convert(value: ContractEntrypointParameter, type: Micheline): Micheline {
+        val meta = createMetaEntrypointParameter(type)
         return createMicheline(value, meta)
     }
 
-    private fun createMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument): MichelineNode =
+    private fun createMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter): Micheline =
         when (meta) {
-            is MetaContractEntrypointArgument.Value -> createValueMicheline(value, meta)
-            is MetaContractEntrypointArgument.Object -> createObjectMicheline(value, meta)
-            is MetaContractEntrypointArgument.Sequence -> createSequenceMicheline(value, meta)
-            is MetaContractEntrypointArgument.Map -> createMapMicheline(value, meta)
+            is MetaContractEntrypointParameter.Value -> createValueMicheline(value, meta)
+            is MetaContractEntrypointParameter.Object -> createObjectMicheline(value, meta)
+            is MetaContractEntrypointParameter.Sequence -> createSequenceMicheline(value, meta)
+            is MetaContractEntrypointParameter.Map -> createMapMicheline(value, meta)
         }
 
-    private fun createValueMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Value): MichelineNode =
+    private fun createValueMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Value): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> value.value ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
@@ -46,7 +46,7 @@ internal class EntrypointParameterToMichelineConverter(
             is ContractEntrypointParameter.Sequence, is ContractEntrypointParameter.Map -> failWithValueMetaMismatch(value, meta)
         }
 
-    private fun createObjectMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Object): MichelineNode =
+    private fun createObjectMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Object): Micheline =
         when {
             meta.type.isPrim(MichelsonType.Pair) || meta.type.isPrim(MichelsonComparableType.Pair) -> createPairMicheline(value, meta)
             meta.type.isPrim(MichelsonType.Option) || meta.type.isPrim(MichelsonComparableType.Option) -> createOptionMicheline(value, meta)
@@ -54,7 +54,7 @@ internal class EntrypointParameterToMichelineConverter(
             else -> createSimpleObjectMicheline(value, meta)
         }
 
-    private fun createSequenceMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Sequence): MichelineNode =
+    private fun createSequenceMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Sequence): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> value.sequenceOrNull() ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
@@ -69,7 +69,7 @@ internal class EntrypointParameterToMichelineConverter(
             is ContractEntrypointParameter.Map -> failWithValueMetaMismatch(value, meta)
         }
 
-    private fun createMapMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Map): MichelineNode =
+    private fun createMapMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Map): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> value.sequenceOrNull(MichelsonData.Elt) ?: failWithValueMetaMismatch(value, meta)
             is ContractEntrypointParameter.Object -> {
@@ -92,7 +92,7 @@ internal class EntrypointParameterToMichelineConverter(
             is ContractEntrypointParameter.Sequence -> failWithValueMetaMismatch(value, meta)
         }
 
-    private fun createPairMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Object): MichelineNode =
+    private fun createPairMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Object): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> {
                 value.primOrNull(MichelsonData.Pair) ?: run {
@@ -114,7 +114,7 @@ internal class EntrypointParameterToMichelineConverter(
             is ContractEntrypointParameter.Sequence, is ContractEntrypointParameter.Map -> failWithValueMetaMismatch(value, meta)
         }
 
-    private fun createOptionMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Object): MichelineNode =
+    private fun createOptionMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Object): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> value.value?.let {
                 MichelinePrimitiveApplication(MichelsonData.Some, args = listOf(it))
@@ -133,7 +133,7 @@ internal class EntrypointParameterToMichelineConverter(
             is ContractEntrypointParameter.Sequence, is ContractEntrypointParameter.Map -> failWithValueMetaMismatch(value, meta)
         }
 
-    private fun createOrMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Object): MichelineNode =
+    private fun createOrMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Object): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> {
                 value.primOrNull(MichelsonData.Left, MichelsonData.Right) ?: run {
@@ -148,7 +148,7 @@ internal class EntrypointParameterToMichelineConverter(
             is ContractEntrypointParameter.Sequence, is ContractEntrypointParameter.Map -> failWithValueMetaMismatch(value, meta)
         }
 
-    private fun createDirectedMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument): MichelineNode =
+    private fun createDirectedMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter): Micheline =
         MichelinePrimitiveApplication(
             meta.trace.directedPrim() ?: failWithInvalidType(meta),
             args = listOf(
@@ -156,12 +156,12 @@ internal class EntrypointParameterToMichelineConverter(
             ),
         )
 
-    private fun createArgMicheline(value: ContractEntrypointParameter.Object, meta: MetaContractEntrypointArgument): MichelineNode? {
+    private fun createArgMicheline(value: ContractEntrypointParameter.Object, meta: MetaContractEntrypointParameter): Micheline? {
         val arg = value.extract(meta) ?: return null
         return createMicheline(arg, meta)
     }
 
-    private fun createSimpleObjectMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument.Object): MichelineNode =
+    private fun createSimpleObjectMicheline(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter.Object): Micheline =
         when (value) {
             is ContractEntrypointParameter.Value -> {
                 value.value ?: run {
@@ -178,18 +178,17 @@ internal class EntrypointParameterToMichelineConverter(
         }
 
 
-    private fun createMetaEntrypointArgument(type: MichelineNode, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument =
+    private fun createMetaEntrypointParameter(type: Micheline, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointParameter =
         when (type) {
-            is MichelinePrimitiveApplication -> createMetaEntrypointArgument(type, trace)
+            is MichelinePrimitiveApplication -> createMetaEntrypointParameter(type, trace)
             else -> failWithInvalidType(type)
         }
 
-    private fun createMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument =
+    private fun createMetaEntrypointParameter(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointParameter =
         when (val prim = Michelson.Prim.fromStringOrNull(type.prim.value, stringToMichelsonPrimConverter)) {
             is MichelsonType.Prim -> when {
-                prim == MichelsonType.BigMap || type.args.isEmpty() -> createValueMetaEntrypointArgument(type, trace)
+                prim == MichelsonType.BigMap || prim == MichelsonType.Lambda || type.args.isEmpty() -> createValueMetaEntrypointArgument(type, trace)
                 prim == MichelsonType.List || prim == MichelsonType.Set -> createSequenceMetaEntrypointArgument(type, trace)
-                prim == MichelsonType.Lambda -> createLambdaMetaEntrypointArgument(type, trace)
                 prim == MichelsonType.Map -> createMapMetaEntrypointArgument(type, trace)
                 type.args.isNotEmpty() -> createObjectMetaEntrypointArgument(type, trace)
                 else -> failWithInvalidType(type)
@@ -197,49 +196,46 @@ internal class EntrypointParameterToMichelineConverter(
             else -> failWithInvalidType(type)
         }
 
-    private fun createValueMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument =
-        MetaContractEntrypointArgument.Value(type, trace)
+    private fun createValueMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointParameter =
+        MetaContractEntrypointParameter.Value(type, trace)
 
-    private fun createSequenceMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument {
+    private fun createSequenceMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointParameter {
         if (type.args.size != 1) failWithInvalidType(type)
 
-        return MetaContractEntrypointArgument.Sequence(type, trace, listOf(createMetaEntrypointArgument(type.args.first(), MichelineTrace.Node(0))))
+        return MetaContractEntrypointParameter.Sequence(type, trace, listOf(createMetaEntrypointParameter(type.args.first(), MichelineTrace.Node(0))))
     }
 
-    private fun createLambdaMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument =
-        MetaContractEntrypointArgument.Sequence(type, trace, listOf(createMetaEntrypointArgument(type)))
-
-    private fun createMapMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument {
+    private fun createMapMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointParameter {
         if (type.args.size != 2) failWithInvalidType(type)
 
-        return MetaContractEntrypointArgument.Map(
+        return MetaContractEntrypointParameter.Map(
             type,
             trace,
-            createMetaEntrypointArgument(type.args[0], MichelineTrace.Node(0)),
-            createMetaEntrypointArgument(type.args[1], MichelineTrace.Node(1)),
+            createMetaEntrypointParameter(type.args[0], MichelineTrace.Node(0)),
+            createMetaEntrypointParameter(type.args[1], MichelineTrace.Node(1)),
         )
     }
 
-    private fun createObjectMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointArgument {
+    private fun createObjectMetaEntrypointArgument(type: MichelinePrimitiveApplication, trace: MichelineTrace = MichelineTrace.Root()): MetaContractEntrypointParameter {
         if (type.args.size > 2) failWithInvalidType(type)
 
-        return MetaContractEntrypointArgument.Object(
+        return MetaContractEntrypointParameter.Object(
             type,
             trace,
-            type.args.mapIndexed { index, t -> createMetaEntrypointArgument(t, MichelineTrace.Node(index)) },
+            type.args.mapIndexed { index, t -> createMetaEntrypointParameter(t, MichelineTrace.Node(index)) },
         )
     }
 
-    private fun ContractEntrypointParameter.Value.primOrNull(vararg prim: MichelsonData.Prim): MichelineNode? =
+    private fun ContractEntrypointParameter.Value.primOrNull(vararg prim: MichelsonData.Prim): Micheline? =
         if (prim.any { value?.isPrim(it) == true }) value else null
 
-    private fun ContractEntrypointParameter.Value.sequenceOrNull(prim: MichelsonData.Prim? = null): MichelineNode? {
+    private fun ContractEntrypointParameter.Value.sequenceOrNull(prim: MichelsonData.Prim? = null): Micheline? {
         if (value !is MichelineSequence) return null
 
         return value.takeIf { prim == null || value.nodes.all { it.isPrim(prim) } }
     }
 
-    private fun ContractEntrypointParameter.findNextMeta(meta: MetaContractEntrypointArgument.Object): MetaContractEntrypointArgument? =
+    private fun ContractEntrypointParameter.findNextMeta(meta: MetaContractEntrypointParameter.Object): MetaContractEntrypointParameter? =
         name?.let {
             when (val trace = meta.trace(it)) {
                 is MichelineTrace.Node -> meta.elements[trace.direction.index]
@@ -247,13 +243,13 @@ internal class EntrypointParameterToMichelineConverter(
             }
         }
 
-    private fun ContractEntrypointParameter.Object.extract(meta: MetaContractEntrypointArgument): ContractEntrypointParameter? {
+    private fun ContractEntrypointParameter.Object.extract(meta: MetaContractEntrypointParameter): ContractEntrypointParameter? {
         val reducedElements = elements.consumeAll { meta.describes(it) }
 
         when (reducedElements.size) {
             0 -> {
                 return when (meta) {
-                    is MetaContractEntrypointArgument.Value -> elements.consumeAt(0)
+                    is MetaContractEntrypointParameter.Value -> elements.consumeAt(0)
                     else -> this
                 }
             }
@@ -268,14 +264,14 @@ internal class EntrypointParameterToMichelineConverter(
         return ContractEntrypointParameter.Object(reducedElements.toMutableList())
     }
 
-    private fun MetaContractEntrypointArgument.findValue(value: ContractEntrypointParameter.Object): ContractEntrypointParameter? =
+    private fun MetaContractEntrypointParameter.findValue(value: ContractEntrypointParameter.Object): ContractEntrypointParameter? =
         value.elements.consume { names.contains(it.name) }
 
-    private inline fun <reified T : ContractEntrypointParameter> MetaContractEntrypointArgument.findFirstInstance(
+    private inline fun <reified T : ContractEntrypointParameter> MetaContractEntrypointParameter.findFirstInstance(
         value: ContractEntrypointParameter.Object
     ): ContractEntrypointParameter? = value.elements.consume { it is T }
 
-    private fun MetaContractEntrypointArgument.Object.extract(value: ContractEntrypointParameter.Object): MetaContractEntrypointArgument? {
+    private fun MetaContractEntrypointParameter.Object.extract(value: ContractEntrypointParameter.Object): MetaContractEntrypointParameter? {
         val direction = flattenTraces.entries
             .mapNotNull { if (value.fields.contains(it.key)) it.value else null }
             .ifEmpty { listOf(MichelineTrace.Node(0)) }
@@ -293,10 +289,10 @@ internal class EntrypointParameterToMichelineConverter(
         return elements.getOrNull(direction.index)
     }
 
-    private fun MetaContractEntrypointArgument.describes(value: ContractEntrypointParameter): Boolean =
+    private fun MetaContractEntrypointParameter.describes(value: ContractEntrypointParameter): Boolean =
         when (this) {
-            is MetaContractEntrypointArgument.Object -> names.contains(value.name) || namedTraces.containsKey(value.name)
-            is MetaContractEntrypointArgument.Value, is MetaContractEntrypointArgument.Sequence, is MetaContractEntrypointArgument.Map -> names.contains(value.name)
+            is MetaContractEntrypointParameter.Object -> names.contains(value.name) || namedTraces.containsKey(value.name)
+            is MetaContractEntrypointParameter.Value, is MetaContractEntrypointParameter.Sequence, is MetaContractEntrypointParameter.Map -> names.contains(value.name)
         }
 
     private fun MichelineTrace.directedPrim(): MichelsonData.Prim? =
@@ -308,10 +304,10 @@ internal class EntrypointParameterToMichelineConverter(
             }
         }
 
-    private fun failWithInvalidType(meta: MetaContractEntrypointArgument): Nothing = failWithInvalidType(meta.type)
-    private fun failWithInvalidType(type: MichelineNode): Nothing =
+    private fun failWithInvalidType(meta: MetaContractEntrypointParameter): Nothing = failWithInvalidType(meta.type)
+    private fun failWithInvalidType(type: Micheline): Nothing =
         failWithIllegalArgument("Micheline type ${type.toCompactExpression(michelineToCompactStringConverter)} is invalid.")
 
-    private fun failWithValueMetaMismatch(value: ContractEntrypointParameter, meta: MetaContractEntrypointArgument): Nothing =
+    private fun failWithValueMetaMismatch(value: ContractEntrypointParameter, meta: MetaContractEntrypointParameter): Nothing =
         failWithIllegalArgument("Micheline type ${meta.type.toCompactExpression(michelineToCompactStringConverter)} and value $value mismatch.")
 }
