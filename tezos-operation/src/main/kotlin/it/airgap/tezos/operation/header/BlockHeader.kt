@@ -30,7 +30,7 @@ public interface ProtocolBlockHeader {
     public val payloadRound: Int
     public val proofOfWorkNonce: HexString
     public val seedNonceHash: NonceHash?
-    public val liquidityBakingEscapeVote: Boolean
+    public val liquidityBakingToggleVote: LiquidityBakingToggleVote
     public val signature: Signature
 }
 
@@ -52,6 +52,6 @@ public data class BlockHeader(
     override val payloadRound: Int,
     override val proofOfWorkNonce: HexString,
     override val seedNonceHash: NonceHash? = null,
-    override val liquidityBakingEscapeVote: Boolean,
+    override val liquidityBakingToggleVote: LiquidityBakingToggleVote,
     override val signature: Signature,
 ) : ShellBlockHeader, ProtocolBlockHeader

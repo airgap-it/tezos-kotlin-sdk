@@ -34,41 +34,41 @@ public sealed class RpcOperationMetadata {
 
     @Serializable
     public data class Endorsement(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         override val delegate: @Contextual PublicKeyHash,
         @SerialName("endorsement_power") override val endorsementPower: Int,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Preendorsement(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         override val delegate: @Contextual PublicKeyHash,
         @SerialName("preendorsement_power") override val preendorsementPower: Int,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class SeedNonceRevelation(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class DoubleEndorsementEvidence(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class DoublePreendorsementEvidence(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class DoubleBakingEvidence(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class ActivateAccount(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
     ) : RpcOperationMetadata()
 
     @Serializable
@@ -79,42 +79,42 @@ public sealed class RpcOperationMetadata {
 
     @Serializable
     public data class Reveal(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         @SerialName("operation_result") override val operationResult: RpcOperationResult.Reveal,
         @SerialName("internal_operation_results") override val internalOperationResults: List<RpcInternalOperationResult.Reveal>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Transaction(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         @SerialName("operation_result") override val operationResult: RpcOperationResult.Transaction,
         @SerialName("internal_operation_results") override val internalOperationResults: List<RpcInternalOperationResult.Transaction>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Origination(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         @SerialName("operation_result") override val operationResult: RpcOperationResult.Origination,
         @SerialName("internal_operation_results") override val internalOperationResults: List<RpcInternalOperationResult.Origination>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class Delegation(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         @SerialName("operation_result") override val operationResult: RpcOperationResult.Delegation,
         @SerialName("internal_operation_results") override val internalOperationResults: List<RpcInternalOperationResult.Delegation>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class SetDepositsLimit(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         @SerialName("operation_result") override val operationResult: RpcOperationResult.SetDepositsLimit,
         @SerialName("internal_operation_results") override val internalOperationResults: List<RpcInternalOperationResult.SetDepositsLimit>? = null,
     ) : RpcOperationMetadata()
 
     @Serializable
     public data class RegisterGlobalConstant(
-        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
+        @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate> = emptyList(),
         @SerialName("operation_result") override val operationResult: RpcOperationResult.RegisterGlobalConstant,
         @SerialName("internal_operation_results") override val internalOperationResults: List<RpcInternalOperationResult.RegisterGlobalConstant>? = null,
     ) : RpcOperationMetadata()

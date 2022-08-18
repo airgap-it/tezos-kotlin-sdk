@@ -57,25 +57,25 @@ class ContractSamples {
             }
         }
 
-        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"))
+        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
         val storage = runBlocking { tezosDomains.storage.get() }
 
         assertTrue(storage is ContractStorageEntry.Object)
 
         val actions = storage["%actions"]
         assertTrue(actions is ContractStorageEntry.BigMap)
-        assertEquals("13806", actions.id)
+        assertEquals("17073", actions.id)
 
         val store = storage["%store"]
         assertTrue(store is ContractStorageEntry.Object)
 
         val records = store["%records"]
         assertTrue(records is ContractStorageEntry.BigMap)
-        assertEquals("13810", records.id)
+        assertEquals("17077", records.id)
 
         val reverseRecords = store["%reverse_records"]
         assertTrue(reverseRecords is ContractStorageEntry.BigMap)
-        assertEquals("13811", reverseRecords.id)
+        assertEquals("17078", reverseRecords.id)
     }
 
     @Test
@@ -92,24 +92,24 @@ class ContractSamples {
             }
         }
 
-        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"))
+        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
         val storage = runBlocking { tezosDomains.storage.get() }
 
         val store = storage.objectEntry["%store"]
 
-        val record = runBlocking { store.objectEntry["%records"].bigMapEntry.get { bytes("talecard.ith".encodeToByteArray()) } }
+        val record = runBlocking { store.objectEntry["%records"].bigMapEntry.get { bytes("aabbcc.jak".encodeToByteArray()) } }
         val address = record.objectEntry["%address"]?.value?.toMichelson()
             .tryAs<MichelsonData.Some>().value
             .tryAs<MichelsonData.StringConstant>()
 
-        assertEquals("tz1QoNopr5DaaQnf1AjfSFuvRbFeHW5ZzM3Z", address.value)
+        assertEquals("tz1Yj8M1R1VnDr8NsKRsJckgWxe1gj8QqZNS", address.value)
 
-        val reverseRecord = runBlocking { store.objectEntry["%reverse_records"].bigMapEntry.get { string("tz1QoNopr5DaaQnf1AjfSFuvRbFeHW5ZzM3Z") } }
+        val reverseRecord = runBlocking { store.objectEntry["%reverse_records"].bigMapEntry.get { string("tz1Yj8M1R1VnDr8NsKRsJckgWxe1gj8QqZNS") } }
         val name = reverseRecord.objectEntry["%name"]?.value?.toMichelson()
             .tryAs<MichelsonData.Some>().value
             .tryAs<MichelsonData.ByteSequenceConstant>()
 
-        assertEquals("talecard.ith", name.toByteArray().decodeToString())
+        assertEquals("aabbcc.jak", name.toByteArray().decodeToString())
     }
 
     @Test
@@ -127,7 +127,7 @@ class ContractSamples {
             }
         }
 
-        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"))
+        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
         val transfer = tezosDomains.entrypoint("transfer")
         val operation = runBlocking {
             transfer(
@@ -170,7 +170,7 @@ class ContractSamples {
                         gasLimit = TezosNatural(1521U),
                         storageLimit = TezosNatural(100U),
                         amount = Mutez(0),
-                        destination = ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"),
+                        destination = ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"),
                         parameters = Parameters(
                             entrypoint = Entrypoint("transfer"),
                             value = Micheline.fromJsonString("""

@@ -11,11 +11,13 @@ import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.operation.header.LiquidityBakingToggleVote
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
 import it.airgap.tezos.rpc.internal.utils.placeholder
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
+import it.airgap.tezos.rpc.type.block.RpcLiquidityBakingToggleVote
 import it.airgap.tezos.rpc.type.operation.RpcInlinedEndorsement
 import it.airgap.tezos.rpc.type.operation.RpcInlinedPreendorsement
 import it.airgap.tezos.rpc.type.operation.RpcOperationContent
@@ -147,7 +149,7 @@ class OperationTest {
                     1,
                     "d4d34b5686c98ae1".asHexString(),
                     null,
-                    true,
+                    LiquidityBakingToggleVote.On,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
                 BlockHeader(
@@ -163,7 +165,7 @@ class OperationTest {
                     2,
                     "336ebf95efce0475".asHexString(),
                     NonceHash("nceUeUCJRZ4M7FCSBsAUZU6dmxePdH7irje9Gfj9zWwCdfWd5B4Ee"),
-                    false,
+                    LiquidityBakingToggleVote.Off,
                     GenericSignature("sigRsUhHqaFVBeV4qzyCZ6Y9TvoKajyNwyPQQCW3SbgPYY99MrpTqR2FopjzZEHMWoJG7LaTaHu7bnieKQRKqCRLA7hB7Ekp"),
                 ),
             ) to RpcOperationContent.DoubleBakingEvidence(
@@ -180,7 +182,7 @@ class OperationTest {
                     1,
                     "d4d34b5686c98ae1",
                     null,
-                    true,
+                    RpcLiquidityBakingToggleVote.On,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
                 RpcBlockHeader(
@@ -196,7 +198,7 @@ class OperationTest {
                     2,
                     "336ebf95efce0475",
                     NonceHash("nceUeUCJRZ4M7FCSBsAUZU6dmxePdH7irje9Gfj9zWwCdfWd5B4Ee"),
-                    false,
+                    RpcLiquidityBakingToggleVote.Off,
                     GenericSignature("sigRsUhHqaFVBeV4qzyCZ6Y9TvoKajyNwyPQQCW3SbgPYY99MrpTqR2FopjzZEHMWoJG7LaTaHu7bnieKQRKqCRLA7hB7Ekp"),
                 ),
             ),
@@ -214,7 +216,7 @@ class OperationTest {
                     1,
                     "d4d34b5686c98ae1".asHexString(),
                     null,
-                    true,
+                    LiquidityBakingToggleVote.On,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
                 BlockHeader(
@@ -230,7 +232,7 @@ class OperationTest {
                     2,
                     "336ebf95efce0475".asHexString(),
                     NonceHash("nceUeUCJRZ4M7FCSBsAUZU6dmxePdH7irje9Gfj9zWwCdfWd5B4Ee"),
-                    false,
+                    LiquidityBakingToggleVote.Pass,
                     GenericSignature("sigRsUhHqaFVBeV4qzyCZ6Y9TvoKajyNwyPQQCW3SbgPYY99MrpTqR2FopjzZEHMWoJG7LaTaHu7bnieKQRKqCRLA7hB7Ekp"),
                 ),
             ) to RpcOperationContent.DoubleBakingEvidence(
@@ -247,7 +249,7 @@ class OperationTest {
                     1,
                     "d4d34b5686c98ae1",
                     null,
-                    true,
+                    RpcLiquidityBakingToggleVote.On,
                     GenericSignature("sigiaEd9dHEGKgccx3JBBDw4eb6WVxGH3MvyziYbQqWQRMmyecdo5VuSkYWkgZvcQXshB4vV2qkTb6AxbKruaNPfnMg4u2EA"),
                 ),
                 RpcBlockHeader(
@@ -263,7 +265,7 @@ class OperationTest {
                     2,
                     "336ebf95efce0475",
                     NonceHash("nceUeUCJRZ4M7FCSBsAUZU6dmxePdH7irje9Gfj9zWwCdfWd5B4Ee"),
-                    false,
+                    RpcLiquidityBakingToggleVote.Pass,
                     GenericSignature("sigRsUhHqaFVBeV4qzyCZ6Y9TvoKajyNwyPQQCW3SbgPYY99MrpTqR2FopjzZEHMWoJG7LaTaHu7bnieKQRKqCRLA7hB7Ekp"),
                 ),
             ),

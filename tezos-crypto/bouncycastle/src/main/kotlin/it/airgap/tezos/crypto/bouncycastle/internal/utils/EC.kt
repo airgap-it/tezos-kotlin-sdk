@@ -1,6 +1,7 @@
 package it.airgap.tezos.crypto.bouncycastle.internal.utils
 
 import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.asHexString
+import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.padStartEven
 import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.splitAt
 import it.airgap.tezos.crypto.bouncycastle.internal.context.TezosCryptoBouncyCastleContext.toHexString
 import org.bouncycastle.crypto.signers.ECDSASigner
@@ -23,7 +24,7 @@ private fun Array<BigInteger>.canonical(spec: ECNamedCurveParameterSpec): Pair<B
 
 private fun Pair<BigInteger, BigInteger>.mergeComponents(): ByteArray =
     let { (r, s) ->
-        val merged = r.toString(16) + s.toString(16)
+        val merged = r.toString(16).padStartEven('0') + s.toString(16).padStartEven('0')
         merged.asHexString().toByteArray()
     }
 

@@ -16,6 +16,7 @@ import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcInvalidBlock
+import it.airgap.tezos.rpc.type.block.RpcLiquidityBakingToggleVote
 import it.airgap.tezos.rpc.type.chain.RpcChainStatus
 import it.airgap.tezos.rpc.type.error.RpcError
 import kotlinx.coroutines.runBlocking
@@ -163,7 +164,7 @@ class ChainsClientTest {
     @Test
     fun `should call GET on 'chains - $chain_id - invalid_blocks - $block_hash'`() {
         val chainId = "chainId"
-        val blockHash = "blockHash"
+        val blockHash = BlockHash("BKuka2aVwcjNkZrDzFHJMvdCz43RoMt1kFfjKnipNnGsERSAUEn")
 
         val (_, expectedResponse, _, jsonResponse) = chainInvalidBlocksBlockGetRequestConfiguration
         coEvery { httpClientProvider.get(any(), any(), any(), any()) } returns jsonResponse
@@ -173,8 +174,8 @@ class ChainsClientTest {
 
             assertEquals(expectedResponse, response)
 
-            coVerify { httpClient.get("$nodeUrl/chains/$chainId/invalid_blocks/$blockHash", "/", headers = headers) }
-            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/invalid_blocks/$blockHash", "/", headers = headers, parameters = emptyList()) }
+            coVerify { httpClient.get("$nodeUrl/chains/$chainId/invalid_blocks/${blockHash.base58}", "/", headers = headers) }
+            coVerify { httpClientProvider.get("$nodeUrl/chains/$chainId/invalid_blocks/${blockHash.base58}", "/", headers = headers, parameters = emptyList()) }
         }
     }
 
@@ -325,7 +326,7 @@ class ChainsClientTest {
                         payloadHash = BlockPayloadHash("vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8"),
                         payloadRound = 0,
                         proofOfWorkNonce = "61fed54075090100",
-                        liquidityBakingEscapeVote = false,
+                        liquidityBakingToggleVote = RpcLiquidityBakingToggleVote.Off,
                         signature = GenericSignature("sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"),
                     ),
                     operations = emptyList(),
@@ -354,7 +355,7 @@ class ChainsClientTest {
                         "payload_hash": "vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8",
                         "payload_round": 0,
                         "proof_of_work_nonce": "61fed54075090100",
-                        "liquidity_baking_escape_vote": false,
+                        "liquidity_baking_toggle_vote": "off",
                         "signature": "sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"
                     },
                     "operations": []

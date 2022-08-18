@@ -2,10 +2,10 @@ package it.airgap.tezos.rpc.type.limits
 
 import it.airgap.tezos.core.internal.type.BigInt
 
-private const val LIMIT_PER_OPERATION_GAS = 1040000U
-private const val LIMIT_PER_OPERATION_STORAGE = 60000U
+private const val LIMIT_PER_OPERATION_GAS = 1_040_000U
+private const val LIMIT_PER_OPERATION_STORAGE = 60_000U
 
-private const val LIMIT_PER_BLOCK_GAS = 5200000U
+private const val LIMIT_PER_BLOCK_GAS = 5_200_000U
 
 // -- Limits --
 

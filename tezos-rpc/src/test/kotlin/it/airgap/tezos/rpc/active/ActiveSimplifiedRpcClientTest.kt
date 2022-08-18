@@ -23,6 +23,7 @@ import it.airgap.tezos.rpc.internal.rpcModule
 import it.airgap.tezos.rpc.type.block.RpcBlock
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
 import it.airgap.tezos.rpc.type.block.RpcFullBlockHeader
+import it.airgap.tezos.rpc.type.block.RpcLiquidityBakingToggleVote
 import it.airgap.tezos.rpc.type.constants.RpcConstants
 import it.airgap.tezos.rpc.type.contract.RpcScriptParsing
 import it.airgap.tezos.rpc.type.operation.*
@@ -659,7 +660,7 @@ class ActiveSimplifiedRpcClientTest {
                         payloadHash = BlockPayloadHash("vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8"),
                         payloadRound = 0,
                         proofOfWorkNonce = "61fed54075090100",
-                        liquidityBakingEscapeVote = false,
+                        liquidityBakingToggleVote = RpcLiquidityBakingToggleVote.On,
                         signature = GenericSignature("sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"),
                     ),
                     operations = emptyList(),
@@ -688,7 +689,7 @@ class ActiveSimplifiedRpcClientTest {
                         "payload_hash": "vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8",
                         "payload_round": 0,
                         "proof_of_work_nonce": "61fed54075090100",
-                        "liquidity_baking_escape_vote": false,
+                        "liquidity_baking_toggle_vote": "on",
                         "signature": "sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"
                     },
                     "operations": []
@@ -1296,7 +1297,7 @@ class ActiveSimplifiedRpcClientTest {
                     payloadHash = BlockPayloadHash("vh2xdPFM2AAyd6qw8HpwrT3RopLofPDeJTUNmFqgrd7bSSkrbFsr"),
                     payloadRound = 0,
                     proofOfWorkNonce = "219a2eff641e0100",
-                    liquidityBakingEscapeVote = false,
+                    liquidityBakingToggleVote = RpcLiquidityBakingToggleVote.Off,
                     signature = GenericSignature("sigSAACcr7xsBJuTvxyAVbhJ91GHCxJV9g282UXXe5WbF4pqLwju7qgjtVF8N7PA8nAr3h6bMeqNtnpopVRhShwGLbKDRqMH"),
                 )
             ),
@@ -1322,7 +1323,7 @@ class ActiveSimplifiedRpcClientTest {
                     "payload_hash": "vh2xdPFM2AAyd6qw8HpwrT3RopLofPDeJTUNmFqgrd7bSSkrbFsr",
                     "payload_round": 0,
                     "proof_of_work_nonce": "219a2eff641e0100",
-                    "liquidity_baking_escape_vote": false,
+                    "liquidity_baking_toggle_vote": "off",
                     "signature": "sigSAACcr7xsBJuTvxyAVbhJ91GHCxJV9g282UXXe5WbF4pqLwju7qgjtVF8N7PA8nAr3h6bMeqNtnpopVRhShwGLbKDRqMH"
                 }
             """.trimIndent(),
