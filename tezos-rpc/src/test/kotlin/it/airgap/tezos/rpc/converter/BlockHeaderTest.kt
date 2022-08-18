@@ -3,8 +3,10 @@ package it.airgap.tezos.rpc.converter
 import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.operation.header.LiquidityBakingToggleVote
 import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
+import it.airgap.tezos.rpc.type.block.RpcLiquidityBakingToggleVote
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -43,7 +45,7 @@ class BlockHeaderTest {
                 payloadHash = BlockPayloadHash("vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8"),
                 payloadRound = 0,
                 proofOfWorkNonce = "61fed54075090100".asHexString(),
-                liquidityBakingEscapeVote = false,
+                liquidityBakingToggleVote = LiquidityBakingToggleVote.Off,
                 signature = GenericSignature("sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"),
             ) to RpcBlockHeader(
                 level = 376499,
@@ -62,7 +64,7 @@ class BlockHeaderTest {
                 payloadHash = BlockPayloadHash("vh3Uk8raNVcLYrfT4QeiqykTjPxQHyk2ZpgH8B2XJNXSURujDxt8"),
                 payloadRound = 0,
                 proofOfWorkNonce = "61fed54075090100",
-                liquidityBakingEscapeVote = false,
+                liquidityBakingToggleVote = RpcLiquidityBakingToggleVote.Off,
                 signature = GenericSignature("sigZ3uvQ5oa3pxSZkPjASKFYvHtph3S7VN8mbUXjSAUtpsaWe736Aa2B5Tr8VpeG3b78FNZJpDoSWTQiTYmeuw4WfniEbFrx"),
             ),
             BlockHeader(
@@ -83,7 +85,7 @@ class BlockHeaderTest {
                 payloadRound = 0,
                 proofOfWorkNonce = "6e2037c91e600200".asHexString(),
                 seedNonceHash = NonceHash("nceVuHLBtMnAnhWgWBUn4sHVkPV4zJ4hYH7VrPkLWmkcB4BLEDk2F"),
-                liquidityBakingEscapeVote = false,
+                liquidityBakingToggleVote = LiquidityBakingToggleVote.Off,
                 signature = GenericSignature("sigdKuy9ifmD4bSmJW9bausXsN8y9jhzDBBMoXaNngyyV6miaXXD4X3srtiGvjD8Ahapgtbw3Zjp4kqcPnbpsDm1CAa9wKBN"),
             ) to RpcBlockHeader(
                 level = 444051,
@@ -103,7 +105,7 @@ class BlockHeaderTest {
                 payloadRound = 0,
                 proofOfWorkNonce = "6e2037c91e600200",
                 seedNonceHash = NonceHash("nceVuHLBtMnAnhWgWBUn4sHVkPV4zJ4hYH7VrPkLWmkcB4BLEDk2F"),
-                liquidityBakingEscapeVote = false,
+                liquidityBakingToggleVote = RpcLiquidityBakingToggleVote.Off,
                 signature = GenericSignature("sigdKuy9ifmD4bSmJW9bausXsN8y9jhzDBBMoXaNngyyV6miaXXD4X3srtiGvjD8Ahapgtbw3Zjp4kqcPnbpsDm1CAa9wKBN"),
             )
         )

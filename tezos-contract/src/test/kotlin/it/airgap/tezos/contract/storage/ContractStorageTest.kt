@@ -56,7 +56,7 @@ class ContractStorageTest {
     }
 
     @Test
-    fun `should create Map from storage values`() {
+    fun `should create ContractStorageEntry from storage values`() {
         every { blockRpc.context.bigMaps } returns mockk()
 
         storageTestCases.forEach { (type, value, expected) ->

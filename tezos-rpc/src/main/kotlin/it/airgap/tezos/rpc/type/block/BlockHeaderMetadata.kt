@@ -30,6 +30,6 @@ public data class RpcBlockHeaderMetadata(
     @SerialName("consumed_gas") public val consumedGas: String,
     public val deactivated: List<@Contextual PublicKeyHash>,
     @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
-    @SerialName("liquidity_baking_escape_ema") public val liquidityBakingEscapeEma: Int,
+    @SerialName("liquidity_baking_toggle_ema") public val liquidityBakingToggleEma: Int,
     @SerialName("implicit_operations_results") public val implicitOperationsResults: List<@Contextual RpcSuccessfulManagerOperationResult>,
 )

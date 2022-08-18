@@ -1,8 +1,10 @@
 package it.airgap.tezos.rpc.converter
 
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.operation.header.LiquidityBakingToggleVote
 import it.airgap.tezos.rpc.internal.context.TezosRpcContext.asHexString
 import it.airgap.tezos.rpc.type.block.RpcBlockHeader
+import it.airgap.tezos.rpc.type.block.RpcLiquidityBakingToggleVote
 
 /**
  * Converts this [block header][BlockHeader] to [its RPC equivalent][RpcBlockHeader].
@@ -21,7 +23,7 @@ public fun BlockHeader.asRpc(): RpcBlockHeader =
         payloadRound,
         proofOfWorkNonce.asString(),
         seedNonceHash,
-        liquidityBakingEscapeVote,
+        liquidityBakingToggleVote.asRpc(),
         signature,
     )
 
@@ -42,6 +44,20 @@ public fun RpcBlockHeader.asBlockHeader(): BlockHeader =
         payloadRound,
         proofOfWorkNonce.asHexString(),
         seedNonceHash,
-        liquidityBakingEscapeVote,
+        liquidityBakingToggleVote.asLiquidityBakingToggleVote(),
         signature,
     )
+
+private fun LiquidityBakingToggleVote.asRpc(): RpcLiquidityBakingToggleVote =
+    when (this) {
+        LiquidityBakingToggleVote.Off -> RpcLiquidityBakingToggleVote.Off
+        LiquidityBakingToggleVote.On -> RpcLiquidityBakingToggleVote.On
+        LiquidityBakingToggleVote.Pass -> RpcLiquidityBakingToggleVote.Pass
+    }
+
+private fun RpcLiquidityBakingToggleVote.asLiquidityBakingToggleVote(): LiquidityBakingToggleVote =
+    when (this) {
+        RpcLiquidityBakingToggleVote.Off -> LiquidityBakingToggleVote.Off
+        RpcLiquidityBakingToggleVote.On -> LiquidityBakingToggleVote.On
+        RpcLiquidityBakingToggleVote.Pass -> LiquidityBakingToggleVote.Pass
+    }

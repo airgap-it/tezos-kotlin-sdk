@@ -9,5 +9,4 @@ include(":tezos-crypto:bouncycastle")
 
 include(":tezos-http:ktor")
 
-// TODO: enable samples when updated to the latest protocol
-//include(":samples")
+include(":samples")

@@ -16,6 +16,7 @@ import it.airgap.tezos.operation.contract.Entrypoint
 import it.airgap.tezos.operation.contract.Parameters
 import it.airgap.tezos.operation.contract.Script
 import it.airgap.tezos.operation.header.BlockHeader
+import it.airgap.tezos.operation.header.LiquidityBakingToggleVote
 import it.airgap.tezos.operation.inlined.InlinedEndorsement
 import it.airgap.tezos.operation.inlined.InlinedPreendorsement
 import it.airgap.tezos.operation.internal.context.TezosOperationContext.consumeAt
@@ -262,7 +263,7 @@ internal class OperationContentBytesCoder(
         val seedNonceHashBytes = seedNonceHash?.encodeToBytes(encodedBytesCoder) ?: byteArrayOf()
         val seedNonceHashPresence = seedNonceHashBytes.isNotEmpty().encodeToBytes()
 
-        val liquidityBankingEscapeVoteBytes = liquidityBakingEscapeVote.encodeToBytes()
+        val liquidityBankingToggleVoteBytes = encodeLiquidityBakingToggleVote(liquidityBakingToggleVote)
         val signatureBytes = signature.encodeToBytes(signatureBytesCoder)
 
         return levelBytes +
@@ -279,7 +280,7 @@ internal class OperationContentBytesCoder(
                 proofOfWorkNonceBytes +
                 seedNonceHashPresence +
                 seedNonceHashBytes +
-                liquidityBankingEscapeVoteBytes +
+                liquidityBankingToggleVoteBytes +
                 signatureBytes
     }
 
@@ -337,6 +338,9 @@ internal class OperationContentBytesCoder(
         val long = timestampBigIntCoder.encode(timestamp).toLongExact()
         return long.encodeToBytes()
     }
+
+    private fun encodeLiquidityBakingToggleVote(toggleVote: LiquidityBakingToggleVote): ByteArray =
+        toggleVote.value
 
     private fun decodeSeedNonceRevelation(bytes: MutableList<Byte>): OperationContent.SeedNonceRevelation {
         requireConsumingKind(OperationContent.SeedNonceRevelation, bytes)
@@ -609,7 +613,7 @@ internal class OperationContentBytesCoder(
         val seedNonceHashPresence = decodeBoolean(bytes)
         val seedNonceHash = if (seedNonceHashPresence) NonceHash.decodeConsumingFromBytes(bytes, encodedBytesCoder) else null
 
-        val liquidityBakingEscapeVote = decodeBoolean(bytes)
+        val liquidityBakingToggleVote = decodeLiquidityBakingToggleVote(bytes)
         val signature = Signature.decodeConsumingFromBytes(bytes, signatureBytesCoder)
 
         return BlockHeader(
@@ -625,7 +629,7 @@ internal class OperationContentBytesCoder(
             payloadRound,
             proofOfWorkNonce,
             seedNonceHash,
-            liquidityBakingEscapeVote,
+            liquidityBakingToggleVote,
             signature,
         )
     }
@@ -685,6 +689,11 @@ internal class OperationContentBytesCoder(
     private fun decodeTimestamp(bytes: MutableList<Byte>): Timestamp {
         val bigInt = BigInt.valueOf(bytes.decodeConsumingInt64())
         return timestampBigIntCoder.decode(bigInt)
+    }
+
+    private fun decodeLiquidityBakingToggleVote(bytes: MutableList<Byte>): LiquidityBakingToggleVote {
+        val toggleVote = if (bytes.isEmpty()) null else LiquidityBakingToggleVote.values().find { bytes.startsWith(it.value) }?.also { bytes.consumeUntil(it.value.size) }
+        return toggleVote ?: failWithInvalidEncodedOperationContent()
     }
 
     private fun decodeUInt8(bytes: MutableList<Byte>): UByte = bytes.decodeConsumingUInt8() ?: failWithInvalidEncodedOperationContent()

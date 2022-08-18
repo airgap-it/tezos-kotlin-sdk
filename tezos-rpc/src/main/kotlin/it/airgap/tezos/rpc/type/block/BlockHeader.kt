@@ -22,7 +22,7 @@ public data class RpcBlockHeader(
     @SerialName("payload_round") public val payloadRound: Int,
     @SerialName("proof_of_work_nonce") public val proofOfWorkNonce: String,
     @SerialName("seed_nonce_hash") public val seedNonceHash: @Contextual NonceHash? = null,
-    @SerialName("liquidity_baking_escape_vote") public val liquidityBakingEscapeVote: Boolean,
+    @SerialName("liquidity_baking_toggle_vote") public val liquidityBakingToggleVote: RpcLiquidityBakingToggleVote,
     public val signature: @Contextual Signature,
 )
 
@@ -45,6 +45,6 @@ public data class RpcFullBlockHeader(
     @SerialName("payload_round") public val payloadRound: Int,
     @SerialName("proof_of_work_nonce") public val proofOfWorkNonce: String,
     @SerialName("seed_nonce_hash") public val seedNonceHash: @Contextual NonceHash? = null,
-    @SerialName("liquidity_baking_escape_vote") public val liquidityBakingEscapeVote: Boolean,
+    @SerialName("liquidity_baking_toggle_vote") public val liquidityBakingToggleVote: RpcLiquidityBakingToggleVote,
     public val signature: @Contextual Signature,
 )

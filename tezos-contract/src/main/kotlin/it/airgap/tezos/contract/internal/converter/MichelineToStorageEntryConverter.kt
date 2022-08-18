@@ -12,8 +12,8 @@ import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.internal.packer.Packer
-import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.Micheline
+import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.rpc.active.block.Block
@@ -89,6 +89,7 @@ internal class MichelineToStorageEntryConverter(
             value,
             MetaContractStorageEntry.Basic(type),
             value.nodes.associate {
+                // TODO: check if `it` is Elt and split it
                 convert(it, type.args[0]) to convert(it, type.args[1])
             },
         )
