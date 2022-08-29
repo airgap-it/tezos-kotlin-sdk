@@ -56,4 +56,4 @@ To add `:tezos-core` into your project:
 
 ## Usage
 
-See `samples` to learn how to use the library.
+See the [docs](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/docs) or [samples](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/samples) to learn how to use the library.

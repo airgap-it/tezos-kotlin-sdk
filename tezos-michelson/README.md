@@ -40,7 +40,7 @@ To add `:tezos-michelson` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos:tezos-michelson:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
 
     // dependencies
     implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
@@ -53,7 +53,7 @@ To add `:tezos-michelson` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
 
-    implementation("com.github.airgap-it.tezos:tezos-michelson:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
 
     // dependencies
     implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
@@ -67,4 +67,4 @@ Tezos Kotlin SDK internally uses various libraries that may require custom ProGu
 
 ## Usage
 
-See `samples` to learn how to use the library.
+See the [docs](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/docs) or [samples](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/samples) to learn how to use the library.

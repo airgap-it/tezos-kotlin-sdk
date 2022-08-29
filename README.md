@@ -9,7 +9,7 @@ A Kotlin library to interact with the Tezos blockchain.
 
 ## Modules Overview
 
-Tezos Kotlin SDK is a multi-module project. It has been designed to allow its users to use only the required minimum of functionality that meets their needs, thus optimizing the amount of redundant and unwanted code and dependencies.
+The Tezos Kotlin SDK is a multi-module project. It has been designed to allow its users to use only the required minimum of functionality that meets their needs, thus optimizing the amount of redundant and unwanted code and dependencies.
 The library modules can be divided into 3 categories:
 - Core
 - Plugin
@@ -18,31 +18,31 @@ The library modules can be divided into 3 categories:
 ### Core Modules
 The core modules are the basis for other modules. They are required for the SDK to work as expected.
 
-| Core Module   | Description                                                          | Module Dependencies |
-|---------------|----------------------------------------------------------------------|---------------------|
-| `:tezos-core` | Provides base Tezos types and actions that can be performed on them. | ✖️                  |
+| Core Module                                                                       | Description                                                          | Module Dependencies |
+|-----------------------------------------------------------------------------------|----------------------------------------------------------------------|---------------------|
+| [:tezos-core](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-core) | Provides base Tezos types and actions that can be performed on them. | ✖️                  |
 
 ### Plugin Modules
 The plugin modules are optional and come with additional functionality. They should be registered in the appropriate core components before use.
 
-| Plugin Module      | Description                                                                                                                                                                                                   | Module Dependencies                                                                  |
-|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| `:tezos-michelson` | Provides [Michelson](https://tezos.gitlab.io/active/michelson.html) and [Micheline](https://tezos.gitlab.io/shell/micheline.html) types and actions, e.g. `pack`/`unpack`.                                    | `:tezos-core`                                                                        |
-| `:tezos-operation` | Provides Tezos Operation structures as defined in [the P2P message format](https://tezos.gitlab.io/shell/p2p_api.html) and actions that can be performed on them, e.g. `forge`/`unforge` and `sign`/`verify`. | `:tezos-core` <br /> `:tezos-michelson`                                              |
-| `:tezos-rpc`       | Provides a Tezos RPC client which should be used to interact with Tezos nodes.                                                                                                                                | `:tezos-core` <br /> `:tezos-michelson` <br /> `:tezos-operation`                    |
-| `:tezos-contract`  | Provides a Tezos contract handler which should be used to interact with Tezos contracts.                                                                                                                      | `:tezos-core` <br /> `:tezos-michelson` <br /> `:tezos-operation` <br />`:tezos-rpc` |
+| Plugin Module                                                                               | Description                                                                                                                                                                                                   | Module Dependencies                                                                                                                                                                                                                                                                                                                                                            |
+|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [:tezos-michelson](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson) | Provides [Michelson](https://tezos.gitlab.io/active/michelson.html) and [Micheline](https://tezos.gitlab.io/shell/micheline.html) types and actions, e.g. `pack`/`unpack`.                                    | [:tezos-core](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-core)                                                                                                                                                                                                                                                                                              |
+| [:tezos-operation](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-operation) | Provides Tezos Operation structures as defined in [the P2P message format](https://tezos.gitlab.io/shell/p2p_api.html) and actions that can be performed on them, e.g. `forge`/`unforge` and `sign`/`verify`. | [:tezos-core](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-core) <br /> [:tezos-michelson](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson)                                                                                                                                                                                           |
+| [:tezos-rpc](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-rpc)             | Provides a Tezos RPC client which should be used to interact with Tezos nodes.                                                                                                                                | [:tezos-core](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-core) <br /> [:tezos-michelson](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson) <br /> [:tezos-operation](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-operation)                                                                                        |
+| [:tezos-contract](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-contract)   | Provides a Tezos contract handler which should be used to interact with Tezos contracts.                                                                                                                      | [:tezos-core](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-core) <br /> [:tezos-michelson](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-michelson) <br /> [:tezos-operation](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-operation) <br /> [:tezos-rpc](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-rpc) |
 
 ### Default Provider Modules
 The default provider modules are optional and come with default implementations of various components that can be provided externally.
 
-| Default Provider Module      | Description                                                                                   | Module Dependencies |
-|------------------------------|-----------------------------------------------------------------------------------------------|---------------------|
-| `:tezos-crypto:bouncycastle` | Uses [BouncyCastle](https://www.bouncycastle.org/) to satisfy the cryptographic requirements. | `:tezos-core`       |
-| `:tezos-http:ktor`           | Uses [Ktor](https://ktor.io/) to provide an HTTP client.                                      | `:tezos-rpc`        |
+| Default Provider Module                                                                                         | Description                                                                                   | Module Dependencies                                                               |
+|-----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [:tezos-crypto:bouncycastle](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-crypto/bouncycastle) | Uses [BouncyCastle](https://www.bouncycastle.org/) to satisfy the cryptographic requirements. | [:tezos-core](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-core) |
+| [:tezos-http:ktor](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-http/ktor)                     | Uses [Ktor](https://ktor.io/) to provide an HTTP client.                                      | [:tezos-rpc](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/tezos-rpc)   |
 
 ## Setup
 
-To add `Tezos Kotlin SDK` into your project:
+To add the Tezos Kotlin SDK into your project:
 
 1. Make sure the [JitPack](https://jitpack.io/) repository is included in your root `build.gradle` file:
 
@@ -119,13 +119,13 @@ To add `Tezos Kotlin SDK` into your project:
 
 ### ProGuard and R8
 
-Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules. If you are using ProGuard or R8, please follow the guides listed below to make sure your project works correctly with mentioned modules after obfuscation:
+The Tezos Kotlin SDK internally uses various libraries that may require custom ProGuard rules. If you are using ProGuard or R8, please follow the guides listed below to make sure your project works correctly with mentioned modules after obfuscation:
 
-| Module             | Rules                                                                                              |
-|--------------------|----------------------------------------------------------------------------------------------------|
-| `:tezos-michelson` | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
-| `:tezos-rpc`       | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
-| `:tezos-http:ktor` | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
+| Module           | Rules                                                                                              |
+|------------------|----------------------------------------------------------------------------------------------------|
+| :tezos-michelson | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
+| :tezos-rpc       | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
+| :tezos-http:ktor | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
 
 ## Documentation
 
@@ -137,4 +137,4 @@ $ ./gradlew buildDocs
 
 ## Usage
 
-See `samples` to learn how to use the library.
+See the [docs](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/docs) or [samples](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/samples) to learn how to use the library.

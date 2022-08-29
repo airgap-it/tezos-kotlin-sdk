@@ -48,7 +48,7 @@ class ContractSamples {
         Tezos {
             isDefault = true
             cryptoProvider = BouncyCastleCryptoProvider()
-            install(RpcModule) {
+            use(RpcModule) {
                 httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                     override fun log(message: String) {
                         println(message)
@@ -83,7 +83,7 @@ class ContractSamples {
         Tezos {
             isDefault = true
             cryptoProvider = BouncyCastleCryptoProvider()
-            install(RpcModule) {
+            use(RpcModule) {
                 httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                     override fun log(message: String) {
                         println(message)
@@ -118,7 +118,7 @@ class ContractSamples {
             isDefault = true
             cryptoProvider = BouncyCastleCryptoProvider()
 
-            install(RpcModule) {
+            use(RpcModule) {
                 httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                     override fun log(message: String) {
                         println(message)
