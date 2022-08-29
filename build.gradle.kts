@@ -5,6 +5,7 @@ plugins {
     `maven-publish`
     jacoco
     id("org.barfuin.gradle.jacocolog") version "2.0.0"
+    id("org.jetbrains.dokka") version Build.Kotlin.version
 }
 
 allprojects {
@@ -19,6 +20,7 @@ subprojects {
     if (isBuildable) {
         apply(plugin = "maven-publish")
         apply(plugin = "jacoco")
+        apply(plugin = "org.jetbrains.dokka")
 
         group = Project.group
         version = Project.version
@@ -59,6 +61,16 @@ subprojects {
             }
         }
     }
+}
+
+// -- docs --
+
+tasks.dokkaHtmlMultiModule.configure {
+    outputDirectory.set(buildDir.resolve("docs"))
+}
+
+tasks.register("buildDocs") {
+    dependsOn(tasks.dokkaHtmlMultimodule)
 }
 
 // -- jars --

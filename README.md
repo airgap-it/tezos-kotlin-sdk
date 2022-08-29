@@ -127,6 +127,14 @@ Tezos Kotlin SDK internally uses various libraries that may require custom ProGu
 | `:tezos-rpc`       | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
 | `:tezos-http:ktor` | [ProGuard rules for Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization#android) |
 
+## Documentation
+
+The code documentation can be build from the root of the project with the `buildDocs` Gradle task:
+```shell
+$ ./gradlew buildDocs 
+> # output: build/docs
+```
+
 ## Usage
 
 See `samples` to learn how to use the library.
