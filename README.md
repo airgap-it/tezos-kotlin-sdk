@@ -7,8 +7,6 @@
 
 A Kotlin library to interact with the Tezos blockchain.
 
-### 🚧🚧🚧 The project is still a work in progress, use at your own risk. 🚧🚧🚧
-
 ## Modules Overview
 
 Tezos Kotlin SDK is a multi-module project. It has been designed to allow its users to use only the required minimum of functionality that meets their needs, thus optimizing the amount of redundant and unwanted code and dependencies.
@@ -79,13 +77,13 @@ To add `Tezos Kotlin SDK` into your project:
     implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
 
     // optional modules
-    implementation "com.github.airgap-it.tezos:tezos-michelson:$tezos_version"
-    implementation "com.github.airgap-it.tezos:tezos-operation:$tezos_version"
-    implementation "com.github.airgap-it.tezos:tezos-rpc:$tezos_version"
-    implementation "com.github.airgap-it.tezos:tezos-contract:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-rpc:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-contract:$tezos_version"
 
-    implementation "com.github.airgap-it.tezos:tezos-crypto-bouncycastle:$tezos_version"
-    implementation "com.github.airgap-it.tezos:tezos-http-ktor:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-crypto-bouncycastle:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-http-ktor:$tezos_version"
     
     ---
 
@@ -104,13 +102,13 @@ To add `Tezos Kotlin SDK` into your project:
     implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
 
     // optional modules
-    implementation("com.github.airgap-it.tezos:tezos-michelson:$tezosVersion")
-    implementation("com.github.airgap-it.tezos:tezos-operation:$tezosVersion")
-    implementation("com.github.airgap-it.tezos:tezos-rpc:$tezosVersion")
-    implementation("com.github.airgap-it.tezos:tezos-contract:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-rpc:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-contract:$tezosVersion")
 
-    implementation("com.github.airgap-it.tezos:tezos-crypto-bouncycastle:$tezosVersion")
-    implementation("com.github.airgap-it.tezos:tezos-http-ktor:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-crypto-bouncycastle:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-http-ktor:$tezosVersion")
     
     ---
 
