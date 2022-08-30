@@ -7,6 +7,32 @@
 
 A Kotlin library to interact with the Tezos blockchain.
 
+## Use Cases
+
+The Tezos Kotlin SDK ships with tools that can be used to:
+
+*General*
+  - convert a Base58 encoded string to bytes and vice versa
+
+*Michelson/Micheline*
+  - parse or create a Micheline JSON string
+  - pack and unpack Micheline
+  - convert Micheline to typed Michelson and vice versa
+
+*Operations*
+- create an unsigned or signed Tezos operation
+- forge and unforge an operation
+- sign an operation and verify the signature
+
+*RPC*
+- interact with a Tezos node
+- estimate the operation fee
+
+*Contract*
+- read a contract's storage
+- read BigMaps
+- prepare contract calls
+
 ## Modules Overview
 
 The Tezos Kotlin SDK is a multi-module project. It has been designed to allow its users to use only the required minimum of functionality that meets their needs, thus optimizing the amount of redundant and unwanted code and dependencies.
@@ -129,12 +155,11 @@ The Tezos Kotlin SDK internally uses various libraries that may require custom P
 
 ## Documentation
 
+A high level guide on how to use the library can be found in the [docs](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/docs).
+To try out the library in action, see the [samples](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/samples).
+
 The code documentation can be build from the root of the project with the `buildDocs` Gradle task:
 ```shell
 $ ./gradlew buildDocs 
 > # output: build/docs
 ```
-
-## Usage
-
-See the [docs](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/docs) or [samples](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/samples) to learn how to use the library.
