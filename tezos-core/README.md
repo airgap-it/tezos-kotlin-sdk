@@ -40,7 +40,7 @@ To add `:tezos-core` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
   }
   ```
 
@@ -50,7 +50,7 @@ To add `:tezos-core` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
 
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
 }
   ```
 

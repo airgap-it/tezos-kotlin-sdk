@@ -43,7 +43,7 @@ To add `:tezos-operation` into your project:
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezos_version"
 
     // dependencies
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
   }
   ```
@@ -57,7 +57,7 @@ To add `:tezos-operation` into your project:
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezosVersion")
 
     // dependencies
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
 }
   ```

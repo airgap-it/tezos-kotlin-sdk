@@ -43,7 +43,7 @@ To add `:tezos-contract` into your project:
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-contract:$tezos_version"
 
     // dependencies
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezos_version"
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-rpc:$tezos_version"
@@ -59,7 +59,7 @@ To add `:tezos-contract` into your project:
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-contract:$tezosVersion")
 
     // dependencies
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezosVersion")
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-rpc:$tezosVersion")

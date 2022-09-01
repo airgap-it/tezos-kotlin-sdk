@@ -43,7 +43,7 @@ To add `:tezos-http-ktor` into your project:
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-http-ktor:$tezos_version"
 
     // dependencies
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
   }
   ```
 
@@ -56,7 +56,7 @@ To add `:tezos-http-ktor` into your project:
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-http-ktor:$tezosVersion")
     
     // dependencies
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
 }
   ```
 

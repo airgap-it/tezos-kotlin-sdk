@@ -100,7 +100,7 @@ To add the Tezos Kotlin SDK into your project:
     def tezos_version = "0.0.2"
 
     // REQUIRED, :tezos-core
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
 
     // optional modules
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
@@ -125,7 +125,7 @@ To add the Tezos Kotlin SDK into your project:
     val tezosVersion = "0.0.2"
 
     // REQUIRED, :tezos-core
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
 
     // optional modules
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
