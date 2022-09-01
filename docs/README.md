@@ -259,7 +259,7 @@ val kt1Address: Address = OriginatedAddress("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ
 
 # Base58 Encoded Data
 
-Similarly to the addresses, the use of a plain string base58 encoded data (i.e. string values whose data type can be 
+Similarly to the addresses, the use of a plain string Base58 encoded data (i.e. string values whose data type can be 
 recognized by their Base58 prefix, e.g. **sig**, **Net**, **expr**, etc.) is not supported. The data must be first wrapped
 in its responding type before it can be used in the library, for example:
 
@@ -998,7 +998,7 @@ import it.airgap.tezos.operation.OperationContent
 val unsigned = Operation(
     OperationContent.Transaction(
         source = ImplicitAddress("tz1PwXjsrgYBi9wpe3tFhazJpt7JMTVzBp5c"),
-        counter = TezosNatural(counter),
+        counter = TezosNatural(1U),
         amount = Mutez(1000),
         destination = Address("tz2AjVPbMHdDF1XwHVhUrTg6ZvqY83AYhJEy"),
     ),
@@ -1008,7 +1008,7 @@ val unsigned = Operation(
 val signed = Operation(
     OperationContent.Transaction(
         source = ImplicitAddress("tz1PwXjsrgYBi9wpe3tFhazJpt7JMTVzBp5c"),
-        counter = TezosNatural(counter),
+        counter = TezosNatural(1U),
         amount = Mutez(1000),
         destination = Address("tz2AjVPbMHdDF1XwHVhUrTg6ZvqY83AYhJEy"),
     ),
@@ -1033,7 +1033,7 @@ val unsigned = Operation.Unsigned(
     listOf(
         OperationContent.Transaction(
             source = ImplicitAddress("tz1PwXjsrgYBi9wpe3tFhazJpt7JMTVzBp5c"),
-            counter = TezosNatural(counter),
+            counter = TezosNatural(1U),
             amount = Mutez(1000),
             destination = Address("tz2AjVPbMHdDF1XwHVhUrTg6ZvqY83AYhJEy"),
         ),
@@ -1045,7 +1045,7 @@ val signed = Operation.Signed(
     listOf(
         OperationContent.Transaction(
             source = ImplicitAddress("tz1PwXjsrgYBi9wpe3tFhazJpt7JMTVzBp5c"),
-            counter = TezosNatural(counter),
+            counter = TezosNatural(1U),
             amount = Mutez(1000),
             destination = Address("tz2AjVPbMHdDF1XwHVhUrTg6ZvqY83AYhJEy"),
         ),
@@ -1075,7 +1075,7 @@ import it.airgap.tezos.operation.coder.unforgeFromString
 val operation = Operation(
     OperationContent.Transaction(
         source = ImplicitAddress("tz1PwXjsrgYBi9wpe3tFhazJpt7JMTVzBp5c"),
-        counter = TezosNatural(counter),
+        counter = TezosNatural(1U),
         amount = Mutez(1000),
         destination = Address("tz2AjVPbMHdDF1XwHVhUrTg6ZvqY83AYhJEy"),
     ),
@@ -1121,7 +1121,7 @@ val unsigned = Operation(branch = BlockHash("BMdhifZkcb5i9D6FnBi19SSBjft3sYaeKDA
 val signature = secretKey.sign(unsigned)
 ```
 
-To verify the operation's signature call `verifyWith` on the operation or `verify` on the public key:
+To verify the operation's signature call `verifyWith` on the signed operation or `verify` on the public key:
 
 ```kotlin
 import it.airgap.tezos.core.type.encoded.BlockHash
@@ -1132,9 +1132,10 @@ import it.airgap.tezos.operation.signer.verifyWith
 
 val publicKey = Ed25519PublicKey("edpkttZKC51wemRqL2QxwpMnEKxWnbd35pq47Y6xsCHp5M1f7LN8NP")
 
-val signed = Operation(
-    branch = BlockHash("BMdhifZkcb5i9D6FnBi19SSBjft3sYaeKDAsEBgbsRLPTihQQJU"),
-    signature = Signature("edsigtyqcyfipEAqFVexKahDjtQkzFgAkd9MroyYHnxxUVHAi4oSBJSezwiKaoNpH9NkY34cNuR4nrL6s8oPWVstQp9h2f7iGQF"),
+val signed = Operation.Signed(
+    BlockHash("BMdhifZkcb5i9D6FnBi19SSBjft3sYaeKDAsEBgbsRLPTihQQJU"),
+    listOf(),
+    Signature("edsigtyqcyfipEAqFVexKahDjtQkzFgAkd9MroyYHnxxUVHAi4oSBJSezwiKaoNpH9NkY34cNuR4nrL6s8oPWVstQp9h2f7iGQF"),
 )
 
 val isSignatureValid1 = signed.verifyWith(publicKey)
@@ -1211,7 +1212,7 @@ You can create the handler with the factory method:
 import it.airgap.tezos.contract.Contract
 import it.airgap.tezos.core.type.encoded.ContractHash
 
-val contract = Contract("https://testnet-tezos.giganode.io", ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
+val contract = Contract("https://testnet-tezos.giganode.io", ContractHash("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7"))
 ```
 
 All features mentioned in this section are provided in the `:tezos-contract` module.
@@ -1352,10 +1353,10 @@ val storageEntry = /* suspend */ contract.storage.get()
 val objectEntry = storageEntry.objectEntry
 val fields = objectEntry["%fields"].objectEntry
 
-val ledger = objectEntry["%ledger"].value // = { "int": "51296" }
-val admin = fields["%admin"].value // = { "bytes": "0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c" }
-val paused = fields["%paused"].value // = { "prim": "True" }
-val totalSupply = fields["%total_supply"].value // = { "int": "20" }
+val ledger = objectEntry["%ledger"]?.value // = { "int": "51296" }
+val admin = fields["%admin"]?.value // = { "bytes": "0000a7848de3b1fce76a7ffce2c7ce40e46be33aed7c" }
+val paused = fields["%paused"]?.value // = { "prim": "True" }
+val totalSupply = fields["%total_supply"]?.value // = { "int": "20" }
 ```
 
 If you don't want to use the handler and process the storage value as raw Micheline, you can access it with the
@@ -1406,12 +1407,14 @@ val parameters = micheline {
         Pair {
             arg { string("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") }
             arg {
-                Pair {
-                    arg { string("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") }
-                    arg {
-                        Pair {
-                            arg { int(0) }
-                            arg { int(100) }
+                sequence {
+                    Pair {
+                        arg { string("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") }
+                        arg {
+                            Pair {
+                                arg { int(0) }
+                                arg { int(100) }
+                            }
                         }
                     }
                 }
@@ -1419,7 +1422,7 @@ val parameters = micheline {
         }
     }
 }
-val unsigned = transfer(parameters, ImplicitAddress("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"))
+val unsigned = /* suspend */ transfer(parameters, ImplicitAddress("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"))
 ```
 
 or with the custom contract entrypoint parameters DSL:
@@ -1429,7 +1432,7 @@ import it.airgap.tezos.core.type.encoded.ImplicitAddress
 import it.airgap.tezos.michelson.micheline.dsl.builder.expression.*
 import it.airgap.tezos.michelson.micheline.dsl.micheline
 
-val unsigned = transfer(ImplicitAddress("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e")) {
+val unsigned = /* suspend */ transfer(ImplicitAddress("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e")) {
     sequence {
         `object` {
             value("%from_") { string("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") }
