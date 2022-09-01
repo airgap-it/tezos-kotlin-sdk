@@ -240,7 +240,7 @@ public sealed class RpcConstants {
         @SerialName("frozen_deposits_percentage") override val frozenDepositsPercentage: Int,
         @SerialName("double_baking_punishment") override val doubleBakingPunishment: String,
         @SerialName("ratio_of_frozen_deposits_slashed_per_double_endorsement") override val ratioOfFrozenDepositsSlashedPerDoubleEndorsement: RpcRatio,
-        @SerialName("initial_seed") override val initialSeed: @Contextual RandomHash?,
+        @SerialName("initial_seed") override val initialSeed: @Contextual RandomHash? = null,
         @SerialName("cache_script_size") override val cacheScriptSize: Int,
         @SerialName("cache_stake_distribution_cycles") override val cacheStakeDistributionCycles: Byte,
         @SerialName("cache_sampler_state_cycles") override val cacheSamplerStateCycles: Byte,
