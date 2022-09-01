@@ -36,6 +36,7 @@ public interface EncodedCoderContext :
     P256SignatureCoderContext,
     ProtocolHashCoderContext,
     PublicKeyCoderContext,
+    RandomHashCoderContext,
     SaplingAddressCoderContext,
     SaplingSpendingKeyCoderContext,
     ScriptExprHashCoderContext,
