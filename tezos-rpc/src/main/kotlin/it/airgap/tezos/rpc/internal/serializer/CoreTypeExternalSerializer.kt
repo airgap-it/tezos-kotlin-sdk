@@ -106,6 +106,8 @@ internal object OperationListListHashSerializer : EncodedSerializer<OperationLis
 internal object P256PublicKeyHashSerializer : EncodedSerializer<P256PublicKeyHash>(P256PublicKeyHash, P256PublicKeyHash::class)
 internal object P256SignatureSerializer : EncodedSerializer<P256Signature>(P256Signature, P256Signature::class)
 internal object ProtocolHashSerializer : EncodedSerializer<ProtocolHash>(ProtocolHash, ProtocolHash::class)
+
+internal object RandomHashSerializer : EncodedSerializer<RandomHash>(RandomHash, RandomHash::class)
 internal object ScriptExprHashSerializer : EncodedSerializer<ScriptExprHash>(ScriptExprHash, ScriptExprHash::class)
 internal object Secp256K1PublicKeyHashSerializer : EncodedSerializer<Secp256K1PublicKeyHash>(Secp256K1PublicKeyHash, Secp256K1PublicKeyHash::class)
 internal object Secp256K1SignatureSerializer : EncodedSerializer<Secp256K1Signature>(Secp256K1Signature, Secp256K1Signature::class)

@@ -9,6 +9,6 @@ internal class StringToPublicKeyHashConverter : StringToEncodedGroupedConverter<
     override val kinds: List<MetaEncoded.Kind<MetaPublicKeyHash<*, PublicKeyHash>, PublicKeyHash>>
         get() = PublicKeyHash.kinds
 
-    override fun failWithInvalidValue(value: String): Nothing = failWithInvalidImplicitAddress(value)
-    private fun failWithInvalidImplicitAddress(value: String): Nothing = failWithIllegalArgument("Value `$value` is not a valid Tezos public key hash.")
+    override fun failWithInvalidValue(value: String): Nothing = failWithInvalidPublicKeyHash(value)
+    private fun failWithInvalidPublicKeyHash(value: String): Nothing = failWithIllegalArgument("Value `$value` is not a valid Tezos public key hash.")
 }

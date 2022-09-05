@@ -40,10 +40,10 @@ To add `:tezos-http-ktor` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos:tezos-http-ktor:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-http-ktor:$tezos_version"
 
     // dependencies
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
   }
   ```
 
@@ -53,10 +53,10 @@ To add `:tezos-http-ktor` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
 
-    implementation("com.github.airgap-it.tezos:tezos-http-ktor:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-http-ktor:$tezosVersion")
     
     // dependencies
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
 }
   ```
 
@@ -75,7 +75,7 @@ import it.airgap.tezos.http.ktor.KtorHttpClientProvider
 import it.airgap.tezos.rpc.RpcModule
 
 val tezos = Tezos {
-    install(RpcModule) {
+    use(RpcModule) {
         httpClientProvider = KtorHttpClientProvider()
     }
 }

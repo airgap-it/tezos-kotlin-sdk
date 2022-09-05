@@ -144,6 +144,10 @@ class EncodedBytesCoderTest {
         assertContentEquals(protocolHash.second, protocolHash.first.encodeToBytes(tezos))
         assertContentEquals(protocolHash.second, protocolHash.first.encodeToBytes(encodedBytesCoder))
 
+        assertContentEquals(randomHash.second, encodedBytesCoder.encode(randomHash.first))
+        assertContentEquals(randomHash.second, randomHash.first.encodeToBytes(tezos))
+        assertContentEquals(randomHash.second, randomHash.first.encodeToBytes(encodedBytesCoder))
+
         assertContentEquals(saplingAddress.second, encodedBytesCoder.encode(saplingAddress.first))
         assertContentEquals(saplingAddress.second, saplingAddress.first.encodeToBytes(tezos))
         assertContentEquals(saplingAddress.second, saplingAddress.first.encodeToBytes(encodedBytesCoder))
@@ -414,6 +418,14 @@ class EncodedBytesCoderTest {
         assertEquals(protocolHash.first, ProtocolHash.decodeFromBytes(protocolHash.second, tezos))
         assertEquals(protocolHash.first, ProtocolHash.decodeFromBytes(protocolHash.second, encodedBytesCoder))
         assertEquals(protocolHash.first, ProtocolHash.decodeConsumingFromBytes(protocolHash.second.toMutableList(), encodedBytesCoder))
+
+        assertEquals(randomHash.first, encodedBytesCoder.decode(randomHash.first.kind.base58Bytes + randomHash.second))
+        assertEquals(randomHash.first, encodedBytesCoder.decodeConsuming((randomHash.first.kind.base58Bytes + randomHash.second).toMutableList()))
+        assertEquals(randomHash.first, encodedBytesCoder.decode(randomHash.second, randomHash.first.kind))
+        assertEquals(randomHash.first, encodedBytesCoder.decodeConsuming(randomHash.second.toMutableList(), randomHash.first.kind))
+        assertEquals(randomHash.first, RandomHash.decodeFromBytes(randomHash.second, tezos))
+        assertEquals(randomHash.first, RandomHash.decodeFromBytes(randomHash.second, encodedBytesCoder))
+        assertEquals(randomHash.first, RandomHash.decodeConsumingFromBytes(randomHash.second.toMutableList(), encodedBytesCoder))
 
         assertEquals(saplingAddress.first, encodedBytesCoder.decode(saplingAddress.first.kind.base58Bytes + saplingAddress.second))
         assertEquals(saplingAddress.first, encodedBytesCoder.decodeConsuming((saplingAddress.first.kind.base58Bytes + saplingAddress.second).toMutableList()))
@@ -956,6 +968,22 @@ class EncodedBytesCoderTest {
             }
 
             assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decode(randomHash.second.sliceArray(1 until randomHash.second.size), randomHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                encodedBytesCoder.decodeConsuming(randomHash.second.sliceArray(1 until randomHash.second.size).toMutableList(), randomHash.first.kind)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                RandomHash.decodeFromBytes(randomHash.second.sliceArray(1 until randomHash.second.size), tezos)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                RandomHash.decodeFromBytes(randomHash.second.sliceArray(1 until randomHash.second.size), encodedBytesCoder)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                RandomHash.decodeConsumingFromBytes(randomHash.second.sliceArray(1 until randomHash.second.size).toMutableList(), encodedBytesCoder)
+            }
+
+            assertFailsWith<IllegalArgumentException> {
                 encodedBytesCoder.decode(saplingAddress.second.sliceArray(1 until saplingAddress.second.size), saplingAddress.first.kind)
             }
             assertFailsWith<IllegalArgumentException> {
@@ -1216,6 +1244,9 @@ class EncodedBytesCoderTest {
 
     private val protocolHash: Pair<ProtocolHash, ByteArray>
         get() = ProtocolHash("Pt2qYBgju8RgUx1gXu1VFAi3FjzCdgMkdkLRwm77gdwAbxbaWpk") to "ace3a899b148831c682105949cdea6cb4c033b3fc152883c7091ef8391dea87a".asHexString().toByteArray()
+
+    private val randomHash: Pair<RandomHash, ByteArray>
+        get() = RandomHash("rngHBUYKNskXPnCPLugKjBjb1pSsVT1MESLU9a2qsTymj5qHSgacH") to "b1510bf30a81451b44f5028ca5fa17483f6d47ab161f4ebe383c51dd7a3d1f0e".asHexString().toByteArray()
 
     private val saplingAddress: Pair<SaplingAddress, ByteArray>
         get() = SaplingAddress("zet12WGVjXxsaWaLJVjyhCp8Pt4oew3noTbS55znq9pwVScY2UFCfq5xbbDoB8ByBtyxP") to "0cf5167bb9fe405489e0a9af41ddb213556d62109f6e069a9e54e50018015ab56c7ae197076daa551393f1".asHexString().toByteArray()

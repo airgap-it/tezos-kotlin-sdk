@@ -7,6 +7,7 @@ import it.airgap.tezos.core.coder.encoded.decodeFromBytes
 import it.airgap.tezos.core.coder.encoded.encodeToBytes
 import it.airgap.tezos.core.converter.encoded.Address
 import it.airgap.tezos.core.converter.encoded.ImplicitAddress
+import it.airgap.tezos.core.converter.encoded.OriginatedAddress
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.crypto.bouncycastle.BouncyCastleCryptoProvider
 import org.junit.Test
@@ -180,6 +181,67 @@ class ImplicitAddressSamples {
 
             val tz3Address = hexToBytes("021a78f4332a6fe15b979904c6c2e5f9521e1ffc4a")
             assertEquals(P256PublicKeyHash("tz3Nk25g51knuzFZZz2DeA5PveaQYmCtV68B"), ImplicitAddress.decodeFromBytes(tz3Address))
+        }
+    }
+}
+
+@RunWith(Enclosed::class)
+class OriginatedAddressSamples {
+
+    class Usage : SamplesBase() {
+
+        @Test
+        fun isValid() {
+            val tz1Address = "tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"
+            assertFalse(OriginatedAddress.isValid(tz1Address))
+
+            val tz2Address = "tz2AjVPbMHdDF1XwHVhUrTg6ZvqY83AYhJEy"
+            assertFalse(OriginatedAddress.isValid(tz2Address))
+
+            val tz3Address = "tz3Nk25g51knuzFZZz2DeA5PveaQYmCtV68B"
+            assertFalse(OriginatedAddress.isValid(tz3Address))
+
+            val kt1Address = "KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7"
+            assertTrue(OriginatedAddress.isValid(kt1Address))
+
+            val unknownAddress = "tzhByhpsNVUsEHndaAaqk6ikEwpeCKQdUZe"
+            assertFalse(OriginatedAddress.isValid(unknownAddress))
+        }
+
+        @Test
+        fun create() {
+            Tezos {
+                isDefault = true
+                cryptoProvider = BouncyCastleCryptoProvider()
+            }
+
+            val kt1Address = OriginatedAddress("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7")
+            assertEquals(ContractHash("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7"), kt1Address)
+        }
+    }
+
+    class Coding : SamplesBase() {
+
+        @Test
+        fun toBytes() {
+            Tezos {
+                isDefault = true
+                cryptoProvider = BouncyCastleCryptoProvider()
+            }
+
+            val kt1Address = OriginatedAddress("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7")
+            assertContentEquals(hexToBytes("6077cd98fd8aca94851b83a4c44203b705d2004b00"), kt1Address.encodeToBytes())
+        }
+
+        @Test
+        fun fromBytes() {
+            Tezos {
+                isDefault = true
+                cryptoProvider = BouncyCastleCryptoProvider()
+            }
+
+            val kt1Address = hexToBytes("6077cd98fd8aca94851b83a4c44203b705d2004b")
+            assertEquals(ContractHash("KT1HNqxFJxnmUcX8wF915wxxaAAU4ixDwWQ7"), OriginatedAddress.decodeFromBytes(kt1Address))
         }
     }
 }

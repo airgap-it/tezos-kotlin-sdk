@@ -43,6 +43,7 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
 
     public val stringToAddressConverter: Converter<String, Address> by lazy { Static.stringToAddressConverter }
     public val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazy { Static.stringToImplicitAddressConverter }
+    public val stringToOriginatedAddressConverter: Converter<String, OriginatedAddress> by lazy { Static.stringToOriginatedAddressConverter }
     public val stringToPublicKeyConverter: Converter<String, PublicKey> by lazy { Static.stringToPublicKeyConverter }
     public val stringToPublicKeyHashConverter: Converter<String, PublicKeyHash> by lazy { Static.stringToPublicKeyHashConverter }
     public val stringToBlindedPublicKeyHashConverter: Converter<String, BlindedPublicKeyHash> by lazy { Static.stringToBlindedPublicKeyHashConverter }
@@ -68,6 +69,7 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
 
         val stringToAddressConverter: Converter<String, Address> by lazyWeak { StringToAddressConverter() }
         val stringToImplicitAddressConverter: Converter<String, ImplicitAddress> by lazyWeak { StringToImplicitAddressConverter(stringToPublicKeyHashConverter) }
+        val stringToOriginatedAddressConverter: Converter<String, OriginatedAddress> by lazyWeak { StringToOriginatedAddressConverter() }
         val stringToPublicKeyConverter: Converter<String, PublicKey> by lazyWeak { StringToPublicKeyConverter() }
         val stringToPublicKeyHashConverter: Converter<String, PublicKeyHash> by lazyWeak { StringToPublicKeyHashConverter() }
         val stringToBlindedPublicKeyHashConverter: Converter<String, BlindedPublicKeyHash> by lazyWeak { StringToBlindedPublicKeyHashConverter() }

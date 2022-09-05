@@ -6,6 +6,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public interface EncodedConverterContext :
     AddressConverterContext,
     ImplicitAddressConverterContext,
+    OriginatedAddressConverterContext,
     BlindedPublicKeyHashConverterContext,
     Ed25519SignatureConverterContext,
     P256SignatureConverterContext,

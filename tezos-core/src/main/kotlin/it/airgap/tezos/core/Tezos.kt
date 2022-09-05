@@ -68,13 +68,13 @@ public class Tezos internal constructor(
         /**
          * Installs a specific [builder] and optionally [configure]s it.
          */
-        public inline fun <reified T : TezosModule, B : TezosModule.Builder<T>> install(builder: B, noinline configure: B.() -> Unit = {}): Builder =
-            apply { install(T::class, builder, configure) }
+        public inline fun <reified T : TezosModule, B : TezosModule.Builder<T>> use(builder: B, noinline configure: B.() -> Unit = {}): Builder =
+            apply { use(T::class, builder, configure) }
 
         private val moduleBuilders: MutableMap<KClass<out TezosModule>, TezosModule.Builder<*>> = mutableMapOf()
 
         @PublishedApi
-        internal fun <T : TezosModule, B : TezosModule.Builder<T>> install(moduleClass: KClass<T>, builder: B, configure: B.() -> Unit) {
+        internal fun <T : TezosModule, B : TezosModule.Builder<T>> use(moduleClass: KClass<T>, builder: B, configure: B.() -> Unit) {
             moduleBuilders[moduleClass] = builder.apply(configure)
         }
 

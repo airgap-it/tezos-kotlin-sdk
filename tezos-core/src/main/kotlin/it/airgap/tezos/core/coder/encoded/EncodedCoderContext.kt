@@ -6,6 +6,7 @@ import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 public interface EncodedCoderContext :
     AddressCoderContext,
     ImplicitAddressCoderContext,
+    OriginatedAddressCoderContext,
     BlockHashCoderContext,
     BlockMetadataHashCoderContext,
     BlockPayloadHashCoderContext,
@@ -35,6 +36,7 @@ public interface EncodedCoderContext :
     P256SignatureCoderContext,
     ProtocolHashCoderContext,
     PublicKeyCoderContext,
+    RandomHashCoderContext,
     SaplingAddressCoderContext,
     SaplingSpendingKeyCoderContext,
     ScriptExprHashCoderContext,

@@ -40,10 +40,10 @@ To add `:tezos-crypto-bouncycastle` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos:tezos-crypto-bouncycastle:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-crypto-bouncycastle:$tezos_version"
     
     // dependencies
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
   }
   ```
 
@@ -53,10 +53,10 @@ To add `:tezos-crypto-bouncycastle` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
     
-    implementation("com.github.airgap-it.tezos:tezos-crypto-bouncycastle:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-crypto-bouncycastle:$tezosVersion")
     
     // dependencies
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
 }
   ```
 
