@@ -96,6 +96,7 @@ public sealed interface MetaEncoded<out Self : MetaEncoded<Self, E>, out E : Enc
                     SaplingAddress, /* zet1(69) */
 
                     ScriptExprHash, /* expr(54) */
+                    RandomHash, /* rng(53) */
                 )
 
             public fun recognize(string: String): Kind<*, *>? = values.find { it.isValid(string) }

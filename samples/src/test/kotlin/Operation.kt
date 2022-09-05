@@ -35,7 +35,7 @@ class OperationSamples {
             isDefault = true
             cryptoProvider = BouncyCastleCryptoProvider()
 
-            install(RpcModule) {
+            use(RpcModule) {
                 httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                     override fun log(message: String) {
                         println(message)
@@ -80,7 +80,7 @@ class OperationSamples {
             isDefault = true
             cryptoProvider = BouncyCastleCryptoProvider()
 
-            install(RpcModule) {
+            use(RpcModule) {
                 httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                     override fun log(message: String) {
                         println(message)
@@ -133,7 +133,7 @@ class OperationSamples {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
 
-                install(RpcModule) {
+                use(RpcModule) {
                     httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                         override fun log(message: String) {
                             println(message)
@@ -172,7 +172,7 @@ class OperationSamples {
                 isDefault = true
                 cryptoProvider = BouncyCastleCryptoProvider()
 
-                install(RpcModule) {
+                use(RpcModule) {
                     httpClientProvider = KtorHttpClientProvider(object : KtorLogger() {
                         override fun log(message: String) {
                             println(message)

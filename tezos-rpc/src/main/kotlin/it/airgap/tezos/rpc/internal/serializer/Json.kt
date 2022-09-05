@@ -47,6 +47,7 @@ internal fun rpcSerializersModule(
     contextual(P256PublicKeyHashSerializer)
     contextual(P256SignatureSerializer)
     contextual(ProtocolHashSerializer)
+    contextual(RandomHashSerializer)
     contextual(ScriptExprHashSerializer)
     contextual(Secp256K1PublicKeyHashSerializer)
     contextual(Secp256K1SignatureSerializer)

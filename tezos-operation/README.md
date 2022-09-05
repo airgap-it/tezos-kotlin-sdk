@@ -40,11 +40,11 @@ To add `:tezos-operation` into your project:
   dependencies {
     def tezos_version = "0.0.1"
 
-    implementation "com.github.airgap-it.tezos:tezos-operation:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezos_version"
 
     // dependencies
-    implementation "com.github.airgap-it.tezos-kotlin-sdk:core:$tezos_version"
-    implementation "com.github.airgap-it.tezos:tezos-michelson:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
+    implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
   }
   ```
 
@@ -54,11 +54,11 @@ To add `:tezos-operation` into your project:
   dependencies {
     val tezosVersion = "0.0.1"
 
-    implementation("com.github.airgap-it.tezos:tezos-operation:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezosVersion")
 
     // dependencies
-    implementation("com.github.airgap-it.tezos-kotlin-sdk:core:$tezosVersion")
-    implementation("com.github.airgap-it.tezos:tezos-michelson:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
+    implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
 }
   ```
 
@@ -71,4 +71,4 @@ This module does not require additional setup, but some of its dependencies may:
 
 ## Usage
 
-See `samples` to learn how to use the library.
+See the [docs](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/docs) or [samples](https://github.com/airgap-it/tezos-kotlin-sdk/tree/main/samples) to learn how to use the library.

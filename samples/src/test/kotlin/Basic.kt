@@ -42,7 +42,7 @@ class BasicSamples : SamplesBase() {
         )
 
         // If the `tezos` parameter is omitted, `Tezos.Default` will be used.
-        operation.signWith(ed25519KeyPair.first, /* tezos = Tezos.Default == default */).also { it.verifyWith(ed25519KeyPair.second, /* tezos = Tezos.Default == default */) }
+        operation.signWith(ed25519KeyPair.first, /* tezos = Tezos.Default (== default) */).also { it.verifyWith(ed25519KeyPair.second, /* tezos = Tezos.Default (== default) */) }
 
         // `other` will be used as the Tezos context provider.
         operation.signWith(ed25519KeyPair.first, tezos = other).also { it.verifyWith(ed25519KeyPair.second, tezos = other) }
@@ -73,7 +73,7 @@ class BasicSamples : SamplesBase() {
     fun configuration() {
         val tezos = Tezos {
             cryptoProvider = CustomCryptoProvider()
-            install(RpcModule) {
+            use(RpcModule) {
                 httpClientProvider = CustomHttpClientProvider()
             }
         }
