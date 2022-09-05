@@ -63,7 +63,7 @@ class TezosTest {
         every { cryptoProviderServiceLoader.iterator() } returns mutableListOf(cryptoProvider).iterator()
 
         val tezos = Tezos {
-            install(TestModule.Builder())
+            use(TestModule.Builder())
         }
 
         var defaultBuilderCalled = false
