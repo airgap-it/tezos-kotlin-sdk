@@ -26,6 +26,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockResponse
 
     /**
@@ -37,6 +39,8 @@ public interface ActiveSimplifiedRpc {
         chainId: ChainId,
         blockId: Int,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockResponse = getBlock(chainId.base58, blockId.toString(), headers)
 
     /**
@@ -48,6 +52,8 @@ public interface ActiveSimplifiedRpc {
         chainId: ChainId,
         blockId: BlockHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockResponse = getBlock(chainId.base58, blockId.base58, headers)
 
     // -- ../<block_id>/context/big_maps --
@@ -68,6 +74,8 @@ public interface ActiveSimplifiedRpc {
         offset: UInt? = null,
         length: UInt? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBigMapResponse
 
     /**
@@ -86,6 +94,8 @@ public interface ActiveSimplifiedRpc {
         offset: UInt? = null,
         length: UInt? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBigMapResponse = getBigMap(chainId.base58, blockId.toString(), bigMapId, offset, length, headers)
 
     /**
@@ -104,6 +114,8 @@ public interface ActiveSimplifiedRpc {
         offset: UInt? = null,
         length: UInt? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBigMapResponse = getBigMap(chainId.base58, blockId.base58, bigMapId, offset, length, headers)
 
     /**
@@ -117,6 +129,8 @@ public interface ActiveSimplifiedRpc {
         bigMapId: String,
         key: ScriptExprHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBigMapValueResponse
 
     /**
@@ -130,6 +144,8 @@ public interface ActiveSimplifiedRpc {
         bigMapId: String,
         key: ScriptExprHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBigMapValueResponse = getBigMapValue(chainId.base58, blockId.toString(), bigMapId, key, headers)
 
     /**
@@ -143,6 +159,8 @@ public interface ActiveSimplifiedRpc {
         bigMapId: String,
         key: ScriptExprHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBigMapValueResponse = getBigMapValue(chainId.base58, blockId.base58, bigMapId, key, headers)
 
     // -- ../<block_id>/context/constants --
@@ -152,21 +170,39 @@ public interface ActiveSimplifiedRpc {
      *
      * [`GET ../<block_id>/context/constants`](https://tezos.gitlab.io/active/rpc.html#get-block-id-context-constants)
      */
-    public suspend fun getConstants(chainId: String = Constants.Chain.MAIN, blockId: String = Constants.Block.HEAD, headers: List<HttpHeader> = emptyList()): GetConstantsResponse
+    public suspend fun getConstants(
+        chainId: String = Constants.Chain.MAIN,
+        blockId: String = Constants.Block.HEAD,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetConstantsResponse
 
     /**
      * All constants
      *
      * [`GET ../<block_id>/context/constants`](https://tezos.gitlab.io/active/rpc.html#get-block-id-context-constants)
      */
-    public suspend fun getConstants(chainId: ChainId, blockId: Int, headers: List<HttpHeader> = emptyList()): GetConstantsResponse = getConstants(chainId.base58, blockId.toString(), headers)
+    public suspend fun getConstants(
+        chainId: ChainId,
+        blockId: Int,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetConstantsResponse = getConstants(chainId.base58, blockId.toString(), headers)
 
     /**
      * All constants
      *
      * [`GET ../<block_id>/context/constants`](https://tezos.gitlab.io/active/rpc.html#get-block-id-context-constants)
      */
-    public suspend fun getConstants(chainId: ChainId, blockId: BlockHash, headers: List<HttpHeader> = emptyList()): GetConstantsResponse = getConstants(chainId.base58, blockId.base58, headers)
+    public suspend fun getConstants(
+        chainId: ChainId,
+        blockId: BlockHash,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetConstantsResponse = getConstants(chainId.base58, blockId.base58, headers)
 
     // -- ../<block_id>/context/contracts --
 
@@ -180,6 +216,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractDetailsResponse
 
     /**
@@ -192,6 +230,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractDetailsResponse = getContractDetails(chainId, blockId.toString(), contractId, headers)
 
     /**
@@ -204,6 +244,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractDetailsResponse = getContractDetails(chainId, blockId.base58, contractId, headers)
 
     /**
@@ -216,6 +258,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractBalanceResponse
 
     /**
@@ -228,6 +272,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractBalanceResponse = getBalance(chainId, blockId.toString(), contractId, headers)
 
     /**
@@ -240,6 +286,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractBalanceResponse = getBalance(chainId, blockId.base58, contractId, headers)
 
     /**
@@ -252,6 +300,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractCounterResponse
 
     /**
@@ -264,6 +314,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractCounterResponse = getCounter(chainId, blockId.toString(), contractId, headers)
 
     /**
@@ -276,6 +328,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractCounterResponse = getCounter(chainId, blockId.base58, contractId, headers)
 
     /**
@@ -288,6 +342,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractDelegateResponse
 
     /**
@@ -300,6 +356,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractDelegateResponse = getDelegate(chainId, blockId.toString(), contractId, headers)
 
     /**
@@ -312,6 +370,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractDelegateResponse = getDelegate(chainId, blockId.base58, contractId, headers)
 
     /**
@@ -324,6 +384,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractEntrypointsResponse
 
     /**
@@ -336,6 +398,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractEntrypointsResponse = getEntrypoints(chainId, blockId.toString(), contractId, headers)
 
     /**
@@ -348,6 +412,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractEntrypointsResponse = getEntrypoints(chainId, blockId.base58, contractId, headers)
 
     /**
@@ -361,6 +427,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         entrypoint: String,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractEntrypointResponse
 
     /**
@@ -374,6 +442,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         entrypoint: String,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractEntrypointResponse = getEntrypoint(chainId, blockId.toString(), contractId, entrypoint)
 
     /**
@@ -387,6 +457,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         entrypoint: String,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractEntrypointResponse = getEntrypoint(chainId, blockId.base58, contractId, entrypoint)
 
     /**
@@ -399,6 +471,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractManagerKeyResponse
 
     /**
@@ -411,6 +485,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractManagerKeyResponse = getManagerKey(chainId, blockId.toString(), contractId, headers)
 
     /**
@@ -423,6 +499,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         contractId: Address,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractManagerKeyResponse = getManagerKey(chainId, blockId.base58, contractId, headers)
 
     /**
@@ -436,6 +514,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractNormalizedScriptResponse
 
     /**
@@ -449,6 +529,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractNormalizedScriptResponse = getScript(chainId, blockId.toString(), contractId, unparsingMode, headers)
 
     /**
@@ -462,6 +544,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractNormalizedScriptResponse = getScript(chainId, blockId.base58, contractId, unparsingMode, headers)
 
     /**
@@ -476,6 +560,8 @@ public interface ActiveSimplifiedRpc {
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractSaplingStateDiffResponse
 
     /**
@@ -490,6 +576,8 @@ public interface ActiveSimplifiedRpc {
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractSaplingStateDiffResponse = getSaplingStateDiff(chainId, blockId.toString(), contractId, commitmentOffset, nullifierOffset, headers)
 
     /**
@@ -504,6 +592,8 @@ public interface ActiveSimplifiedRpc {
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractSaplingStateDiffResponse = getSaplingStateDiff(chainId, blockId.base58, contractId, commitmentOffset, nullifierOffset, headers)
 
     /**
@@ -517,6 +607,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractNormalizedStorageResponse
 
     /**
@@ -530,6 +622,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractNormalizedStorageResponse = getStorage(chainId, blockId.toString(), contractId, unparsingMode, headers)
 
     /**
@@ -543,6 +637,8 @@ public interface ActiveSimplifiedRpc {
         contractId: Address,
         unparsingMode: RpcScriptParsing = RpcScriptParsing.Readable,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetContractNormalizedStorageResponse = getStorage(chainId, blockId.base58, contractId, unparsingMode, headers)
 
     // -- ../<block_id>/context/delegates --
@@ -557,6 +653,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDetailsResponse
 
     /**
@@ -569,6 +667,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDetailsResponse = getDelegateDetails(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -581,6 +681,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDetailsResponse = getDelegateDetails(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -593,6 +695,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateCurrentFrozenDepositsResponse
 
     /**
@@ -605,6 +709,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateCurrentFrozenDepositsResponse = getCurrentFrozenDeposits(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -617,6 +723,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateCurrentFrozenDepositsResponse = getCurrentFrozenDeposits(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -629,6 +737,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDeactivatedStatusResponse
 
     /**
@@ -641,6 +751,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDeactivatedStatusResponse = isDeactivated(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -653,6 +765,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDeactivatedStatusResponse = isDeactivated(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -665,6 +779,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDelegatedBalanceResponse
 
     /**
@@ -677,6 +793,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDelegatedBalanceResponse = getDelegatedBalance(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -689,6 +807,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDelegatedBalanceResponse = getDelegatedBalance(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -701,6 +821,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDelegatedContractsResponse
 
     /**
@@ -713,6 +835,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDelegatedContractsResponse = getDelegatedContracts(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -725,6 +849,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateDelegatedContractsResponse = getDelegatedContracts(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -738,6 +864,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFrozenDepositsResponse
 
     /**
@@ -751,6 +879,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFrozenDepositsResponse = getFrozenDeposits(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -764,6 +894,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFrozenDepositsResponse = getFrozenDeposits(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -776,6 +908,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFrozenDepositsLimitResponse
 
     /**
@@ -788,6 +922,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFrozenDepositsLimitResponse = getFrozenDepositsLimit(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -800,6 +936,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFrozenDepositsLimitResponse = getFrozenDepositsLimit(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -812,6 +950,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFullBalanceResponse
 
     /**
@@ -824,6 +964,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFullBalanceResponse = getFullBalance(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -836,6 +978,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateFullBalanceResponse = getFullBalance(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -850,6 +994,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateGracePeriodResponse
 
     /**
@@ -864,6 +1010,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateGracePeriodResponse = getGracePeriod(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -878,6 +1026,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateGracePeriodResponse = getGracePeriod(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -902,6 +1052,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateParticipationResponse
 
     /**
@@ -926,6 +1078,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateParticipationResponse = getParticipation(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -950,6 +1104,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateParticipationResponse = getParticipation(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -963,6 +1119,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateStakingBalanceResponse
 
     /**
@@ -976,6 +1134,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateStakingBalanceResponse = getStakingBalance(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -989,6 +1149,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateStakingBalanceResponse = getStakingBalance(chainId, blockId.base58, delegateId, headers)
 
     /**
@@ -1001,6 +1163,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateVotingPowerResponse
 
     /**
@@ -1013,6 +1177,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateVotingPowerResponse = getVotingPower(chainId, blockId.toString(), delegateId, headers)
 
     /**
@@ -1025,6 +1191,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         delegateId: PublicKeyHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetDelegateVotingPowerResponse = getVotingPower(chainId, blockId.base58, delegateId, headers)
 
     // -- ../<block_id>/context/sapling --
@@ -1041,6 +1209,8 @@ public interface ActiveSimplifiedRpc {
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetSaplingStateDiffResponse
 
     /**
@@ -1055,6 +1225,8 @@ public interface ActiveSimplifiedRpc {
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetSaplingStateDiffResponse = getSaplingStateDiff(chainId, blockId.toString(), stateId, commitmentOffset, nullifierOffset, headers)
 
     /**
@@ -1069,6 +1241,8 @@ public interface ActiveSimplifiedRpc {
         commitmentOffset: ULong? = null,
         nullifierOffset: ULong? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetSaplingStateDiffResponse = getSaplingStateDiff(chainId, blockId.base58, stateId, commitmentOffset, nullifierOffset, headers)
 
     // -- ../<block_id>/header --
@@ -1082,6 +1256,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockHeaderResponse
 
     /**
@@ -1093,6 +1269,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String,
         blockId: Int,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockHeaderResponse = getBlockHeader(chainId, blockId.toString(), headers)
 
     /**
@@ -1104,6 +1282,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String,
         blockId: BlockHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockHeaderResponse = getBlockHeader(chainId, blockId.base58, headers)
 
     // -- ../<block_id>/helpers --
@@ -1118,6 +1298,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         operations: List<RpcApplicableOperation>,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): PreapplyOperationsResponse
 
     /**
@@ -1130,6 +1312,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         operations: List<RpcApplicableOperation>,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): PreapplyOperationsResponse = preapplyOperations(chainId, blockId.toString(), operations, headers)
 
     /**
@@ -1142,6 +1326,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         operations: List<RpcApplicableOperation>,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): PreapplyOperationsResponse = preapplyOperations(chainId, blockId.base58, operations, headers)
 
     /**
@@ -1154,6 +1340,8 @@ public interface ActiveSimplifiedRpc {
         blockId: String = Constants.Block.HEAD,
         operation: RpcRunnableOperation,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): RunOperationResponse
 
     /**
@@ -1166,6 +1354,8 @@ public interface ActiveSimplifiedRpc {
         blockId: Int,
         operation: RpcRunnableOperation,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): RunOperationResponse = runOperation(chainId, blockId.toString(), operation, headers)
 
     /**
@@ -1178,6 +1368,8 @@ public interface ActiveSimplifiedRpc {
         blockId: BlockHash,
         operation: RpcRunnableOperation,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): RunOperationResponse = runOperation(chainId, blockId.base58, operation, headers)
 
     // -- ../<block_id>/operations --
@@ -1191,6 +1383,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String = Constants.Chain.MAIN,
         blockId: String = Constants.Block.HEAD,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockOperationsResponse
 
     /**
@@ -1202,6 +1396,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String,
         blockId: Int,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockOperationsResponse = getOperations(chainId, blockId.toString(), headers)
 
     /**
@@ -1213,6 +1409,8 @@ public interface ActiveSimplifiedRpc {
         chainId: String,
         blockId: BlockHash,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlockOperationsResponse = getOperations(chainId, blockId.base58, headers)
 
 }

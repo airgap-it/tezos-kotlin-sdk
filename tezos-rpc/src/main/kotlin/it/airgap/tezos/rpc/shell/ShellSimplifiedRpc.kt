@@ -38,6 +38,8 @@ public interface ShellSimplifiedRpc {
         head: BlockHash? = null,
         minDate: String? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlocksResponse
 
     /**
@@ -60,6 +62,8 @@ public interface ShellSimplifiedRpc {
         head: BlockHash? = null,
         minDate: String? = null,
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): GetBlocksResponse = getBlocks(chainId.base58, length, head, minDate, headers)
 
     /**
@@ -67,28 +71,48 @@ public interface ShellSimplifiedRpc {
      *
      * [`GET /chains/<chain_id>/chain_id`](https://tezos.gitlab.io/shell/rpc.html#get-chains-chain-id-chain-id)
      */
-    public suspend fun getChainId(chainId: String = Constants.Chain.MAIN, headers: List<HttpHeader> = emptyList()): GetChainIdResponse
+    public suspend fun getChainId(
+        chainId: String = Constants.Chain.MAIN,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetChainIdResponse
 
     /**
      * The chain unique identifier.
      *
      * [`GET /chains/<chain_id>/chain_id`](https://tezos.gitlab.io/shell/rpc.html#get-chains-chain-id-chain-id)
      */
-    public suspend fun getChainId(chainId: ChainId, headers: List<HttpHeader> = emptyList()): GetChainIdResponse = getChainId(chainId.base58, headers)
+    public suspend fun getChainId(
+        chainId: ChainId,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetChainIdResponse = getChainId(chainId.base58, headers)
 
     /**
      * The bootstrap status of a chain.
      *
      * [`GET /chains/<chain_id>/is_bootstrapped`](https://tezos.gitlab.io/shell/rpc.html#get-chains-chain-id-is-bootstrapped)
      */
-    public suspend fun isBootstrapped(chainId: String = Constants.Chain.MAIN, headers: List<HttpHeader> = emptyList()): GetBootstrappedStatusResponse
+    public suspend fun isBootstrapped(
+        chainId: String = Constants.Chain.MAIN,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetBootstrappedStatusResponse
 
     /**
      * The bootstrap status of a chain.
      *
      * [`GET /chains/<chain_id>/is_bootstrapped`](https://tezos.gitlab.io/shell/rpc.html#get-chains-chain-id-is-bootstrapped)
      */
-    public suspend fun isBootstrapped(chainId: ChainId, headers: List<HttpHeader> = emptyList()): GetBootstrappedStatusResponse = isBootstrapped(chainId.base58, headers)
+    public suspend fun isBootstrapped(
+        chainId: ChainId,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): GetBootstrappedStatusResponse = isBootstrapped(chainId.base58, headers)
 
     // -- /injection --
 
@@ -109,5 +133,12 @@ public interface ShellSimplifiedRpc {
      *
      * [`POST /injection/operation?[async]&[chain=<chain_id>]`](https://tezos.gitlab.io/shell/rpc.html#post-injection-operation)
      */
-    public suspend fun injectOperation(data: String, async: Boolean? = null, chain: ChainId? = null, headers: List<HttpHeader> = emptyList()): InjectOperationResponse
+    public suspend fun injectOperation(
+        data: String,
+        async: Boolean? = null,
+        chain: ChainId? = null,
+        headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): InjectOperationResponse
 }

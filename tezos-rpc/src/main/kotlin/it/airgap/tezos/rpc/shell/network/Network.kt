@@ -18,7 +18,11 @@ public interface Network {
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/connections`
      */
     public interface Connections {
-        public suspend fun get(headers: List<HttpHeader> = emptyList()): GetConnectionsResponse
+        public suspend fun get(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): GetConnectionsResponse
 
         public operator fun invoke(peerId: CryptoboxPublicKeyHash): Connection
 
@@ -26,8 +30,17 @@ public interface Network {
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/connections/<peer_id>`
          */
         public interface Connection {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetConnectionResponse
-            public suspend fun delete(wait: Boolean? = null, headers: List<HttpHeader> = emptyList()): CloseConnectionResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetConnectionResponse
+            public suspend fun delete(
+                wait: Boolean? = null,
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): CloseConnectionResponse
         }
     }
 
@@ -38,20 +51,32 @@ public interface Network {
         public val ips: Ips
         public val peers: Peers
 
-        public suspend fun delete(headers: List<HttpHeader> = emptyList()): ClearGreylistResponse
+        public suspend fun delete(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): ClearGreylistResponse
 
         /**
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/greylist/ips`
          */
         public interface Ips {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetGreylistedIpsResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetGreylistedIpsResponse
         }
 
         /**
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/greylist/peers`
          */
         public interface Peers {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetGreylistedPeersResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetGreylistedPeersResponse
         }
     }
 
@@ -59,14 +84,23 @@ public interface Network {
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/log`
      */
     public interface Log {
-        public suspend fun get(headers: List<HttpHeader> = emptyList()): GetLogResponse
+        public suspend fun get(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): GetLogResponse
     }
 
     /**
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/peers`
      */
     public interface Peers {
-        public suspend fun get(filter: RpcPeerState? = null, headers: List<HttpHeader> = emptyList()): GetPeersResponse
+        public suspend fun get(
+            filter: RpcPeerState? = null,
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): GetPeersResponse
 
         public operator fun invoke(peerId: CryptoboxPublicKeyHash): Peer
 
@@ -74,8 +108,17 @@ public interface Network {
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/peers/<peer_id>`
          */
         public interface Peer {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetPeerResponse
-            public suspend fun patch(acl: RpcAcl, headers: List<HttpHeader> = emptyList()): ChangePeerPermissionResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetPeerResponse
+            public suspend fun patch(
+                acl: RpcAcl,
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): ChangePeerPermissionResponse
 
             public val banned: Banned
             public val log: Log
@@ -84,14 +127,23 @@ public interface Network {
              * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/peers/<peer_id>/banned`
              */
             public interface Banned {
-                public suspend fun get(headers: List<HttpHeader> = emptyList()): GetPeerBannedStatusResponse
+                public suspend fun get(
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): GetPeerBannedStatusResponse
             }
 
             /**
              * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/network/peers/<peer_id>/log`
              */
             public interface Log {
-                public suspend fun get(monitor: Boolean? = null, headers: List<HttpHeader> = emptyList()): GetPeerEventsResponse
+                public suspend fun get(
+                    monitor: Boolean? = null,
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): GetPeerEventsResponse
             }
         }
     }

@@ -17,13 +17,21 @@ internal class MonitorClient(parentUrl: String, private val httpClient: HttpClie
 private class MonitorActiveChainsClient(parentUrl: String, private val httpClient: HttpClient): Monitor.ActiveChains {
     private val baseUrl: String = /* /monitor/active_chains */ "$parentUrl/active_chains"
 
-    override suspend fun get(headers: List<HttpHeader>): MonitorActiveChainsResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): MonitorActiveChainsResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class MonitorBootstrappedClient(parentUrl: String, private val httpClient: HttpClient): Monitor.Bootstrapped {
     private val baseUrl: String = /* /monitor/bootstrapped */ "$parentUrl/bootstrapped"
 
-    override suspend fun get(headers: List<HttpHeader>): MonitorBootstrappedResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): MonitorBootstrappedResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class MonitorHeadsClient(parentUrl: String, private val httpClient: HttpClient): Monitor.Heads {
@@ -35,7 +43,12 @@ private class MonitorHeadsClient(parentUrl: String, private val httpClient: Http
 private class MonitorHeadsHeadClient(parentUrl: String, chainId: String, private val httpClient: HttpClient): Monitor.Heads.Head {
     private val baseUrl: String = /* /monitor/heads/<chain_id> */ "$parentUrl/$chainId"
 
-    override suspend fun get(nextProtocol: ProtocolHash?, headers: List<HttpHeader>): MonitorHeadResponse =
+    override suspend fun get(
+        nextProtocol: ProtocolHash?,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): MonitorHeadResponse =
         httpClient.get(
             baseUrl,
             "/",
@@ -43,13 +56,19 @@ private class MonitorHeadsHeadClient(parentUrl: String, chainId: String, private
             parameters = buildList {
                 nextProtocol?.let { add("next_protocol" to it.base58) }
             },
+            requestTimeout = requestTimeout,
+            connectionTimeout = connectionTimeout,
         )
 }
 
 private class MonitorProtocolsClient(parentUrl: String, private val httpClient: HttpClient): Monitor.Protocols {
     private val baseUrl: String = /* /monitor/protocols */ "$parentUrl/protocols"
 
-    override suspend fun get(headers: List<HttpHeader>): MonitorProtocolsResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): MonitorProtocolsResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class MonitorValidBlocksClient(parentUrl: String, private val httpClient: HttpClient): Monitor.ValidBlocks {
@@ -60,6 +79,8 @@ private class MonitorValidBlocksClient(parentUrl: String, private val httpClient
         nextProtocol: ProtocolHash?,
         chain: String?,
         headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
     ): MonitorValidBlocksResponse =
         httpClient.get(
             baseUrl,
@@ -70,5 +91,7 @@ private class MonitorValidBlocksClient(parentUrl: String, private val httpClient
                 nextProtocol?.let { add("next_protocol" to it.base58) }
                 chain?.let { add("chain" to it) }
             },
+            requestTimeout = requestTimeout,
+            connectionTimeout = connectionTimeout,
         )
 }

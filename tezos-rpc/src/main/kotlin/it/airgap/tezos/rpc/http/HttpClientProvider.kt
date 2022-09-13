@@ -30,6 +30,8 @@ public interface HttpClientProvider {
         endpoint: String,
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): String
 
     /**
@@ -42,6 +44,8 @@ public interface HttpClientProvider {
         endpoint: String,
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): String /* raw JSON */
 
     /**
@@ -56,6 +60,8 @@ public interface HttpClientProvider {
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
         body: String?, /* raw JSON */
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): String /* raw JSON */
 
     /**
@@ -70,6 +76,8 @@ public interface HttpClientProvider {
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
         body: String?, /* raw JSON */
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): String /* raw JSON */
 
     /**
@@ -84,5 +92,7 @@ public interface HttpClientProvider {
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
         body: String?, /* raw JSON */
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): String /* raw JSON */
 }

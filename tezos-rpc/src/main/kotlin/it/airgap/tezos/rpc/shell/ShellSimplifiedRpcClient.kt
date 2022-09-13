@@ -18,14 +18,32 @@ internal class ShellSimplifiedRpcClient(
 
     // -- /chains --
 
-    override suspend fun getBlocks(chainId: String, length: UInt?, head: BlockHash?, minDate: String?, headers: List<HttpHeader>): GetBlocksResponse =
-        chains(chainId).blocks.get(length, head, minDate, headers)
+    override suspend fun getBlocks(
+        chainId: String,
+        length: UInt?,
+        head: BlockHash?,
+        minDate: String?,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetBlocksResponse =
+        chains(chainId).blocks.get(length, head, minDate, headers, requestTimeout, connectionTimeout)
 
-    override suspend fun getChainId(chainId: String, headers: List<HttpHeader>): GetChainIdResponse =
-        chains(chainId).chainId.get(headers)
+    override suspend fun getChainId(
+        chainId: String,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetChainIdResponse =
+        chains(chainId).chainId.get(headers, requestTimeout, connectionTimeout)
 
-    override suspend fun isBootstrapped(chainId: String, headers: List<HttpHeader>): GetBootstrappedStatusResponse =
-        chains(chainId).isBootstrapped.get(headers)
+    override suspend fun isBootstrapped(
+        chainId: String,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetBootstrappedStatusResponse =
+        chains(chainId).isBootstrapped.get(headers, requestTimeout, connectionTimeout)
 
     // -- /injection --
 
@@ -34,6 +52,8 @@ internal class ShellSimplifiedRpcClient(
         async: Boolean?,
         chain: ChainId?,
         headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
     ): InjectOperationResponse =
-        injection.operation.post(data, async, chain, headers)
+        injection.operation.post(data, async, chain, headers, requestTimeout, connectionTimeout)
 }
