@@ -38,7 +38,7 @@ To add `:tezos-michelson` into your project:
 #### Groovy
   ```groovy
   dependencies {
-    def tezos_version = "0.0.1"
+    def tezos_version = "0.0.3"
 
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezos_version"
 
@@ -51,7 +51,7 @@ To add `:tezos-michelson` into your project:
 
   ```kotlin
   dependencies {
-    val tezosVersion = "0.0.1"
+    val tezosVersion = "0.0.3"
 
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-michelson:$tezosVersion")
 

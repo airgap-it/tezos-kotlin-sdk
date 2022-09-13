@@ -97,7 +97,7 @@ To add the Tezos Kotlin SDK into your project:
 #### Groovy
   ```groovy
   dependencies {
-    def tezos_version = "0.0.2"
+    def tezos_version = "0.0.3"
 
     // REQUIRED, :tezos-core
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezos_version"
@@ -122,7 +122,7 @@ To add the Tezos Kotlin SDK into your project:
 
   ```kotlin
   dependencies {
-    val tezosVersion = "0.0.2"
+    val tezosVersion = "0.0.3"
 
     // REQUIRED, :tezos-core
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-core:$tezosVersion")
