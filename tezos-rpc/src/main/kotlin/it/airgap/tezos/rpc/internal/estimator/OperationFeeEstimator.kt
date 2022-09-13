@@ -27,12 +27,19 @@ internal class OperationFeeEstimator(
 ) : FeeEstimator<Operation> {
     private val chainIdCached: CachedMap<String, ChainId> = CachedMap { key, headers -> chains(key).chainId.get(headers).chainId }
 
-    override suspend fun minFee(chainId: String, operation: Operation, limits: Limits, headers: List<HttpHeader>): Operation {
+    override suspend fun minFee(
+        chainId: String,
+        operation: Operation,
+        limits: Limits,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): Operation {
         val runnableOperation = operation
             .applyLimits(limits)
             .asRunnable(chainId.asChainId(headers))
 
-        val runOperationResult = chains(chainId).blocks.head.helpers.scripts.runOperation.post(runnableOperation, headers)
+        val runOperationResult = chains(chainId).blocks.head.helpers.scripts.runOperation.post(runnableOperation, headers, requestTimeout, connectionTimeout)
 
         return runnableOperation
             .asOperation()
