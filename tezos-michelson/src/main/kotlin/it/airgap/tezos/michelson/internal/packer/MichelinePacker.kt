@@ -11,7 +11,6 @@ import it.airgap.tezos.core.type.Timestamp
 import it.airgap.tezos.core.type.encoded.*
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.comparator.isPrim
-import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.consumeAt
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeConsumingFromBytes
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeConsumingString
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.decodeFromBytes
@@ -45,19 +44,26 @@ internal class MichelinePacker(
     private val stringToPublicKeyConverter: Converter<String, PublicKey>,
     private val stringToSignatureConverter: Converter<String, Signature>,
 ) : Packer<Micheline> {
-    override fun pack(value: Micheline, schema: Micheline?): ByteArray {
-        val prePacked = if (schema != null) prePack(value, schema) else value
-        return Tag.Node + prePacked.encodeToBytes(michelineBytesCoder)
+    override fun pack(value: Micheline, schema: Micheline?): ByteArray = Tag.Node + prePack(value, schema)
+
+    override fun prePack(value: Micheline, schema: Micheline?): ByteArray {
+        val prePacked = if (schema == null) value else prePack(value, schema)
+        return prePacked.encodeToBytes(michelineBytesCoder)
     }
 
-    override fun unpack(bytes: ByteArray, schema: Micheline?): Micheline =
-        when (Tag.recognize(bytes)) {
-            Tag.Node -> {
-                val prePacked = Micheline.decodeFromBytes(bytes.sliceArray(1 until bytes.size), michelineBytesCoder)
-                if (schema != null) postUnpack(prePacked, schema) else prePacked
-            }
-            else -> failWithUnknownTag()
+    override fun unpack(bytes: ByteArray, schema: Micheline?): Micheline {
+        val prePackedBytes = when (Tag.recognize(bytes)) {
+            Tag.Node -> bytes.sliceArray(1 until bytes.size)
+            else -> bytes
         }
+
+        return postUnpack(prePackedBytes, schema)
+    }
+
+    override fun postUnpack(bytes: ByteArray, schema: Micheline?): Micheline {
+        val prePacked = Micheline.decodeFromBytes(bytes, michelineBytesCoder)
+        return if (schema != null) postUnpack(prePacked, schema) else prePacked
+    }
 
     private fun prePack(value: Micheline, schema: Micheline): Micheline =
         when {
@@ -518,8 +524,6 @@ internal class MichelinePacker(
 
     private fun failWithValueSchemaMismatch(value: Micheline, schema: Micheline): Nothing =
         failWithIllegalArgument("Micheline value ${value.toCompactExpression(michelineToCompactStringConverter)} does not match the schema ${schema.toCompactExpression(michelineToCompactStringConverter)}.")
-
-    private fun failWithUnknownTag(): Nothing = failWithIllegalArgument("Data is not packed Micheline.")
 }
 
 private enum class Tag(override val value: ByteArray) : BytesTag {
