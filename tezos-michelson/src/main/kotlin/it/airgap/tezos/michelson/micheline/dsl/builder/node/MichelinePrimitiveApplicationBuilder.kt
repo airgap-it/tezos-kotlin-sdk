@@ -3,8 +3,8 @@ package it.airgap.tezos.michelson.micheline.dsl.builder.node
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.replaceOrAdd
-import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.Micheline
+import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
@@ -23,6 +23,8 @@ public open class MichelinePrimitiveApplicationSingleArgBuilder<in T : Michelson
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public open fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
         MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
+
+    public fun arg(value: Micheline): MichelineNodeBuilder<T, G> = arg { micheline(value) }
 }
 
 public open class MichelinePrimitiveApplicationNoArgsBuilder<in T : Michelson.Prim> internal constructor(
