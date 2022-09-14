@@ -57,6 +57,8 @@ public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.Prim> inter
     public fun sequence(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
         MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).mapNodeToSequence().also { builders.add(it) }
 
+    public fun sequence(nodes: List<Micheline>): MichelineBuilder = sequence { nodes.forEach { micheline(it) } }
+
     // -- micheline --
 
     public infix fun micheline(value: Micheline): MichelineBuilder =
