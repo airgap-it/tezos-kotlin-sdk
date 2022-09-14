@@ -24,8 +24,12 @@ public class MichelineMichelsonDataKeyValueBuilder internal constructor(
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonData.Prim>(michelsonToMichelineConverter, prim) {
     public fun key(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =
         MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
+
+    public fun key(value: Micheline): MichelineMichelsonDataExpressionBuilder = key { micheline(value) }
     public fun value(builderAction: MichelineMichelsonDataExpressionBuilder.() -> Unit): MichelineMichelsonDataExpressionBuilder =
         MichelineMichelsonDataExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
+
+    public fun value(value: Micheline): MichelineMichelsonDataExpressionBuilder = value { micheline(value) }
 }
 
 public fun MichelineMichelsonDataExpressionBuilder.Unit(builderAction: MichelineMichelsonDataNoArgsBuilder.() -> Unit = {}): MichelineMichelsonDataNoArgsBuilder =
