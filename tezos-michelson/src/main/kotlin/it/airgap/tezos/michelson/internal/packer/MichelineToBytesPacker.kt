@@ -28,7 +28,7 @@ import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 
-internal class MichelinePacker(
+internal class MichelineToBytesPacker(
     private val michelineBytesCoder: ConsumingBytesCoder<Micheline>,
     private val michelinePrimitiveApplicationNormalizer: Normalizer<MichelinePrimitiveApplication>,
     private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
@@ -43,7 +43,7 @@ internal class MichelinePacker(
     private val stringToImplicitAddressConverter: Converter<String, ImplicitAddress>,
     private val stringToPublicKeyConverter: Converter<String, PublicKey>,
     private val stringToSignatureConverter: Converter<String, Signature>,
-) : Packer<Micheline> {
+) : BytesPacker<Micheline> {
     override fun pack(value: Micheline, schema: Micheline?): ByteArray = Tag.Node + prePack(value, schema)
 
     override fun prePack(value: Micheline, schema: Micheline?): ByteArray {
