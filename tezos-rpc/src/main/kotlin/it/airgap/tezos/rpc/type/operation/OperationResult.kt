@@ -321,7 +321,7 @@ public sealed class RpcOperationResult {
         @SerialName(Applied.KIND)
         public data class Applied(
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
-            @SerialName("consumed_gas") override val consumedGas: String,
+            @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("storage_size") override val storageSize: String,
             @SerialName("global_address") override val globalAddress: @Contextual ScriptExprHash,
         ) : RegisterGlobalConstant() {
@@ -349,7 +349,7 @@ public sealed class RpcOperationResult {
         public data class Backtracked(
             override val errors: List<RpcError>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
-            @SerialName("consumed_gas") override val consumedGas: String,
+            @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("storage_size") override val storageSize: String,
             @SerialName("global_address") override val globalAddress: @Contextual ScriptExprHash,
         ) : RegisterGlobalConstant() {
