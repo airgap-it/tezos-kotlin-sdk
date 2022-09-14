@@ -1,4 +1,4 @@
 object Project {
     const val group = "it.airgap.tezos"
-    const val version = "0.0.4-beta01"
+    const val version = "0.0.4-beta02"
 }
