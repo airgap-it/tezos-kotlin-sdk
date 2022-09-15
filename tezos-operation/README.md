@@ -38,7 +38,7 @@ To add `:tezos-operation` into your project:
 #### Groovy
   ```groovy
   dependencies {
-    def tezos_version = "0.0.3"
+    def tezos_version = "x.y.z"
 
     implementation "com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezos_version"
 
@@ -52,7 +52,7 @@ To add `:tezos-operation` into your project:
 
   ```kotlin
   dependencies {
-    val tezosVersion = "0.0.3"
+    val tezosVersion = "x.y.z"
 
     implementation("com.github.airgap-it.tezos-kotlin-sdk:tezos-operation:$tezosVersion")
 
