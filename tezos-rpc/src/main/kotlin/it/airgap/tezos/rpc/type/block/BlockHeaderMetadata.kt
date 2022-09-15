@@ -27,7 +27,7 @@ public data class RpcBlockHeaderMetadata(
     @SerialName("level_info") public val levelInfo: RpcLevelInfo,
     @SerialName("voting_period_info") public val votingPeriodInfo: RpcVotingPeriodInfo,
     @SerialName("nonce_hash") public val nonceHash: @Contextual NonceHash?,
-    @SerialName("consumed_gas") public val consumedGas: String,
+    @SerialName("consumed_gas") public val consumedGas: String? = null,
     public val deactivated: List<@Contextual PublicKeyHash>,
     @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>,
     @SerialName("liquidity_baking_toggle_ema") public val liquidityBakingToggleEma: Int,

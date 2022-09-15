@@ -14,14 +14,23 @@ public interface Config {
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/config/history_mode`
      */
     public interface HistoryMode {
-        public suspend fun get(headers: List<HttpHeader> = emptyList()): GetHistoryModeResponse
+        public suspend fun get(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): GetHistoryModeResponse
     }
 
     /**
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/config/logging`
      */
     public interface Logging {
-        public suspend fun put(activeSinks: List<String>, headers: List<HttpHeader> = emptyList()): SetLoggingResponse
+        public suspend fun put(
+            activeSinks: List<String>,
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): SetLoggingResponse
     }
 
     /**
@@ -35,14 +44,22 @@ public interface Config {
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/config/network/user_activated_protocol_overrides`
          */
         public interface UserActivatedProtocolOverrides {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetUserActivatedProtocolOverridesResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetUserActivatedProtocolOverridesResponse
         }
 
         /**
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/config/network/user_activated_upgrades`
          */
         public interface UserActivatedUpgrades {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetUserActivatedUpgradesResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetUserActivatedUpgradesResponse
         }
     }
 }

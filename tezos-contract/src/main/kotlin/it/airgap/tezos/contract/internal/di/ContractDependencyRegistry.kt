@@ -15,8 +15,6 @@ import it.airgap.tezos.contract.storage.ContractStorageEntry
 import it.airgap.tezos.contract.type.ContractCode
 import it.airgap.tezos.core.internal.annotation.InternalTezosSdkApi
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
-import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.type.encoded.ContractHash
 import it.airgap.tezos.michelson.internal.di.MichelsonDependencyRegistry
 import it.airgap.tezos.michelson.micheline.Micheline
@@ -29,8 +27,6 @@ import java.lang.ref.WeakReference
 
 @InternalTezosSdkApi
 public class ContractDependencyRegistry internal constructor(
-    private val global: DependencyRegistry,
-    private val core: CoreDependencyRegistry,
     private val michelson: MichelsonDependencyRegistry,
     private val rpc: RpcDependencyRegistry,
 ) {
@@ -91,10 +87,8 @@ public class ContractDependencyRegistry internal constructor(
 
     private fun michelineToStorageEntryConverter(block: Block): TypedConverter<Micheline, ContractStorageEntry> =
         MichelineToStorageEntryConverter(
-            global.crypto,
             block,
-            core.encodedBytesCoder,
-            michelson.michelinePacker,
+            michelson.michelineToScriptExprHashPacker,
             michelson.michelineToCompactStringConverter,
             michelson.stringToMichelsonPrimConverter,
             michelson.michelsonToMichelineConverter,

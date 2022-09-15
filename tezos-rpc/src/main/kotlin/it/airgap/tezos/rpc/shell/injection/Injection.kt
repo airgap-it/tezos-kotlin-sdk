@@ -24,6 +24,8 @@ public interface Injection {
             force: Boolean? = null,
             chain: ChainId? = null,
             headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
         ): InjectBlockResponse
     }
 
@@ -36,6 +38,8 @@ public interface Injection {
             async: Boolean? = null,
             chain: ChainId? = null,
             headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
         ): InjectOperationResponse
     }
 
@@ -48,6 +52,8 @@ public interface Injection {
             components: List<RpcProtocolComponent>,
             async: Boolean? = null,
             headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
         ): InjectProtocolResponse
     }
 }

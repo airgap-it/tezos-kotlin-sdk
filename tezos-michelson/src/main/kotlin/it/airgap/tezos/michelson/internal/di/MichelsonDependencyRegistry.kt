@@ -5,14 +5,18 @@ import it.airgap.tezos.core.internal.coder.Coder
 import it.airgap.tezos.core.internal.coder.ConsumingBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.core.internal.di.CoreDependencyRegistry
+import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.normalizer.Normalizer
+import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.*
 import it.airgap.tezos.michelson.internal.coder.MichelineBytesCoder
 import it.airgap.tezos.michelson.internal.coder.MichelineJsonCoder
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.lazyWeak
 import it.airgap.tezos.michelson.internal.converter.*
 import it.airgap.tezos.michelson.internal.normalizer.MichelineNormalizer
-import it.airgap.tezos.michelson.internal.packer.MichelinePacker
+import it.airgap.tezos.michelson.internal.packer.BytesPacker
+import it.airgap.tezos.michelson.internal.packer.MichelineToBytesPacker
+import it.airgap.tezos.michelson.internal.packer.MichelineToScriptExprHashPacker
 import it.airgap.tezos.michelson.internal.packer.Packer
 import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -20,7 +24,10 @@ import it.airgap.tezos.michelson.micheline.MichelineSequence
 import kotlinx.serialization.json.JsonElement
 
 @InternalTezosSdkApi
-public class MichelsonDependencyRegistry internal constructor(core: CoreDependencyRegistry) {
+public class MichelsonDependencyRegistry internal constructor(
+    global: DependencyRegistry,
+    core: CoreDependencyRegistry,
+) {
 
     // -- coder --
 
@@ -63,8 +70,8 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
 
     // -- packer --
 
-    public val michelinePacker: Packer<Micheline> by lazy {
-        MichelinePacker(
+    public val michelineToBytesPacker: BytesPacker<Micheline> by lazy {
+        MichelineToBytesPacker(
             michelineBytesCoder,
             michelinePrimitiveApplicationNormalizer,
             stringToMichelsonPrimConverter,
@@ -82,6 +89,14 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
         )
     }
 
+    public val michelineToScriptExprHashPacker: Packer<Micheline, ScriptExprHash> by lazy {
+        MichelineToScriptExprHashPacker(
+            global.crypto,
+            core.encodedBytesCoder,
+            michelineToBytesPacker,
+        )
+    }
+
     private object Static {
 
         // -- coder --
@@ -90,7 +105,7 @@ public class MichelsonDependencyRegistry internal constructor(core: CoreDependen
 
         // -- converter --
 
-        val michelineToMichelsonConverter: Converter<Micheline, Michelson> by lazy { MichelineToMichelsonConverter(stringToMichelsonPrimConverter, michelineToCompactStringConverter) }
+        val michelineToMichelsonConverter: Converter<Micheline, Michelson> by lazyWeak { MichelineToMichelsonConverter(stringToMichelsonPrimConverter, michelineToCompactStringConverter) }
 
         val michelineToStringConverter: Converter<Micheline, String> by lazyWeak { MichelineToStringConverter() }
         val michelineToCompactStringConverter: Converter<Micheline, String> by lazyWeak { MichelineToCompactStringConverter() }

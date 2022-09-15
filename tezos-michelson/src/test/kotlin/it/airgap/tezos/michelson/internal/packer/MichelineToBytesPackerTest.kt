@@ -26,17 +26,17 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class MichelinePackerTest {
+class MichelineToBytesPackerTest {
 
     private lateinit var tezos: Tezos
-    private lateinit var michelinePacker: MichelinePacker
+    private lateinit var michelineToBytesPacker: MichelineToBytesPacker
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
         tezos = mockTezos()
-        michelinePacker = MichelinePacker(
+        michelineToBytesPacker = MichelineToBytesPacker(
             tezos.michelsonModule.dependencyRegistry.michelineBytesCoder,
             tezos.michelsonModule.dependencyRegistry.michelinePrimitiveApplicationNormalizer,
             tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
@@ -114,13 +114,13 @@ class MichelinePackerTest {
             ),
         ).flatten().forEach { (packed, michelineWithSchemas) ->
             michelineWithSchemas.forEach {
-                assertContentEquals(packed, michelinePacker.pack(it.first, it.second))
-                assertContentEquals(packed, it.first.packToBytes(it.second, tezos))
-                assertContentEquals(packed, it.first.packToBytes(it.second, michelinePacker))
-                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(it.second, withHexPrefix = false, tezos))
-                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(it.second, withHexPrefix = false, michelinePacker))
-                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(it.second, withHexPrefix = true, tezos))
-                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(it.second, withHexPrefix = true, michelinePacker))
+                assertContentEquals(packed, michelineToBytesPacker.pack(it.first, it.second))
+                assertContentEquals(packed, it.first.packToBytes(it.second, tezos = tezos))
+                assertContentEquals(packed, it.first.packToBytes(it.second, michelineToBytesPacker))
+                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(it.second, withHexPrefix = false, tezos = tezos))
+                assertEquals(packed.toHexString().asString(withPrefix = false), it.first.packToString(it.second, withHexPrefix = false, michelineToBytesPacker))
+                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(it.second, withHexPrefix = true, tezos = tezos))
+                assertEquals(packed.toHexString().asString(withPrefix = true), it.first.packToString(it.second, withHexPrefix = true, michelineToBytesPacker))
             }
         }
     }
@@ -128,11 +128,11 @@ class MichelinePackerTest {
     @Test
     fun `should fail to pack Micheline Primitive Application if prim is unknown`() = withTezosContext {
         invalidPrimitiveApplicationsWithSchema.forEach {
-            assertFailsWith<IllegalArgumentException> { michelinePacker.pack(it.first, it.second) }
-            assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second, tezos) }
-            assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second, michelinePacker) }
+            assertFailsWith<IllegalArgumentException> { michelineToBytesPacker.pack(it.first, it.second) }
+            assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second, tezos = tezos) }
+            assertFailsWith<IllegalArgumentException> { it.first.packToBytes(it.second, michelineToBytesPacker) }
             assertFailsWith<IllegalArgumentException> { it.first.packToString(it.second, tezos = tezos) }
-            assertFailsWith<IllegalArgumentException> { it.first.packToString(it.second, michelinePacker = michelinePacker) }
+            assertFailsWith<IllegalArgumentException> { it.first.packToString(it.second, michelinePacker = michelineToBytesPacker) }
         }
     }
 
@@ -160,13 +160,13 @@ class MichelinePackerTest {
             ),
         ).flatten().forEach { (packed, michelineWithSchemas) ->
             michelineWithSchemas.forEach {
-                assertEquals(it.first.normalized(tezos), michelinePacker.unpack(packed, it.second))
-                assertEquals(it.first.normalized(tezos), Micheline.unpackFromBytes(packed, it.second, tezos))
-                assertEquals(it.first.normalized(tezos), Micheline.unpackFromBytes(packed, it.second, michelinePacker))
-                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, tezos))
-                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, michelinePacker))
-                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, tezos))
-                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, michelinePacker))
+                assertEquals(it.first.normalized(tezos), michelineToBytesPacker.unpack(packed, it.second))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromBytes(packed, it.second, tezos = tezos))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromBytes(packed, it.second, michelineToBytesPacker))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, tezos = tezos))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = false), it.second, michelineToBytesPacker))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, tezos = tezos))
+                assertEquals(it.first.normalized(tezos), Micheline.unpackFromString(packed.toHexString().asString(withPrefix = true), it.second, michelineToBytesPacker))
             }
         }
     }
@@ -174,11 +174,11 @@ class MichelinePackerTest {
     @Test
     fun `should fail to unpack Micheline if packed value or schema is invalid`() = withTezosContext {
         (invalidPackedWithSchema + packedWithInvalidSchema).forEach {
-            assertFailsWith<IllegalArgumentException> { michelinePacker.unpack(it.first.asHexString().toByteArray(), it.second) }
-            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, tezos) }
-            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, michelinePacker) }
-            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromString(it.first, it.second, tezos) }
-            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromString(it.first, it.second, michelinePacker) }
+            assertFailsWith<IllegalArgumentException> { michelineToBytesPacker.unpack(it.first.asHexString().toByteArray(), it.second) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, tezos = tezos) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromBytes(it.first.asHexString().toByteArray(), it.second, michelineToBytesPacker) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromString(it.first, it.second, tezos = tezos) }
+            assertFailsWith<IllegalArgumentException> { Micheline.unpackFromString(it.first, it.second, michelineToBytesPacker) }
         }
     }
 

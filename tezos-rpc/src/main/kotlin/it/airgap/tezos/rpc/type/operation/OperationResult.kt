@@ -29,7 +29,7 @@ public sealed class RpcOperationResult {
     public open val balanceUpdates: List<RpcBalanceUpdate>? = null
 
     @Transient
-    public open val originatedContracts: List<Address>? = null
+    public open val originatedContracts: List<@Contextual Address>? = null
 
     @Transient
     public open val consumedGas: String? = null
@@ -111,7 +111,7 @@ public sealed class RpcOperationResult {
             override val storage: Micheline? = null,
             @SerialName("big_map_diff") override val bigMapDiff: List<RpcBigMapDiff>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>? = null,
-            @SerialName("originated_contracts") override val originatedContracts: List<Address>? = null,
+            @SerialName("originated_contracts") override val originatedContracts: List<@Contextual Address>? = null,
             @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("consumed_milligas") override val consumedMilligas: String? = null,
             @SerialName("storage_size") override val storageSize: String? = null,
@@ -145,7 +145,7 @@ public sealed class RpcOperationResult {
             override val storage: Micheline? = null,
             @SerialName("big_map_diff") override val bigMapDiff: List<RpcBigMapDiff>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>? = null,
-            @SerialName("originated_contracts") override val originatedContracts: List<Address>? = null,
+            @SerialName("originated_contracts") override val originatedContracts: List<@Contextual Address>? = null,
             @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("consumed_milligas") override val consumedMilligas: String? = null,
             @SerialName("storage_size") override val storageSize: String? = null,
@@ -172,7 +172,7 @@ public sealed class RpcOperationResult {
         public data class Applied(
             @SerialName("big_map_diff") override val bigMapDiff: List<RpcBigMapDiff>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>? = null,
-            @SerialName("originated_contracts") override val originatedContracts: List<Address>? = null,
+            @SerialName("originated_contracts") override val originatedContracts: List<@Contextual Address>? = null,
             @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("consumed_milligas") override val consumedMilligas: String? = null,
             @SerialName("storage_size") override val storageSize: String? = null,
@@ -204,7 +204,7 @@ public sealed class RpcOperationResult {
             override val errors: List<RpcError>? = null,
             @SerialName("big_map_diff") override val bigMapDiff: List<RpcBigMapDiff>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>? = null,
-            @SerialName("originated_contracts") override val originatedContracts: List<Address>? = null,
+            @SerialName("originated_contracts") override val originatedContracts: List<@Contextual Address>? = null,
             @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("consumed_milligas") override val consumedMilligas: String? = null,
             @SerialName("storage_size") override val storageSize: String? = null,
@@ -321,7 +321,7 @@ public sealed class RpcOperationResult {
         @SerialName(Applied.KIND)
         public data class Applied(
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
-            @SerialName("consumed_gas") override val consumedGas: String,
+            @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("storage_size") override val storageSize: String,
             @SerialName("global_address") override val globalAddress: @Contextual ScriptExprHash,
         ) : RegisterGlobalConstant() {
@@ -349,7 +349,7 @@ public sealed class RpcOperationResult {
         public data class Backtracked(
             override val errors: List<RpcError>? = null,
             @SerialName("balance_updates") override val balanceUpdates: List<RpcBalanceUpdate>,
-            @SerialName("consumed_gas") override val consumedGas: String,
+            @SerialName("consumed_gas") override val consumedGas: String? = null,
             @SerialName("storage_size") override val storageSize: String,
             @SerialName("global_address") override val globalAddress: @Contextual ScriptExprHash,
         ) : RegisterGlobalConstant() {
@@ -514,7 +514,7 @@ public sealed class RpcSuccessfulManagerOperationResult {
         public val storage: Micheline? = null,
         @SerialName("big_map_diff") public val bigMapDiff: List<RpcBigMapDiff>? = null,
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>? = null,
-        @SerialName("originated_contracts") public val originatedContracts: List<Address>? = null,
+        @SerialName("originated_contracts") public val originatedContracts: List<@Contextual Address>? = null,
         @SerialName("consumed_gas") public val consumedGas: String? = null,
         @SerialName("consumed_milligas") public val consumedMilligas: String? = null,
         @SerialName("storage_size") public val storageSize: String? = null,
@@ -532,7 +532,7 @@ public sealed class RpcSuccessfulManagerOperationResult {
     public data class Origination(
         @SerialName("big_map_diff") public val bigMapDiff: List<RpcBigMapDiff>? = null,
         @SerialName("balance_updates") public val balanceUpdates: List<RpcBalanceUpdate>? = null,
-        @SerialName("originated_contracts") public val originatedContracts: List<Address>? = null,
+        @SerialName("originated_contracts") public val originatedContracts: List<@Contextual Address>? = null,
         @SerialName("consumed_gas") public val consumedGas: String? = null,
         @SerialName("consumed_milligas") public val consumedMilligas: String? = null,
         @SerialName("storage_size") public val storageSize: String? = null,

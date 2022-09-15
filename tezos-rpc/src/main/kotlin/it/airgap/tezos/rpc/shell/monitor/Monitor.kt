@@ -19,14 +19,22 @@ public interface Monitor {
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/monitor/active_chains`
      */
     public interface ActiveChains {
-        public suspend fun get(headers: List<HttpHeader> = emptyList()): MonitorActiveChainsResponse
+        public suspend fun get(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): MonitorActiveChainsResponse
     }
 
     /**
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/monitor/bootstrapped`
      */
     public interface Bootstrapped {
-        public suspend fun get(headers: List<HttpHeader> = emptyList()): MonitorBootstrappedResponse
+        public suspend fun get(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): MonitorBootstrappedResponse
     }
 
     /**
@@ -43,7 +51,12 @@ public interface Monitor {
         public operator fun invoke(chainId: ChainId): Head = invoke(chainId.base58)
 
         public interface Head {
-            public suspend fun get(nextProtocol: ProtocolHash? = null, headers: List<HttpHeader> = emptyList()): MonitorHeadResponse
+            public suspend fun get(
+                nextProtocol: ProtocolHash? = null,
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): MonitorHeadResponse
         }
     }
 
@@ -51,15 +64,33 @@ public interface Monitor {
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/monitor/protocols`
      */
     public interface Protocols {
-        public suspend fun get(headers: List<HttpHeader> = emptyList()): MonitorProtocolsResponse
+        public suspend fun get(
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): MonitorProtocolsResponse
     }
 
     /**
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/monitor/valid_blocks`
      */
     public interface ValidBlocks {
-        public suspend fun get(protocol: ProtocolHash? = null, nextProtocol: ProtocolHash? = null, chain: String? = null, headers: List<HttpHeader> = emptyList()): MonitorValidBlocksResponse
-        public suspend fun get(protocol: ProtocolHash? = null, nextProtocol: ProtocolHash? = null, chain: ChainId, headers: List<HttpHeader> = emptyList()): MonitorValidBlocksResponse =
+        public suspend fun get(
+            protocol: ProtocolHash? = null,
+            nextProtocol: ProtocolHash? = null,
+            chain: String? = null,
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): MonitorValidBlocksResponse
+        public suspend fun get(
+            protocol: ProtocolHash? = null,
+            nextProtocol: ProtocolHash? = null,
+            chain: ChainId,
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): MonitorValidBlocksResponse =
             get(protocol, nextProtocol, chain.base58, headers)
     }
 }
