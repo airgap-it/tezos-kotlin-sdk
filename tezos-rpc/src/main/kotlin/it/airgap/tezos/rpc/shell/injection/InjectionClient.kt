@@ -24,6 +24,8 @@ private class InjectionBlockClient(parentUrl: String, private val httpClient: Ht
         force: Boolean?,
         chain: ChainId?,
         headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
     ): InjectBlockResponse =
         httpClient.post(
             baseUrl,
@@ -35,6 +37,8 @@ private class InjectionBlockClient(parentUrl: String, private val httpClient: Ht
                 chain?.let { add("chain" to chain.base58) }
             },
             request = InjectBlockRequest(data, operations),
+            requestTimeout = requestTimeout,
+            connectionTimeout = connectionTimeout,
         )
 }
 
@@ -46,6 +50,8 @@ private class InjectionOperationClient(parentUrl: String, private val httpClient
         async: Boolean?,
         chain: ChainId?,
         headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
     ): InjectOperationResponse =
         httpClient.post(
             baseUrl,
@@ -56,6 +62,8 @@ private class InjectionOperationClient(parentUrl: String, private val httpClient
                 chain?.let { add("chain" to chain.base58) }
             },
             request = InjectOperationRequest(data),
+            requestTimeout = requestTimeout,
+            connectionTimeout = connectionTimeout,
         )
 }
 
@@ -67,6 +75,8 @@ private class InjectionProtocolClient(parentUrl: String, private val httpClient:
         components: List<RpcProtocolComponent>,
         async: Boolean?,
         headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
     ): InjectProtocolResponse =
         httpClient.post(
             baseUrl,
@@ -76,5 +86,7 @@ private class InjectionProtocolClient(parentUrl: String, private val httpClient:
                 async?.takeIf { it }?.let { add("async" to null) }
             },
             request = InjectProtocolRequest(expectedEnvVersion, components),
+            requestTimeout = requestTimeout,
+            connectionTimeout = connectionTimeout,
         )
 }

@@ -23,7 +23,12 @@ public interface Chains {
      * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>`
      */
     public interface Chain {
-        public suspend fun patch(bootstrapped: Boolean, headers: List<HttpHeader> = emptyList()): SetBootstrappedResponse
+        public suspend fun patch(
+            bootstrapped: Boolean,
+            headers: List<HttpHeader> = emptyList(),
+            requestTimeout: Long? = null,
+            connectionTimeout: Long? = null,
+        ): SetBootstrappedResponse
 
         public val blocks: Blocks
         public val chainId: ChainId
@@ -41,6 +46,8 @@ public interface Chains {
                 head: BlockHash? = null,
                 minDate: String? = null,
                 headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
             ): GetBlocksResponse
 
             public val head: Block
@@ -54,14 +61,22 @@ public interface Chains {
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/chain_id`
          */
         public interface ChainId {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetChainIdResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetChainIdResponse
         }
 
         /**
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/invalid_blocks`
          */
         public interface InvalidBlocks {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetInvalidBlocksResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetInvalidBlocksResponse
 
             public operator fun invoke(blockHash: BlockHash): Block
 
@@ -69,8 +84,16 @@ public interface Chains {
              * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/invalid_blocks/<block_hash>`
              */
             public interface Block {
-                public suspend fun get(headers: List<HttpHeader> = emptyList()): GetInvalidBlockResponse
-                public suspend fun delete(headers: List<HttpHeader> = emptyList()): DeleteInvalidBlockResponse
+                public suspend fun get(
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): GetInvalidBlockResponse
+                public suspend fun delete(
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): DeleteInvalidBlockResponse
             }
         }
 
@@ -78,7 +101,11 @@ public interface Chains {
          * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/is_bootstrapped`
          */
         public interface IsBootstrapped {
-            public suspend fun get(headers: List<HttpHeader> = emptyList()): GetBootstrappedStatusResponse
+            public suspend fun get(
+                headers: List<HttpHeader> = emptyList(),
+                requestTimeout: Long? = null,
+                connectionTimeout: Long? = null,
+            ): GetBootstrappedStatusResponse
         }
 
         /**
@@ -93,21 +120,33 @@ public interface Chains {
              * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels/caboose`
              */
             public interface Caboose {
-                public suspend fun get(headers: List<HttpHeader> = emptyList()): GetCabooseResponse
+                public suspend fun get(
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): GetCabooseResponse
             }
 
             /**
              * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels/checkpoint`
              */
             public interface Checkpoint {
-                public suspend fun get(headers: List<HttpHeader> = emptyList()): GetCheckpointResponse
+                public suspend fun get(
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): GetCheckpointResponse
             }
 
             /**
              * [Shell RPCs](https://tezos.gitlab.io/shell/rpc.html): `/chains/<chain_id>/levels/savepoint`
              */
             public interface Savepoint {
-                public suspend fun get(headers: List<HttpHeader> = emptyList()): GetSavepointResponse
+                public suspend fun get(
+                    headers: List<HttpHeader> = emptyList(),
+                    requestTimeout: Long? = null,
+                    connectionTimeout: Long? = null,
+                ): GetSavepointResponse
             }
         }
     }

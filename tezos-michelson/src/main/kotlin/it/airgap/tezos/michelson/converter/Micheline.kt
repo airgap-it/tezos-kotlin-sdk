@@ -19,6 +19,15 @@ public fun <T : Micheline> T.toMichelson(tezos: Tezos = Tezos.Default): Michelso
 }
 
 /**
+ * Convenience method to get the current [Micheline] value as [T].
+ *
+ * @throws IllegalArgumentException if the current value is not [T].
+ */
+public inline fun <reified T : Micheline> Micheline?.tryAs(): T = withTezosContext {
+    this@tryAs as? T ?: failWithIllegalArgument("Micheline value ${this@tryAs?.let { it::class } ?: "null" } is not ${T::class}")
+}
+
+/**
  * Converts [Micheline] to a [String] expression as specified in [the documentation](https://tezos.gitlab.io/shell/micheline.html).
  * Takes an optional [tezos] object to provide context. If the argument was omitted, the default [Tezos] instance will be used.
  *

@@ -3,10 +3,8 @@ import io.mockk.mockk
 import io.mockk.mockkClass
 import it.airgap.tezos.contract.ContractModule
 import it.airgap.tezos.contract.internal.TezosContractModule
-import it.airgap.tezos.core.CoreModule
 import it.airgap.tezos.core.Tezos
 import it.airgap.tezos.core.crypto.CryptoProvider
-import it.airgap.tezos.core.internal.TezosCoreModule
 import it.airgap.tezos.core.internal.di.DependencyRegistry
 import it.airgap.tezos.core.internal.module.ModuleRegistry
 import it.airgap.tezos.michelson.MichelsonModule
@@ -30,7 +28,6 @@ internal fun mockTezos(cryptoProvider: CryptoProvider? = null, httpClientProvide
         val dependencyRegistry = DependencyRegistry(cryptoProvider)
         val moduleRegistry = ModuleRegistry(
             builders = mapOf(
-                TezosCoreModule::class to CoreModule,
                 TezosMichelsonModule::class to MichelsonModule,
                 TezosRpcModule::class to RpcModule.apply { this.httpClientProvider = httpClientProvider },
                 TezosContractModule::class to ContractModule,

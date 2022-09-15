@@ -14,6 +14,8 @@ public interface FeeEstimator<T> {
         operation: Operation,
         limits: Limits = Limits(),
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): Operation
 
     public suspend fun minFee(
@@ -21,5 +23,7 @@ public interface FeeEstimator<T> {
         operation: Operation,
         limits: Limits = Limits(),
         headers: List<HttpHeader> = emptyList(),
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
     ): Operation = minFee(chainId.base58, operation, limits, headers)
 }

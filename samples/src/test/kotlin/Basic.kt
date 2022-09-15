@@ -157,9 +157,11 @@ class BasicSamples : SamplesBase() {
             endpoint: String,
             headers: List<HttpHeader>,
             parameters: List<HttpParameter>,
+            requestTimeout: Long?,
+            connectionTimeout: Long?,
         ): String {
             printlnOnce("CustomHttpClientProvider: DELETE ${url(baseUrl, endpoint)}")
-            return delegateHttpClientProvider.delete(baseUrl, endpoint, headers, parameters)
+            return delegateHttpClientProvider.delete(baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout)
         }
 
         override suspend fun get(
@@ -167,9 +169,11 @@ class BasicSamples : SamplesBase() {
             endpoint: String,
             headers: List<HttpHeader>,
             parameters: List<HttpParameter>,
+            requestTimeout: Long?,
+            connectionTimeout: Long?,
         ): String {
             printlnOnce("CustomHttpClientProvider: GET ${url(baseUrl, endpoint)}")
-            return delegateHttpClientProvider.get(baseUrl, endpoint, headers, parameters)
+            return delegateHttpClientProvider.get(baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout)
         }
 
         override suspend fun patch(
@@ -178,9 +182,11 @@ class BasicSamples : SamplesBase() {
             headers: List<HttpHeader>,
             parameters: List<HttpParameter>,
             body: String?,
+            requestTimeout: Long?,
+            connectionTimeout: Long?,
         ): String {
             printlnOnce("CustomHttpClientProvider: PATH ${url(baseUrl, endpoint)}")
-            return delegateHttpClientProvider.patch(baseUrl, endpoint, headers, parameters, body)
+            return delegateHttpClientProvider.patch(baseUrl, endpoint, headers, parameters, body, requestTimeout, connectionTimeout)
         }
 
         override suspend fun post(
@@ -189,9 +195,11 @@ class BasicSamples : SamplesBase() {
             headers: List<HttpHeader>,
             parameters: List<HttpParameter>,
             body: String?,
+            requestTimeout: Long?,
+            connectionTimeout: Long?,
         ): String {
             printlnOnce("CustomHttpClientProvider: POST ${url(baseUrl, endpoint)}")
-            return delegateHttpClientProvider.post(baseUrl, endpoint, headers, parameters, body)
+            return delegateHttpClientProvider.post(baseUrl, endpoint, headers, parameters, body, requestTimeout, connectionTimeout)
         }
 
         override suspend fun put(
@@ -200,9 +208,11 @@ class BasicSamples : SamplesBase() {
             headers: List<HttpHeader>,
             parameters: List<HttpParameter>,
             body: String?,
+            requestTimeout: Long?,
+            connectionTimeout: Long?,
         ): String {
             printlnOnce("CustomHttpClientProvider: PUT ${url(baseUrl, endpoint)}")
-            return delegateHttpClientProvider.put(baseUrl, endpoint, headers, parameters, body)
+            return delegateHttpClientProvider.put(baseUrl, endpoint, headers, parameters, body, requestTimeout, connectionTimeout)
         }
 
     }

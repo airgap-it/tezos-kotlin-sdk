@@ -5,10 +5,9 @@ import it.airgap.tezos.contract.internal.context.TezosContractContext.fromString
 import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
-import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.normalizer.Normalizer
+import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.MichelsonType
 import it.airgap.tezos.michelson.internal.packer.Packer
@@ -19,10 +18,8 @@ import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.rpc.active.block.Block
 
 internal class MichelineToStorageEntryConverter(
-    private val crypto: Crypto,
     private val rpc: Block,
-    private val encodedBytesCoder: EncodedBytesCoder,
-    private val michelinePacker: Packer<Micheline>,
+    private val michelineToScriptExprHashPacker: Packer<Micheline, ScriptExprHash>,
     private val michelineToCompactStringConverter: Converter<Micheline, String>,
     private val stringToMichelsonPrimConverter: Converter<String, Michelson.Prim>,
     private val michelsonToMichelineConverter: Converter<Michelson, Micheline>,
@@ -54,9 +51,7 @@ internal class MichelineToStorageEntryConverter(
             value,
             MetaContractStorageEntry.BigMap(
                 type,
-                crypto,
-                encodedBytesCoder,
-                michelinePacker,
+                michelineToScriptExprHashPacker,
                 this,
                 michelineToCompactStringConverter,
                 michelineNormalizer,

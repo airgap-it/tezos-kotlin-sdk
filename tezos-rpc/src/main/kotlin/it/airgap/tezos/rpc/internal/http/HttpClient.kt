@@ -17,7 +17,9 @@ public class HttpClient(
         endpoint: String,
         headers: List<HttpHeader> = emptyList(),
         parameters: List<HttpParameter> = emptyList(),
-    ): Response = httpClientProvider.delete(baseUrl, endpoint, headers, parameters).decodeAsResponse()
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): Response = httpClientProvider.delete(baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout).decodeAsResponse()
 
     @Throws(Exception::class)
     public suspend inline fun <reified Response : Any> get(
@@ -25,7 +27,9 @@ public class HttpClient(
         endpoint: String,
         headers: List<HttpHeader> = emptyList(),
         parameters: List<HttpParameter> = emptyList(),
-    ): Response = httpClientProvider.get(baseUrl, endpoint, headers, parameters).decodeAsResponse()
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): Response = httpClientProvider.get(baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout).decodeAsResponse()
 
     @Throws(Exception::class)
     public suspend inline fun <reified Request : Any, reified Response : Any> patch(
@@ -34,7 +38,9 @@ public class HttpClient(
         headers: List<HttpHeader> = emptyList(),
         parameters: List<HttpParameter> = emptyList(),
         request: Request? = null,
-    ): Response = httpClientProvider.patch(baseUrl, endpoint, headers, parameters, request?.encodeAsRequest()).decodeAsResponse()
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): Response = httpClientProvider.patch(baseUrl, endpoint, headers, parameters, request?.encodeAsRequest(), requestTimeout, connectionTimeout).decodeAsResponse()
 
     @Throws(Exception::class)
     public suspend inline fun <reified Request : Any, reified Response : Any> post(
@@ -43,7 +49,9 @@ public class HttpClient(
         headers: List<HttpHeader> = emptyList(),
         parameters: List<HttpParameter> = emptyList(),
         request: Request? = null,
-    ): Response = httpClientProvider.post(baseUrl, endpoint, headers, parameters, request?.encodeAsRequest()).decodeAsResponse()
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): Response = httpClientProvider.post(baseUrl, endpoint, headers, parameters, request?.encodeAsRequest(), requestTimeout, connectionTimeout).decodeAsResponse()
 
     @Throws(Exception::class)
     public suspend inline fun <reified Request : Any, reified Response : Any> put(
@@ -52,7 +60,9 @@ public class HttpClient(
         headers: List<HttpHeader> = emptyList(),
         parameters: List<HttpParameter> = emptyList(),
         request: Request? = null,
-    ): Response = httpClientProvider.put(baseUrl, endpoint, headers, parameters, request?.encodeAsRequest()).decodeAsResponse()
+        requestTimeout: Long? = null,
+        connectionTimeout: Long? = null,
+    ): Response = httpClientProvider.put(baseUrl, endpoint, headers, parameters, request?.encodeAsRequest(), requestTimeout, connectionTimeout).decodeAsResponse()
 
     @PublishedApi
     internal inline fun <reified T : Any> T.encodeAsRequest(): String = json.encodeToString(this)

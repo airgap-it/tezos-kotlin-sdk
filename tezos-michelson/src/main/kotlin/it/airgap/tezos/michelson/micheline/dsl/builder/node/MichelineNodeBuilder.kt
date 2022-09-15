@@ -3,9 +3,10 @@ package it.airgap.tezos.michelson.micheline.dsl.builder.node
 import it.airgap.tezos.core.internal.converter.Converter
 import it.airgap.tezos.michelson.Michelson
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.asHexString
+import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toHexString
 import it.airgap.tezos.michelson.internal.context.TezosMichelsonContext.toMicheline
-import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.Micheline
+import it.airgap.tezos.michelson.micheline.MichelineLiteral
 import it.airgap.tezos.michelson.micheline.MichelineSequence
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineBuilder
 import it.airgap.tezos.michelson.micheline.dsl.builder.MichelineTransformableBuilder
@@ -38,8 +39,7 @@ public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.Prim> inter
     public infix fun bytes(value: String): MichelineBuilder =
         MichelineBuilder { (MichelineLiteral.Bytes(value.asHexString().asString(withPrefix = true))) }.also { builders.add(it) }
 
-    public infix fun bytes(value: ByteArray): MichelineBuilder =
-        MichelineBuilder { (MichelineLiteral.Bytes(value)) }.also { builders.add(it) }
+    public infix fun bytes(value: ByteArray): MichelineBuilder = bytes(value.toHexString().asString())
 
     // -- primitive application --
 
@@ -56,6 +56,13 @@ public class MichelineNodeBuilder<in T : Michelson, in G : Michelson.Prim> inter
 
     public fun sequence(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> =
         MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).mapNodeToSequence().also { builders.add(it) }
+
+    public fun sequence(nodes: List<Micheline>): MichelineBuilder = sequence { nodes.forEach { micheline(it) } }
+
+    // -- micheline --
+
+    public infix fun micheline(value: Micheline): MichelineBuilder =
+        MichelineBuilder { value }.also { builders.add(it) }
 
     // -- michelson --
 

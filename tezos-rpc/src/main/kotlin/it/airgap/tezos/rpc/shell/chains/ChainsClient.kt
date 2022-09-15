@@ -15,8 +15,19 @@ internal class ChainsClient(parentUrl: String, private val httpClient: HttpClien
 private class ChainsChainClient(parentUrl: String, chainId: String, private val httpClient: HttpClient) : Chains.Chain {
     private val baseUrl: String = /* /chains/<chain_id> */ "$parentUrl/$chainId"
 
-    override suspend fun patch(bootstrapped: Boolean, headers: List<HttpHeader>) =
-        httpClient.patch<SetBootstrappedRequest, SetBootstrappedResponse>(baseUrl, "/", headers, request = SetBootstrappedRequest(bootstrapped))
+    override suspend fun patch(
+        bootstrapped: Boolean,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ) = httpClient.patch<SetBootstrappedRequest, SetBootstrappedResponse>(
+        baseUrl,
+        "/",
+        headers,
+        request = SetBootstrappedRequest(bootstrapped),
+        requestTimeout = requestTimeout,
+        connectionTimeout = connectionTimeout,
+    )
 
     override val blocks: Chains.Chain.Blocks by lazy { ChainsChainBlocksClient(baseUrl, httpClient) }
     override val chainId: Chains.Chain.ChainId by lazy { ChainsChainChainIdClient(baseUrl, httpClient) }
@@ -33,6 +44,8 @@ private class ChainsChainBlocksClient(parentUrl: String, private val httpClient:
         head: BlockHash?,
         minDate: String?,
         headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
     ): GetBlocksResponse =
         httpClient.get(
             baseUrl,
@@ -42,7 +55,9 @@ private class ChainsChainBlocksClient(parentUrl: String, private val httpClient:
                 length?.let { add("length" to length.toString()) }
                 head?.let { add("head" to head.base58) }
                 minDate?.let { add("min_date" to minDate) }
-            }
+            },
+            requestTimeout = requestTimeout,
+            connectionTimeout = connectionTimeout,
         )
 
     override operator fun invoke(blockId: String): Block = BlockClient(baseUrl, blockId, httpClient)
@@ -51,13 +66,21 @@ private class ChainsChainBlocksClient(parentUrl: String, private val httpClient:
 private class ChainsChainChainIdClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.ChainId {
     private val baseUrl: String = /* /chains/<chain_id>/chain_id */ "$parentUrl/chain_id"
 
-    override suspend fun get(headers: List<HttpHeader>): GetChainIdResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetChainIdResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class ChainsChainInvalidBlocksClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks {
     private val baseUrl: String = /* /chains/<chain_id>/invalid_blocks */ "$parentUrl/invalid_blocks"
 
-    override suspend fun get(headers: List<HttpHeader>): GetInvalidBlocksResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetInvalidBlocksResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 
     override operator fun invoke(blockHash: BlockHash): Chains.Chain.InvalidBlocks.Block = ChainsInvalidBlockClient(baseUrl, blockHash, httpClient)
 }
@@ -65,14 +88,26 @@ private class ChainsChainInvalidBlocksClient(parentUrl: String, private val http
 private class ChainsInvalidBlockClient(parentUrl: String, blockHash: BlockHash, private val httpClient: HttpClient) : Chains.Chain.InvalidBlocks.Block {
     private val baseUrl: String = /* /chains/<chain_id>/invalid_blocks/<block_hash> */  "$parentUrl/${blockHash.base58}"
 
-    override suspend fun get(headers: List<HttpHeader>): GetInvalidBlockResponse = httpClient.get(baseUrl, "/", headers)
-    override suspend fun delete(headers: List<HttpHeader>): DeleteInvalidBlockResponse = httpClient.delete(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetInvalidBlockResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
+    override suspend fun delete(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): DeleteInvalidBlockResponse = httpClient.delete(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class ChainsChainIsBootstrappedClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.IsBootstrapped {
     private val baseUrl: String = /* /chains/<chain_id>/is_bootstrapped */ "$parentUrl/is_bootstrapped"
 
-    override suspend fun get(headers: List<HttpHeader>): GetBootstrappedStatusResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetBootstrappedStatusResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 
 }
 
@@ -87,17 +122,29 @@ private class ChainsChainLevelsClient(parentUrl: String, private val httpClient:
 private class ChainsChainLevelCabooseClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.Levels.Caboose {
     private val baseUrl: String = /* /chains/<chain_id>/levels/caboose */ "$parentUrl/caboose"
 
-    override suspend fun get(headers: List<HttpHeader>): GetCabooseResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetCabooseResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class ChainsChainLevelCheckpointClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.Levels.Checkpoint {
     private val baseUrl: String = /* /chains/<chain_id>/levels/checkpoint */ "$parentUrl/checkpoint"
 
-    override suspend fun get(headers: List<HttpHeader>): GetCheckpointResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetCheckpointResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class ChainsChainLevelSavepointClient(parentUrl: String, private val httpClient: HttpClient) : Chains.Chain.Levels.Savepoint {
     private val baseUrl: String = /* /chains/<chain_id>/levels/savepoint */ "$parentUrl/savepoint"
 
-    override suspend fun get(headers: List<HttpHeader>): GetSavepointResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetSavepointResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }

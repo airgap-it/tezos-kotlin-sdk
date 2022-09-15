@@ -67,7 +67,9 @@ public class KtorHttpClientProvider(
         endpoint: String,
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
-    ): String = request(HttpMethod.Delete, baseUrl, endpoint, headers, parameters)
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): String = request(HttpMethod.Delete, baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout)
 
     /**
      * Call GET HTTP method on specified [baseUrl] and [endpoint] with [headers] and [parameters].
@@ -79,7 +81,9 @@ public class KtorHttpClientProvider(
         endpoint: String,
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
-    ): String = request(HttpMethod.Get, baseUrl, endpoint, headers, parameters)
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): String = request(HttpMethod.Get, baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout)
 
     /**
      * Call PATCH HTTP method on specified [baseUrl] and [endpoint] with [headers], [parameters] and [body].
@@ -93,7 +97,9 @@ public class KtorHttpClientProvider(
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
         body: String?,
-    ): String = request(HttpMethod.Patch, baseUrl, endpoint, headers, parameters) {
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): String = request(HttpMethod.Patch, baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout) {
         body?.let { setBodyAsText(it) }
     }
 
@@ -109,7 +115,9 @@ public class KtorHttpClientProvider(
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
         body: String?,
-    ): String = request(HttpMethod.Post, baseUrl, endpoint, headers, parameters) {
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): String = request(HttpMethod.Post, baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout) {
         body?.let { setBodyAsText(it) }
     }
 
@@ -125,7 +133,9 @@ public class KtorHttpClientProvider(
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
         body: String?,
-    ): String = request(HttpMethod.Put, baseUrl, endpoint, headers, parameters) {
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): String = request(HttpMethod.Put, baseUrl, endpoint, headers, parameters, requestTimeout, connectionTimeout) {
         body?.let { setBodyAsText(it) }
     }
 
@@ -135,6 +145,8 @@ public class KtorHttpClientProvider(
         endpoint: String,
         headers: List<HttpHeader>,
         parameters: List<HttpParameter>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
         block: HttpRequestBuilder.() -> Unit = {},
     ): String {
         val response = ktor.request {
@@ -147,6 +159,11 @@ public class KtorHttpClientProvider(
 
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
+
+            timeout {
+                requestTimeout?.let { requestTimeoutMillis = it }
+                connectionTimeout?.let { connectTimeoutMillis = it }
+            }
 
             block(this)
         }

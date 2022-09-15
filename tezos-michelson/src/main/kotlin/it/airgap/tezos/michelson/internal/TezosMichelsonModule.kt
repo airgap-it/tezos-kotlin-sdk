@@ -16,7 +16,7 @@ public class TezosMichelsonModule private constructor(public val dependencyRegis
         override fun build(dependencyRegistry: DependencyRegistry, moduleRegistry: ModuleRegistry): TezosMichelsonModule {
             val core = moduleRegistry.coreModule(dependencyRegistry)
 
-            return TezosMichelsonModule(MichelsonDependencyRegistry(core.dependencyRegistry))
+            return TezosMichelsonModule(MichelsonDependencyRegistry(dependencyRegistry, core.dependencyRegistry))
         }
     }
 }
