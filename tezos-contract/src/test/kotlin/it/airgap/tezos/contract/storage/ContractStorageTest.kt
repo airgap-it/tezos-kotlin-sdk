@@ -6,7 +6,6 @@ import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConver
 import it.airgap.tezos.contract.internal.storage.MetaContractStorage
 import it.airgap.tezos.contract.internal.storage.MetaContractStorageEntry
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.internal.coreModule
 import it.airgap.tezos.michelson.internal.michelsonModule
 import it.airgap.tezos.michelson.micheline.Micheline
 import it.airgap.tezos.michelson.micheline.MichelinePrimitiveApplication
@@ -39,10 +38,8 @@ class ContractStorageTest {
 
         tezos = mockTezos()
         michelineToStorageEntryConverter = MichelineToStorageEntryConverter(
-            tezos.dependencyRegistry.crypto,
             blockRpc,
-            tezos.coreModule.dependencyRegistry.encodedBytesCoder,
-            tezos.michelsonModule.dependencyRegistry.michelinePacker,
+            tezos.michelsonModule.dependencyRegistry.michelineToScriptExprHashPacker,
             tezos.michelsonModule.dependencyRegistry.michelineToCompactStringConverter,
             tezos.michelsonModule.dependencyRegistry.stringToMichelsonPrimConverter,
             tezos.michelsonModule.dependencyRegistry.michelsonToMichelineConverter,
@@ -153,8 +150,6 @@ class ContractStorageTest {
                                 mockk(),
                                 mockk(),
                                 mockk(),
-                                mockk(),
-                                mockk(),
                             ),
                             mockk(),
                             mockk()
@@ -164,8 +159,6 @@ class ContractStorageTest {
                             value.args[1].args[0],
                             MetaContractStorageEntry.BigMap(
                                 type.args[1].args[0],
-                                mockk(),
-                                mockk(),
                                 mockk(),
                                 mockk(),
                                 mockk(),

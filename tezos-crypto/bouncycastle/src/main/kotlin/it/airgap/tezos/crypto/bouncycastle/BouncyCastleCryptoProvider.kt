@@ -25,8 +25,8 @@ public class BouncyCastleCryptoProvider : CryptoProvider {
      * Hashes the [message] using the SHA-256 hash function.
      */
     override fun sha256(message: ByteArray): ByteArray {
-        val shA256Digest = SHA256Digest()
-        return shA256Digest.hash(message)
+        val sha256Digest = SHA256Digest()
+        return sha256Digest.hash(message)
     }
 
     /**

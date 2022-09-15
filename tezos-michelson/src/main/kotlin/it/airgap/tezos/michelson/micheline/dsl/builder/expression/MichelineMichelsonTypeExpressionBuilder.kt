@@ -21,6 +21,8 @@ public class MichelineMichelsonTypeCodeBuilder internal constructor(
 ) : MichelinePrimitiveApplicationNoArgsBuilder<MichelsonType.Prim>(michelsonToMichelineConverter, MichelsonType.Code) {
     public fun arg(builderAction: MichelineMichelsonInstructionExpressionBuilder.() -> Unit): MichelineMichelsonInstructionExpressionBuilder =
         MichelineMichelsonInstructionExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
+
+    public fun arg(value: Micheline): MichelineMichelsonInstructionExpressionBuilder = arg { micheline(value) }
 }
 
 public class MichelineMichelsonTypeOptionBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
@@ -28,6 +30,8 @@ public class MichelineMichelsonTypeOptionBuilder<T : MichelsonType, G : Michelso
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun arg(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
+
+    public fun arg(value: Micheline): MichelineNodeBuilder<T, G> = arg { micheline(value) }
 }
 
 public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonType.Prim> @PublishedApi internal constructor(
@@ -35,7 +39,10 @@ public class MichelineMichelsonTypeOrBuilder<T : MichelsonType, G : MichelsonTyp
     prim: G,
 ) : MichelinePrimitiveApplicationNoArgsBuilder<G>(michelsonToMichelineConverter, prim) {
     public fun lhs(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
+    public fun lhs(value: Micheline): MichelineNodeBuilder<T, G> = lhs { micheline(value) }
+
     public fun rhs(builderAction: MichelineNodeBuilder<T, G>.() -> Unit): MichelineNodeBuilder<T, G> = MichelineNodeBuilder<T, G>(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
+    public fun rhs(value: Micheline): MichelineNodeBuilder<T, G> = rhs { micheline(value) }
 }
 
 public class MichelineMichelsonTypeLambdaBuilder internal constructor(
@@ -44,8 +51,12 @@ public class MichelineMichelsonTypeLambdaBuilder internal constructor(
     public fun parameter(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 
+    public fun parameter(value: Micheline): MichelineMichelsonTypeExpressionBuilder = parameter { micheline(value) }
+
     public fun returnType(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
+
+    public fun returnType(value: Micheline): MichelineMichelsonTypeExpressionBuilder = returnType { micheline(value) }
 }
 
 public class MichelineMichelsonTypeMapBuilder internal constructor(
@@ -55,8 +66,12 @@ public class MichelineMichelsonTypeMapBuilder internal constructor(
     public fun key(builderAction: MichelineMichelsonComparableTypeExpressionBuilder.() -> Unit): MichelineMichelsonComparableTypeExpressionBuilder =
         MichelineMichelsonComparableTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(0, it) }
 
+    public fun key(value: Micheline): MichelineMichelsonComparableTypeExpressionBuilder = key { micheline(value) }
+
     public fun value(builderAction: MichelineMichelsonTypeExpressionBuilder.() -> Unit): MichelineMichelsonTypeExpressionBuilder =
         MichelineMichelsonTypeExpressionBuilder(michelsonToMichelineConverter).apply(builderAction).also { args.replaceOrAdd(1, it) }
+
+    public fun value(value: Micheline): MichelineMichelsonTypeExpressionBuilder = value { micheline(value) }
 }
 
 public inline fun <T : MichelsonType, reified G : MichelsonType.Prim> MichelineNodeBuilder<T, G>.option(

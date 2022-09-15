@@ -49,6 +49,8 @@ public class CoreDependencyRegistry internal constructor(global: DependencyRegis
     public val stringToBlindedPublicKeyHashConverter: Converter<String, BlindedPublicKeyHash> by lazy { Static.stringToBlindedPublicKeyHashConverter }
     public val stringToSignatureConverter: Converter<String, Signature> by lazy { Static.stringToSignatureConverter }
 
+    public val publicKeyToPublicKeyHashConverter: Converter<PublicKey, PublicKeyHash> by lazy { PublicKeyToPublicKeyHashConverter(global.crypto, encodedBytesCoder) }
+
     public val signatureToGenericSignatureConverter: Converter<Signature, GenericSignature> by lazy { SignatureToGenericSignatureConverter(signatureBytesCoder, encodedBytesCoder) }
     public val genericSignatureToEd25519SignatureConverter: Converter<GenericSignature, Ed25519Signature> by lazy { GenericSignatureToEd25519SignatureConverter(signatureBytesCoder, encodedBytesCoder) }
     public val genericSignatureToSecp256K1SignatureConverter: Converter<GenericSignature, Secp256K1Signature> by lazy { GenericSignatureToSecp256K1SignatureConverter(signatureBytesCoder, encodedBytesCoder) }

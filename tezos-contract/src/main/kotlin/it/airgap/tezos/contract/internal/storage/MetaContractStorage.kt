@@ -1,17 +1,14 @@
 package it.airgap.tezos.contract.internal.storage
 
-import it.airgap.tezos.contract.internal.context.TezosContractContext.decodeFromBytes
 import it.airgap.tezos.contract.internal.context.TezosContractContext.failWithIllegalArgument
 import it.airgap.tezos.contract.internal.context.TezosContractContext.normalized
-import it.airgap.tezos.contract.internal.context.TezosContractContext.packToBytes
+import it.airgap.tezos.contract.internal.context.TezosContractContext.packToScriptExpr
 import it.airgap.tezos.contract.internal.context.TezosContractContext.toCompactExpression
 import it.airgap.tezos.contract.internal.converter.MichelineToStorageEntryConverter
 import it.airgap.tezos.contract.internal.converter.TypedConverter
 import it.airgap.tezos.contract.internal.converter.toStorageEntry
 import it.airgap.tezos.contract.storage.ContractStorageEntry
-import it.airgap.tezos.core.internal.coder.encoded.EncodedBytesCoder
 import it.airgap.tezos.core.internal.converter.Converter
-import it.airgap.tezos.core.internal.crypto.Crypto
 import it.airgap.tezos.core.internal.normalizer.Normalizer
 import it.airgap.tezos.core.type.encoded.ScriptExprHash
 import it.airgap.tezos.michelson.internal.packer.Packer
@@ -43,9 +40,7 @@ internal sealed interface MetaContractStorageEntry {
 
     class BigMap(
         override val type: Micheline,
-        private val crypto: Crypto,
-        private val encodedBytesCoder: EncodedBytesCoder,
-        private val michelinePacker: Packer<Micheline>,
+        private val michelineToScriptExprHashPacker: Packer<Micheline, ScriptExprHash>,
         private val michelineToStorageEntryConverter: MichelineToStorageEntryConverter,
         private val michelineToCompactStringConverter: Converter<Micheline, String>,
         private val michelineNormalizer: Normalizer<Micheline>,
@@ -53,10 +48,7 @@ internal sealed interface MetaContractStorageEntry {
 
         fun scriptExpr(key: Micheline): ScriptExprHash {
             if (type !is MichelinePrimitiveApplication || type.args.size != 2) failWithInvalidType(type)
-            val keyBytes = key.packToBytes(type.args.first(), michelinePacker)
-            val keyHash = crypto.hash(keyBytes, 32)
-
-            return ScriptExprHash.decodeFromBytes(keyHash, encodedBytesCoder)
+            return key.packToScriptExpr(type.args.first(), michelineToScriptExprHashPacker)
         }
 
         fun entryFrom(value: Micheline): ContractStorageEntry {

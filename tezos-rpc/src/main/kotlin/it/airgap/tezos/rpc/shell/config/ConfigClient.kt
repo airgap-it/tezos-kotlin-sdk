@@ -14,14 +14,29 @@ internal class ConfigClient(parentUrl: String, private val httpClient: HttpClien
 private class ConfigHistoryModeClient(parentUrl: String, private val httpClient: HttpClient) : Config.HistoryMode {
     private val baseUrl: String = /* /config/history_mode */ "$parentUrl/history_mode"
 
-    override suspend fun get(headers: List<HttpHeader>): GetHistoryModeResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetHistoryModeResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class ConfigLoggingClient(parentUrl: String, private val httpClient: HttpClient) : Config.Logging {
     private val baseUrl: String = /* /config/logging */ "$parentUrl/logging"
 
-    override suspend fun put(activeSinks: List<String>, headers: List<HttpHeader>): SetLoggingResponse =
-        httpClient.put(baseUrl, "/", headers, request = SetLoggingRequest(activeSinks))
+    override suspend fun put(
+        activeSinks: List<String>,
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): SetLoggingResponse = httpClient.put(
+        baseUrl,
+        "/",
+        headers,
+        request = SetLoggingRequest(activeSinks),
+        requestTimeout = requestTimeout,
+        connectionTimeout = connectionTimeout,
+    )
 }
 
 private class ConfigNetworkClient(parentUrl: String, private val httpClient: HttpClient) : Config.Network {
@@ -34,11 +49,19 @@ private class ConfigNetworkClient(parentUrl: String, private val httpClient: Htt
 private class ConfigNetworkUserActivatedProtocolOverridesClient(parentUrl: String, private val httpClient: HttpClient) : Config.Network.UserActivatedProtocolOverrides {
     private val baseUrl: String = /* /config/network/user_activated_protocol_overrides */ "$parentUrl/user_activated_protocol_overrides"
 
-    override suspend fun get(headers: List<HttpHeader>): GetUserActivatedProtocolOverridesResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetUserActivatedProtocolOverridesResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
 
 private class ConfigNetworkUserActivatedUpgradesClient(parentUrl: String, private val httpClient: HttpClient) : Config.Network.UserActivatedUpgrades {
     private val baseUrl: String = /* /config/network/user_activated_upgrades */ "$parentUrl/user_activated_upgrades"
 
-    override suspend fun get(headers: List<HttpHeader>): GetUserActivatedUpgradesResponse = httpClient.get(baseUrl, "/", headers)
+    override suspend fun get(
+        headers: List<HttpHeader>,
+        requestTimeout: Long?,
+        connectionTimeout: Long?,
+    ): GetUserActivatedUpgradesResponse = httpClient.get(baseUrl, "/", headers, requestTimeout = requestTimeout, connectionTimeout = connectionTimeout)
 }
