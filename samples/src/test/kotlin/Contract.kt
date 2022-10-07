@@ -57,25 +57,25 @@ class ContractSamples {
             }
         }
 
-        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
+        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"))
         val storage = runBlocking { tezosDomains.storage.get() }
 
         assertTrue(storage is ContractStorageEntry.Object)
 
         val actions = storage["%actions"]
         assertTrue(actions is ContractStorageEntry.BigMap)
-        assertEquals("17073", actions.id)
+        assertEquals("13806", actions.id)
 
         val store = storage["%store"]
         assertTrue(store is ContractStorageEntry.Object)
 
         val records = store["%records"]
         assertTrue(records is ContractStorageEntry.BigMap)
-        assertEquals("17077", records.id)
+        assertEquals("13810", records.id)
 
         val reverseRecords = store["%reverse_records"]
         assertTrue(reverseRecords is ContractStorageEntry.BigMap)
-        assertEquals("17078", reverseRecords.id)
+        assertEquals("13811", reverseRecords.id)
     }
 
     @Test
@@ -92,24 +92,24 @@ class ContractSamples {
             }
         }
 
-        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
+        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"))
         val storage = runBlocking { tezosDomains.storage.get() }
 
         val store = storage.objectEntry["%store"]
 
-        val record = runBlocking { store.objectEntry["%records"].bigMapEntry.get { bytes("aabbcc.jak".encodeToByteArray()) } }
+        val record = runBlocking { store.objectEntry["%records"].bigMapEntry.get { bytes("lab-void.ith".encodeToByteArray()) } }
         val address = record.objectEntry["%address"]?.value?.toMichelson()
             .tryAs<MichelsonData.Some>().value
             .tryAs<MichelsonData.StringConstant>()
 
-        assertEquals("tz1Yj8M1R1VnDr8NsKRsJckgWxe1gj8QqZNS", address.value)
+        assertEquals("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m", address.value)
 
-        val reverseRecord = runBlocking { store.objectEntry["%reverse_records"].bigMapEntry.get { string("tz1Yj8M1R1VnDr8NsKRsJckgWxe1gj8QqZNS") } }
+        val reverseRecord = runBlocking { store.objectEntry["%reverse_records"].bigMapEntry.get { string("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m") } }
         val name = reverseRecord.objectEntry["%name"]?.value?.toMichelson()
             .tryAs<MichelsonData.Some>().value
             .tryAs<MichelsonData.ByteSequenceConstant>()
 
-        assertEquals("aabbcc.jak", name.toByteArray().decodeToString())
+        assertEquals("short-wing.ith", name.toByteArray().decodeToString())
     }
 
     @Test
@@ -127,11 +127,11 @@ class ContractSamples {
             }
         }
 
-        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"))
+        val tezosDomains = Contract(TEZOS_NODE, ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"))
         val transfer = tezosDomains.entrypoint("transfer")
         val operation = runBlocking {
             transfer(
-                source = ImplicitAddress("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"),
+                source = ImplicitAddress("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m"),
                 // The `fee` and `limits` values can be omitted.
                 // If **both** omitted, the entrypoint handler will estimate the minimum fee for the resulting operation.
                 fee = Mutez(505),
@@ -142,11 +142,11 @@ class ContractSamples {
             ) {
                 sequence {
                     `object` {
-                        value("%from_") { string("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") }
+                        value("%from_") { string("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m") }
                         sequence("%txs") {
                             `object` {
-                                value("%to_") { string("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e") }
-                                value("%token_id") { int(0) }
+                                value("%to_") { string("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m") }
+                                value("%token_id") { int(53) }
                                 value("%amount") { int(100) }
                             }
                         }
@@ -157,20 +157,20 @@ class ContractSamples {
 
         val tezosRpc = TezosRpc(TEZOS_NODE)
         val branch = runBlocking { tezosRpc.getBlock().block.hash }
-        val counter = runBlocking { tezosRpc.getCounter(contractId = Address("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e")).counter!! }
+        val counter = runBlocking { tezosRpc.getCounter(contractId = Address("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m")).counter!! }
 
         assertEquals(
             Operation.Unsigned(
                 branch = branch,
                 contents = listOf(
                     OperationContent.Transaction(
-                        source = ImplicitAddress("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"),
+                        source = ImplicitAddress("tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m"),
                         fee = Mutez(505),
                         counter = TezosNatural(counter),
                         gasLimit = TezosNatural(1521U),
                         storageLimit = TezosNatural(100U),
                         amount = Mutez(0),
-                        destination = ContractHash("KT1VmuKWcqSJ35RwPigAhLvu43Y11jED37fy"),
+                        destination = ContractHash("KT1GFYUFQRT4RsNbtG2NU23woUyMp5tx9gx2"),
                         parameters = Parameters(
                             entrypoint = Entrypoint("transfer"),
                             value = Micheline.fromJsonString("""
@@ -179,20 +179,20 @@ class ContractSamples {
                                         "prim": "Pair",
                                         "args": [
                                             {
-                                                "string": "tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"
+                                                "string": "tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m"
                                             },
                                             [
                                                 {
                                                     "prim": "Pair",
                                                     "args": [
                                                         {
-                                                            "string": "tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e"
+                                                            "string": "tz1UA6Neo7pu6qvUveZQq1ZWwV1YuNgoip4m"
                                                         },
                                                         {
                                                             "prim": "Pair",
                                                             "args": [
                                                                 {
-                                                                    "int": "0"
+                                                                    "int": "53"
                                                                 },
                                                                 {
                                                                     "int": "100"

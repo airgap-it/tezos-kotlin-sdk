@@ -1,6 +1,6 @@
 # Tezos Kotlin SDK: Samples
 
-An interactive playground to try out the library's features. 
+An interactive playground to try out the library's features.
 
 ## Run
 
@@ -16,7 +16,7 @@ $ ./gradlew samples:test
 You can also specify a single sample to run with:
 
 ```shell
-$ ./gradlew saples:test --tests SampleClass.sampleMethod # e.g. BasicSamples.explicit
+$ ./gradlew samples:test --tests SampleClass.sampleMethod # e.g. BasicSamples.explicit
 ```
 
 See also [how to filter test suites in Gradle](https://docs.gradle.org/current/userguide/java_testing.html#test_filtering)
