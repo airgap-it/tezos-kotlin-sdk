@@ -57,7 +57,7 @@ internal fun RpcOperationResult.assertApplied() {
 
 private val RpcOperationResult.gasLimit: BigInt
     get() {
-        val consumedGas = consumedGas?.let { BigInt.valueOf(it) } ?: BigInt.zero
+        val consumedGas = consumedMilligas?.let { BigInt.valueOf(it) / 1000 } ?: BigInt.zero
         return consumedGas + GAS_SAFETY_MARGIN.toInt()
     }
 
