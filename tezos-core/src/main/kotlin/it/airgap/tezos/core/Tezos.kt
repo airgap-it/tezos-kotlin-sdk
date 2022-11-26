@@ -87,7 +87,7 @@ public class Tezos internal constructor(
 
             return Tezos(dependencyRegistry, moduleRegistry).also {
                 if (isDefault) {
-                    Static.defaultTezos = it
+                    Tezos.setDefault(it)
                 }
             }
         }
@@ -102,6 +102,15 @@ public class Tezos internal constructor(
          */
         public val Default: Tezos
             get() = Static.defaultTezos
+
+        /**
+         * Sets [tezos] as the default [Tezos] instance.
+         *
+         * @see Tezos.Default
+         */
+        public fun setDefault(tezos: Tezos) {
+            Static.defaultTezos = tezos
+        }
     }
 }
 

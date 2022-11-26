@@ -20,20 +20,37 @@ See the rest of the examples to better understand how to configure the `Tezos` c
 
 ## Default Context
 
-A newly created `Tezos` context instance can be set as the library's default with the `isDefault` flag.
-The default context instance will always be used implicitly, if an explicit instance isn't passed in:
+A newly created `Tezos` context instance can be set as the library's default with the `isDefault` flag (while being constructed):
 
 ```kotlin
 import it.airgap.tezos.core.Tezos
-import it.airgap.tezos.core.converter.encoded.Address
 
 Tezos {
     isDefault = true /* this instance can be then referenced as Tezos.Default */
     /* ... */
 }
+```
+
+or with the `Tezos#setDefault` method (after it was created):
+
+```kotlin
+import it.airgap.tezos.core.Tezos
+
+val tezos = Tezos {
+    /* ... */
+}
+
+Tezos.setDefault(tezos /* this instance can be then referenced as Tezos.Default */)
+```
+
+The default context instance will always be used implicitly, if an explicit instance isn't passed in:
+
+```kotlin
+import it.airgap.tezos.core.converter.encoded.Address
 
 val address = Address("tz1fJGtrdmckD3VkiDxqUEci5h4gGcvocw6e", /* tezos = Tezos.Default */)
 ```
+
 
 ## Modules
 
